@@ -1,3 +1,5 @@
+fis.set('project.files', ['helpers/**', 'routes/**', 'app.js', 'config.js']);
+
 fis.match('**', {
   deploy: fis.plugin('http-push', {
     receiver: 'http://139.199.69.115:8999/receiver',

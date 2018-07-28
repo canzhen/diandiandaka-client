@@ -35,6 +35,8 @@ app.use(session({
   cookie: { maxAge: 100000 }
 }));
 
+app.set('view engine', 'jade');
+
 app.use('/', routes);
 app.use('/db', db);
 app.use('/user', users);

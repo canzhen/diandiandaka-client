@@ -39,7 +39,7 @@ function checkTopic(topicname, existCb, notExistCb) {
     data: { 'topicname': topicname },
     success: function (res) { //请求成功之后的回调函数
       /* 如果存在，则在该卡片的记录的打卡人数上加一，跳转到用户的所有打卡界面 */
-      if (res.data.ifExist) {
+      if (res.statusCode == 200 && res.data.ifExist) {
         console.log('topic已存在');
         existCb();
       } else { /* 如果不存在，则需要往卡片表里新增，跳转到新卡片界面 */
@@ -61,7 +61,7 @@ function updateTopic(topicname){
     method: 'POST',
     data: { 'topicname': topicname },
     success: function (res) {
-      if (res.data.status) console.log('新增人数成功');
+      if (res.statusCode == 200 && res.data.status) console.log('新增人数成功');
       else console.log('新增人数失败');
     }
   })
@@ -80,7 +80,7 @@ function insertTopic(topicname, topicurl, cb) {
     data: { 'topicname': topicname,
             'topicurl': topicurl},
     success: function (res) {
-      if (res.data.status) console.log('新增' + topicname + '人数成功');
+      if (res.statusCode == 200 && res.data.status) console.log('新增' + topicname + '人数成功');
       else console.log('新增' + topicname + '人数失败');
       cb (res.data.status);
     }

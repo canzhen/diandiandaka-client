@@ -3,7 +3,7 @@ App({
   config: {
     host: 'zhoucanzhendevelop.com',
     request_head: 'https://zhoucanzhendevelop.com',
-    hot_topic_num : 6, 
+    hot_topic_num : 6,
   },
   
   globalData:{
@@ -28,8 +28,10 @@ App({
               'userinfo': userinfo
             },
             success: function (res) {
-              console.log('发送请求成功啦！' + res.data);
-              return true;
+              if (res.statusCode == 200) {
+                console.log('发送请求成功啦！' + res.data);
+                return true;
+              }
             }
           })
         },

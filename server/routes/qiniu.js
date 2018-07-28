@@ -3,9 +3,10 @@ var qiniuhelper = require('../helpers/qiniuhelper.js');
 var router = express.Router();
 
 router.get('/getToken', function (req, res) {
+  let token = qiniuhelper.getToken();
   res.send({
     'status': 0,
-    'token': qiniuhelper.getToken()
+    'token': token
     });
 });
 

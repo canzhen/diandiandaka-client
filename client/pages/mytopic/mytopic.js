@@ -1,5 +1,5 @@
+var qiniuhelper = require('../../vendor/qiniuhelper.js');
 var numEachRow = 4;
-var qiniuSDK = require('../../vendor/qiniu-sdk-min.js');
 
 Page({
   data: {
@@ -134,35 +134,41 @@ Page({
     // })
 
     
+    let showFailToast = function(){
+      wx.showToast({
+        title: '大哥饶命，上传失败...',
+        icon: 'none',
+        duration: 2000
+      })
+    };
 
-
-    self = this;
+    let that = this;
     wx.chooseImage({
-      count: 1, // 默认9
+      count: 1, // 允许选择的图片数
       sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
       sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
       success: function (res) {
         let filepath = res.tempFilePaths[0];
+        let filename = filepath.substring(filepath.indexOf('tmp/') + 4, filepath.lastIndexOf('.'));
         // 向服务器端获取token
         wx.request({
           url: getApp().config.request_head + '/qiniu/getToken',
           method: 'GET',
           success: function(res){
-            if (res.statusCode == 200 && res.data.status == 0){
-              
-            }else{
-              wx.showToast({
-                title: '大哥饶命，上传失败...',
-                icon: 'none',
-                duration: 2000
-              })
-            }
+            if (res.statusCode == 200 && res.data.status == 0) {
+              // 成功获取token之后，开始上传图片
+              let token = res.data.token;
+              qiniuhelper.upload(filepath, filename, token, (status, url) => {
+                if (!status) { showFailToast(); return;}
+                // 设置头像为上传到七牛的图片url
+                that.setData({
+                  avatarPath: url
+                });
+                console.log('成功上传新头像！地址是：' + that.data.avatarPath);
+              });
+            }else{ showFailToast(); return;}
           }
         })
-        self.setData({
-            avatarPath: res.tempFilePaths
-        });
-        console.log('成功上传新头像！地址是：' + self.data.avatarPath);
       }
     });
   },

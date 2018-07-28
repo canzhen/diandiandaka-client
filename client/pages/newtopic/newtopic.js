@@ -196,9 +196,9 @@ Page({
         'enddate': value.end_date
       },
       success: function (res) {
-        if (res.data.status == 1)
+        if (res.statusCode == 200 && res.data.status == 1)
           that.showFailToast('这个卡片好像你以前添加过喔！换个卡片吧~');
-        else if (res.data.status == 2)
+        else if (res.statusCode != 200 || res.data.status == 2)
           that.showFailToast('提交失败..大爷饶命，小的这就去查看原因..');
         else
           // console.log('成功发送/db/createtopic请求，' + res.data);
