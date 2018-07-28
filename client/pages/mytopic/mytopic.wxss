@@ -1,0 +1,75 @@
+Page{
+  font-size: 30rpx;
+  color:#7a7e82;
+  display: flex;
+  flex-direction: column;
+}
+
+.top-background{
+  width: 100%;
+  height: 100rpx;
+  background: #fee0c1;
+}
+
+
+.avatar{
+  margin-top: -90rpx;
+  margin-left: 288rpx;
+  width: 180rpx;
+  height: 180rpx;
+  overflow:hidden;
+  border: 0 solid #ffffff;
+  border-radius: 50%;
+  background-size: 100% 100%;
+}
+
+.username{
+  margin-top:20rpx;
+  margin-left: 330rpx;
+}
+
+/* 大的整块卡片区域 */
+.topic-image-view{
+  display:flex; 
+  flex-direction:row; 
+  margin-top:30rpx; 
+  margin-left: 30rpx; 
+  margin-right: 30rpx; 
+  justify-content: space-around;
+}
+
+/* 每一行 */
+.topic-image-row{
+  display: flex; 
+  flex-direction: column; 
+  margin-left: 20rpx;
+  margin-right: 20rpx; 
+  justify-content: space-around;
+}
+
+/* 每一个卡片 */
+.topic-image-each-item{
+  width: 130rpx;
+  height: 130rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content:center;
+  align-items: center;
+  margin-bottom:15rpx;
+}
+
+.topic-image-each-item image{
+  width: 100rpx;
+  height: 100rpx;
+}
+
+.image {
+  width: 100rpx;
+  height: 100rpx;
+}
+
+.image-punched-in {
+  width: 80rpx;
+  height: 80rpx;
+  margin-left: -80rpx;
+}

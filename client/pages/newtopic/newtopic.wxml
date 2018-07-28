@@ -1,0 +1,51 @@
+<view style="display:flex; flex-direction:column; margin-left: 70rpx; margin-right: 70rpx; padding-top: 60rpx;">
+  <form bindsubmit="submitForm">
+    <view style="display:flex; flex-direction:row;">
+      <text class="topic-name"> 计划名称 </text>
+      <input class="input-topic-name" placeholder="输入计划名称" value="{{topic_name}}" name="input_topic_name" bindchange="bindTopicChange" disabled="{{name_given}}"/>
+    </view>
+    <view class="line"></view>
+    <view style="display:flex; flex-direction:row;">
+      <text class="topic-name"> 开始日期 </text>
+      <picker class="input-topic-name" mode="date" value="{{start_date}}"  name="start_date" start="{{start_date}}" end="3000-12-31" bindchange="bindStartDateChange">
+        <view class="picker">
+          {{start_date}}
+        </view>
+      </picker>
+    </view>
+    <view class="line"></view>
+
+    <view style="display:flex; flex-direction:row;">
+      <text class="topic-name"> 结束日期 </text>
+      <picker class="input-topic-name" style="padding-bottom: 5rpx;" mode="date" value="{{end_date}}" name="end_date" start="{{end_date}}" end="3000-12-31" bindchange="bindEndDateChange">
+        <view class="picker">
+          {{end_date}}
+        </view>
+      </picker>
+      <text class="topic-name"> 永不结束 </text>
+      <checkbox-group bindchange="bindNeverRepeat">
+        <checkbox/>
+      </checkbox-group>
+    </view>
+    <view class="line"></view>
+
+    <view class="pick-icon-text">选择图标</view>
+
+    <!-- 展示图标（每行六个图标） -->
+    <view class="icon-image-view" wx:for="{{icon_name_num}}" wx:key="idx" wx:for-item="row_data">
+      <!-- 每一行 -->
+      <view class="icon-image-row" wx:for="{{row_data}}" wx:key="col" wx:for-item="num">
+        <view class="icon-image-each-item" bindtap="checkIcon" data-src="/images/{{icon_data[num].name}}" data-idx="{{num}}">
+          <image class="image" src="{{icon_data[num].name}}"></image>
+          
+          <icon class="image-punched-in" wx:if="{{icon_data[num].is_checked}}"
+                  type="success_no_circle" size="30"></icon>
+        </view>
+      </view>
+      <!-- 每行结束 -->
+    </view>
+
+
+    <button class="new-topic-button" form-type="submit"> 确定 </button>
+  </form>
+</view>

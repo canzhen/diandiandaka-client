@@ -1,0 +1,331 @@
+page{
+  font-size: 30rpx;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.navbar{
+  flex: none;
+  display: flex;
+  background: #fff;
+  margin-top: 20rpx;
+}
+
+.navbar .item{
+  position: relative;
+  flex: auto;
+  text-align: center;
+  line-height: 80rpx;
+}
+
+.navbar .item.active{
+  color: #feb873;
+}
+
+.navbar .item.active:after{
+  content: "";
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 7rpx;
+  background: #fee0c1;
+}
+
+
+
+/* 所有历史部分 */
+
+.all-history-panel{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin-top: 30rpx;
+}
+
+.all-history-left{
+  display: flex;
+  flex-direction: column;
+  width: 15%;
+  height: 100%;
+  margin: 60rpx -10rpx 0rpx 10rpx;
+}
+
+.all-history-left-item{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align:center;
+  justify-content:center;
+  margin-bottom: 20rpx;
+  margin-top: 10rpx;
+}
+
+.all-history-left-image{
+  width: 80rpx;
+  height: 80rpx;
+}
+
+.all-history-left-bottom{
+  position: fixed;
+  width: 50rpx;
+  left: 10rpx;
+  top: 990rpx;
+}
+
+.all-history-left-bottom-image-left{
+  width: 40rpx;
+  height: 40rpx;
+
+  position: fixed;
+  left: 10rpx;
+  top: 990rpx;
+}
+
+.all-history-left-bottom-image-right{
+  width: 40rpx;
+  height: 40rpx;
+
+  position: fixed;
+  left: 80rpx;
+  top: 990rpx;
+}
+
+
+.all-history-right{
+  display: flex;
+  flex-direction: column;
+  width: 85%;
+  height: 100%;
+  margin-top: 10rpx;
+}
+
+
+image{
+  width: 40rpx;
+  height: 40rpx;
+  margin-bottom: 10rpx;
+}
+
+.all-history-first-row{
+  display: flex;
+  flex-direction: row;
+  justify-content:center;
+  margin:0rpx 10rpx 10rpx 20rpx;
+  font-size: 30rpx;
+}
+
+.all-history-emphasize{
+  font-weight:900;
+  text-decoration:underline;
+}
+
+.calendar-panel{
+  display: flex; 
+  flex-direction: row;
+  height: 390rpx;
+  margin: 0rpx 20rpx 20rpx 20rpx;
+  background-color: #f6f6f6;
+  padding-bottom: 20rpx;
+}
+
+.year-month-circle{
+  /* 形状、位置 */
+  width: 150rpx;
+  height: 150rpx;
+  margin: 130rpx 10rpx 130rpx 20rpx;
+
+  /* 圆形相关 */
+  border: 0 solid #fff;
+  border-radius: 500px;
+  background-size:100% 100%;
+  display: flex;
+  align-items: center;
+  text-align:center;
+  justify-content:center;
+}
+
+.year-month-text{
+  /* margin-top: 100rpx; */
+  color:#fff;
+  /* font-size:30rpx;  */
+}
+
+.calendar-right-part{
+  width: 410rpx;
+  height:440rpx;
+  display:flex;
+  flex-direction: column; 
+  margin: 20rpx 0rpx 30rpx 0rpx;
+}
+
+.calendar-days-row{
+  display: flex; 
+  flex-direction: row;
+  margin-left: 15rpx;
+  margin-right: 15rpx; 
+}
+
+
+.calendar-days-each-item{
+  width: 85rpx;
+  height: 45rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content:center;
+  align-items: center;
+  margin-bottom:10rpx;
+  color: #8c8c8c;
+}
+
+.picker{
+  margin: 0rpx 10rpx 0rpx 10rpx;
+  color: #888888;
+  /* box-sizing: border-box;
+  border: 2rpx solid #eee; */
+}
+
+.checked{
+  /* width: 60rpx;
+  height: 60rpx; */
+  margin-left: -40rpx;
+}
+
+.all-history-last-row{
+  display: flex;
+  flex-direction: row-reverse;
+  margin:-5rpx 20rpx 20rpx 10rpx;
+  /* font-size: 30rpx; */
+}
+/* 所有历史部分结束 */
+
+
+/*---------------------------------------*/
+
+ 
+ /* 每日完成度部分开始  */
+
+ .completeness-panel{
+  display:flex;
+  flex-direction: column;
+  justify-content: space-around;
+  height: 95%;
+  margin: 20rpx, 50rpx, 20rpx, 50rpx;
+ }
+
+
+ .completeness-first-row{
+  display:flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 5%;
+ }
+
+ .completeness-panel-bottom{
+  display:flex;
+  flex-direction: row;
+  justify-content: space-around; 
+  position: fixed;
+  bottom: 5%;
+  left: 4%;
+  width: 90%;
+ }
+
+
+.completeness-button{
+  width: 120rpx;
+  height: 60rpx;
+  margin-right: 1%;
+
+  /* text */
+  font-size: 22rpx; 
+  color: #000000;
+  text-align: center;
+  padding-top: 4rpx; 
+
+  
+  /* shape */
+  border: none;
+  border-radius: 4px;
+  background-color: #feddbb;
+}
+
+
+.completeness-button-checked{
+  width: 120rpx;
+  height: 60rpx;
+  margin-right: 1%;
+
+  /* text */
+  font-size: 24rpx; 
+  font-family: bold;
+  color: #000000;
+  text-align: center;
+  padding-top: 3rpx; 
+
+  
+  /* shape */
+  border: none;
+  border-radius: 4px;
+  background-color: #f8cd9b;
+}
+
+/* 去除button边框 */
+button::after{
+  border: none;
+}
+
+.completeness-canvas{
+  display:flex;
+  position: fixed;
+  flex-direction: row;
+  justify-content: space-around; 
+  left: 3.8%;
+  width: 95%;
+  height: 100%;
+  top: 15%;
+  margin-top: 40rpx;
+  margin-right: 5%;
+  /* width: 95%;
+  height: 600rpx; */
+}
+
+.subitem-row{
+  display:flex;
+  flex-direction: row;
+  width: 100%;
+  margin-top: 70rpx;
+  margin-left: 70rpx;
+}
+
+.subitem-row-left{
+  display:flex;
+  flex-direction: column;
+  text-align: center;
+  color: #8c8c8c;
+  /* margin: 50rpx 50rpx 50rpx 100rpx; */
+}
+
+.subitem-image{
+  width: 70rpx;
+  height: 70rpx;
+}
+
+.subitem-row-right{
+  display: flex;
+  margin-left: 50rpx;
+  align-items: center;
+  width: 100%;
+  color: #8c8c8c;
+}
+
+.subitem-row-right-progress{
+  height:40rpx; 
+  background: #ebebeb;
+  text-align: center;
+  padding-top: 12.5rpx;
+  font-size: 25rpx;
+}
+/* 每日完成度部分结束 */

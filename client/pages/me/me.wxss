@@ -1,0 +1,71 @@
+Page{
+  font-size: 30rpx;
+  color:#7a7e82;
+  display: flex;
+  flex-direction: column;
+}
+
+.me-upper-part{
+  display:flex; 
+  flex-direction:column;
+}
+
+
+.top-background{
+  width: 100%;
+  height: 200rpx;
+  background: #fee0c1;
+}
+
+
+.avatar{
+  margin-top: -180rpx;
+  margin-left: 30rpx;
+  width: 150rpx;
+  height: 150rpx;
+  overflow:hidden;
+  border: 0 solid #ffffff;
+  border-radius: 50%;
+  background-size: 100% 100%;
+}
+
+.username{
+  margin-top: -120rpx;
+  margin-left: 210rpx;
+  font-family: bold;
+}
+
+.openid{
+  margin-top: 10rpx;
+  margin-left: 210rpx;
+  font-size: 25rpx;
+}
+
+.edit-data{
+  margin-top: -60rpx;
+  margin-left: 75%;
+  font-size: 25rpx;
+}
+
+.image {
+  width: 100rpx;
+  height: 100rpx;
+  margin-bottom: 15rpx;
+}
+
+.me-lower-part{
+  display:flex; 
+  flex-direction:row;
+  margin: 135rpx 50rpx 50rpx 20rpx;
+}
+
+.me-lower-part-each-item{
+  display:flex; 
+  flex-direction:column;
+  align-items: center;
+  width: 150rpx;
+  height: 200rpx;
+  margin-right: 10rpx; 
+
+  font-size: 25rpx;
+}

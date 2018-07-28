@@ -1,0 +1,104 @@
+Page{
+  font-size: 30rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 去除button边框 */
+button::after{
+  border: none;
+}
+
+.topic-name{
+   margin-top: 5rpx; 
+}
+
+.input-topic-name{
+  /* margin-top: 5rpx; */
+  margin-left: 30rpx;
+  width: 280rpx;
+}
+
+/* 单选钮样式 */
+checkbox {
+  margin-top: 3rpx; 
+  transform:scale(0.6);
+}
+
+
+.line{
+  margin-top: 10rpx;
+  margin-bottom: 20rpx;
+  width: 600rpx;
+  height:2rpx;
+  background:#aaa;
+}
+
+.pick-icon-text{
+  margin-top: 40rpx;
+  margin-bottom: 20rpx;
+}
+
+/* 大的整块选择图标区域 */
+.icon-image-view{
+  display:flex; 
+  flex-direction:row;
+}
+
+/* 每一行 */
+.topic-image-row{
+  display:flex; 
+  flex-direction:column; 
+  margin-left: 2rpx;
+  margin-right: 2rpx; 
+}
+
+/* 每一个卡片 */
+.icon-image-each-item{
+  width: 115rpx;
+  height: 115rpx;
+  display: flex;
+  flex-direction: row;
+  justify-content:center;
+  align-items: center;
+}
+
+.icon-image-each-item image{
+  width: 75rpx;
+  height: 75rpx;
+}
+
+.image {
+  width: 75rpx;
+  height: 75rpx;
+}
+
+.new-topic-button{
+  width: 170rpx;
+  height: 85rpx;
+  margin: 150rpx 70rpx 90rpx 220rpx;
+
+  display: flex;
+  flex-direction: row;
+  justify-content:center;
+  align-items: center;
+
+  /* text */
+  font-size: 30rpx; 
+  color: #000000;
+  text-align: center;
+  /* padding-top: 12rpx; */
+
+  
+  /* shape */
+  border-radius: 4px;
+  background-color: #feddbb;
+  border: none;
+}
+
+
+.image-punched-in {
+  width: 40rpx;
+  height: 40rpx;
+  margin-left: -40rpx;
+}

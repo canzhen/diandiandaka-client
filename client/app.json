@@ -1,0 +1,41 @@
+{
+  "pages": [
+    "pages/mytopic/mytopic",
+    "pages/index/index",
+    "pages/history/history",
+    "pages/newtopic/newtopic",
+    "pages/me/me"
+  ],
+
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fee0c1",
+    "navigationBarTitleText": "点点小打卡",
+    "navigationBarTextStyle": "black"
+  },
+
+  "tabBar": {
+    "color": "#a9b7b7",
+    "backgroundColor": "#f6f6f6",
+    "selectedColor": "#fd9731",
+    "borderStyle": "white",
+    "list": [{
+        "selectedIconPath": "/images/toolbar/1selected.png",
+        "iconPath": "/images/toolbar/1.png",
+        "pagePath": "pages/mytopic/mytopic",
+        "text": "打卡"
+      },{
+        "selectedIconPath": "/images/toolbar/2selected.png",
+        "iconPath": "/images/toolbar/2.png",
+        "pagePath": "pages/history/history",
+        "text": "历史"
+      },{
+        "selectedIconPath": "/images/toolbar/3selected.png",
+        "iconPath": "/images/toolbar/3.png",
+        "pagePath": "pages/me/me",
+        "text": "我"
+      }
+    ]
+  }  
+}
+
