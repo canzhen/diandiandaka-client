@@ -9,16 +9,21 @@ const API = {
 
 /**
  * POST请求接口
+ * @param params: {'url':'', 'data':{}, 
+ *                 'success': function(){}, 
+ *                 'fail': function(){},
+ *                 'showLoading': false, 
+ *                 'header' : {}}
  */
 function postRequest(params) {
-  wx.showLoading({
-    title: '加载中',
-  })
+  if (params.showLoading){
+    wx.showLoading({
+      title: '加载中',
+    })
+  }
   wx.getNetworkType({
     success: (res) => {
-      //console.log(res.networkType);
       if (res.networkType == 'none') {
-        // console.log('1111')
         wx.showToast({
           title: '无网络访问',
           icon: 'none',
@@ -26,17 +31,18 @@ function postRequest(params) {
         })
         return
       }
+      //添加header
+      if (!params.header) params.header = {};
+      params.header['content-type'] = 'application/x-www-form-urlencoded';
+      params.header['session-id'] = wx.getStorageSync('sessionId');
       wx.request({
-        url: params.url,
+        url: root + params.url,
         method: 'POST',
         dataType: 'json',
         data: params.data,
-        header: {
-          'content-type': 'application/x-www-form-urlencoded' // 默认值
-        },
+        header: params.header, 
         success: (res) => {
           wx.hideLoading()
-
           if (res.data.state == -2) {
             wx.showToast({
               title: '请重新登录',
@@ -50,9 +56,13 @@ function postRequest(params) {
           }
           if (res.statusCode == 200)
             params.success(res.data)
+          else showFailToast()
         },
         fail: (res) => {
-          wx.hideLoading();
+          console.log('post failed:');
+          console.log(res);
+          if (params.showLoading) 
+            wx.hideLoading();
           showFailToast()
           params.fail(res.data)
           return
@@ -90,13 +100,15 @@ function getRequest(url, data, fnSucess, fnFail) {
         header: { 'content-type': 'application/json;chareset=UT8-8' },
         success: (res) => {
           wx.hideLoading();
-          if (res.statusCode == 200 && res.data.errorCode == 200) {
+          if (res.statusCode == 200) {
             if (fnSucess && typeof fnSucess == "function") {
               fnSucess(res.data);
             }
           } else {
             //统一代码处理中心
             // console.log("------------- ")
+            showFailToast()
+            fnFail(res);
           }
 
         },

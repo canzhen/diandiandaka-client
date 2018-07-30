@@ -184,6 +184,10 @@ Page({
     //将卡片姓名和卡片图像url添加到卡片表中
     api.postRequest({
       'url': '/topic/createtopic',
+      'header': {
+        'sessionid': wx.getStorageSync('sessionId')
+      },
+      'showLoading': false, 
       'data': {
         'topicname': value.input_topic_name,
         'topicurl': this.data.topic_url,
@@ -191,11 +195,13 @@ Page({
         'enddate': value.end_date
       },
       'success': function(res){
-        if (res.status == 101) 
+        console.log('into success');
+        console.log(res.errorCode);
+        if (res.errorCode == 101) 
           that.showFailToast('这个卡片好像你以前添加过喔！换个卡片吧~');
-        else if (res.status == 100)
+        else if (res.errorCode == 100)
           that.showFailToast('提交失败..大爷饶命，小的这就去查看原因..');
-        else if (res.status == 200)
+        else if (res.errorCode == 200)
           that.showSucceedToast(); 
       },
       'fail': function(res){
@@ -229,6 +235,16 @@ Page({
           })
         }, 1000);
       }
+    })
+  },
+
+
+  // 显示提交失败的toast
+  showFailToast: function (msg) {
+    wx.showToast({
+      title: msg,
+      icon: 'none',
+      duration: 2000
     })
   }
 });

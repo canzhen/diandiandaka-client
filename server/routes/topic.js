@@ -1,19 +1,13 @@
-var express = require('express');
-var dbhelper = require('../helpers/dbhelper.js')
-var router = express.Router();
-
-/* GET users listing. */
-// router.get('/', function (req, res) {
-//   res.send('<p>you are reaching 嘻嘻嘻</p>');
-// });
+const express = require('express');
+const dbhelper = require('../helpers/dbhelper.js')
+const redishelper = require('../helpers/redishelper.js');
+const router = express.Router();
 
 
 /**
  * 往topic table里添加一条数据
  */
 router.post('/createtopic', function (req, res) {
-  console.log('查看session:');
-  console.log(req.session);
   if (!req.body.topicname || !req.body.topicurl) return false;
   /* 1. 往topic表里新增或更新数据 */
   // 查看topic表是否已经存在相应的数据
@@ -24,21 +18,37 @@ router.post('/createtopic', function (req, res) {
     } else {/* 如果不存在，则需要往卡片表新增一条数据 */
       dbhelper.insertTopic(req.body.topicname, req.body.topicurl, 1, (result) => {});
     }
+    
     /* 2. 往用户卡片表里新增一条数据 */
-    dbhelper.insertUserTopic(req.session.openId, req.body.topicname, 
-                             req.body.topicurl, 0, req.body.startdate,
-                             req.body.enddate, (result, errmsg) => {
-      if (result) {
-        res.send({ 'errorCode': 200, 
-                    'msg': 'insert into topic and user_topic table success' });
-      } else {
-        console.log(errmsg);
-        let errReason = errmsg.substr(0, errmsg.indexOf(':')); 
-        let status = 200;
-        if (errReason == 'ER_DUP_ENTRY') status = 101;
-        res.send({ 'errorCode': status, 'msg': errmsg });
+    if (!req.header('sessionid')) {
+      res.send({ 'errorCode': 103, 'msg': '用户未登录' });
+      return;
+    }
+    // 从redis里获取用户的唯一标识：openid
+    let sessionid = req.header('sessionid')
+    redishelper.getValue(sessionid, (value) => {
+      if (!value) {
+        res.send({ 'errorCode': 102, 'msg': 'redis数据库里找不到对应用户数据' });
+        return;
       }
-    });
+      dbhelper.insertUserTopic(value, req.body.topicname,
+        req.body.topicurl, 0, req.body.startdate,
+        req.body.enddate, (result, errmsg) => {
+          if (result) {
+            res.send({
+              'errorCode': 200,
+              'msg': 'insert into topic and user_topic table success'
+            });
+          } else {
+            console.log(errmsg);
+            let errReason = errmsg.substr(0, errmsg.indexOf(':'));
+            let status = 200;
+            if (errReason == 'ER_DUP_ENTRY') status = 101;
+            res.send({ 'errorCode': status, 'msg': errmsg });
+          }
+        });
+      });
+    
   });
 });
 

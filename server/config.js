@@ -25,6 +25,14 @@ const CONF = {
     char: 'utf8mb4'
   },
 
+  /**
+   * Redis缓存配置，默认过期时间为2分钟
+   */
+  redis: {
+    host: 'localhost',
+    port : 6379,
+    ttl: 1000*60*2 //2分钟
+  },
 
   /**
    * 七牛cdn存储的配置

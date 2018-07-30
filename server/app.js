@@ -2,11 +2,7 @@ var express = require('express');
 var path = require('path');
 var favicon = require('static-favicon');
 var logger = require('morgan');
-var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-
-var session = require('express-session');
-var RedisStore = require('connect-redis')(session);
 
 var routes = require('./routes/index');
 var users = require('./routes/user');
@@ -19,21 +15,8 @@ app.use(favicon());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cookieParser('canzhenbeautiful'));
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(session({
-  store: new RedisStore({
-    host: '127.0.0.1',
-    port: '6379',
-    ttl: 120000, //单位毫秒 120s,2min
-    logErrors: true,
-  }),
-  resave: false,
-  saveUninitialized: false,
-  secret: 'canzhenbeautiful',
-  cookie: { maxAge: 1 * 60 * 60 * 1000 /* 一小时 */ }
-}));
 
 app.set('view engine', 'jade');
 

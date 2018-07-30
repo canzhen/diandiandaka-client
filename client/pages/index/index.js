@@ -11,13 +11,16 @@ Page({
   
 
   /**
-   * “开始进步”button同时是用户单击之后要获取权限的按钮，
+   * 单击"开始进步"触发的函数
+   * "开始进步"button同时是用户单击之后要获取权限的按钮，
    * 此方法就是引导用户确认权限
    */
   bindGetUserInfo: function (e) {
     let topicname = this.data.topic_name;
     let topicurl = this.data.topic_url;
-    if (e.detail.userInfo == undefined){ //用户拒绝了授权
+    let userinfo = e.detail.userInfo;
+    
+    if (userinfo == undefined){ //用户拒绝了授权
       wx.showToast({
         title: '确定不授权？不授权无法保存您的数据喔~',
         icon: 'none',
@@ -25,10 +28,32 @@ Page({
         success: function () {}
       })
     }else{ //用户同意授权
-      helper.userLogin(e.detail.userInfo, (result) => {
-        console.log('用户登录结果：' + result);
-      });
-      helper.navigateToNewTopicPage(topicname, topicurl);
+      wx.login({ //用户登录
+        success(loginResult) {
+          console.log('登录成功');
+          api.postRequest({
+            'url': '/user/login',
+            'header': {
+              'sessionid': wx.getStorageSync('sessionId')
+            },
+            'data': {
+              'code': loginResult.code,
+              'userinfo': JSON.stringify(userinfo),
+            },
+            'success': function(res){
+              wx.setStorageSync('sessionId', res.sessionId);
+              helper.navigateToNewTopicPage(topicname, topicurl);
+            },
+            'fail': function (res) {
+              console.log('更新或添加用户登录状态失败，请检查网络状态');
+            }
+          });
+        },
+        fail(loginError) {
+          console.log('微信登录失败，请检查网络状态');
+        }
+      })
+      
     }
   },
 
@@ -46,11 +71,7 @@ Page({
             hot_topic_data: res.data
           });
         }else{
-          wx.showToast({
-            title: '提交失败..大爷饶命，小的这就去查看原因..',
-            icon: 'none',
-            duration: 2000
-          })
+          
           setTimeout(function () {
             wx.navigateTo({
               url: '/pages/index/index',
@@ -90,6 +111,4 @@ Page({
     });
   },
 
-});
-
-
+})
