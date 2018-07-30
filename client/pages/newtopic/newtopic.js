@@ -1,8 +1,8 @@
 import {
   getFullDateSlash
 } from '../../vendor/util'
-
-var numEachRow = 5;
+let api = require('../../ajax/api.js');
+let numEachRow = 5;
 
 Page({
   data: {
@@ -184,29 +184,26 @@ Page({
     let that = this;
     
     //将卡片姓名和卡片图像url添加到卡片表中
-    wx.request({
-      url: getApp().config.request_head + '/topic/createtopic',
-      method: 'POST',
-      data: {
+    api.postRequest({
+      'url': '/topic/createtopic',
+      'data': {
         'topicname': value.input_topic_name,
         'topicurl': this.data.topic_url,
         'startdate': value.start_date,
         'enddate': value.end_date
       },
-      success: function (res) {
-        if (res.statusCode == 200 && res.data.status == 1)
+      'success': function(res){
+        if (res.status == 101) 
           that.showFailToast('这个卡片好像你以前添加过喔！换个卡片吧~');
-        else if (res.statusCode != 200 || res.data.status == 2)
+        else if (res.status == 100)
           that.showFailToast('提交失败..大爷饶命，小的这就去查看原因..');
-        else
-          // console.log('成功发送/topic/createtopic请求，' + res.data);
+        else if (res.status == 200)
           that.showSucceedToast(); 
       },
-      fail: function(res){
+      'fail': function(res){
         console.log('发送/topic/createtopic请求失败');
-        that.showFailToast('提交失败..大爷饶命，小的这就去查看原因..');
-      } 
-    })
+      }
+    });
 
   },
 
@@ -219,25 +216,6 @@ Page({
         if (res.confirm) console.log('用户在提示之后点击确定。');
       }
     });
-  },
-
-  // 显示正在提交中的toast
-  showLoadingToast: function(){
-    wx.showToast({
-      title: '正在提交中',
-      icon: 'loading',
-      duration: 2000
-    })
-  },
-
-  // 显示提交失败的toast
-  showFailToast: function(msg){
-    wx.showToast({
-        // title: '提交失败..大爷饶命，小的这就去查看原因..',
-        title: msg,
-        icon: 'none',
-        duration: 2000
-    })
   },
 
   // 显示提交成功的toast
