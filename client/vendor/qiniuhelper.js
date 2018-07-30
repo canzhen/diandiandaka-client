@@ -1,17 +1,4 @@
-var qiniu = require('qiniu-sdk-min.js');
-
-/**
- * 获取七牛云上传图片的配置
- */
-function getConfig(){
-  var config = {
-    useCdnDomain: true,
-    region: qiniu.region.z1, //华北地区
-    retryCount: 5 //重试次数，5
-  };
-  return config;
-}
-
+var qiniu = require('qiniuUploader.js');
 
 /**
  * 向七牛云上传图片
@@ -26,19 +13,46 @@ function upload(file, key, token, cb){
     params: {},
     mimeType: [] || null
   };
-  var observable = qiniu.upload(file, key, token, putExtra, getConfig());
-  var subscription = observable.subscribe(// 上传开始
-  (next) => {}, 
-  (error) => {
-    if (error) cb({'status': false, 'avatarUrl':''})
-  }, 
-  (completeRes) => {
-    // cb({ 'status': true, 'avatarUrl': completeRes.url })
-    cb({ 'status': true, 'avatarUrl': '111' })
-  }); 
-  // subscription.unsubscribe(); // 上传取消
+  // console.log(file);
+  // console.log(key);
+  // console.log(token);
+  // console.log(getConfig());
+  qiniu.upload(file, (res) => {
+    console.log('上传图片成功，imgurl：' + res.imageURL);
+    cb('001', res.imageURL);
+  }, (error) => {
+    console.log('七牛上传图片失败....');
+    cb(false, '');
+  }, {
+    key: key,
+    region: 'ECN',
+    uptoken: token,
+    uploadURL: 'https://upload.qiniup.com',
+    domain: 'https://pcjzq4ixp.bkt.clouddn.com'
+  });
+
+  // console.log('进入qiniuhelper，准备上传。');
+  // wx.uploadFile({
+  //   url: 'https://upload.qiniup.com',
+  //   filePath: file,
+  //   name: 'file',
+  //   formData: {
+  //     'token': token,//刚刚获取的上传凭证
+  //     'key': key//这里是为文件设置上传后的文件名
+  //   },
+  //   success: function (r) {
+  //     var data = r.data;//七牛会返回一个包含hash值和key的JSON字符串
+  //     if (typeof data === 'string') data = JSON.parse(data.trim());//解压缩
+  //     if (data.key) {//这里就可以直接使用data.key，文件已经上传成功可以使用了。如果是图片也可以直接通过image调用
+  //       console.log(data.key);
+  //     }
+  //   },
+  //   fail: function (res) {
+  //     console.log(res)
+  //   }
+  // })
 }
 
-module.export = {
+module.exports = {
   upload
-}
+};

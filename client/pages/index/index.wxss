@@ -70,6 +70,21 @@ Page{
   margin-bottom:40rpx;
 }
 
+.hot-topic-button{
+  display:flex; 
+  flex-direction:row; 
+  margin-left: 50rpx;
+  width: 100%;
+  background: none;
+  border: none;
+}
+
+
+.hot-topic-button:after{
+  border: none;
+}
+
+
 .hot-topic-content{
   margin: 12rpx 0rpx 0rpx 60rpx;
 }

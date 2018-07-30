@@ -1,11 +1,9 @@
 <view style="display:flex; flex-direction:column;margin-left:60rpx; margin-right:60rpx;">
   <!-- 第一行，输入框以及“开始进步”button -->
-  <form bindsubmit='submittopic'>
-    <view style="display:flex; flex-direction:row;">
-        <input type='text' class="new-topic-input" placeholder="输入卡片，每天进步一点点" cursor-spacing="5" name='topicname'/>
-        <button open-type='getUserInfo' lang="zh_CN" class="new-topic-button" form-type='submit'> 开始进步 </button>
-    </view>
-  </form>
+  <view style="display:flex; flex-direction:row;">
+      <input type='text' class="new-topic-input" placeholder="输入卡片，每天进步一点点" cursor-spacing="5" bindinput='bindInputTopicChange' value="{{topic_name}}"/>
+      <button open-type='getUserInfo' lang="zh_CN" class="new-topic-button" bindgetuserinfo='bindGetUserInfo' disabled="{{input_topic_name==''}}"> 开始进步 </button>
+  </view>
   
   <!-- 第二行，热门卡片 -->
   <view style="display:flex; flex-direction:row; margin-bottom:40rpx;">
@@ -15,8 +13,11 @@
   </view>
 
   <!-- 第三行，热门卡片部分 -->
+  
   <view class="hot-topic-panel" wx:for="{{hot_topic_data}}" wx:key="key" wx:for-item="topic" bindtap="clickHotTopic" data-selected-topic-name="{{topic.topic_name}}" data-selected-topic-url="{{topic.topic_url}}">
+      <!-- <button open-type='getUserInfo' lang="zh_CN" class="hot-topic-button">  -->
       <image class="image" src="{{topic.topic_url}}" mode="aspectFit"></image>
       <text class="text hot-topic-content">{{topic.topic_name}}\n已有{{topic.use_people_num}}人参与打卡</text>
+    <!-- </button> -->
     </view>
 </view>

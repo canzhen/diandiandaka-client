@@ -1,39 +1,34 @@
-import {
-  checkTopic,
-  updateTopic,
-  insertTopic,
-  getTopic
-} from './helper'
+var helper = require('./helper.js');
 
 Page({
   data: {
     user_openid: '', //用户唯一标识
     hot_topic_data: [], //热门卡片
+    topic_name: '', //用户在输入框输入的卡片名称
+    topic_url: '', //如果用户直接单击热门卡片，则图片的url会被记录下来
   },
   
+
+  /**
+   * “开始进步”button同时是用户单击之后要获取权限的按钮，
+   * 此方法就是引导用户确认权限
+   */
   bindGetUserInfo: function (e) {
-    // console.log(e.detail.userInfo)
-  },
-
-  
-  submittopic: function(e){
-    if (!wx.getStorageSync('userInfo')) getUserInfo;
-    let topicname = e.detail.value.topicname
-    //如果输入框为空，则要提示需要输入字才能提交
-    if (topicname == '') {
-      wx.showModal({
-        content: '需要输入卡片名称才能开始进步喔~',
-        showCancel: false
-      });
-      return;
-    }
-
-    /* 查看该卡片是否存在，如果存在则更新卡片，人数加一；否则新增卡片 */
-    checkTopic(topicname, updateTopic, function(){
-      wx.navigateTo({
-        url: '/pages/newtopic/newtopic?topic_name=' + topicname
+    let topicname = this.data.topic_name;
+    let topicurl = this.data.topic_url;
+    if (e.detail.userInfo == undefined){ //用户拒绝了授权
+      wx.showToast({
+        title: '确定不授权？不授权无法保存您的数据喔~',
+        icon: 'none',
+        duration: 2000,
+        success: function () {}
       })
-    });
+    }else{ //用户同意授权
+      helper.userLogin(e.detail.userInfo, (result) => {
+        console.log('用户登录结果：' + result);
+      });
+      helper.navigateToNewTopicPage(topicname, topicurl);
+    }
   },
 
   /**
@@ -43,24 +38,29 @@ Page({
     this.getHotTopicData();
   },
 
+  /**
+   * 当输入框的数据发生改变时，触发该函数
+   */
+  bindInputTopicChange: function(e){
+    this.setData({
+      'topic_name': e.detail.value
+    });
+  },
 
   /**
    * 从数据库中获取topic并根据参与人数排序
    */
   getHotTopicData: function(){
-    getTopic(getApp().config.hot_topic_num, //limit number
-            (status, result_list) => {
-              if (!status){
-                this.showGetHotTopicFailToast();
-              }
-              result_list.sort(function(a, b){
-                return b['use_people_num'] - a['use_people_num'];
-              });
-              // console.log(result_list);
-              this.setData({
-                hot_topic_data: result_list
-              });
-            });
+    helper.getTopic(getApp().config.hot_topic_num, //limit number
+        (status, result_list) => {
+          if (!status){
+            this.showGetHotTopicFailToast();
+          }
+          // console.log(result_list);
+          this.setData({
+            hot_topic_data: result_list
+          });
+        });
   },
 
   /**
@@ -69,15 +69,19 @@ Page({
   clickHotTopic: function(e){
     let topicname = e.currentTarget.dataset.selectedTopicName;
     let topicurl = e.currentTarget.dataset.selectedTopicUrl;
-    if (topicname == undefined) return;
-    insertTopic(topicname, topicurl, (status) => {
-      if (status){
-        console.log('成功');
-        wx.switchTab({
-          url: '/pages/mytopic/mytopic',
-        })
-      }
+    this.setData({
+      'topic_name': topicname,
+      'topic_url': topicurl
     });
+    // if (topicname == undefined) return;
+    // helper.insertTopic(topicname, topicurl, (status) => {
+    //   if (status){
+    //     console.log('成功');
+    //     wx.switchTab({
+    //       url: '/pages/mytopic/mytopic',
+    //     })
+    //   }
+    // });
     
   },
 
@@ -85,20 +89,20 @@ Page({
   /**
    * 显示提交成功的toast
    */
-  showSucceedToast: function () {
-    wx.showToast({
-      title: '提交成功',
-      icon: 'success',
-      duration: 2000,
-      success: function () {
-        setTimeout(function () {
-          wx.navigateTo({
-            url: '/pages/index/index',
-          })
-        }, 1000);
-      }
-    })
-  },
+  // showSucceedToast: function () {
+  //   wx.showToast({
+  //     title: '提交成功',
+  //     icon: 'success',
+  //     duration: 2000,
+  //     success: function () {
+  //       setTimeout(function () {
+  //         wx.navigateTo({
+  //           url: '/pages/index/index',
+  //         })
+  //       }, 1000);
+  //     }
+  //   })
+  // },
 
 
   /**

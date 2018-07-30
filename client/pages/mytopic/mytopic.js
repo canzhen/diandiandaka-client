@@ -158,13 +158,16 @@ Page({
             if (res.statusCode == 200 && res.data.status == 0) {
               // 成功获取token之后，开始上传图片
               let token = res.data.token;
+              console.log('成功获取token:' + token);
               qiniuhelper.upload(filepath, filename, token, (status, url) => {
                 if (!status) { showFailToast(); return;}
-                // 设置头像为上传到七牛的图片url
-                that.setData({
-                  avatarPath: url
-                });
-                console.log('成功上传新头像！地址是：' + that.data.avatarPath);
+                if (status == '001'){
+                  // 设置头像为上传到七牛的图片url
+                  that.setData({
+                    avatarPath: url
+                  });
+                  console.log('成功上传新头像！地址是：' + that.data.avatarPath);
+                }               
               });
             }else{ showFailToast(); return;}
           }

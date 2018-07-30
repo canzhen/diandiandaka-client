@@ -7,28 +7,36 @@ var numEachRow = 5;
 Page({
   data: {
     icon_data: [
-      { "name": '/images/fuqi.png', "is_checked": false},
-      { "name": '/images/cake.png', "is_checked": false },
-      { "name": '/images/guozhi.png', "is_checked": false },
-      { "name": '/images/saozhou.png', "is_checked": false },
-      { "name": '/images/huatong.png', "is_checked": false },
-      { "name": '/images/cat.png', "is_checked": false },
-      { "name": '/images/dog.png', "is_checked": false },
-      { "name": '/images/zixingche.png', "is_checked": false },
-      { "name": '/images/camera.png', "is_checked": false },
-      { "name": '/images/medicine.png', "is_checked": false },
-      { "name": '/images/shufa.png', "is_checked": false },
-      { "name": '/images/paobu.png', "is_checked": false },
-      { "name": '/images/jianshen.png', "is_checked": false },
-      { "name": '/images/jianfei.png', "is_checked": false },
-      { "name": '/images/yuedu.png', "is_checked": false },
-      { "name": '/images/chizaocan.png', "is_checked": false },
-      { "name": '/images/qingchenyibeishui.png', "is_checked": false },
-      { "name": '/images/zaoqi.png', "is_checked": false },
-      { "name": '/images/zaoshui.png', "is_checked": false }],
+      // { "name": '/images/fuqi.png', "is_checked": false},
+      // { "name": '/images/cake.png', "is_checked": false },
+      // { "name": '/images/guozhi.png', "is_checked": false },
+      // { "name": '/images/saozhou.png', "is_checked": false },
+      // { "name": '/images/huatong.png', "is_checked": false },
+      // { "name": '/images/cat.png', "is_checked": false },
+      // { "name": '/images/dog.png', "is_checked": false },
+      // { "name": '/images/zixingche.png', "is_checked": false },
+      // { "name": '/images/camera.png', "is_checked": false },
+      // { "name": '/images/medicine.png', "is_checked": false },
+      // { "name": '/images/shufa.png', "is_checked": false },
+      // { "name": '/images/paobu.png', "is_checked": false },
+      // { "name": '/images/jianshen.png', "is_checked": false },
+      // { "name": '/images/jianfei.png', "is_checked": false },
+      // { "name": '/images/yuedu.png', "is_checked": false },
+      // { "name": '/images/chizaocan.png', "is_checked": false },
+      // { "name": '/images/qingchenyibeishui.png', "is_checked": false },
+      // { "name": '/images/zaoqi.png', "is_checked": false },
+      // { "name": '/images/zaoshui.png', "is_checked": false }],
+      '/images/fuqi.png', '/images/cake.png', '/images/guozhi.png',
+      '/images/saozhou.png', '/images/huatong.png', '/images/cat.png',
+      '/images/dog.png', '/images/zixingche.png', '/images/camera.png', 
+      '/images/medicine.png', '/images/shufa.png', '/images/paobu.png', 
+      '/images/jianshen.png', '/images/jianfei.png',  '/images/yuedu.png', 
+      '/images/chizaocan.png', '/images/qingchenyibeishui.png',
+      '/images/zaoqi.png', '/images/zaoshui.png'],
     icon_name_num: [],
-    selected_icon_num: -1,
+    // selected_icon_num: -1,
     topic_name: '',
+    topic_url: '', //topic图片的url
     name_given: false,
     start_date: getFullDateSlash(new Date()),
     end_date: getFullDateSlash(new Date()),
@@ -40,7 +48,6 @@ Page({
 
   /* 方法部分 */
   onLoad: function (options) {
-
     //动态创建icon_name_num作为分行下标
     var l = this.data.icon_data.length,
         r = l / numEachRow,
@@ -58,6 +65,7 @@ Page({
     this.setData({
       icon_name_num: temp_icon_data_num,
       topic_name: options.topic_name,
+      topic_url: options.topic_url,
       name_given: options.topic_name != undefined
     });
   },
@@ -72,18 +80,9 @@ Page({
     // 查看是否是空白栏，如果是，直接返回
     if (typeof data == 'undefined') return;
 
-    // 设置is_checked为true
-    var boolValue = "icon_data[" + id + "].is_checked";
-
-    // 如果已经选择过图标，则要把之前选择过的替换，勾勾去除
-    var selectedBoolValue = this.data.selected_icon_num != -1 ? 
-        "icon_data[" + this.data.selected_icon_num + "].is_checked" : /* true */
-        "icon_data[" + id + "].is_checked"; /* false */
-
     this.setData({
       selected_icon_num: id,
-      [selectedBoolValue]: false,
-      [boolValue]: true
+      topic_url: event.currentTarget.dataset.url
     });
   },
 
@@ -179,19 +178,18 @@ Page({
 
     console.log("topic name是：" + value.input_topic_name + 
       "\n selected id 是：" + this.data.selected_icon_num + 
-      "\n所选择的图像url是：" + this.data.icon_data[this.data.selected_icon_num].name +
+      "\n所选择的图像url是：" + this.data.topic_url + 
       "\n开始日期是：" + value.start_date + 
       "\n结束日期是：" + value.end_date);
     let that = this;
+    
     //将卡片姓名和卡片图像url添加到卡片表中
     wx.request({
-      url: getApp().config.request_head + '/db/createtopic',
+      url: getApp().config.request_head + '/topic/createtopic',
       method: 'POST',
       data: {
-        // 'userid': wx.getStorageSync('openidKey'),
-        'userid': 'wgd2039dslkxEwsoiQW8023',
         'topicname': value.input_topic_name,
-        'topicurl': this.data.icon_data[this.data.selected_icon_num].name,
+        'topicurl': this.data.topic_url,
         'startdate': value.start_date,
         'enddate': value.end_date
       },
@@ -201,11 +199,11 @@ Page({
         else if (res.statusCode != 200 || res.data.status == 2)
           that.showFailToast('提交失败..大爷饶命，小的这就去查看原因..');
         else
-          // console.log('成功发送/db/createtopic请求，' + res.data);
+          // console.log('成功发送/topic/createtopic请求，' + res.data);
           that.showSucceedToast(); 
       },
       fail: function(res){
-        console.log('发送/db/createtopic请求失败');
+        console.log('发送/topic/createtopic请求失败');
         that.showFailToast('提交失败..大爷饶命，小的这就去查看原因..');
       } 
     })

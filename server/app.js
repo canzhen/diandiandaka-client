@@ -10,7 +10,7 @@ var RedisStore = require('connect-redis')(session);
 
 var routes = require('./routes/index');
 var users = require('./routes/user');
-var db = require('./routes/db');
+var topic = require('./routes/topic');
 var qiniu = require('./routes/qiniu');
 
 var app = express();
@@ -18,27 +18,27 @@ var app = express();
 app.use(favicon());
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
-app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser('canzhenbeautiful'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
   store: new RedisStore({
     host: '127.0.0.1',
-    port: 6379,
-    db: 0,
-    ttl: 120000 //单位毫秒 120s,2min
+    port: '6379',
+    ttl: 120000, //单位毫秒 120s,2min
+    logErrors: true,
   }),
   resave: false,
-  saveUninitialized: true,
-  secret: 'keyboard cat',
-  cookie: { maxAge: 100000 }
+  saveUninitialized: false,
+  secret: 'canzhenbeautiful',
+  cookie: { maxAge: 1 * 60 * 60 * 1000 /* 一小时 */ }
 }));
 
 app.set('view engine', 'jade');
 
 app.use('/', routes);
-app.use('/db', db);
+app.use('/topic', topic);
 app.use('/user', users);
 app.use('/qiniu', qiniu);
 

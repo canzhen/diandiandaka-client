@@ -25,22 +25,20 @@ function connectServer() {
  **/
 function insertOrUpdateUsers(userid, username, avatarurl, 
                               country = '', province = '', city = '', 
-                              gender){
-  
+                              gender , isDelete = 0,  cb){
   var client = connectServer();
   client.query(
-    'REPLACE INTO users VALUES(?, ?, ?, ?, ?, ?, ?)', 
-    [userid, username, avatarurl, country, province, city, gender, userid],
+    'REPLACE INTO user(user_id, user_name, avatar_url, country, province, city, gender, is_delete) VALUES(?, ?, ?, ?, ?, ?, ?, ?)', 
+    [userid, username, avatarurl, country, province, city, gender, isDelete],
     function (err, result) {
       if (err) {
         console.log("insert user 失败，失败信息:" + err.message);
-        return err;
+        cb(false, err.message);
       }else{
         console.log('insert user 成功');
+        cb(true, '');
       }
-      // callback(err);
     });
-
     client.end();
 }
 
@@ -116,8 +114,8 @@ function checkTopic(topicname, cb) {
 function getTopic(limit_num, cb) {
   var client = connectServer();
   let queryStr = limit_num != -1 ? 
-                 "SELECT * FROM topic LIMIT " + limit_num :
-                 "SELECT * FROM topic";
+                 'SELECT * FROM topic ORDER BY use_people_num DESC LIMIT ' + limit_num :
+                 'SELECT * FROM topic';
   client.query(
     queryStr, [],
     function (err, result) {

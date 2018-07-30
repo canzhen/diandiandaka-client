@@ -12,6 +12,8 @@ var router = express.Router();
  * 往topic table里添加一条数据
  */
 router.post('/createtopic', function (req, res) {
+  console.log('查看session:');
+  console.log(req.session);
   if (!req.body.topicname || !req.body.topicurl) return false;
   /* 1. 往topic表里新增或更新数据 */
   // 查看topic表是否已经存在相应的数据
@@ -22,9 +24,8 @@ router.post('/createtopic', function (req, res) {
     } else {/* 如果不存在，则需要往卡片表新增一条数据 */
       dbhelper.insertTopic(req.body.topicname, req.body.topicurl, 1, (result) => {});
     }
-
     /* 2. 往用户卡片表里新增一条数据 */
-    dbhelper.insertUserTopic(req.body.userid, req.body.topicname, 
+    dbhelper.insertUserTopic(req.session.openId, req.body.topicname, 
                              req.body.topicurl, 0, req.body.startdate,
                              req.body.enddate, (result, errmsg) => {
       if (result) {

@@ -10,6 +10,7 @@ var router = express.Router();
  * 用户登录，获取唯一open_id
  */
 router.post('/login', function(req, res) {
+  // 先request获取唯一标识open_id
   request({
     'url' : 'https://api.weixin.qq.com/sns/jscode2session',
     'method': 'GET',
@@ -24,36 +25,28 @@ router.post('/login', function(req, res) {
     function (error, response, body) {
       if (!error && response.statusCode == 200) {
         var userinfo = req.body.userinfo;
-        userinfo['openId'] = body.openid;
-        // 每次登录都要更新一次用户表
+        // 然后插入表或者更新表数据
         dbhelper.insertOrUpdateUsers(
-                  dbhelper.connectServer(), 
-                  userinfo.openId, 
+                  body.openid, 
                   userinfo.nickName, 
                   userinfo.avatarUrl,
                   userinfo.country,
                   userinfo.province,
                   userinfo.city,
-                  parseInt(userinfo.gender));
-        req.session.userOpenId = userinfo.openId; //将userOpenId保存到session（redis）
+                  parseInt(userinfo.gender), 0, (result, errmsg) => {
+                    if (result) res.send({'status': true, 'msg': ''});
+                    else res.send({ 'status': true, 'msg': errmsg });
+                  });
+
+        req.session.openId = body.openid; //将userOpenId保存到session（redis）
+        req.session.save();  //保存一下修改后的Session
+
+        console.log(req.session);
+
+        console.log('session已保存到本地：' + req.session.openId);
       }
   });
 });
-
-
-
-/**
- * 用户上传头像
- */
-router.post('/uploadAvatar', function (req, res) {
-  console.log(req.files);
-  console.log('I am here, in /user/uploadAvatar');
-  res.send({'status': 0, 'avatarUrl': 111});
-  // req.session.userAvatar = 'nicai.png';
-  // console.log('测试session好不好使，session：' + req.session.userAvatar);
-  // qiniuhelper.upload();
-});
-
 
 
 module.exports = router;

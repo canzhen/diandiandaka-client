@@ -2,30 +2,36 @@
  * 登录用户，并将用户数据加入到数据库中，
  * 如果用户信息在数据库已经存在，则更新
  */
-function userLogin(userinfo) {
-  if (userinfo == []) return false;
+function userLogin(userinfo, cb) {
+  if (userinfo == []) cb(false);
   wx.login({
     success(loginResult) {
       console.log('登录成功');
       wx.request({
-        url: getApp().config.request_head + '/users/login',
+        url: getApp().config.request_head + '/user/login',
         method: 'POST',
         data: {
           'code': loginResult.code,
           'userinfo': userinfo
         },
         success: function (res) {
-          console.log('发送请求成功啦！' + res.data);
-          return true;
+          if (res.statusCode == 200 && res.data.status){
+            console.log('发送请求成功啦！' + res.data);
+            cb(true);
+          }else{
+            console.log('微信登录失败，请检查网络状态');
+            cb(false);
+          }
         }
       })
     },
     fail(loginError) {
       console.log('微信登录失败，请检查网络状态');
-      return false;
+      cb(false);
     }
   })
 }
+
 
 /**
  * 查看指定卡片是否已存在，
@@ -34,7 +40,7 @@ function userLogin(userinfo) {
  */
 function checkTopic(topicname, existCb, notExistCb) {
   wx.request({
-    url: getApp().config.request_head + '/db/checktopic',
+    url: getApp().config.request_head + '/topic/checktopic',
     method: 'POST',
     data: { 'topicname': topicname },
     success: function (res) { //请求成功之后的回调函数
@@ -57,7 +63,7 @@ function checkTopic(topicname, existCb, notExistCb) {
 function updateTopic(topicname){
   console.log('现在开始update该topic的打卡人数');
   wx.request({
-    url: getApp().config.request_head + '/db/updatetopic',
+    url: getApp().config.request_head + '/topic/updatetopic',
     method: 'POST',
     data: { 'topicname': topicname },
     success: function (res) {
@@ -75,7 +81,7 @@ function updateTopic(topicname){
 function insertTopic(topicname, topicurl, cb) {
   console.log('现在开始往topic表里新增一条新topic');
   wx.request({
-    url: getApp().config.request_head + '/db/inserttopic',
+    url: getApp().config.request_head + '/topic/inserttopic',
     method: 'POST',
     data: { 'topicname': topicname,
             'topicurl': topicurl},
@@ -93,9 +99,8 @@ function insertTopic(topicname, topicurl, cb) {
  * 获取topic表的所有数据
  */
 function getTopic(limit_num = -1, cb) {
-  console.log('现在开始往topic表里新增一条新topic');
   wx.request({
-    url: getApp().config.request_head + '/db/gettopic',
+    url: getApp().config.request_head + '/topic/gettopic',
     method: 'GET',
     data: {
       'limit_num': limit_num
@@ -106,10 +111,22 @@ function getTopic(limit_num = -1, cb) {
   })
 }
 
+
+/**
+ * 跳转页面到新卡片界面
+ */
+function navigateToNewTopicPage(topicname, topicurl = ''){
+  wx.navigateTo({
+      url: '/pages/newtopic/newtopic?topic_name=' + topicname +
+        '&topic_url=' + topicurl
+    })
+}
+
 module.exports = {
   userLogin,
   checkTopic,
   updateTopic,
   insertTopic,
   getTopic,
+  navigateToNewTopicPage,
 }
