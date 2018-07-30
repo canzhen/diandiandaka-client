@@ -1,8 +1,8 @@
 import {
   getFullDateSlash
 } from '../../vendor/util'
-let api = require('../../ajax/api.js');
-let numEachRow = 5;
+const api = require('../../ajax/api.js');
+const numEachRow = 5;
 
 Page({
   data: {
@@ -37,7 +37,6 @@ Page({
     // selected_icon_num: -1,
     topic_name: '',
     topic_url: '', //topic图片的url
-    name_given: false,
     start_date: getFullDateSlash(new Date()),
     end_date: getFullDateSlash(new Date()),
     pre_end_date: '', //在取消永不结束checkbox时，就把之前选好的end_date再放上去
@@ -66,7 +65,6 @@ Page({
       icon_name_num: temp_icon_data_num,
       topic_name: options.topic_name,
       topic_url: options.topic_url,
-      name_given: options.topic_name != undefined
     });
   },
 
@@ -150,13 +148,13 @@ Page({
   submitForm: function(event){
     let value = event.detail.value;
     // 检查数据是否完整
-    if (value.input_topic_name === '') {
+    if (!value.input_topic_name) {
       this.showReminderAlert('好像忘了填计划名称哟~');
       return;
     }
 
     //检查计划名称中是否包含特殊字符
-    if (this.data.has_special_character == true) {
+    if (this.data.has_special_character) {
       this.showReminderAlert('计划名称中包含特殊字符，请删掉再提交，谢谢~');
       return;
     }
@@ -171,7 +169,7 @@ Page({
       this.showReminderAlert('开始日期和结束日期一样喔，确定吗？');
       return;
     }
-    if (this.data.selected_icon_num === -1) {
+    if (!this.data.topic_url) {
       this.showReminderAlert('随便选一个图标就好啦~');
       return;
     }

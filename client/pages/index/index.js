@@ -1,4 +1,5 @@
-var helper = require('./helper.js');
+const helper = require('./helper.js');
+const api = require('../../ajax/api.js');
 
 Page({
   data: {
@@ -35,7 +36,36 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    this.getHotTopicData();
+    // 从数据库中获取topic
+    api.getRequest(
+      '/topic/gettopic', 
+      { 'limit_num': getApp().config.index_hot_topic_num },
+      (res) => {
+        if (res.errorCode == 200){
+          this.setData({
+            hot_topic_data: res.data
+          });
+        }else{
+          wx.showToast({
+            title: '提交失败..大爷饶命，小的这就去查看原因..',
+            icon: 'none',
+            duration: 2000
+          })
+          setTimeout(function () {
+            wx.navigateTo({
+              url: '/pages/index/index',
+            })
+          }, 3000);
+        }
+      },
+      (res) => {
+        setTimeout(function () {
+          wx.navigateTo({
+            url: '/pages/index/index',
+          })
+        }, 3000);
+        console.log('[index] get hot topic data failed');
+      });
   },
 
   /**
@@ -47,21 +77,6 @@ Page({
     });
   },
 
-  /**
-   * 从数据库中获取topic并根据参与人数排序
-   */
-  getHotTopicData: function(){
-    helper.getTopic(getApp().config.hot_topic_num, //limit number
-        (status, result_list) => {
-          if (!status){
-            this.showGetHotTopicFailToast();
-          }
-          // console.log(result_list);
-          this.setData({
-            hot_topic_data: result_list
-          });
-        });
-  },
 
   /**
    * 选择某个热门卡片时所触发的函数
@@ -73,55 +88,7 @@ Page({
       'topic_name': topicname,
       'topic_url': topicurl
     });
-    // if (topicname == undefined) return;
-    // helper.insertTopic(topicname, topicurl, (status) => {
-    //   if (status){
-    //     console.log('成功');
-    //     wx.switchTab({
-    //       url: '/pages/mytopic/mytopic',
-    //     })
-    //   }
-    // });
-    
   },
-
-
-  /**
-   * 显示提交成功的toast
-   */
-  // showSucceedToast: function () {
-  //   wx.showToast({
-  //     title: '提交成功',
-  //     icon: 'success',
-  //     duration: 2000,
-  //     success: function () {
-  //       setTimeout(function () {
-  //         wx.navigateTo({
-  //           url: '/pages/index/index',
-  //         })
-  //       }, 1000);
-  //     }
-  //   })
-  // },
-
-
-  /**
-   * 显示获取hot topic卡片失败
-   */
-  showGetHotTopicFailToast: function(){
-    wx.showToast({
-      title: '正在提取热门卡片',
-      icon: 'loading',
-      duration: 2000,
-      success: function () {
-        setTimeout(function () {
-          wx.navigateTo({
-            url: '/pages/index/index',
-          })
-        }, 1000);
-      }
-    })
-  }
 
 });
 

@@ -50,8 +50,6 @@ function postRequest(params) {
           }
           if (res.statusCode == 200)
             params.success(res.data)
-          else
-            showFailToast()
         },
         fail: (res) => {
           wx.hideLoading();
@@ -68,7 +66,7 @@ function postRequest(params) {
 /**
  * GET 请求接口
  */
-function getRequest(url, fnSucess, fnFail) {
+function getRequest(url, data, fnSucess, fnFail) {
   wx.showLoading({
     title: '加载中',
   })
@@ -87,23 +85,24 @@ function getRequest(url, fnSucess, fnFail) {
       wx.request({
         url: root + url,
         method: 'GET',
+        data: data,
         dataType: 'json',
         header: { 'content-type': 'application/json;chareset=UT8-8' },
         success: (res) => {
           wx.hideLoading();
-          if (res.statusCode == 200) {
+          if (res.statusCode == 200 && res.data.errorCode == 200) {
             if (fnSucess && typeof fnSucess == "function") {
               fnSucess(res.data);
             }
           } else {
             //统一代码处理中心
             // console.log("------------- ")
-            showFailToast()
           }
 
         },
         fail: (res) => {
           wx.hideLoading();
+          showFailToast()
           //统一代码处理中心
           if (fnFail && typeof fnFail == "function")
             fnFail(res);

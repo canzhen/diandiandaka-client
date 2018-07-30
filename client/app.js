@@ -3,7 +3,7 @@ App({
   config: {
     host: 'zhoucanzhendevelop.com',
     request_head: 'https://zhoucanzhendevelop.com',
-    hot_topic_num : 6,
+    index_hot_topic_num : 6,
   },
   
   globalData:{

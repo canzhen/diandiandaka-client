@@ -29,15 +29,14 @@ router.post('/createtopic', function (req, res) {
                              req.body.topicurl, 0, req.body.startdate,
                              req.body.enddate, (result, errmsg) => {
       if (result) {
-        res.send({ 'status': 0, 
-                    'msg': 'insert into topic and user_topic table succeed' });
+        res.send({ 'errorCode': 200, 
+                    'msg': 'insert into topic and user_topic table success' });
       } else {
         console.log(errmsg);
         let errReason = errmsg.substr(0, errmsg.indexOf(':')); 
-        let status = 2;
-        if (errReason == 'ER_DUP_ENTRY')
-          status = 1;
-        res.send({ 'status': status, 'msg': errmsg });
+        let status = 200;
+        if (errReason == 'ER_DUP_ENTRY') status = 101;
+        res.send({ 'errorCode': status, 'msg': errmsg });
       }
     });
   });
@@ -51,8 +50,8 @@ router.post('/inserttopic', function (req, res) {
   if (!req.body.topicname || !req.body.topicurl) return false;
   dbhelper.insertTopic(req.body.topicname, req.body.topicurl, 
                         1, (result) => {
-    if (result) res.send({'status': 0});
-    else res.send({'status': 1});
+    if (result) res.send({'errorCode': 200});
+    else res.send({'errorCode': 100});
   })
 });
 
@@ -61,11 +60,12 @@ router.post('/inserttopic', function (req, res) {
  */
 router.post('/updatetopic', function (req, res) {
   if (!req.body.topicname) {
-    res.send({'status': 1});
+    res.send({'errorCode': 100});
     return;
   }
   dbhelper.updateTopic(req.body.topicname, (updateStatus) => {
-    res.send({ 'status': updateStatus});
+    let errorCode = updateStatus ? 200 : 100;
+    res.send({ 'errorCode': updateStatus});
   });
 });
 
@@ -85,8 +85,10 @@ router.post('/checktopic', function (req, res) {
  */
 router.get('/gettopic', function (req, res) {
   dbhelper.getTopic(req.query.limit_num, (status, alldata) => {
-    res.send({ 'status': status,
-               'data': alldata });
+    let errorCode = status ? 200 : 100;
+    res.send({
+      'errorCode': errorCode,
+      'data': alldata });
   });
 });
 

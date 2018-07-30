@@ -2,7 +2,7 @@
   <form bindsubmit="submitForm">
     <view style="display:flex; flex-direction:row;">
       <text class="topic-name"> 计划名称 </text>
-      <input class="input-topic-name" placeholder="输入计划名称" value="{{topic_name}}" name="input_topic_name" bindchange="bindTopicChange" disabled="{{name_given}}"/>
+      <input class="input-topic-name" placeholder="输入计划名称" value="{{topic_name}}" name="input_topic_name" bindchange="bindTopicChange"/>
     </view>
     <view class="line"></view>
     <view style="display:flex; flex-direction:row;">
