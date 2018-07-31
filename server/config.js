@@ -33,7 +33,7 @@ const CONF = {
   redis: {
     host: 'localhost',
     port : 6379,
-    ttl: 1000*60*60*2 //2小时
+    ttl: 1000*60*60*24 //24小时
   },
 
   /**

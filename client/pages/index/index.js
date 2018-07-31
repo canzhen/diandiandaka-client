@@ -19,7 +19,7 @@ Page({
     let topicurl = this.data.topic_url;
     utils.login((res) => {
       console.log(res);
-      utils.setStorageSync('sessionId', res.sessionId, 1000 * 60 * 60 * 2); //session默认2小时过期
+      utils.setStorageSync('sessionId', res.sessionId, 1000 * 60 * 60 * 24); //服务端的session也是默认24小时过期
       helper.navigateToNewTopicPage(topicname, topicurl);
     });
   },

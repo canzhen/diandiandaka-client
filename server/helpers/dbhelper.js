@@ -21,7 +21,7 @@ function connectServer() {
 function insertUser(openid, cb){
   var client = connectServer();
   client.query(
-    'REPLACE INTO user(user_id) VALUES(?)', 
+    'INSERT INTO user(user_id) VALUES(?)', 
     [openid],
     function (err, result) {
       if (err) {
@@ -76,7 +76,7 @@ function getUserById(id, cb) {
       }
 
       let result_list = JSON.parse(JSON.stringify(result));
-      cb(!err, result_list[0]);
+      cb(!err, result_list);
     });
 
   client.end();

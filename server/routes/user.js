@@ -22,6 +22,13 @@ router.post('/login', function(req, res) {
   let that = this;
   let redis_ttl = config.redis.ttl;
 
+  let generateRandomSessionId = function(openid){
+    utils.generateRandom((random) => {
+      redishelper.storeValue(random, openid, redis_ttl);
+      res.send({ 'error_code': 200, 'msg': '', 'sessionId': random });
+    });
+  };
+
   // 如果sessionid存在且在服务端redis没过期，则直接返回
   // 如果sessionid不存在，或者在redis过期了，都需要重新获取openid
   let getOpenID = function (code) {
@@ -37,15 +44,17 @@ router.post('/login', function(req, res) {
       'json': true
     }, (error, response, body) => {
       if (!error && response.statusCode == 200) {
-        // 然后插入表或者更新表数据
-        dbhelper.insertUser(body.openid, (result, errmsg) => {
-          if (result) { //插入成功，则在redis里存储sessionid
-            utils.generateRandom((random) => {
-              console.log('随机生成sessionid：' + random);
-              redishelper.storeValue(random, body.openid, redis_ttl);
-              res.send({ 'error_code': 200, 'msg': '', 'sessionId': random });
+        //先查看数据库里是否存在该用户，如果已存在，则不需要重新插入
+        dbhelper.getUserById(body.openid, (result, result_list) => {
+          if (result && result_list.length != 0) {//数据库中已存在，不需要重新插入，直接生成sessionid给前端发过去
+            generateRandomSessionId(body.openid);
+          } else {  //不存在该用户，此时插入新的一行用户数据
+            dbhelper.insertUser(body.openid, (result, errmsg) => {
+              if (result) { //插入成功，则在redis里存储sessionid
+                generateRandomSessionId(body.openid);
+              } else res.send({ 'error_code': 100, 'msg': errmsg, 'sessionId': '' });
             });
-          } else res.send({ 'error_code': 100, 'msg': errmsg, 'sessionId': '' });
+          }
         });
       }
     });
@@ -98,19 +107,20 @@ router.post('/getNameAvatar', function (req, res) {
       return;
     }
     dbhelper.getUserById(openid, (status, result) => {
-      if (status)
-        res.send({
-          'error_code': 200, 'msg': '',
-          'result_list': {
-            'user_name': result['user_name'],
-            'avatar_url': result['avatar_url']
-          }
-        });
-      else
+      if (!status || (status && result.length == 0)){
         res.send({
           'error_code': 100, 'msg': '',
           'result_list': {}
         });
+        return;
+      }
+      res.send({
+        'error_code': 200, 'msg': '',
+        'result_list': {
+          'user_name': result[0]['user_name'],
+          'avatar_url': result[0]['avatar_url']
+        }
+      });
     })
   });
 });

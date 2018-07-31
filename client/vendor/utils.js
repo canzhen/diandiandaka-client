@@ -9,7 +9,6 @@ function login(fnSuccess) {
   wx.login({ //用户登录
     success(loginResult) {
       console.log('登录成功');
-      console.log(api);
       let code = loginResult.code;
       api.postRequest({
         'url': '/user/login',
@@ -91,7 +90,7 @@ function getStorageSync(key) {
 
 
   console.log('get key: ' + key +
-    'expiration time:' + expiration + ', current time is : ' + timestamp);
+    ', expiration time:' + expiration + ', current time is : ' + timestamp);
 
   if (data && expiration > timestamp){
     return data;

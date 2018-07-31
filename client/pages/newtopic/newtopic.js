@@ -182,12 +182,7 @@ Page({
           that.showFailToast('这个卡片好像你以前添加过喔！换个卡片吧~');
         else if (res.error_code == 103){
           console.log('用户未登录，怎么会这样？');
-          login((res) => {
-            console.log(res);
-            setStorageSync('sessionId', res.sessionId, 1000 * 60 * 60 * 2); //session默认2小时过期
-            that.showFailToast('出现了一些意外~ 请您再点击一次提交好不好呀~');
-          });
-          return;
+          that.showFailToast('提交失败..大爷饶命，小的这就去查看原因..');
         }else if (res.error_code == 100)
           that.showFailToast('提交失败..大爷饶命，小的这就去查看原因..');
         else if (res.error_code == 200)

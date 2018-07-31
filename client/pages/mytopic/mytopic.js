@@ -79,9 +79,10 @@ Page({
       'data': [],
       'success': (res) => {
         if (res.error_code == 200 && res.result_list != []) {
-          console.log('getNameAvatar: ');
-          console.log(res.result_list);
+          // console.log('getNameAvatar: ');
+          // console.log(res.result_list);
           let reslist = res.result_list;
+          if (reslist == undefined) return;
           if (reslist['user_name'] || reslist['avatar_url'])
             this.setData({
               is_reset_name: !(reslist['user_name'] == false),
