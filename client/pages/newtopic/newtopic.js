@@ -181,8 +181,8 @@ Page({
         if (res.error_code == 101) 
           that.showFailToast('这个卡片好像你以前添加过喔！换个卡片吧~');
         else if (res.error_code == 103){
-          console.log('用户未登录，怎么会这样？');
-          that.showFailToast('提交失败..大爷饶命，小的这就去查看原因..');
+          utils.login((res)=>{});
+          that.showFailToast('好像出了点问题，可以再提交一次咩~');
         }else if (res.error_code == 100)
           that.showFailToast('提交失败..大爷饶命，小的这就去查看原因..');
         else if (res.error_code == 200)

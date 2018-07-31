@@ -15,7 +15,10 @@ function login(fnSuccess) {
         'data': {
           'code': code,
         },
-        'success': fnSuccess,
+        'success': (res) => {
+          setStorageSync('sessionId', res.sessionId, 1000 * 60 * 60 * 24); //服务端的session也是默认24小时过期
+          fnSuccess(res);
+        },
         'fail': function (res) {
           console.log('更新或添加用户登录状态失败，请检查网络状态');
         }

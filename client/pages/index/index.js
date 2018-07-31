@@ -17,9 +17,12 @@ Page({
   createNewTopic: function (e) {
     let topicname = this.data.topic_name;
     let topicurl = this.data.topic_url;
+    if (utils.getStorageSync('sessionId')) { //如果已经存好了sessionid则不需要重新获取
+      helper.navigateToNewTopicPage(topicname, topicurl);
+      return;
+    }
     utils.login((res) => {
       console.log(res);
-      utils.setStorageSync('sessionId', res.sessionId, 1000 * 60 * 60 * 24); //服务端的session也是默认24小时过期
       helper.navigateToNewTopicPage(topicname, topicurl);
     });
   },
@@ -28,6 +31,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    // if (utils.getStorageSync('sessionId')) return;
     // 从数据库中获取topic
     api.getRequest(
       '/topic/gettopic', 
