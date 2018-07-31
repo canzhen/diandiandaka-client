@@ -17,32 +17,11 @@ Page({
   createNewTopic: function (e) {
     let topicname = this.data.topic_name;
     let topicurl = this.data.topic_url;
-    // 无须让用户授权，在后端保存用户的openid，名字和头像可以暂时为空
-    // 前端保存用户sessionid，每次发送post请求会在header里带一个sessionid
-    // sessionid的header这个功能直接写在api.js里了，封装在每个post请求里
-    wx.login({ //用户登录
-      success(loginResult) {
-        console.log('登录成功');
-        let code = loginResult.code;
-        api.postRequest({
-          'url': '/user/login',
-          'data': {
-            'code': code,
-          },
-          'success': function (res) {
-            console.log(res);
-            utils.setStorageSync('sessionId', res.sessionId, 1000*60*60*2); //session默认2小时过期
-            helper.navigateToNewTopicPage(topicname, topicurl);
-          },
-          'fail': function (res) {
-            console.log('更新或添加用户登录状态失败，请检查网络状态');
-          }
-        });
-      },
-      fail(loginError) {
-        console.log('微信登录失败，请检查网络状态');
-      }
-    })
+    utils.login((res) => {
+      console.log(res);
+      utils.setStorageSync('sessionId', res.sessionId, 1000 * 60 * 60 * 2); //session默认2小时过期
+      helper.navigateToNewTopicPage(topicname, topicurl);
+    });
   },
 
   /**
@@ -74,6 +53,9 @@ Page({
         }, 1000);
         console.log('[index] get hot topic data failed');
       });
+  },
+
+  onShow: function(options){
   },
 
   /**

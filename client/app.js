@@ -1,3 +1,6 @@
+const utils = require('./vendor/utils.js');
+
+
 //app.js
 App({
   config: {
@@ -15,6 +18,12 @@ App({
    * 用户首次打开小程序，触发 onLaunch（全局只触发一次）
    */
   onLaunch: function (options) {
+    if (utils.getStorageSync('sessionId')) {
+      wx.switchTab({
+        url: '/pages/mytopic/mytopic',
+      })
+      // console.log('navige过去了没？');
+    }
   },
 
 

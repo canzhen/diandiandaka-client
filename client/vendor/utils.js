@@ -1,39 +1,66 @@
-/**
- * 获取用户的姓名和头像url
- */
-function getUserNameAvatarUrl(){
-  //查看用户是否授权
-  wx.getSetting({
-    success: function (res) {
-      if (res.authSetting['scope.userInfo']) {
-        console.log('用户已经授权');
-        if (wx.getStorageSync('username') && wx.getStorageSync('avatarurl')) return;
-        // 已经授权，可以直接调用 getUserInfo 获取头像昵称
-        
-        wx.getUserInfo({
-          success: function (res) {
-            /**
-             * {'nickName': '', 
-             * 'avatarUrl':'', 
-             * 'country': '', 
-             * 'province':'', 
-             * 'city': '', 
-             * 'gender':''}
-             */
-            // 其实想想，不需要全部存下来，省市这些都不展示，性别也不展示
-            // 所以其实只要存名字和头像，甚至名字都不用，因为可以直接open-data展示
-            // wx.setStorageSync('userInfo', res.userInfo);
-            wx.setStorageSync('username', res.userInfo.nickName);
-            // 先在数据库里搜索是否存在username这个字段，
-            // 如果有，直接获取数据库里的头像url
 
-            // 否则，将userinfo里的url作为头像url存下来
-            wx.setStorageSync('avatarurl', res.userInfo.avatarUrl);
-          },
-        })
-      }
+
+/**
+ * 用户登录，无须让用户授权，在后端保存用户的openid，
+ * 名字和头像可以暂时为空，前端保存用户sessionid，
+ * 每次发送post请求会在header里带一个sessionid，
+ * sessionid的header这个功能直接写在api.js里了，封装在每个post请求里
+ */
+function login(fnSuccess) {
+  const api = require('../ajax/api.js');
+  wx.login({ //用户登录
+    success(loginResult) {
+      console.log('登录成功');
+      console.log(api);
+      let code = loginResult.code;
+      api.postRequest({
+        'url': '/user/login',
+        'data': {
+          'code': code,
+        },
+        'success': fnSuccess,
+        'fail': function (res) {
+          console.log('更新或添加用户登录状态失败，请检查网络状态');
+        }
+      });
+    },
+    fail(loginError) {
+      console.log('微信登录失败，请检查网络状态');
     }
   })
+
+  //查看用户是否授权
+  // wx.getSetting({
+  //   success: function (res) {
+  //     if (res.authSetting['scope.userInfo']) {
+  //       console.log('用户已经授权');
+  //       if (wx.getStorageSync('username') && wx.getStorageSync('avatarurl')) return;
+  //       // 已经授权，可以直接调用 getUserInfo 获取头像昵称
+        
+  //       wx.getUserInfo({
+  //         success: function (res) {
+  //           /**
+  //            * {'nickName': '', 
+  //            * 'avatarUrl':'', 
+  //            * 'country': '', 
+  //            * 'province':'', 
+  //            * 'city': '', 
+  //            * 'gender':''}
+  //            */
+  //           // 其实想想，不需要全部存下来，省市这些都不展示，性别也不展示
+  //           // 所以其实只要存名字和头像，甚至名字都不用，因为可以直接open-data展示
+  //           // wx.setStorageSync('userInfo', res.userInfo);
+  //           wx.setStorageSync('username', res.userInfo.nickName);
+  //           // 先在数据库里搜索是否存在username这个字段，
+  //           // 如果有，直接获取数据库里的头像url
+
+  //           // 否则，将userinfo里的url作为头像url存下来
+  //           wx.setStorageSync('avatarurl', res.userInfo.avatarUrl);
+  //         },
+  //       })
+  //     }
+  //   }
+  // })
 }
 
 /**
@@ -483,7 +510,7 @@ function getCompletenessSubtitle (currentdate, timelapse, n) {
 
 module.exports = {
   /* 功能方面 */
-  getUserNameAvatarUrl, 
+  login, 
   setStorageSync, 
   getStorageSync,
 
