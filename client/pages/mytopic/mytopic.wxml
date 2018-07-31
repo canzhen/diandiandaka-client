@@ -2,7 +2,8 @@
   <!-- 背景墙 -->
   <view class="top-background"></view>
   <!-- 头像 -->
-  <image class="avatar" mode="aspectFill" src="{{avatarPath}}" bindtap="changeAvatar"></image>
+  <!-- <image class="avatar" mode="aspectFill" src="{{avatarPath}}" bindtap="changeAvatar"></image> -->
+  <open-data type="userAvatarUrl" class="avatar"></open-data>
   <!-- 用户名 -->
   <open-data type="userNickName" lang="zh_CN" class="username"></open-data>
 

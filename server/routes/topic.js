@@ -20,12 +20,12 @@ router.post('/createtopic', function (req, res) {
     }
     
     /* 2. 往用户卡片表里新增一条数据 */
-    if (!req.header('sessionid')) {
+    if (!req.header('session-id')) {
       res.send({ 'errorCode': 103, 'msg': '用户未登录' });
       return;
     }
     // 从redis里获取用户的唯一标识：openid
-    let sessionid = req.header('sessionid')
+    let sessionid = req.header('session-id')
     redishelper.getValue(sessionid, (value) => {
       if (!value) {
         res.send({ 'errorCode': 102, 'msg': 'redis数据库里找不到对应用户数据' });

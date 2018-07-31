@@ -23,11 +23,11 @@ function connectServer() {
  * 往users表里插入一条新数据，
  * 如果该数据已经存在，则update之。
  **/
-function insertOrUpdateUsers(userinfo, cb){
+function insertOrUpdateUsers(openid, cb){
   var client = connectServer();
   client.query(
-    'REPLACE INTO user(user_id, user_name, avatar_url, country, province, city, gender) VALUES(?, ?, ?, ?, ?, ?, ?)', 
-    [userinfo.openid, userinfo.nickName, userinfo.avatarUrl, userinfo.country, userinfo.province, userinfo.city, userinfo.gender],
+    'REPLACE INTO user(user_id) VALUES(?)', 
+    [openid],
     function (err, result) {
       if (err) {
         console.log("insert user 失败，失败信息:" + err.message);

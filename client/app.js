@@ -10,30 +10,18 @@ App({
     
   },
 
-  onLaunch: function (options) {
 
-    //查看用户是否授权
-    wx.getSetting({
-      success: function (res) {
-        if (res.authSetting['scope.userInfo']) {
-          console.log('用户已经授权');
-          if (wx.getStorageSync('userInfo')) return;
-          // 已经授权，可以直接调用 getUserInfo 获取头像昵称
-          wx.getUserInfo({
-            success: function (res) {
-              /**
-               * {'nickName': '', 
-               * 'avatarUrl':'', 
-               * 'country': '', 
-               * 'province':'', 
-               * 'city': '', 
-               * 'gender':''}
-               */
-              wx.setStorageSync('userInfo', res.userInfo);
-            },
-          })
-        }
-      }
-    })
+  /**
+   * 用户首次打开小程序，触发 onLaunch（全局只触发一次）
+   */
+  onLaunch: function (options) {
+  },
+
+
+
+  /**
+   * 小程序初始化完成后，触发onShow方法，监听小程序显示
+   */
+  onShow: function(options){
   },
 });

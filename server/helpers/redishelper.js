@@ -2,14 +2,17 @@ const redis = require('redis');
 const {redis: config} = require('../config.js');
 const client = redis.createClient(config);
 redis.client = client;
+
 /**
  * 存数据
  * @param key: 键
  * @param value: 值
+ * @param expiration: 过期时间，单位为毫秒
  */
-function storeValue(key, value) {
+function storeValue(key, value, expiration) {
   console.log('save redis, key: ' + key + ', value: ' + value);
   client.set(key, value);
+  client.expire(key, expiration);
 }
 
 
@@ -28,8 +31,6 @@ function getValue(key, cb) {
     if (object){
       console.log('get redis ' + key + ' value');
       console.log(object);
-      console.log('err:');
-      console.log(err);
       cb(object);
     }else cb(false);
   })

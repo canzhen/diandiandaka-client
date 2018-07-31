@@ -5,7 +5,7 @@ var router = express.Router();
 router.get('/getToken', function (req, res) {
   let token = qiniuhelper.getToken();
   res.send({
-    'status': 0,
+    'errorCode': 200,
     'token': token
     });
 });

@@ -24,7 +24,7 @@
       </picker>
       <text class="topic-name"> 永不结束 </text>
       <checkbox-group bindchange="bindNeverRepeat">
-        <checkbox/>
+        <checkbox />
       </checkbox-group>
     </view>
     <view class="line"></view>

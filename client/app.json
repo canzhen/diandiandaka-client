@@ -2,8 +2,8 @@
   "pages": [
     "pages/index/index",
     "pages/mytopic/mytopic",
-    "pages/history/history",
     "pages/newtopic/newtopic",
+    "pages/history/history",
     "pages/me/me"
   ],
 

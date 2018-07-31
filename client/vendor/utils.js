@@ -1,4 +1,87 @@
 /**
+ * 获取用户的姓名和头像url
+ */
+function getUserNameAvatarUrl(){
+  //查看用户是否授权
+  wx.getSetting({
+    success: function (res) {
+      if (res.authSetting['scope.userInfo']) {
+        console.log('用户已经授权');
+        if (wx.getStorageSync('username') && wx.getStorageSync('avatarurl')) return;
+        // 已经授权，可以直接调用 getUserInfo 获取头像昵称
+        
+        wx.getUserInfo({
+          success: function (res) {
+            /**
+             * {'nickName': '', 
+             * 'avatarUrl':'', 
+             * 'country': '', 
+             * 'province':'', 
+             * 'city': '', 
+             * 'gender':''}
+             */
+            // 其实想想，不需要全部存下来，省市这些都不展示，性别也不展示
+            // 所以其实只要存名字和头像，甚至名字都不用，因为可以直接open-data展示
+            // wx.setStorageSync('userInfo', res.userInfo);
+            wx.setStorageSync('username', res.userInfo.nickName);
+            // 先在数据库里搜索是否存在username这个字段，
+            // 如果有，直接获取数据库里的头像url
+
+            // 否则，将userinfo里的url作为头像url存下来
+            wx.setStorageSync('avatarurl', res.userInfo.avatarUrl);
+          },
+        })
+      }
+    }
+  })
+}
+
+/**
+ * 设置缓存
+ * @param key: 键
+ * @param value: 值
+ * @param expiration: 过期时间，单位为毫秒
+ * @param cb: 回调函数
+ * @param return: true/false
+ */
+function setStorageSync(key, data, expiration){
+  var timestamp = Date.parse(new Date());
+  var expiration_time = timestamp + expiration;
+  wx.setStorageSync(key.toString(), data);
+  wx.setStorageSync(key.toString() + '_expiration', expiration_time);
+  console.log('set key: ' + key + ', value: ' + JSON.stringify(data) + 
+              'expiration time:' + expiration_time);
+}
+
+
+/**
+ * 获取缓存数据
+ * 如果缓存存在且没过期，则返回；
+ * 否则返回false
+ */
+function getStorageSync(key) {
+  var timestamp = Date.parse(new Date());
+  var expiration = wx.getStorageSync(key + '_expiration');
+  var data = wx.getStorageSync(key);
+
+
+  console.log('get key: ' + key +
+    'expiration time:' + expiration + ', current time is : ' + timestamp);
+
+  if (data && expiration > timestamp){
+    return data;
+  } else {
+    if (data) { //过期了
+      wx.clearStorageSync(key);
+      wx.clearStorageSync(key + '_expiration');
+    }
+    // 从服务端拉取数据
+    return '';
+  }
+}
+
+
+/**
   判断闰年还是平年
 */
 function isLeap (year) {
@@ -399,6 +482,12 @@ function getCompletenessSubtitle (currentdate, timelapse, n) {
 }
 
 module.exports = {
+  /* 功能方面 */
+  getUserNameAvatarUrl, 
+  setStorageSync, 
+  getStorageSync,
+
+  /* 时间计算方面 */
   isLeap,
   getDaysOfGivenMonth,
   getFirstDayofGivenMonth,

@@ -1,5 +1,6 @@
-var qiniuhelper = require('../../vendor/qiniuhelper.js');
-var numEachRow = 4;
+const qiniuhelper = require('../../vendor/qiniuhelper.js');
+const api = require('../../ajax/api.js');
+const numEachRow = 4;
 
 Page({
   data: {
@@ -50,7 +51,7 @@ Page({
         'is_checked': false
       }],
     my_topic_data_num: [],
-    avatarPath: wx.getStorageSync('userInfo').avatarUrl, //从本地缓存中获取
+    avatarPath: wx.getStorageSync('avatarurl'), //从本地缓存中获取
   },
 
 
@@ -74,6 +75,7 @@ Page({
       my_topic_data_num: temp_topic_data_num
     });
   },
+
 
   /**
    * 打卡功能
@@ -127,12 +129,6 @@ Page({
    */
   changeAvatar: function () {
     console.log('点击选择图片');
-
-    // wx.request({
-    //   url: getApp().config.request_head + '/user/uploadAvatar',
-    //   method: 'POST'
-    // })
-
     
     let showFailToast = function(){
       wx.showToast({
@@ -143,6 +139,7 @@ Page({
     };
 
     let that = this;
+    // 弹出选择图片的框
     wx.chooseImage({
       count: 1, // 允许选择的图片数
       sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
@@ -151,27 +148,23 @@ Page({
         let filepath = res.tempFilePaths[0];
         let filename = filepath.substring(filepath.indexOf('tmp/') + 4, filepath.lastIndexOf('.'));
         // 向服务器端获取token
-        wx.request({
-          url: getApp().config.request_head + '/qiniu/getToken',
-          method: 'GET',
-          success: function(res){
-            if (res.statusCode == 200 && res.data.status == 0) {
-              // 成功获取token之后，开始上传图片
-              let token = res.data.token;
-              console.log('成功获取token:' + token);
-              qiniuhelper.upload(filepath, filename, token, (status, url) => {
-                if (!status) { showFailToast(); return;}
-                if (status == '001'){
-                  // 设置头像为上传到七牛的图片url
-                  that.setData({
-                    avatarPath: url
-                  });
-                  console.log('成功上传新头像！地址是：' + that.data.avatarPath);
-                }               
+        api.getRequest('/qiniu/getToken', {}, (res) => {
+          if (res.errorCode == 200) {
+            // 成功获取token之后，开始上传图片
+            let token = res.token;
+            console.log('成功获取token:' + token);
+            qiniuhelper.upload(filepath, filename, token, (status, url) => {
+              if (!status) { showFailToast(); return; }
+              // 设置当前显示的头像为上传到七牛的图片url
+              that.setData({
+                avatarPath: url
               });
-            }else{ showFailToast(); return;}
-          }
-        })
+              // 设置缓存里的url为新上传头像
+              wx.setStorageSync('avatarurl', url);
+              console.log('成功上传新头像！地址是：' + that.data.avatarPath);
+            });
+          } else { showFailToast(); return; }
+        });
       }
     });
   },

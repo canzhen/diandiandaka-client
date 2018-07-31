@@ -19,10 +19,13 @@ function upload(file, key, token, cb){
   // console.log(getConfig());
   qiniu.upload(file, (res) => {
     console.log('上传图片成功，imgurl：' + res.imageURL);
-    cb('001', res.imageURL);
+    cb(true, res.imageURL);
   }, (error) => {
-    console.log('七牛上传图片失败....');
-    cb(false, '');
+    console.log(error);
+    if (error) {
+      console.log('七牛上传图片失败....');
+      cb(false, '');
+    }
   }, {
     key: key,
     region: 'ECN',

@@ -1,31 +1,12 @@
 import {
   getFullDateSlash
-} from '../../vendor/util'
+} from '../../vendor/utils'
 const api = require('../../ajax/api.js');
 const numEachRow = 5;
 
 Page({
   data: {
     icon_data: [
-      // { "name": '/images/fuqi.png', "is_checked": false},
-      // { "name": '/images/cake.png', "is_checked": false },
-      // { "name": '/images/guozhi.png', "is_checked": false },
-      // { "name": '/images/saozhou.png', "is_checked": false },
-      // { "name": '/images/huatong.png', "is_checked": false },
-      // { "name": '/images/cat.png', "is_checked": false },
-      // { "name": '/images/dog.png', "is_checked": false },
-      // { "name": '/images/zixingche.png', "is_checked": false },
-      // { "name": '/images/camera.png', "is_checked": false },
-      // { "name": '/images/medicine.png', "is_checked": false },
-      // { "name": '/images/shufa.png', "is_checked": false },
-      // { "name": '/images/paobu.png', "is_checked": false },
-      // { "name": '/images/jianshen.png', "is_checked": false },
-      // { "name": '/images/jianfei.png', "is_checked": false },
-      // { "name": '/images/yuedu.png', "is_checked": false },
-      // { "name": '/images/chizaocan.png', "is_checked": false },
-      // { "name": '/images/qingchenyibeishui.png', "is_checked": false },
-      // { "name": '/images/zaoqi.png', "is_checked": false },
-      // { "name": '/images/zaoshui.png', "is_checked": false }],
       '/images/fuqi.png', '/images/cake.png', '/images/guozhi.png',
       '/images/saozhou.png', '/images/huatong.png', '/images/cat.png',
       '/images/dog.png', '/images/zixingche.png', '/images/camera.png', 
@@ -63,8 +44,8 @@ Page({
     
     this.setData({
       icon_name_num: temp_icon_data_num,
-      topic_name: options.topic_name,
-      topic_url: options.topic_url,
+      topic_name: options.topic_name ? options.topic_name : '',
+      topic_url: options.topic_url ? options.topic_url : '',
     });
   },
 
@@ -131,11 +112,11 @@ Page({
   bindNeverRepeat: function(e) {
     if (e.detail.value.length != 0){
       this.setData({
-        pre_end_date: this.data.end_date,
-        end_date: '永不结束'
+        pre_end_date: this.data.end_date, //把当前end_date保存到pre
+        end_date: '永不结束' //之后设置当前end_date为永不结束
       });
     } else {
-      this.setData({
+      this.setData({ //如果用户取消选择'永不结束'，则重置为之前所选择的时间
         end_date: this.data.pre_end_date
       });
     }
@@ -184,9 +165,6 @@ Page({
     //将卡片姓名和卡片图像url添加到卡片表中
     api.postRequest({
       'url': '/topic/createtopic',
-      'header': {
-        'sessionid': wx.getStorageSync('sessionId')
-      },
       'showLoading': false, 
       'data': {
         'topicname': value.input_topic_name,

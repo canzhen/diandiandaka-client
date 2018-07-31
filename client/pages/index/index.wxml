@@ -2,7 +2,7 @@
   <!-- 第一行，输入框以及“开始进步”button -->
   <view style="display:flex; flex-direction:row;">
       <input type='text' class="new-topic-input" placeholder="输入卡片，每天进步一点点" cursor-spacing="5" bindinput='bindInputTopicChange' value="{{topic_name}}"/>
-      <button open-type='getUserInfo' lang="zh_CN" class="new-topic-button" bindgetuserinfo='bindGetUserInfo' disabled="{{input_topic_name==''}}"> 开始进步 </button>
+      <button lang="zh_CN" class="new-topic-button" bindtap='createNewTopic' disabled="{{topic_name==''}}"> 开始进步 </button>
   </view>
   
   <!-- 第二行，热门卡片 -->

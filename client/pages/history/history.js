@@ -5,7 +5,7 @@ import {
 } from './data'
 
 var Charts = require('wxcharts.js');
-var Utils = require('../../vendor/util.js');
+var Utils = require('../../vendor/utils.js');
 
 Page({
   data: {

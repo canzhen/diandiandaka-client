@@ -1,4 +1,5 @@
 const root = getApp().config.request_head;
+const utils = require('../vendor/utils.js');
 
 // 接口信息
 const API = {
@@ -34,7 +35,7 @@ function postRequest(params) {
       //添加header
       if (!params.header) params.header = {};
       params.header['content-type'] = 'application/x-www-form-urlencoded';
-      params.header['session-id'] = wx.getStorageSync('sessionId');
+      params.header['session-id'] = utils.getStorageSync('sessionId');
       wx.request({
         url: root + params.url,
         method: 'POST',
@@ -110,7 +111,6 @@ function getRequest(url, data, fnSucess, fnFail) {
             showFailToast()
             fnFail(res);
           }
-
         },
         fail: (res) => {
           wx.hideLoading();

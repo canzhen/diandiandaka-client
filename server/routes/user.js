@@ -10,13 +10,20 @@ const router = express.Router();
 
 /**
  * 用户登录
+ * 登录其实就是一个在数据库中create user的过程，
+ * 所以请求的header里带有sessionid，
+ * 且sesisonoid在服务端redis没过期，
+ * 那么没必要再在数据库create了，直接返回即。
  */
 router.post('/login', function(req, res) {
   let code = req.body.code;
-  let userinfo = JSON.parse(req.body.userinfo);
   let sessionid = req.header('session-id');
   let openid = '';
+  let that = this;
+  let redis_ttl = config.redis.ttl;
 
+  // 如果sessionid存在且在服务端redis没过期，则直接返回
+  // 如果sessionid不存在，或者在redis过期了，都需要重新获取openid
   let getOpenID = function (code) {
     request({
       'url': 'https://api.weixin.qq.com/sns/jscode2session',
@@ -30,83 +37,51 @@ router.post('/login', function(req, res) {
       'json': true
     }, (error, response, body) => {
       if (!error && response.statusCode == 200) {
-        userinfo['openid'] = body.openid;
         // 然后插入表或者更新表数据
-        dbhelper.insertOrUpdateUsers(userinfo, (result, errmsg) => {
+        dbhelper.insertOrUpdateUsers(body.openid, (result, errmsg) => {
           if (result) { //插入成功，则在redis里存储sessionid
             utils.generateRandom((random) => {
               console.log('随机生成sessionid：' + random);
-              redishelper.storeValue(random, body.openid,
-                (err) => {
-                  if (err) console.log('redis 存储失败');
-                  else console.log('redis存储成功');
-                });
+              redishelper.storeValue(random, body.openid, redis_ttl);
               res.send({ 'errorCode': 200, 'msg': '', 'sessionId': random });
             });
           } else res.send({ 'errorCode': 100, 'msg': errmsg, 'sessionId': '' });
-
-          
         });
       }
     });
   }
 
-  //如果传递过来sessionid，且redis里有存openid和sessionid，则直接获取
-  if (sessionid){
+  if (sessionid) {
     redishelper.getValue(sessionid, (value) => {
-      console.log('redis获取key ' + sessionid + ':' + value);
-      if (!value) { //如果redis里无法获取值，代表过期了，也要重新发送api请求
-        getOpenID(code);
+      if (value) {
+        res.send({'errorCode': 200, 'msg': '', 'sessionId': sessionid});
         return;
-      }
-      userinfo['openid'] = storeValue;
-      dbhelper.insertOrUpdateUsers(userinfo, (result, errmsg) => {
-        if (result) res.send({ 'errorCode': 200, 'msg': '', 'sessionId': sessionid });
-        else res.send({ 'errorCode': 100, 'msg': errmsg, 'sessionId': sessionid });
-      });
+      } else { getOpenID(code);}
     })
-  } else { //否则发送微信api请求
+  }else{
     getOpenID(code);
   }
 
-  
-  // // 先request获取唯一标识open_id
-  // request({
-  //   'url' : 'https://api.weixin.qq.com/sns/jscode2session',
-  //   'method': 'GET',
-  //   'qs': {
-  //       appid: config.appId,
-  //       secret: config.appSecret,
-  //       js_code: code,
-  //       grant_type: 'authorization_code'
-  //     },
-  //   'json': true
-  //   }, 
-  //   function (error, response, body) {
-  //     if (!error && response.statusCode == 200) {
-  //       // 然后插入表或者更新表数据
-  //       dbhelper.insertOrUpdateUsers(
-  //                 body.openid, 
-  //                 userinfo.nickName, 
-  //                 userinfo.avatarUrl,
-  //                 userinfo.country,
-  //                 userinfo.province,
-  //                 userinfo.city,
-  //                 parseInt(userinfo.gender), 0, (result, errmsg) => {
-  //                   let sessionId = utils.generateRandom();
-  //                   if (result) {
-  //                     redishelper.storeValue(
-  //                       sessionId, 
-  //                       {'openid': body.openid, 'sessionid': body.sessionId}, 
-  //                       (err) => {
-  //                         if (err) console.log('redis 存储失败');
-  //                         else console.log('redis存储成功');
-  //                       });
-  //                     res.send({ 'errorCode': 200, 'msg': '', 'sessionId': sessionId});
-  //                   } else res.send({ 'errorCode': 100, 'msg': errmsg, 'sessionId': '' });
-  //                 });
+
+
+
+  //如果传递过来sessionid，且redis里有存openid和sessionid，则直接获取
+  // if (sessionid){
+  //   redishelper.getValue(sessionid, (value) => {
+  //     console.log('redis获取key ' + sessionid + ':' + value);
+  //     if (!value) { //如果redis里无法获取值，代表过期了，也要重新发送api请求
+  //       getOpenID(code);
+  //       return;
   //     }
-  // });
+  //     userinfo['openid'] = storeValue;
+  //     dbhelper.insertOrUpdateUsers(userinfo, (result, errmsg) => {
+  //       if (result) res.send({ 'errorCode': 200, 'msg': '', 'sessionId': sessionid });
+  //       else res.send({ 'errorCode': 100, 'msg': errmsg, 'sessionId': sessionid });
+  //     });
+  //   })
+  // } else { //否则发送微信api请求
+  //   getOpenID(code);
+  // }
 });
 
 
