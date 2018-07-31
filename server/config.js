@@ -11,6 +11,8 @@ const CONF = {
   // 是否使用腾讯云代理登录小程序
   useQcloudLogin: false,
 
+  getUserInfoUrl: 'https://api.weixin.qq.com/sns/jscode2session',
+
   /**
    * MySQL 配置，用来存储 session 和用户信息
    * 若使用了腾讯云微信小程序解决方案
@@ -31,7 +33,7 @@ const CONF = {
   redis: {
     host: 'localhost',
     port : 6379,
-    ttl: 1000*60*60*2 //2分钟
+    ttl: 1000*60*60*2 //2小时
   },
 
   /**

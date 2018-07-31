@@ -22,7 +22,6 @@ App({
       wx.switchTab({
         url: '/pages/mytopic/mytopic',
       })
-      // console.log('navige过去了没？');
     }
   },
 

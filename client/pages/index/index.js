@@ -33,7 +33,7 @@ Page({
       '/topic/gettopic', 
       { 'limit_num': getApp().config.index_hot_topic_num },
       (res) => { //请求成功
-        if (res.errorCode == 200){
+        if (res.error_code == 200){
           this.setData({
             hot_topic_data: res.data
           });

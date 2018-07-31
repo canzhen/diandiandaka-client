@@ -21,14 +21,14 @@ router.post('/createtopic', function (req, res) {
     
     /* 2. 往用户卡片表里新增一条数据 */
     if (!req.header('session-id')) {
-      res.send({ 'errorCode': 103, 'msg': '用户未登录' });
+      res.send({ 'error_code': 103, 'msg': '用户未登录' });
       return;
     }
     // 从redis里获取用户的唯一标识：openid
     let sessionid = req.header('session-id')
     redishelper.getValue(sessionid, (value) => {
       if (!value) {
-        res.send({ 'errorCode': 102, 'msg': 'redis数据库里找不到对应用户数据' });
+        res.send({ 'error_code': 102, 'msg': 'redis数据库里找不到对应用户数据' });
         return;
       }
       dbhelper.insertUserTopic(value, req.body.topicname,
@@ -36,7 +36,7 @@ router.post('/createtopic', function (req, res) {
         req.body.enddate, (result, errmsg) => {
           if (result) {
             res.send({
-              'errorCode': 200,
+              'error_code': 200,
               'msg': 'insert into topic and user_topic table success'
             });
           } else {
@@ -44,7 +44,7 @@ router.post('/createtopic', function (req, res) {
             let errReason = errmsg.substr(0, errmsg.indexOf(':'));
             let status = 200;
             if (errReason == 'ER_DUP_ENTRY') status = 101;
-            res.send({ 'errorCode': status, 'msg': errmsg });
+            res.send({ 'error_code': status, 'msg': errmsg });
           }
         });
       });
@@ -60,8 +60,8 @@ router.post('/inserttopic', function (req, res) {
   if (!req.body.topicname || !req.body.topicurl) return false;
   dbhelper.insertTopic(req.body.topicname, req.body.topicurl, 
                         1, (result) => {
-    if (result) res.send({'errorCode': 200});
-    else res.send({'errorCode': 100});
+    if (result) res.send({'error_code': 200});
+    else res.send({'error_code': 100});
   })
 });
 
@@ -70,12 +70,12 @@ router.post('/inserttopic', function (req, res) {
  */
 router.post('/updatetopic', function (req, res) {
   if (!req.body.topicname) {
-    res.send({'errorCode': 100});
+    res.send({'error_code': 100});
     return;
   }
   dbhelper.updateTopic(req.body.topicname, (updateStatus) => {
-    let errorCode = updateStatus ? 200 : 100;
-    res.send({ 'errorCode': updateStatus});
+    let error_code = updateStatus ? 200 : 100;
+    res.send({ 'error_code': updateStatus});
   });
 });
 
@@ -95,9 +95,9 @@ router.post('/checktopic', function (req, res) {
  */
 router.get('/gettopic', function (req, res) {
   dbhelper.getTopic(req.query.limit_num, (status, alldata) => {
-    let errorCode = status ? 200 : 100;
+    let error_code = status ? 200 : 100;
     res.send({
-      'errorCode': errorCode,
+      'error_code': error_code,
       'data': alldata });
   });
 });

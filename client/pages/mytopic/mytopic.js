@@ -1,4 +1,5 @@
 const qiniuhelper = require('../../vendor/qiniuhelper.js');
+const utils = require('../../vendor/utils.js');
 const api = require('../../ajax/api.js');
 const numEachRow = 4;
 
@@ -51,13 +52,17 @@ Page({
         'is_checked': false
       }],
     my_topic_data_num: [],
-    avatarPath: wx.getStorageSync('avatarurl'), //从本地缓存中获取
+    user_name: '', 
+    avatar_url:'', //从本地缓存中获取
+    is_reset_avatar: false, //默认用户没有修改头像
+    is_reset_name: false, //默认用户没修改过名字
   },
 
 
   /* 方法部分 */
   onLoad(){
-    // 动态创建my_topic_data_num作为分行下标
+
+    /* 动态创建my_topic_data_num作为分行下标 */
     var l = this.data.my_topic_data.length,
         r = l / numEachRow, c = numEachRow;
 
@@ -68,7 +73,29 @@ Page({
         temp_topic_data_num[r1][c1] = r1 * numEachRow + c1;
     }
 
-    // 获取当前用户的打卡信息
+    /* 获取用户的个性化头像和姓名 */
+    api.postRequest({
+      'url': '/user/getNameAvatar',
+      'data': [],
+      'success': (res) => {
+        if (res.error_code == 200 && res.result_list != []) {
+          console.log('getNameAvatar: ');
+          console.log(res.result_list);
+          let reslist = res.result_list;
+          if (reslist['user_name'] || reslist['avatar_url'])
+            this.setData({
+              is_reset_name: !(reslist['user_name'] == false),
+              is_reset_avatar: !(reslist['avatar_url'] == false),
+              user_name: reslist['user_name'] ? reslist['user_name'] : '',
+              avatar_url: reslist['avatar_url'] ? reslist['avatar_url'] : ''
+            });
+        }
+      }
+    });
+    
+
+    
+    /* 获取当前用户的打卡信息 */
     
 
     this.setData({
@@ -138,6 +165,22 @@ Page({
       })
     };
 
+    let updateAvatarUrl = function(url){
+      api.postRequest({
+        'url': '/user/updateAvatarUrl',
+        'data': {'url': url},
+        'success': (res) => {
+          if (res.error_code == 200) 
+            console.log('更新数据库里的avatar_url字段成功');
+          else
+            console.log('更新数据库里的avatar_url字段失败');
+        },
+        'fail': (res) => {
+          console.log('更新数据库里的avatar_url字段失败');
+        }
+      });
+    }
+
     let that = this;
     // 弹出选择图片的框
     wx.chooseImage({
@@ -149,19 +192,21 @@ Page({
         let filename = filepath.substring(filepath.indexOf('tmp/') + 4, filepath.lastIndexOf('.'));
         // 向服务器端获取token
         api.getRequest('/qiniu/getToken', {}, (res) => {
-          if (res.errorCode == 200) {
+          if (res.error_code == 200) {
             // 成功获取token之后，开始上传图片
             let token = res.token;
             console.log('成功获取token:' + token);
             qiniuhelper.upload(filepath, filename, token, (status, url) => {
               if (!status) { showFailToast(); return; }
+              url += qiniuhelper.config.scaleAPI;
               // 设置当前显示的头像为上传到七牛的图片url
               that.setData({
-                avatarPath: url
+                avatar_url: url,
+                is_reset_userinfo: true
               });
-              // 设置缓存里的url为新上传头像
-              wx.setStorageSync('avatarurl', url);
-              console.log('成功上传新头像！地址是：' + that.data.avatarPath);
+              // 更新数据库里的avatar_url字段
+              updateAvatarUrl(url);
+              console.log('成功上传新头像！地址是：' + that.data.avatar_url);
             });
           } else { showFailToast(); return; }
         });

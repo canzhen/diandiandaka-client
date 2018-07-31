@@ -26,7 +26,7 @@ router.post('/login', function(req, res) {
   // 如果sessionid不存在，或者在redis过期了，都需要重新获取openid
   let getOpenID = function (code) {
     request({
-      'url': 'https://api.weixin.qq.com/sns/jscode2session',
+      'url': config.getUserInfoUrl,
       'method': 'GET',
       'qs': {
         appid: config.appId,
@@ -38,14 +38,14 @@ router.post('/login', function(req, res) {
     }, (error, response, body) => {
       if (!error && response.statusCode == 200) {
         // 然后插入表或者更新表数据
-        dbhelper.insertOrUpdateUsers(body.openid, (result, errmsg) => {
+        dbhelper.insertUser(body.openid, (result, errmsg) => {
           if (result) { //插入成功，则在redis里存储sessionid
             utils.generateRandom((random) => {
               console.log('随机生成sessionid：' + random);
               redishelper.storeValue(random, body.openid, redis_ttl);
-              res.send({ 'errorCode': 200, 'msg': '', 'sessionId': random });
+              res.send({ 'error_code': 200, 'msg': '', 'sessionId': random });
             });
-          } else res.send({ 'errorCode': 100, 'msg': errmsg, 'sessionId': '' });
+          } else res.send({ 'error_code': 100, 'msg': errmsg, 'sessionId': '' });
         });
       }
     });
@@ -54,7 +54,7 @@ router.post('/login', function(req, res) {
   if (sessionid) {
     redishelper.getValue(sessionid, (value) => {
       if (value) {
-        res.send({'errorCode': 200, 'msg': '', 'sessionId': sessionid});
+        res.send({'error_code': 200, 'msg': '', 'sessionId': sessionid});
         return;
       } else { getOpenID(code);}
     })
@@ -74,9 +74,9 @@ router.post('/login', function(req, res) {
   //       return;
   //     }
   //     userinfo['openid'] = storeValue;
-  //     dbhelper.insertOrUpdateUsers(userinfo, (result, errmsg) => {
-  //       if (result) res.send({ 'errorCode': 200, 'msg': '', 'sessionId': sessionid });
-  //       else res.send({ 'errorCode': 100, 'msg': errmsg, 'sessionId': sessionid });
+  //     dbhelper.insertUser(userinfo, (result, errmsg) => {
+  //       if (result) res.send({ 'error_code': 200, 'msg': '', 'sessionId': sessionid });
+  //       else res.send({ 'error_code': 100, 'msg': errmsg, 'sessionId': sessionid });
   //     });
   //   })
   // } else { //否则发送微信api请求
@@ -84,5 +84,55 @@ router.post('/login', function(req, res) {
   // }
 });
 
+/**
+ * 根据用户id获取用户的姓名和头像url
+ */
+router.post('/getNameAvatar', function (req, res) {
+  let sessionid = req.header('session-id');
+  redishelper.getValue(sessionid, (openid) => {
+    if (!sessionid){
+      res.send({
+        'error_code': 100, 'msg': '',
+        'result_list': {}
+      });
+      return;
+    }
+    dbhelper.getUserById(openid, (status, result) => {
+      if (status)
+        res.send({
+          'error_code': 200, 'msg': '',
+          'result_list': {
+            'user_name': result['user_name'],
+            'avatar_url': result['avatar_url']
+          }
+        });
+      else
+        res.send({
+          'error_code': 100, 'msg': '',
+          'result_list': {}
+        });
+    })
+  });
+});
+
+/**
+ * 更新用户的头像
+ */
+router.post('/updateAvatarUrl', function (req, res) {
+  let id = req.header('session-id');
+  redishelper.getValue(id, (openid) => {
+    if (!openid){
+      res.send({ 'error_code': 100, 'msg': '' });
+      return;
+    }
+    // console.log('openid:' + openid);
+    let url = req.body.url;
+    dbhelper.updateUser('avatar_url', url, openid, (status, result) => {
+      if (status) res.send({ 'error_code': 200, 'msg': '' });
+      else res.send({ 'error_code': 100, 'msg': result });
+    })
+  });
+  
+});
 
 module.exports = router;

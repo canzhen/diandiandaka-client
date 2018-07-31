@@ -43,7 +43,7 @@ function postRequest(params) {
         data: params.data,
         header: params.header, 
         success: (res) => {
-          wx.hideLoading()
+          if (params.showLoading) wx.hideLoading()
           if (res.data.state == -2) {
             wx.showToast({
               title: '请重新登录',
@@ -62,8 +62,7 @@ function postRequest(params) {
         fail: (res) => {
           console.log('post failed:');
           console.log(res);
-          if (params.showLoading) 
-            wx.hideLoading();
+          if (params.showLoading) wx.hideLoading();
           showFailToast()
           params.fail(res.data)
           return

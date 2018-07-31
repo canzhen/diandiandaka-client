@@ -1,5 +1,10 @@
 var qiniu = require('qiniuUploader.js');
 
+const config = {
+  'scaleAPI': '?imageView2/1/w/90/h/90/q/75|imageslim',
+}
+
+
 /**
  * 向七牛云上传图片
  * @param file : Blob对象，上传的文件
@@ -57,5 +62,6 @@ function upload(file, key, token, cb){
 }
 
 module.exports = {
+  config, 
   upload
 };

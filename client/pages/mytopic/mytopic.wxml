@@ -2,10 +2,11 @@
   <!-- 背景墙 -->
   <view class="top-background"></view>
   <!-- 头像 -->
-  <!-- <image class="avatar" mode="aspectFill" src="{{avatarPath}}" bindtap="changeAvatar"></image> -->
-  <open-data type="userAvatarUrl" class="avatar"></open-data>
+  <image class="avatar" bindtap="changeAvatar" mode="aspectFill" src="{{avatar_url}}" hidden="{{!is_reset_avatar}}"></image>
+  <view class="avatar" bindtap="changeAvatar" hidden="{{is_reset_avatar}}"><open-data type="userAvatarUrl"></open-data></view>
   <!-- 用户名 -->
-  <open-data type="userNickName" lang="zh_CN" class="username"></open-data>
+  <text class="username" hidden="{{!is_reset_name}}">{{user_name}}</text>
+  <open-data type="userNickName" lang="zh_CN" class="username" hidden="{{is_reset_name}}"></open-data>
 
     
   <!-- 我的卡片（每行四个卡片） -->

@@ -2,10 +2,6 @@ var express = require('express');
 var mysql = require('mysql');
 var {mysql : config} = require('../config.js');
 
-function test(){
-  console.log('test');
-}
-
 /* 创建并返回一个新的Server */
 function connectServer() {
   var client = mysql.createConnection({
@@ -20,10 +16,9 @@ function connectServer() {
 
 /* ------------------- user表部分 -------------------- */
 /* 
- * 往users表里插入一条新数据，
- * 如果该数据已经存在，则update之。
+ * 往users表里插入一条新数据
  **/
-function insertOrUpdateUsers(openid, cb){
+function insertUser(openid, cb){
   var client = connectServer();
   client.query(
     'REPLACE INTO user(user_id) VALUES(?)', 
@@ -38,6 +33,53 @@ function insertOrUpdateUsers(openid, cb){
       }
     });
     client.end();
+}
+
+/**
+ * 更新用户表的数据
+ * @param keylist: 表里对应的列的list
+ * @param valuelist: 要更新的值的list
+ */
+function updateUser(key, value, id, cb) {
+  var client = connectServer();
+
+  let sql = 'UPDATE user SET ' + key + ' = ? WHERE user_id = ?';
+
+  console.log('update user, sql 语句是：' + sql);
+  console.log(value);
+
+  client.query(sql, [value, id], function (err, result) {
+    if (err) {
+      console.log("update user 失败，失败信息:" + err.message);
+      cb(false, err.message);
+    } else {
+      console.log('update user 成功');
+      cb(true, '');
+    }
+  });
+  client.end();
+}
+
+
+/* 
+ * 通过openid获取user的具体信息
+ **/
+function getUserById(id, cb) {
+  var client = connectServer();
+  client.query(
+    "SELECT * FROM user WHERE user_id = ?" , [id],
+    function (err, result) {
+      if (err) {
+        console.log("get user by id失败，失败信息:" + err.message);
+      } else {
+        console.log('get user by id成功');
+      }
+
+      let result_list = JSON.parse(JSON.stringify(result));
+      cb(!err, result_list[0]);
+    });
+
+  client.end();
 }
 
 
@@ -66,7 +108,7 @@ function insertTopic(topicname, topicurl, usenum = 1, cb) {
 /* 
  * 更新使用该topic的人数
  **/
-function updateTopic(topicname, cb) {
+function checkTopic(topicname, cb) {
   var client = connectServer();
   client.query(
     "SELECT count(*) FROM topic WHERE topic_name=?",
@@ -88,7 +130,7 @@ function updateTopic(topicname, cb) {
 /* 
  * 更新使用该topic的人数
  **/
-function checkTopic(topicname, cb) {
+function updateTopic(topicname, cb) {
   var client = connectServer();
   client.query(
     "UPDATE topic SET use_people_num = use_people_num + 1 WHERE topic_name=?",
@@ -151,10 +193,21 @@ function insertUserTopic(user_id, topic_name, topic_url, insist_day, start_date,
   client.end();
 }
 
+
+
+/* ------------------- user_topic表部分 -------------------- */
+
+
+
 module.exports = {
-  test,
   connectServer,
-  insertOrUpdateUsers,
+
+  //user部分
+  insertUser,
+  updateUser,
+  getUserById,
+
+  //topic部分
   insertTopic,
   updateTopic,
   checkTopic,
