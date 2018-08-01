@@ -5,10 +5,18 @@ Page{
   flex-direction: column;
 }
 
+.first-line-view{
+  display:flex; 
+  flex-direction:row; 
+  margin-top:70rpx; 
+  margin-bottom:80rpx;
+}
+
+
 .new-topic-input{
   width: 450rpx;
   height: 80rpx;
-  margin: 80rpx 20rpx 90rpx 0rpx;
+  margin-right: 20rpx;
 
   border-style: solid;
   border-width: 1px;
@@ -25,19 +33,24 @@ Page{
 .new-topic-button{
   width: 200rpx;
   height: 85rpx;
-  margin: 80rpx 0rpx 90rpx 0rpx;
 
   text-align: center;
   padding-top: 7rpx;
 
   /* font */
-   font-size: 30rpx; 
+  font-size: 30rpx; 
   color: #000000;
   
   /* shape */
   border-radius: 4px;
   background-color: #feddbb;
   border: none;
+}
+
+.second-line-view{
+  display:flex; 
+  flex-direction:row; 
+  margin-bottom:40rpx;
 }
 
 
@@ -58,33 +71,20 @@ Page{
   margin: -20rpx 20rpx 0rpx 20rpx;
 }
 
-.image{
-  width: 100rpx;
-  height: 100rpx;
-}
 
 .hot-topic-panel{
   display:flex; 
   flex-direction:row; 
-  margin-left: 50rpx;
-  margin-bottom:40rpx;
-}
-
-.hot-topic-button{
-  display:flex; 
-  flex-direction:row; 
-  margin-left: 50rpx;
-  width: 100%;
-  background: none;
-  border: none;
+  margin-left: 70rpx;
+  margin-bottom:35rpx;
 }
 
 
-.hot-topic-button:after{
-  border: none;
+.image{
+  width: 95rpx;
+  height: 95rpx;
 }
-
 
 .hot-topic-content{
-  margin: 12rpx 0rpx 0rpx 60rpx;
+  margin: 5rpx 0rpx 0rpx 80rpx;
 }
