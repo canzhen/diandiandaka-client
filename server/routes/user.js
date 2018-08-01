@@ -81,7 +81,7 @@ router.post('/getNameAvatar', function (req, res) {
   redishelper.getValue(sessionid, (openid) => {
     if (!sessionid){
       res.send({
-        'error_code': 100, 'msg': '',
+        'error_code': 102, 'msg': '',
         'result_list': {}
       });
       return;
@@ -112,7 +112,7 @@ router.post('/updateAvatarUrl', function (req, res) {
   let id = req.header('session-id');
   redishelper.getValue(id, (openid) => {
     if (!openid){
-      res.send({ 'error_code': 100, 'msg': '' });
+      res.send({ 'error_code': 102, 'msg': '' });
       return;
     }
     // console.log('openid:' + openid);

@@ -7,48 +7,48 @@ Page({
   data: {
     my_topic_data: [
       {
-        'name': '跑步',
+        'topic_name': '跑步',
         'insist_day': 8,
-        'image_url': '/images/paobu.png',
+        'topic_url': '/images/paobu.png',
         'is_checked' : false
       }, {
-        'name': '早睡',
+        'topic_name': '早睡',
         'insist_day': 2,
-        'image_url': '/images/zaoshui.png',
+        'topic_url': '/images/zaoshui.png',
         'is_checked': false
       }, {
-        'name': '减肥',
+        'topic_name': '减肥',
         'insist_day': 7,
-        'image_url': '/images/jianfei.png',
+        'topic_url': '/images/jianfei.png',
         'is_checked': false
       }, {
-        'name': '吃早餐',
+        'topic_name': '吃早餐',
         'insist_day': 19,
-        'image_url': '/images/chizaocan.png',
+        'topic_url': '/images/chizaocan.png',
         'is_checked': false
       }, {
-        'name': '清晨一杯水',
+        'topic_name': '清晨一杯水',
         'insist_day': 13,
-        'image_url': '/images/qingchenyibeishui.png',
+        'topic_url': '/images/qingchenyibeishui.png',
         'is_checked': false
       }, {
-        'name': '单反记录美好生活',
+        'topic_name': '单反记录美好生活',
         'insist_day': 10,
-        'image_url': '/images/camera.png',
+        'topic_url': '/images/camera.png',
         'is_checked': false
       }, {
-        'name': '健身',
+        'topic_name': '健身',
         'insist_day': 2,
-        'image_url': '/images/jianshen.png',
+        'topic_url': '/images/jianshen.png',
         'is_checked': false
       }, {
-        'name': '骑自行车',
+        'topic_name': '骑自行车',
         'insist_day': 2,
-        'image_url': '/images/zixingche.png',
+        'topic_url': '/images/zixingche.png',
         'is_checked': false
       }, {
-        'name': '添加新卡片',
-        'image_url': '/images/xinkapian.png',
+        'topic_name': '添加新卡片',
+        'topic_url': '/images/xinkapian.png',
         'is_checked': false
       }],
     my_topic_data_num: [],

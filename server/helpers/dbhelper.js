@@ -193,6 +193,23 @@ function insertUserTopic(user_id, topic_name, topic_url, insist_day, start_date,
 
 /* ------------------- user_topic表部分 -------------------- */
 
+function getUserTopicById(id, cb) {
+  var client = connectServer();
+  client.query(
+    "SELECT * FROM user_topic WHERE user_id = ?", [id],
+    function (err, result) {
+      if (err) {
+        console.log("get user by id失败，失败信息:" + err.message);
+      } else {
+        console.log('get user by id成功');
+      }
+
+      let result_list = JSON.parse(JSON.stringify(result));
+      cb(!err, result_list);
+    });
+
+  client.end();
+}
 
 
 module.exports = {

@@ -13,12 +13,12 @@
     <view class="topic-image-view" wx:for="{{my_topic_data_num}}" wx:key="idx" wx:for-item="row_data">
       <!-- 每一行 -->
       <view class="topic-image-row" wx:for="{{row_data}}" wx:key="col" wx:for-item="num">
-        <view class="topic-image-each-item" bindtap="check" data-src="{{my_topic_data[num].image_url}}" data-idx="{{num}}">
-          <image class="image" src="{{my_topic_data[num].image_url}}"></image>
+        <view class="topic-image-each-item" bindtap="check" data-src="{{my_topic_data[num].topic_url}}" data-idx="{{num}}">
+          <image class="image" src="{{my_topic_data[num].topic_url}}"></image>
           <icon class="image-punched-in" wx:if="{{my_topic_data[num].is_checked && my_topic_data[num].insist_day}}"  
                 type="success_no_circle" size="40"></icon>
         </view>
-        <text style="text-align:center; margin-top: -5rpx;">{{my_topic_data[num].name}}\n</text>
+        <text style="text-align:center; margin-top: -5rpx;">{{my_topic_data[num].topic_name}}\n</text>
         <text wx:if="{{my_topic_data[num].insist_day}}" 
               style="text-align:center;font-size:23rpx;">坚持了{{my_topic_data[num].insist_day}}天 </text>
       </view>

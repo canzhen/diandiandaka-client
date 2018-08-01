@@ -5,7 +5,8 @@ var logger = require('morgan');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
-var users = require('./routes/user');
+var user = require('./routes/user');
+var userTopic = require('./routes/userTopic');
 var topic = require('./routes/topic');
 var qiniu = require('./routes/qiniu');
 
@@ -21,9 +22,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'jade');
 
 app.use('/', routes);
-app.use('/topic', topic);
-app.use('/user', users);
 app.use('/qiniu', qiniu);
+app.use('/topic', topic);
+app.use('/user', user);
+app.use('/userTopic', userTopic);
 
 
 
