@@ -9,47 +9,57 @@ const router = express.Router();
  */
 router.post('/createtopic', function (req, res) {
   if (!req.body.topicname || !req.body.topicurl) return false;
-  /* 1. 往topic表里新增或更新数据 */
-  // 查看topic表是否已经存在相应的数据
-  dbhelper.checkTopic(req.body.topicname, (ifExist) => {
-    /* 如果存在，则在该卡片的记录的打卡人数上加一 */
-    if (ifExist) {
-      dbhelper.updateTopic(req.body.topicname, (updateStatus) => {});
-    } else {/* 如果不存在，则需要往卡片表新增一条数据 */
-      dbhelper.insertTopic(req.body.topicname, req.body.topicurl, 1, (result) => {});
-    }
-    
-    /* 2. 往用户卡片表里新增一条数据 */
-    if (!req.header('session-id')) {
-      res.send({ 'error_code': 103, 'msg': '用户未登录' });
+
+  if (!req.header('session-id')) {
+    res.send({ 'error_code': 103, 'msg': '用户未登录' });
+    return;
+  }
+
+  /* 1. 往用户卡片表里新增一条数据 */
+  // 从redis里获取用户的唯一标识：openid
+  let sessionid = req.header('session-id')
+  redishelper.getValue(sessionid, (value) => {
+    if (!value) {
+      res.send({ 'error_code': 102, 'msg': 'redis数据库里找不到对应用户数据' });
       return;
     }
-    // 从redis里获取用户的唯一标识：openid
-    let sessionid = req.header('session-id')
-    redishelper.getValue(sessionid, (value) => {
-      if (!value) {
-        res.send({ 'error_code': 102, 'msg': 'redis数据库里找不到对应用户数据' });
-        return;
-      }
-      dbhelper.insertUserTopic(value, req.body.topicname,
-        req.body.topicurl, 0, req.body.startdate,
-        req.body.enddate, (result, errmsg) => {
-          if (result) {
-            res.send({
-              'error_code': 200,
-              'msg': 'insert into topic and user_topic table success'
-            });
-          } else {
-            console.log(errmsg);
-            let errReason = errmsg.substr(0, errmsg.indexOf(':'));
-            let status = 200;
-            if (errReason == 'ER_DUP_ENTRY') status = 101;
-            res.send({ 'error_code': status, 'msg': errmsg });
+    dbhelper.insertUserTopic(value, req.body.topicname,
+      req.body.topicurl, 0, req.body.startdate,
+      req.body.enddate, (result, errmsg) => {
+        if (result) {
+          res.send({
+            'error_code': 200,
+            'msg': 'insert into topic and user_topic table success'
+          });
+        } else {
+          console.log(errmsg);
+          let errReason = errmsg.substr(0, errmsg.indexOf(':'));
+          if (errReason == 'ER_DUP_ENTRY') { 
+            res.send({ 'error_code': 101, 'msg': errmsg }); 
+            return;
           }
-        });
+          //
+          /* 2. 如果成功插入user_topic，则开始更新topic表 */
+          // 查看topic表是否已经存在相应的数据
+          dbhelper.checkTopic(req.body.topicname, (ifExist) => {
+            /* 如果存在，则在该卡片的记录的打卡人数上加一 */
+            if (ifExist) {
+              dbhelper.updateTopic(req.body.topicname, (updateStatus) => {
+                if (updateStatus) res.send({ 'error_code': 200, 'msg': '' });
+                else res.send({ 'error_code': 100, 'msg': '' });
+              });
+            } else {/* 如果不存在，则需要往卡片表新增一条数据 */
+              dbhelper.insertTopic(req.body.topicname, req.body.topicurl, 1, (result) => {
+                if (result) res.send({ 'error_code': 200, 'msg': '' });
+                else res.send({ 'error_code': 100, 'msg': '' });
+              });
+            }
+          });
+        }
       });
-    
   });
+  
+  
 });
 
 

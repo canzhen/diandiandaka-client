@@ -1,27 +1,52 @@
 <view style="display:flex; flex-direction:column;">
   <!-- 背景墙 -->
   <view class="top-background"></view>
-  <!-- 头像 -->
-  <image class="avatar" bindtap="changeAvatar" mode="aspectFill" src="{{avatar_url}}" hidden="{{!is_reset_avatar}}"></image>
-  <view class="avatar" bindtap="changeAvatar" hidden="{{is_reset_avatar}}"><open-data type="userAvatarUrl"></open-data></view>
-  <!-- 用户名 -->
-  <text class="username" hidden="{{!is_reset_name}}">{{user_name}}</text>
-  <open-data type="userNickName" lang="zh_CN" class="username" hidden="{{is_reset_name}}"></open-data>
-
-    
+  
+  <view class="first-line-view">
+    <!-- 头像 -->
+    <image class="avatar" bindtap="changeAvatar" mode="aspectFill" src="{{avatar_url}}" wx:if="{{is_reset_avatar}}"></image>
+    <view class="avatar" bindtap="changeAvatar" wx:if="{{!is_reset_avatar}}"><open-data type="userAvatarUrl"></open-data></view>
+    <!-- 用户名 -->
+    <text class="username" wx:if="{{is_reset_name}}">{{user_name}}</text>
+    <open-data type="userNickName" lang="zh_CN" class="username" wx:if="{{!is_reset_name}}"></open-data>
+  </view>
+  
+  
+  <text class="notopic-reminder" wx:if="{{my_topic_data.length == 1}}">您还没有任何卡片喔~</text>
   <!-- 我的卡片（每行四个卡片） -->
-    <view class="topic-image-view" wx:for="{{my_topic_data_num}}" wx:key="idx" wx:for-item="row_data">
-      <!-- 每一行 -->
-      <view class="topic-image-row" wx:for="{{row_data}}" wx:key="col" wx:for-item="num">
-        <view class="topic-image-each-item" bindtap="check" data-src="{{my_topic_data[num].topic_url}}" data-idx="{{num}}">
-          <image class="image" src="{{my_topic_data[num].topic_url}}"></image>
-          <icon class="image-punched-in" wx:if="{{my_topic_data[num].is_checked && my_topic_data[num].insist_day}}"  
-                type="success_no_circle" size="40"></icon>
-        </view>
-        <text style="text-align:center; margin-top: -5rpx;">{{my_topic_data[num].topic_name}}\n</text>
-        <text wx:if="{{my_topic_data[num].insist_day}}" 
-              style="text-align:center;font-size:23rpx;">坚持了{{my_topic_data[num].insist_day}}天 </text>
+  <view class="topic-image-view" wx:for="{{my_topic_data_num}}" wx:key="idx" wx:for-item="row_data">
+    <!-- 每一行 -->
+    <view class="topic-image-row" wx:for="{{row_data}}" wx:key="col" wx:for-item="num">
+      <view class="topic-image-each-item" bindtap="check" data-src="{{my_topic_data[num].topic_url}}" data-idx="{{num}}">
+        <image class="image" src="{{my_topic_data[num].topic_url}}"></image>
+        <icon class="image-punched-in" wx:if="{{my_topic_data[num].is_checked && my_topic_data[num].insist_day}}"  
+              type="success_no_circle" size="40"></icon>
       </view>
-      <!-- 每行结束 -->
+      <text style="text-align:center; margin-top: -5rpx;">{{my_topic_data[num].topic_name}}\n</text>
+      <text wx:if="{{my_topic_data[num].insist_day != -1}}" 
+            style="text-align:center;font-size:23rpx;">坚持了{{my_topic_data[num].insist_day}}天 </text>
     </view>
+    <!-- 每行结束 -->
+  </view>
 </view>
+
+
+
+
+
+<!-- 弹窗部分开始 -->
+<view class="modal-mask" bindtap="hideModal" catchtouchmove="preventTouchMove" wx:if="{{show_modal}}"></view>
+<view class="modal-dialog" wx:if="{{show_modal}}">
+  <view class="modal-title">打卡日志</view>
+  <view class="modal-subtitle">{{modal_todate_time}}</view>
+  <view class="modal-content">
+    <view class="modal-input">
+      <textarea placeholder-class="textarea-holder" fixed auto-height bindinput="inputChange" class="textarea" placeholder="{{modal_placeholder}}"></textarea>
+    </view>
+  </view>
+  <view class="modal-footer">
+    <view class="btn-cancel" bindtap="onCancel" data-status="cancel">不再显示</view>
+    <view class="btn-confirm" bindtap="onConfirm" data-status="confirm">确定</view>
+  </view>
+</view>
+<!-- 弹窗部分结束 -->

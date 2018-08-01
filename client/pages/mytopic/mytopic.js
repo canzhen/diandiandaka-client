@@ -5,77 +5,21 @@ const numEachRow = 4;
 
 Page({
   data: {
-    my_topic_data: [
-      {
-        'topic_name': '跑步',
-        'insist_day': 8,
-        'topic_url': '/images/paobu.png',
-        'is_checked' : false
-      }, {
-        'topic_name': '早睡',
-        'insist_day': 2,
-        'topic_url': '/images/zaoshui.png',
-        'is_checked': false
-      }, {
-        'topic_name': '减肥',
-        'insist_day': 7,
-        'topic_url': '/images/jianfei.png',
-        'is_checked': false
-      }, {
-        'topic_name': '吃早餐',
-        'insist_day': 19,
-        'topic_url': '/images/chizaocan.png',
-        'is_checked': false
-      }, {
-        'topic_name': '清晨一杯水',
-        'insist_day': 13,
-        'topic_url': '/images/qingchenyibeishui.png',
-        'is_checked': false
-      }, {
-        'topic_name': '单反记录美好生活',
-        'insist_day': 10,
-        'topic_url': '/images/camera.png',
-        'is_checked': false
-      }, {
-        'topic_name': '健身',
-        'insist_day': 2,
-        'topic_url': '/images/jianshen.png',
-        'is_checked': false
-      }, {
-        'topic_name': '骑自行车',
-        'insist_day': 2,
-        'topic_url': '/images/zixingche.png',
-        'is_checked': false
-      }, {
-        'topic_name': '添加新卡片',
-        'topic_url': '/images/xinkapian.png',
-        'is_checked': false
-      }],
+    my_topic_data: [],
     my_topic_data_num: [],
+    selected_id: -1, //用户单击打卡的id
     user_name: '', 
     avatar_url:'', //从本地缓存中获取
     is_reset_avatar: false, //默认用户没有修改头像
     is_reset_name: false, //默认用户没修改过名字
+    show_modal: false, //是否弹出弹框
+    modal_placeholder: '', //弹出框的默认字符串
+    modal_todate_time: '', //弹出框要显示的今日日期时间
   },
 
 
-
-
-
-  /* 方法部分 */
-  onLoad(){
-
-    /* 动态创建my_topic_data_num作为分行下标 */
-    var l = this.data.my_topic_data.length,
-        r = l / numEachRow, c = numEachRow;
-
-    var temp_topic_data_num = new Array();
-    for (var r1 = 0; r1 < r; r1++){
-      temp_topic_data_num[r1] = new Array();
-      for (var c1 = 0; c1 < c; c1++)
-        temp_topic_data_num[r1][c1] = r1 * numEachRow + c1;
-    }
-
+  init: function(){
+    let that = this;
     /* 获取用户的个性化头像和姓名 */
     api.postRequest({
       'url': '/user/getNameAvatar',
@@ -96,19 +40,87 @@ Page({
         }
       }
     });
-    
 
-    
+
+    let createRowNum = function () {
+      that.setData({
+        my_topic_data_num: utils.getMyTopicTopicNumByLength(that.data.my_topic_data.length, numEachRow)
+      });
+    }
+
     /* 获取当前用户的打卡信息 */
-    
-
-    this.setData({
-      my_topic_data_num: temp_topic_data_num
+    api.postRequest({
+      'url': '/userTopic/getTopicListByUserId',
+      'data': [],
+      'success': (res) => { //成功
+        if (res.error_code == 200) {
+          console.log('获取用户打卡信息成功');
+          var result_list = res.result_list;
+          result_list.push({
+            'topic_name': '添加新卡片',
+            'topic_url': '/images/xinkapian.png',
+            'insist_day': -1,
+            'is_checked': false
+          });
+          console.log(result_list);
+          this.setData({
+            my_topic_data: res.result_list
+          });
+          createRowNum();
+        } else console.log('获取用户打卡信息失败');
+      },
+      'fail': (res) => { //失败
+        console.log('获取用户打卡信息失败');
+      }
     });
   },
 
 
 
+  /* 页面加载函数 */
+  onLoad(){
+    // this.init();
+  },
+
+  onShow(){
+    this.init();
+  },
+
+  /**
+   * 保存到当前打卡数据到数据库
+   */
+  saveCheckData: function(){
+    // let check_data = this.data.my_topic_data;
+    // check_data.pop(); //去除最后一个“添加新卡片”的元素
+    // api.postRequest({
+    //   'url': '/userTopic/udpateTopicListByUserId',
+    //   'data': { 'insist_day': check_data.insist_day},
+    //   'showLoading': false, 
+    //   'success': (res) => {},
+    //   'fail': (res) => {}
+    // });
+  },
+
+
+  /** 
+   * 页面隐藏函数
+   * 监听页面的隐藏，
+   * 当从当前A页跳转到其他页面，那么A页面处于隐藏状态
+   * */
+  onHide: function(event){
+    this.saveCheckData();
+  },
+
+
+
+  /**
+   * 页面卸载函数
+   * 监听页面的卸载，
+   * 当前处于A页面，点击返回按钮时，则将是A页面卸载
+   */
+  onUnload: function(event){
+    this.saveCheckData();
+  },
 
 
 
@@ -121,7 +133,7 @@ Page({
     // 查看是否是空白栏，如果是，直接返回
     if (typeof data == 'undefined') return;
     // 查看是否是添加新卡片，如果是，就直接跳转到newtopic function
-    if (data.insist_day == null) return this.newtopic(event);
+    if (data.insist_day == -1) return this.newtopic(event);
     // 查看是否之前单击过，如果单击过，则此次单击取消之前单击
     let origin_is_checked = data.is_checked;
     let origin_insist_day = parseInt(data.insist_day);
@@ -135,20 +147,27 @@ Page({
 
     this.setData({
       [boolData]: origin_is_checked,
-      [intData]: origin_insist_day + 1
+      [intData]: origin_insist_day + 1,
+      selected_id: id,
+      show_modal: true,
+      modal_todate_time: utils.getFormateDatetimeCN(new Date()),
+      modal_placeholder: '今天' + data.topic_name + '有什么感想咩~',
     });
+    console.log(this.data.selected_id);
 
-    let msg = origin_is_checked ? 
-              '打卡成功，您已坚持' + data.name +
-              parseInt(origin_insist_day + 1) + '天' : 
-              '取消打卡成功' ;
+    // let msg = origin_is_checked ? 
+    //           '打卡成功，您已坚持' + data.topic_name +
+    //           parseInt(origin_insist_day + 1) + '天' : 
+    //           '取消打卡成功' ;
 
-    wx.showModal({
-      content: msg,
-      showCancel: false,
-      success: function (res) { }
-    });
+    // wx.showModal({
+    //   content: msg,
+    //   showCancel: false,
+    //   success: function (res) { }
+    // });
   },
+
+
   
   /**
    * 添加新卡片
@@ -158,8 +177,6 @@ Page({
       url: '/pages/newtopic/newtopic',
     })
   },
-
-
 
 
 
@@ -246,5 +263,35 @@ Page({
       }
     });
   },
+
+
+  /**
+   * 弹出框蒙层截断touchmove事件
+   */
+  preventTouchMove: function () {
+  },
+
+  /**
+   * 隐藏模态对话框
+   */
+  hideModal: function () {
+    this.setData({
+      show_modal: false
+    });
+  },
+
+  /**
+     * 对话框取消按钮点击事件
+     */
+  onCancel: function () {
+    this.hideModal();
+  },
+
+  /**
+   * 对话框确认按钮点击事件
+   */
+  onConfirm: function () {
+    this.hideModal();
+  }
 
 }); 

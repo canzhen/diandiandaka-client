@@ -3,6 +3,7 @@ const {redis: config} = require('../config.js');
 const client = redis.createClient(config);
 redis.client = client;
 
+
 /**
  * 存数据
  * @param key: 键
@@ -29,8 +30,7 @@ function getValue(key, cb) {
       return;
     }
     if (object){
-      console.log('get redis ' + key + ' value');
-      console.log(object.toString());
+      console.log('get redis ' + key + ' value' + object.toString());
       cb(object.toString());
     }else cb(false);
   });

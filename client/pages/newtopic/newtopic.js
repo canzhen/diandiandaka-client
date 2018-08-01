@@ -24,7 +24,7 @@ Page({
     start_date: getFullDateSlash(new Date()),
     end_date: getFullDateSlash(new Date()),
     pre_end_date: '', //在取消永不结束checkbox时，就把之前选好的end_date再放上去
-    // never_repeat: false, //永不结束的checkbox是否选中
+    never_end: false, //永不结束的checkbox是否选中
     has_special_character: false, //计划名称中是否包含特殊字符
   },
 
@@ -74,7 +74,7 @@ Page({
    */
   bindStartDateChange: function (e) {
     this.setData({
-      'start_date': e.detail.value
+      start_date: e.detail.value
     });
   },
 
@@ -83,7 +83,8 @@ Page({
    */
   bindEndDateChange: function (e) {
     this.setData({
-      'end_date': e.detail.value
+      end_date: e.detail.value,
+      never_end: false,
     });
   },
 
@@ -100,11 +101,11 @@ Page({
         duration: 1000
       })
       this.setData({
-        'has_special_character': true
+        has_special_character: true
       });
     }else{
       this.setData({
-        'has_special_character': false
+        has_special_character: false
       });
     }
   },
@@ -195,6 +196,7 @@ Page({
 
   },
 
+
   // 显示提示输入完整信息的toast
   showReminderAlert: function(alertMsg){
     wx.showModal({
@@ -206,6 +208,7 @@ Page({
     });
   },
 
+
   // 显示提交成功的toast
   showSucceedToast: function(){
     wx.showToast({
@@ -216,6 +219,11 @@ Page({
         setTimeout(function(){
           wx.switchTab({
             url: '/pages/mytopic/mytopic',
+            success: function(e){
+              var page = getCurrentPages().pop();
+              if (page == undefined || page == null) return;
+              page.onLoad(); 
+            }
           })
         }, 1000);
       }

@@ -17,31 +17,21 @@ Page({
   createNewTopic: function (e) {
     let topicname = this.data.topic_name;
     let topicurl = this.data.topic_url;
-    if (utils.getStorageSync('sessionId')) { //如果已经存好了sessionid则不需要重新获取
-      helper.navigateToNewTopicPage(topicname, topicurl);
-      return;
-    }
-    utils.login((res) => {
-      console.log(res);
-      helper.navigateToNewTopicPage(topicname, topicurl);
-    });
+    helper.navigateToNewTopicPage(topicname, topicurl);
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad: function (options) {
+  init: function(){
     // if (utils.getStorageSync('sessionId')) return;
     // 从数据库中获取topic
     api.getRequest(
-      '/topic/gettopic', 
+      '/topic/gettopic',
       { 'limit_num': getApp().config.index_hot_topic_num },
       (res) => { //请求成功
-        if (res.error_code == 200){
+        if (res.error_code == 200) {
           this.setData({
             hot_topic_data: res.data
           });
-        }else{
+        } else {
           setTimeout(function () {
             wx.navigateTo({
               url: '/pages/index/index',
@@ -59,7 +49,15 @@ Page({
       });
   },
 
-  onShow: function(options){
+  /**
+   * 生命周期函数--监听页面加载
+   */
+  onLoad: function (options) {
+    // this.init();
+  },
+
+  onShow: function (options) {
+    this.init();
   },
 
   /**

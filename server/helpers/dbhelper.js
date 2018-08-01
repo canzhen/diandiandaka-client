@@ -170,6 +170,9 @@ function getTopic(limit_num, cb) {
 
 
 /* ------------------- user_topic表部分 -------------------- */
+/**
+ * 往user_topic表里插入一条新的数据
+ */
 function insertUserTopic(user_id, topic_name, topic_url, insist_day, start_date, end_date, cb){
   var client = connectServer();
   client.query(
@@ -191,17 +194,18 @@ function insertUserTopic(user_id, topic_name, topic_url, insist_day, start_date,
 
 
 
-/* ------------------- user_topic表部分 -------------------- */
-
-function getUserTopicById(id, cb) {
+/**
+ * 通过用户id获取usertopic信息
+ */
+function getUserTopicByUserId(id, cb) {
   var client = connectServer();
   client.query(
     "SELECT * FROM user_topic WHERE user_id = ?", [id],
     function (err, result) {
       if (err) {
-        console.log("get user by id失败，失败信息:" + err.message);
+        console.log("get user_topic by id失败，失败信息:" + err.message);
       } else {
-        console.log('get user by id成功');
+        console.log('get user_topic by id成功');
       }
 
       let result_list = JSON.parse(JSON.stringify(result));
@@ -211,6 +215,31 @@ function getUserTopicById(id, cb) {
   client.end();
 }
 
+
+/**
+ * 通过用户id更新usertopic信息
+ * @param id: 用户的openid
+ * @param key: 对应数据库里的列名
+ * @param data: 更新成的值
+ * @param cb: 回调函数
+ */
+function updateUserTopicByUserId(id, key, data, cb) {
+  var client = connectServer();
+  client.query(
+    "UPDATE user_topic SET() VALUES() WHERE user_id = ?", [id],
+    function (err, result) {
+      if (err) {
+        console.log("update user_topic by id失败，失败信息:" + err.message);
+      } else {
+        console.log('update user_topic by id成功');
+      }
+
+      let result_list = JSON.parse(JSON.stringify(result));
+      cb(!err, result_list);
+    });
+
+  client.end();
+}
 
 module.exports = {
   connectServer,
@@ -226,4 +255,8 @@ module.exports = {
   checkTopic,
   getTopic,
   insertUserTopic,
+
+  //user_topic部分
+  getUserTopicByUserId,
+  updateUserTopicByUserId
 };

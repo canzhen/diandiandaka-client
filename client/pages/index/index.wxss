@@ -50,7 +50,7 @@ Page{
 .second-line-view{
   display:flex; 
   flex-direction:row; 
-  margin-bottom:40rpx;
+  margin-bottom: 50rpx;
 }
 
 
@@ -76,7 +76,7 @@ Page{
   display:flex; 
   flex-direction:row; 
   margin-left: 70rpx;
-  margin-bottom:35rpx;
+  margin-bottom:40rpx;
 }
 
 

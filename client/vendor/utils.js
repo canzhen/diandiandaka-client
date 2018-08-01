@@ -107,6 +107,31 @@ function getStorageSync(key) {
   }
 }
 
+function getMyTopicTopicNumByLength(l, numEachRow){
+  /* 动态创建my_topic_data_num作为分行下标 */
+  var r = parseInt(l / numEachRow),
+      c = l % numEachRow;
+  if (c == 0) {
+    c = numEachRow;
+    r -= 1;
+  }
+  console.log(l)
+  console.log(r)
+  console.log(c)
+  var temp_topic_data_num = new Array();
+  for (var r1 = 0; r1 <= r; r1++) {
+    temp_topic_data_num[r1] = new Array();
+    if (r1 == r) {
+      for (var c1 = 0; c1 < c; c1++)
+        temp_topic_data_num[r1][c1] = r1 * numEachRow + c1;
+    } else {
+      for (var c1 = 0; c1 < numEachRow; c1++)
+        temp_topic_data_num[r1][c1] = r1 * numEachRow + c1;
+    }
+  }
+  console.log(temp_topic_data_num)
+  return temp_topic_data_num;
+}
 
 /**
   判断闰年还是平年
@@ -197,14 +222,32 @@ function generateCalendar(checkedDataList, year, month, color) {
 }
 
 
-/*
-将时间翻译成带有中文字符‘年’‘月’
-*/
+/**
+ * 将时间翻译成带有中文字符‘年’‘月’
+ */
 function translateFormateDate(date) {
-  var year = date.split('-')[0]
-  var month = date.split('-')[1]
-  return year + '年' + month + '月'
+  var year = date.split('-')[0];
+  var month = date.split('-')[1];
+  return year + '年' + month + '月';
 }
+
+
+
+/**
+ * 获取格式化日期和时间，中文版
+ */
+function getFormateDatetimeCN(date) {
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const hour = date.getHours();
+  const minute = date.getMinutes();
+
+  return year + '年' + month + '月' + 
+          day + '日 ' + hour + '时' + minute + '分';
+}
+
+
 
 
 /*
@@ -522,6 +565,7 @@ module.exports = {
   generateCalendar,
   getFullDateSlash,
   translateFormateDate,
+  getFormateDatetimeCN,
   getCurrentDate,
   nextMonth,
   lastMonth,
@@ -540,4 +584,7 @@ module.exports = {
   getYearEndDate,
   getFullDateDot,
   getCompletenessSubtitle,
+
+  /* 计算下标方面 */
+  getMyTopicTopicNumByLength,
 }
