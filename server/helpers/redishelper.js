@@ -7,7 +7,7 @@ redis.client = client;
  * 存数据
  * @param key: 键
  * @param value: 值
- * @param expiration: 过期时间，单位为毫秒
+ * @param expiration: 过期时间，单位为秒
  */
 function storeValue(key, value, expiration) {
   console.log('save redis, key: ' + key + ', value: ' + value);
@@ -30,10 +30,10 @@ function getValue(key, cb) {
     }
     if (object){
       console.log('get redis ' + key + ' value');
-      console.log(object);
-      cb(object);
+      console.log(object.toString());
+      cb(object.toString());
     }else cb(false);
-  })
+  });
 }
 
 

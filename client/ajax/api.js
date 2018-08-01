@@ -10,7 +10,8 @@ const API = {
 
 /**
  * POST请求接口
- * @param params: {'url':'', 'data':{}, 
+ * @param params: {'url':'', 
+ *                 'data':{}, 
  *                 'success': function(){}, 
  *                 'fail': function(){},
  *                 'showLoading': false, 

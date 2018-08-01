@@ -44,10 +44,6 @@ function updateUser(key, value, id, cb) {
   var client = connectServer();
 
   let sql = 'UPDATE user SET ' + key + ' = ? WHERE user_id = ?';
-
-  console.log('update user, sql 语句是：' + sql);
-  console.log(value);
-
   client.query(sql, [value, id], function (err, result) {
     if (err) {
       console.log("update user 失败，失败信息:" + err.message);

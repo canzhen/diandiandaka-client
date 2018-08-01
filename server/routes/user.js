@@ -71,26 +71,6 @@ router.post('/login', function(req, res) {
     getOpenID(code);
   }
 
-
-
-
-  //如果传递过来sessionid，且redis里有存openid和sessionid，则直接获取
-  // if (sessionid){
-  //   redishelper.getValue(sessionid, (value) => {
-  //     console.log('redis获取key ' + sessionid + ':' + value);
-  //     if (!value) { //如果redis里无法获取值，代表过期了，也要重新发送api请求
-  //       getOpenID(code);
-  //       return;
-  //     }
-  //     userinfo['openid'] = storeValue;
-  //     dbhelper.insertUser(userinfo, (result, errmsg) => {
-  //       if (result) res.send({ 'error_code': 200, 'msg': '', 'sessionId': sessionid });
-  //       else res.send({ 'error_code': 100, 'msg': errmsg, 'sessionId': sessionid });
-  //     });
-  //   })
-  // } else { //否则发送微信api请求
-  //   getOpenID(code);
-  // }
 });
 
 /**

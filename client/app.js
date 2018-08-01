@@ -1,6 +1,5 @@
 const utils = require('./vendor/utils.js');
 
-
 //app.js
 App({
   config: {
@@ -19,10 +18,16 @@ App({
    */
   onLaunch: function (options) {
     if (utils.getStorageSync('sessionId')) {
+      console.log('进来了，要switchTab了');
       wx.switchTab({
         url: '/pages/mytopic/mytopic',
       })
+      console.log('switchTab结束');
     }
+    // setTimeout(function () {
+    //   console.log('get storage sessionId: ' + utils.getStorageSync('sessionId'));
+      
+    // }, 0);
   },
 
 

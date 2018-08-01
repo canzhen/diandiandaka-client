@@ -28,20 +28,23 @@ const CONF = {
   },
 
   /**
-   * Redis缓存配置，默认过期时间为2分钟
+   * Redis缓存配置，默认过期时间为24小时
    */
   redis: {
     host: 'localhost',
     port : 6379,
-    ttl: 1000*60*60*24 //24小时
+    ttl: 60 * 60 * 24 //单位为秒，24小时
   },
 
   /**
    * 七牛cdn存储的配置
    */
   qiniu: {
+    prefix: 'https://pcjzq4ixp.bkt.clouddn.com/',
+    suffix: '?imageView2/1/w/90/h/90/q/75|imageslim',
     accessKey: 'Qo0sHRVPZBSNfD03wbzxMfXtRQb3BlIX0q1EKKV-',
     secretKey: 'El-eXq7MDFhVVtn8a3L4qDmEui0_OIocRB5nPSUj',
+    bucket: 'diandiandaka-pics'
   },
 
   cos: {

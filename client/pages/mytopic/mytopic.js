@@ -59,6 +59,9 @@ Page({
   },
 
 
+
+
+
   /* 方法部分 */
   onLoad(){
 
@@ -103,6 +106,10 @@ Page({
       my_topic_data_num: temp_topic_data_num
     });
   },
+
+
+
+
 
 
   /**
@@ -152,18 +159,43 @@ Page({
     })
   },
 
+
+
+
+
+
   /**
-   * 修改头像
+   * 用户单击头像，修改头像
    */
   changeAvatar: function () {
-    console.log('点击选择图片');
-    
+    let that = this;
+
     let showFailToast = function(){
       wx.showToast({
         title: '大哥饶命，上传失败...',
         icon: 'none',
         duration: 2000
       })
+    };
+
+    //用七牛删除之前的头像（不继续保存）
+    let deletePreAvatar = function(){
+      if (that.data.avatar_url) {
+        api.postRequest({
+          'url': '/qiniu/delete',
+          'data': {
+            'key': that.data.avatar_url
+          },
+          'showLoading': false,
+          'success': (res) => {
+            if (res.error_code == 200) console.log('删除之前的头像成功');
+            else console.log('删除之前头像失败');
+          },
+          'fail': (res) => {
+            console.log('删除之前头像失败');
+          }
+        }); 
+      }
     };
 
     let updateAvatarUrl = function(url){
@@ -182,7 +214,6 @@ Page({
       });
     }
 
-    let that = this;
     // 弹出选择图片的框
     wx.chooseImage({
       count: 1, // 允许选择的图片数
@@ -194,6 +225,7 @@ Page({
         // 向服务器端获取token
         api.getRequest('/qiniu/getToken', {}, (res) => {
           if (res.error_code == 200) {
+            deletePreAvatar(); //删除之前保存的头像，如果存在的话
             // 成功获取token之后，开始上传图片
             let token = res.token;
             console.log('成功获取token:' + token);
@@ -203,7 +235,7 @@ Page({
               // 设置当前显示的头像为上传到七牛的图片url
               that.setData({
                 avatar_url: url,
-                is_reset_userinfo: true
+                is_reset_avatar: true
               });
               // 更新数据库里的avatar_url字段
               updateAvatarUrl(url);
