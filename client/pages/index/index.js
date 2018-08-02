@@ -47,6 +47,10 @@ Page({
         }, 1000);
         console.log('[index] get hot topic data failed');
       });
+
+      this.setData({
+        topic_name: ''
+      });
   },
 
   /**

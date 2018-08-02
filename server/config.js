@@ -24,7 +24,8 @@ const CONF = {
     user: 'root',
     db: 'diandiandaka',
     pwd: 'mysql123',
-    char: 'utf8mb4'
+    char: 'utf8mb4',
+    timezone: 'Hongkong'
   },
 
   /**

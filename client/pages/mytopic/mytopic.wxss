@@ -55,7 +55,6 @@ Page{
   flex-direction: column; 
   margin-left: 20rpx;
   margin-right: 20rpx; 
-  /* justify-content:center; */
   align-items: center;
   justify-content: space-between;
 }

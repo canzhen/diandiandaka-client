@@ -11,8 +11,6 @@
     <open-data type="userNickName" lang="zh_CN" class="username" wx:if="{{!is_reset_name}}"></open-data>
   </view>
   
-  
-  <text class="notopic-reminder" wx:if="{{my_topic_data.length == 1}}">您还没有任何卡片喔~</text>
   <!-- 我的卡片（每行四个卡片） -->
   <view class="topic-image-row" wx:for="{{my_topic_data_num}}" wx:key="idx" wx:for-item="row_data">
     <!-- 每一行 -->

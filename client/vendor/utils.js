@@ -1,3 +1,5 @@
+const moment = require('./moment.min.js');
+
 /**
  * 用户登录，无须让用户授权，在后端保存用户的openid，
  * 名字和头像可以暂时为空，前端保存用户sessionid，
@@ -535,6 +537,16 @@ function getCompletenessSubtitle (currentdate, timelapse, n) {
   return {'subtitle': subtitle, 'enddate': enddate};
 }
 
+
+function filterDatedData(user_topic_list){
+  console.log('filter dated data');
+  for (var i in user_topic_list){
+    var item = user_topic_list[i];
+    if (item['insist_day'] == 0) continue; //0就不用管是否过期了
+    console.log(moment(item['update_time']).format('YYYY-MM-DD HH:mm:ss'));
+  }
+}
+
 module.exports = {
   /* 功能方面 */
   login, 
@@ -570,6 +582,7 @@ module.exports = {
   getFullDateDot,
   getCompletenessSubtitle,
 
-  /* 计算下标方面 */
-  getMyTopicTopicNumByLength,
+  /* mytopic部分 */
+  getMyTopicTopicNumByLength, //计算下标
+  filterDatedData, //过滤掉过期的数据，主要是看insist_day连续坚持天数是否正确
 }

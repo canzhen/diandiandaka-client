@@ -8,7 +8,8 @@ function connectServer() {
     host: config.host,
     user: config.user,
     password: config.pwd,
-    database: config.db
+    database: config.db,
+    timezone: config.timezone
   })
   return client;
 }

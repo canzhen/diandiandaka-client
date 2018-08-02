@@ -58,14 +58,14 @@ Page({
       'success': (res) => { //成功
         if (res.error_code == 200) {
           console.log('获取用户打卡信息成功');
-          var result_list = res.result_list;
-          result_list.push({
+          utils.filterDatedData(res.result_list);
+          res.result_list.push({
             'topic_name': '添加新卡片\n\n\n',
             'topic_url': '/images/xinkapian.png',
             'insist_day': -1,
             'is_checked': false
           });
-          console.log(result_list);
+          console.log(res.result_list);
           this.setData({
             my_topic_data: res.result_list
           });
@@ -93,6 +93,7 @@ Page({
    * 保存到当前打卡数据到数据库
    */
   saveCheckData: function(){
+    console.log(this.data.my_topic_data);
     // let check_data = this.data.my_topic_data;
     // check_data.pop(); //去除最后一个“添加新卡片”的元素
     // api.postRequest({
