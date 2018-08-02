@@ -46,7 +46,7 @@ Page{
   flex-direction:row; 
   margin-bottom: 30rpx; 
   margin-left: 30rpx; 
-  margin-right: 30rpx; 
+  margin-right: 30rpx;
 }
 
 /* 每一个卡片 */
@@ -55,8 +55,9 @@ Page{
   flex-direction: column; 
   margin-left: 20rpx;
   margin-right: 20rpx; 
-  justify-content:center;
+  /* justify-content:center; */
   align-items: center;
+  justify-content: space-between;
 }
 
 /* 每一个图片 */

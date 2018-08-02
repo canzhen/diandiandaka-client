@@ -55,4 +55,43 @@ router.post('/udpateTopicListByUserId', function (req, res) {
 
 });
 
+
+
+/**
+ * 打卡user_topic表
+ * 返回给前端新的insist_day和total_day
+ */
+router.post('/check', function (req, res) {
+  let id = req.header('session-id');
+  let topic_name = req.body.topic_name; //打卡的卡片名称
+  redishelper.getValue(id, (openid) => {
+    if (!openid) {
+      res.send({ 'error_code': 102, 'msg': '' });
+      return;
+    }
+    dbhelper.checkInsertuserTopic(
+      openid, topic_name,
+      (status) => {
+        if (!status) {
+          res.send({ 'error_code': 100, 'msg': result, 'result_list': ''})
+          return;
+        }
+        //如果成功，则向数据库获取最新的insist_day和total_day
+        dbhelper.getUserTopicByUserIdTopicName(openid, topic_name, 
+          (status, result) => {
+            if (status) res.send({ 
+              'error_code': 200, 'msg': '', 
+              'result_list': {
+                'insist_day': result['insist_day'],
+                'total_day': result['total_day']
+              }});
+            else 
+              res.send({ 'error_code': 100, 'msg': result, 'result_list': '' })
+          });
+        
+      });
+  });
+
+});
+
 module.exports = router;

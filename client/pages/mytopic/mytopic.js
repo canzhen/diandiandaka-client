@@ -60,7 +60,7 @@ Page({
           console.log('获取用户打卡信息成功');
           var result_list = res.result_list;
           result_list.push({
-            'topic_name': '添加新卡片',
+            'topic_name': '添加新卡片\n\n\n',
             'topic_url': '/images/xinkapian.png',
             'insist_day': -1,
             'is_checked': false
@@ -137,37 +137,31 @@ Page({
     if (typeof data == 'undefined') return;
     // 查看是否是添加新卡片，如果是，就直接跳转到newtopic function
     if (data.insist_day == -1) return this.newtopic(event);
+
     // 查看是否之前单击过，如果单击过，则此次单击取消之前单击
+    let boolData = 'my_topic_data[' + this.data.selected_id + '].is_checked';
+    let insistData = 'my_topic_data[' + this.data.selected_id + '].insist_day';
+    let totalData = 'my_topic_data[' + this.data.selected_id + '].total_day';
     let origin_is_checked = data.is_checked;
-    let origin_insist_day = parseInt(data.insist_day);
+    let origin_insist_day = data.insist_day;
+    let origin_total_day = data.total_day;
+
     if (origin_is_checked) {
-      origin_is_checked = false;
-      origin_insist_day -= 2;
-    } else origin_is_checked = true;
-    
-    let boolData = 'my_topic_data[' + id + '].is_checked';
-    let intData = 'my_topic_data[' + id + '].insist_day';
+      this.setData({
+        [boolData]: false,
+        [insistData]: origin_insist_day == 1 ? 0 : origin_insist_day - 1,
+        [totalData]: origin_total_day - 1
+      });
+      return;
+    }
+
 
     this.setData({
-      [boolData]: origin_is_checked,
-      [intData]: origin_insist_day + 1,
       selected_id: id,
       show_modal: true,
       modal_todate_time: utils.getFormateDatetimeEN(new Date()),
       modal_placeholder: '今天' + data.topic_name + '有什么感想咩~',
     });
-    console.log(this.data.selected_id);
-
-    // let msg = origin_is_checked ? 
-    //           '打卡成功，您已坚持' + data.topic_name +
-    //           parseInt(origin_insist_day + 1) + '天' : 
-    //           '取消打卡成功' ;
-
-    // wx.showModal({
-    //   content: msg,
-    //   showCancel: false,
-    //   success: function (res) { }
-    // });
   },
 
 
@@ -292,7 +286,40 @@ Page({
    * 对话框确认按钮点击事件
    */
   onConfirm: function () {
-    let insist_day = 
+    let that = this;
+    let data = this.data.my_topic_data[this.data.selected_id];
+
+    let showFailToast = function () {
+      wx.showToast({
+        title: '大哥饶命，打卡失败....55555...',
+        icon: 'none',
+        duration: 2000
+      })
+    };
+    
+    api.postRequest({
+      'url': '/userTopic/check',
+      'data': {
+        'topic_name': data['topic_name']
+      },
+      'success': (res) => {
+        if (res.error_code == 200) {
+          let boolData = 'my_topic_data[' + this.data.selected_id + '].is_checked';
+          let insistData = 'my_topic_data[' + this.data.selected_id + '].insist_day';
+          let totalData = 'my_topic_data[' + this.data.selected_id + '].total_day';
+          that.setData({
+            [boolData]: true,
+            [insistData]: res['result_list']['insist_day'],
+            [totalData]: res['result_list']['total_day']
+          });
+        } else showFailToast();
+      },
+      'fail': (res) => {
+        console.log('check user_topic 表失败');
+        showFailToast();
+      }
+    });
+
     this.hideModal();
   },
 

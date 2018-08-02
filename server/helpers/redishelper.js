@@ -30,7 +30,7 @@ function getValue(key, cb) {
       return;
     }
     if (object){
-      console.log('get redis ' + key + ' value' + object.toString());
+      console.log('get redis ' + key + ' value ' + object.toString());
       cb(object.toString());
     }else cb(false);
   });

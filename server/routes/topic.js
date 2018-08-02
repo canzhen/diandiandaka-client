@@ -26,36 +26,33 @@ router.post('/createtopic', function (req, res) {
     dbhelper.insertUserTopic(value, req.body.topicname,
       req.body.topicurl, 0, req.body.startdate,
       req.body.enddate, (result, errmsg) => {
-        if (result) {
-          res.send({
-            'error_code': 200,
-            'msg': 'insert into topic and user_topic table success'
-          });
-        } else {
+        if (!result) {
           console.log(errmsg);
           let errReason = errmsg.substr(0, errmsg.indexOf(':'));
-          if (errReason == 'ER_DUP_ENTRY') { 
-            res.send({ 'error_code': 101, 'msg': errmsg }); 
-            return;
+          if (errReason == 'ER_DUP_ENTRY') {
+            res.send({ 'error_code': 101, 'msg': errmsg });
+          }else{
+            res.send({ 'error_code': 100, 'msg': errmsg });
           }
-          //
-          /* 2. 如果成功插入user_topic，则开始更新topic表 */
-          // 查看topic表是否已经存在相应的数据
-          dbhelper.checkTopic(req.body.topicname, (ifExist) => {
-            /* 如果存在，则在该卡片的记录的打卡人数上加一 */
-            if (ifExist) {
-              dbhelper.updateTopic(req.body.topicname, (updateStatus) => {
-                if (updateStatus) res.send({ 'error_code': 200, 'msg': '' });
-                else res.send({ 'error_code': 100, 'msg': '' });
-              });
-            } else {/* 如果不存在，则需要往卡片表新增一条数据 */
-              dbhelper.insertTopic(req.body.topicname, req.body.topicurl, 1, (result) => {
-                if (result) res.send({ 'error_code': 200, 'msg': '' });
-                else res.send({ 'error_code': 100, 'msg': '' });
-              });
-            }
-          });
+          return;
         }
+
+        /* 2. 如果成功插入user_topic，则开始更新topic表 */
+        // 查看topic表是否已经存在相应的数据
+        dbhelper.checkTopic(req.body.topicname, (ifExist) => {
+          /* 如果存在，则在该卡片的记录的打卡人数上加一 */
+          if (ifExist) {
+            dbhelper.updateTopic(req.body.topicname, (updateStatus) => {
+              if (updateStatus) res.send({ 'error_code': 200, 'msg': '' });
+              else res.send({ 'error_code': 100, 'msg': '' });
+            });
+          } else {/* 如果不存在，则需要往卡片表新增一条数据 */
+            dbhelper.insertTopic(req.body.topicname, req.body.topicurl, 1, (result) => {
+              if (result) res.send({ 'error_code': 200, 'msg': '' });
+              else res.send({ 'error_code': 100, 'msg': '' });
+            });
+          }
+        });
       });
   });
   
