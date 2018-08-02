@@ -14,17 +14,18 @@
   
   <text class="notopic-reminder" wx:if="{{my_topic_data.length == 1}}">您还没有任何卡片喔~</text>
   <!-- 我的卡片（每行四个卡片） -->
-  <view class="topic-image-view" wx:for="{{my_topic_data_num}}" wx:key="idx" wx:for-item="row_data">
+  <view class="topic-image-row" wx:for="{{my_topic_data_num}}" wx:key="idx" wx:for-item="row_data">
     <!-- 每一行 -->
-    <view class="topic-image-row" wx:for="{{row_data}}" wx:key="col" wx:for-item="num">
-      <view class="topic-image-each-item" bindtap="check" data-src="{{my_topic_data[num].topic_url}}" data-idx="{{num}}">
+    <view class="topic-image-each-item" wx:for="{{row_data}}" wx:key="col" wx:for-item="num">
+      <view class="topic-image-each-image" bindtap="check" data-src="{{my_topic_data[num].topic_url}}" data-idx="{{num}}">
         <image class="image" src="{{my_topic_data[num].topic_url}}"></image>
-        <icon class="image-punched-in" wx:if="{{my_topic_data[num].is_checked && my_topic_data[num].insist_day}}"  
-              type="success_no_circle" size="40"></icon>
+        <icon class="image-punched-in" wx:if="{{my_topic_data[num].is_checked && my_topic_data[num].insist_day}}" type="success_no_circle" size="40"></icon>
       </view>
       <text style="text-align:center; margin-top: -5rpx;">{{my_topic_data[num].topic_name}}</text>
       <text wx:if="{{my_topic_data[num].insist_day != -1}}" 
-            style="text-align:center;font-size:23rpx;">连续了{{my_topic_data[num].insist_day}}天 \n 坚持了{{my_topic_data[num].total_day}}天</text>
+            style="text-align:center;font-size:23rpx; margin-top: -30rpx;" >
+            连续了{{my_topic_data[num].insist_day}}天 \n 坚持了{{my_topic_data[num].total_day}}天
+      </text>
     </view>
     <!-- 每行结束 -->
   </view>

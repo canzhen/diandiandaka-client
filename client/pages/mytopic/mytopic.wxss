@@ -40,27 +40,27 @@ Page{
   justify-content: center;
 }
 
-/* 大的整块卡片区域 */
-.topic-image-view{
+/* 每一行 */
+.topic-image-row{
   display:flex; 
   flex-direction:row; 
   margin-bottom: 30rpx; 
   margin-left: 30rpx; 
   margin-right: 30rpx; 
-  /* justify-content: space-around; */
-}
-
-/* 每一行 */
-.topic-image-row{
-  display: flex; 
-  flex-direction: column; 
-  margin-left: 20rpx;
-  margin-right: 20rpx; 
-  justify-content: space-around;
 }
 
 /* 每一个卡片 */
 .topic-image-each-item{
+  display: flex; 
+  flex-direction: column; 
+  margin-left: 20rpx;
+  margin-right: 20rpx; 
+  justify-content:center;
+  align-items: center;
+}
+
+/* 每一个图片 */
+.topic-image-each-image{
   width: 130rpx;
   height: 130rpx;
   display: flex;

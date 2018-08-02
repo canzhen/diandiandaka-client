@@ -310,7 +310,7 @@ Page({
    * 下拉刷新
    */
   onPullDownRefresh: function () {
-    wx.showNavigationBarLoading() //在标题栏中显示加载
+    wx.showNavigationBarLoading(); //在标题栏中显示加载
     this.init();
     //模拟加载
     setTimeout(function () {
