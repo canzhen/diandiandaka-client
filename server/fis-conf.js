@@ -1,4 +1,4 @@
-fis.set('project.files', ['helpers/**', 'routes/**', 'app.js', 'config.js']);
+fis.set('project.files', ['helpers/**', 'routes/**', 'app.js', 'config.js', 'check_insist_day_script', 'crontab_file']);
 
 fis.match('**', {
   deploy: fis.plugin('http-push', {

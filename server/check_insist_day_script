@@ -1,0 +1,6 @@
+MYSQL="mysql -hlocalhost -P3306 -uroot diandiandaka -pmysql123 $test --default-character-set=utf8  -A -N"
+sql="UPDATE user_topic SET insist_day = CASE WHEN HOUR(timediff(now(), last_update_time)) > 24 THEN 0 END;"
+
+result="$($MYSQL -e "$sql")"
+
+echo -e "$result"

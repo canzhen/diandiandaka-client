@@ -16,7 +16,7 @@ function login(fnSuccess) {
           'code': code,
         },
         'success': (res) => {
-          setStorageSync('sessionId', res.sessionId, 1000 * 60 * 60 * 24); //服务端的session也是默认24小时过期
+          setStorageSync('sessionId', res.sessionId, 1000 * 60 * 60 * 2); //服务端的session也是默认2小时过期
           fnSuccess(res);
         },
         'fail': function (res) {
@@ -28,39 +28,6 @@ function login(fnSuccess) {
       console.log('微信登录失败，请检查网络状态');
     }
   })
-
-  //查看用户是否授权
-  // wx.getSetting({
-  //   success: function (res) {
-  //     if (res.authSetting['scope.userInfo']) {
-  //       console.log('用户已经授权');
-  //       if (wx.getStorageSync('username') && wx.getStorageSync('avatarurl')) return;
-  //       // 已经授权，可以直接调用 getUserInfo 获取头像昵称
-        
-  //       wx.getUserInfo({
-  //         success: function (res) {
-  //           /**
-  //            * {'nickName': '', 
-  //            * 'avatarUrl':'', 
-  //            * 'country': '', 
-  //            * 'province':'', 
-  //            * 'city': '', 
-  //            * 'gender':''}
-  //            */
-  //           // 其实想想，不需要全部存下来，省市这些都不展示，性别也不展示
-  //           // 所以其实只要存名字和头像，甚至名字都不用，因为可以直接open-data展示
-  //           // wx.setStorageSync('userInfo', res.userInfo);
-  //           wx.setStorageSync('username', res.userInfo.nickName);
-  //           // 先在数据库里搜索是否存在username这个字段，
-  //           // 如果有，直接获取数据库里的头像url
-
-  //           // 否则，将userinfo里的url作为头像url存下来
-  //           wx.setStorageSync('avatarurl', res.userInfo.avatarUrl);
-  //         },
-  //       })
-  //     }
-  //   }
-  // })
 }
 
 /**
