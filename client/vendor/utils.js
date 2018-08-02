@@ -537,13 +537,17 @@ function getCompletenessSubtitle (currentdate, timelapse, n) {
   return {'subtitle': subtitle, 'enddate': enddate};
 }
 
-
+/**
+ * 将24小时未打卡的卡片insist_day设置为0
+ */
 function filterDatedData(user_topic_list){
   console.log('filter dated data');
   for (var i in user_topic_list){
     var item = user_topic_list[i];
     if (item['insist_day'] == 0) continue; //0就不用管是否过期了
-    console.log(moment(item['update_time']).format('YYYY-MM-DD HH:mm:ss'));
+    //如果超过24小时未打卡，则显示的时候自动显示insist_day为0
+    if (moment().diff(moment(item['update_time']), 'hours') > 24)
+      item['insist_day'] = 0;
   }
 }
 

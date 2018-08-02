@@ -20,8 +20,11 @@ Page({
     textarea_value: '', //textarea默认字
   },
 
-
-  init: function(){
+  /**
+   * 页面初始化，获取数据
+   */
+  init: function () {
+    if (!utils.getStorageSync('sessionId')) utils.login();
     let that = this;
     /* 获取用户的个性化头像和姓名 */
     api.postRequest({
@@ -85,6 +88,7 @@ Page({
     // this.init();
   },
 
+  /* 页面显示函数，tab切换回来也会调用 */
   onShow(){
     this.init();
   },
