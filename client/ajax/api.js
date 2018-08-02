@@ -1,4 +1,4 @@
-const root = getApp().config.request_head;
+const root = 'https://zhoucanzhendevelop.com';
 const utils = require('../vendor/utils.js');
 
 // 接口信息
@@ -77,10 +77,12 @@ function postRequest(params) {
 /**
  * GET 请求接口
  */
-function getRequest(url, data, fnSucess, fnFail) {
-  wx.showLoading({
-    title: '加载中',
-  })
+function getRequest(url, data, fnSucess, fnFail, showLoading = false) {
+  if (showLoading) {
+    wx.showLoading({
+      title: '加载中',
+    })
+  }
   wx.getNetworkType({
     success: (res) => {
       //console.log(res.networkType);
@@ -100,7 +102,7 @@ function getRequest(url, data, fnSucess, fnFail) {
         dataType: 'json',
         header: { 'content-type': 'application/json;chareset=UT8-8' },
         success: (res) => {
-          wx.hideLoading();
+          if (showLoading) wx.hideLoading();
           if (res.statusCode == 200) {
             if (fnSucess && typeof fnSucess == "function") {
               fnSucess(res.data);
@@ -113,7 +115,7 @@ function getRequest(url, data, fnSucess, fnFail) {
           }
         },
         fail: (res) => {
-          wx.hideLoading();
+          if (showLoading) wx.hideLoading();
           showFailToast()
           //统一代码处理中心
           if (fnFail && typeof fnFail == "function")

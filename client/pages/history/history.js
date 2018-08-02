@@ -5,7 +5,7 @@ import {
 } from './data'
 
 var Charts = require('wxcharts.js');
-var Utils = require('../../vendor/utils.js');
+var utils = require('../../vendor/utils.js');
 
 Page({
   data: {
@@ -43,10 +43,10 @@ Page({
   onLoad: function () {
     /* 获取当前年、月 */
     let today = new Date();
-    let allTopic = Utils.getAllTopicList(this.data.checked_data_list); //所有topic名字的集合
-    let checkedTimeList = Utils.getCheckedDataOfEveryTopic(this.data.checked_data_list, allTopic);
-    let fullTopicInfo = Utils.getAndCalculateTopicInfo(checkedTimeList, this.data.topic_info);
-    let allTopicInfoDivided = Utils.divideTopicInfoIntoGroups(checkedTimeList,
+    let allTopic = utils.getAllTopicList(this.data.checked_data_list); //所有topic名字的集合
+    let checkedTimeList = utils.getCheckedDataOfEveryTopic(this.data.checked_data_list, allTopic);
+    let fullTopicInfo = utils.getAndCalculateTopicInfo(checkedTimeList, this.data.topic_info);
+    let allTopicInfoDivided = utils.divideTopicInfoIntoGroups(checkedTimeList,
       this.data.topic_info,
       this.data.topic_info_divided_size);
     this.setData({ //初始化当前日期，且不再改变
@@ -79,10 +79,10 @@ Page({
 
     this.setData({
       // 获取当前月份的天数组，以及相应的每天的是否打卡的数据
-      'year_month_list[1]': Utils.generateCalendar(checkedTime, year, month, '#f8d3ad'),
-      'year_month_list[0]': Utils.generateCalendar(checkedTime, preYear, preMonth, '#f3c6ca'),
-      date: year + '-' + Utils.addZero(month),
-      dateCN: Utils.translateFormateDate(year + '-' + Utils.addZero(month)),
+      'year_month_list[1]': utils.generateCalendar(checkedTime, year, month, '#f8d3ad'),
+      'year_month_list[0]': utils.generateCalendar(checkedTime, preYear, preMonth, '#f3c6ca'),
+      date: year + '-' + utils.addZero(month),
+      dateCN: utils.translateFormateDate(year + '-' + utils.addZero(month)),
       selected_topic: allTopic[0]
     });
   },
@@ -153,14 +153,14 @@ Page({
 
   // 单击日历上的某一天，跳转显示当前具体打的卡片
   bindTapOnDate: function (e) {
-    let checkedDetail = getCheckDetailOnGivenDay(
+    let checkedDetail = utils.getCheckDetailOnGivenDay(
       this.data.checked_data_list,
       e.currentTarget.dataset.currentDate);
     let completeness = (checkedDetail.length / this.data.topic_info.length).toFixed(2);
     var content = '您在' + e.currentTarget.dataset.currentDate;
     checkedDetail.length == 0 ? content += '没打卡,继续努力哟~'
-      : content += '打了' + checkedDetail.length + "张卡: \n" + checkedDetail.toString() +
-      ', 当日打卡完成度为' + parseInt(completeness * 100) + '%';
+      : content += '打了' + checkedDetail.length + "张卡：" + checkedDetail.toString() +
+      '，当日打卡完成度为' + parseInt(completeness * 100) + '%';
 
     wx.showModal({
       content: content,
@@ -222,7 +222,7 @@ Page({
   @param n int: 上周还是下周，还是当前，如果是上周则为-1，如果是下周则为1，如果是当前则为0
   */
   setCompletenessSubtitle: function (timelapse, n) {
-    let ans = Utils.getCompletenessSubtitle(this.data.completeness_week_current_date, timelapse, n);
+    let ans = utils.getCompletenessSubtitle(this.data.completeness_week_current_date, timelapse, n);
     // console.log('n=' + n);
     // console.log('timelapse=' + timelapse);
     // console.log('before, current_date:' + this.data.completeness_week_current_date);

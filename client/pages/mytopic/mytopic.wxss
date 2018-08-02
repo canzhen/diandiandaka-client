@@ -9,10 +9,11 @@ Page{
   width: 100%;
   height: 100rpx;
   background: #fee0c1;
+  z-index: -1;
 }
 
 .first-line-view{
-  margin-bottom: 60rpx;
+  margin-bottom: 40rpx;
 }
 
 .avatar{
@@ -24,10 +25,11 @@ Page{
   border: 0 solid #ffffff;
   border-radius: 50%;
   background-size: 100% 100%;
+  z-index: 100;
 }
 
 .username{
-  margin-top:20rpx;
+  margin-top:30rpx;
   margin-left: 330rpx;
 }
 
@@ -152,7 +154,7 @@ Page{
   height: 300rpx;
   font-size: 30rpx;
   line-height: 28rpx;
-  padding: 0 20rpx;
+  padding: 0 10rpx;
   box-sizing: border-box;
   color: #333;
 }

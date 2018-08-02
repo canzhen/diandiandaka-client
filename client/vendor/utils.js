@@ -115,9 +115,9 @@ function getMyTopicTopicNumByLength(l, numEachRow){
     c = numEachRow;
     r -= 1;
   }
-  console.log(l)
-  console.log(r)
-  console.log(c)
+  // console.log(l)
+  // console.log(r)
+  // console.log(c)
   var temp_topic_data_num = new Array();
   for (var r1 = 0; r1 <= r; r1++) {
     temp_topic_data_num[r1] = new Array();
@@ -129,7 +129,7 @@ function getMyTopicTopicNumByLength(l, numEachRow){
         temp_topic_data_num[r1][c1] = r1 * numEachRow + c1;
     }
   }
-  console.log(temp_topic_data_num)
+  // console.log(temp_topic_data_num)
   return temp_topic_data_num;
 }
 
@@ -245,6 +245,23 @@ function getFormateDatetimeCN(date) {
 
   return year + '年' + month + '月' + 
           day + '日 ' + hour + '时' + minute + '分';
+}
+
+
+
+
+/**
+ * 获取格式化日期和时间，英文版
+ */
+function getFormateDatetimeEN(date) {
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const hour = date.getHours();
+  const minute = date.getMinutes();
+
+  return year + '.' + month + '.' +
+          day + ' ' + hour + ':' + minute;
 }
 
 
@@ -566,6 +583,7 @@ module.exports = {
   getFullDateSlash,
   translateFormateDate,
   getFormateDatetimeCN,
+  getFormateDatetimeEN,
   getCurrentDate,
   nextMonth,
   lastMonth,

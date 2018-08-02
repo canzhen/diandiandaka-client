@@ -36,7 +36,7 @@ function upload(file, key, token, cb){
     region: 'ECN',
     uptoken: token,
     uploadURL: 'https://upload.qiniup.com',
-    domain: 'https://pcjzq4ixp.bkt.clouddn.com'
+    domain: 'http://pcjzq4ixp.bkt.clouddn.com'
   });
 
   // console.log('进入qiniuhelper，准备上传。');

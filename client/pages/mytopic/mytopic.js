@@ -12,9 +12,12 @@ Page({
     avatar_url:'', //从本地缓存中获取
     is_reset_avatar: false, //默认用户没有修改头像
     is_reset_name: false, //默认用户没修改过名字
+
     show_modal: false, //是否弹出弹框
     modal_placeholder: '', //弹出框的默认字符串
     modal_todate_time: '', //弹出框要显示的今日日期时间
+    word_left_num: 140, //微信默认textarea最多输入140字
+    textarea_value: '', //textarea默认字
   },
 
 
@@ -26,8 +29,6 @@ Page({
       'data': [],
       'success': (res) => {
         if (res.error_code == 200 && res.result_list != []) {
-          // console.log('getNameAvatar: ');
-          // console.log(res.result_list);
           let reslist = res.result_list;
           if (reslist == undefined) return;
           if (reslist['user_name'] || reslist['avatar_url'])
@@ -37,11 +38,13 @@ Page({
               user_name: reslist['user_name'] ? reslist['user_name'] : '',
               avatar_url: reslist['avatar_url'] ? reslist['avatar_url'] : ''
             });
+          // console.log(this.data.is_reset_avatar);
+          // console.log(this.data.avatar_url);
         }
       }
     });
 
-
+    // 根据当前卡片数来生成每一行图片的的下标
     let createRowNum = function () {
       that.setData({
         my_topic_data_num: utils.getMyTopicTopicNumByLength(that.data.my_topic_data.length, numEachRow)
@@ -150,7 +153,7 @@ Page({
       [intData]: origin_insist_day + 1,
       selected_id: id,
       show_modal: true,
-      modal_todate_time: utils.getFormateDatetimeCN(new Date()),
+      modal_todate_time: utils.getFormateDatetimeEN(new Date()),
       modal_placeholder: '今天' + data.topic_name + '有什么感想咩~',
     });
     console.log(this.data.selected_id);
@@ -177,7 +180,6 @@ Page({
       url: '/pages/newtopic/newtopic',
     })
   },
-
 
 
 
@@ -268,8 +270,7 @@ Page({
   /**
    * 弹出框蒙层截断touchmove事件
    */
-  preventTouchMove: function () {
-  },
+  preventTouchMove: function () {},
 
   /**
    * 隐藏模态对话框
@@ -283,7 +284,7 @@ Page({
   /**
      * 对话框取消按钮点击事件
      */
-  onCancel: function () {
+  onNeverShow: function () {
     this.hideModal();
   },
 
@@ -291,7 +292,31 @@ Page({
    * 对话框确认按钮点击事件
    */
   onConfirm: function () {
+    let insist_day = 
     this.hideModal();
-  }
+  },
 
+  /**
+   * 输入框字数变化时触发的函数
+   */
+  inputChange: function(e){
+    console.log(e.detail.value);
+    this.setData({
+      word_left_num: 140 - e.detail.value.length //默认最多输入140
+    });
+  },
+
+  /**
+   * 下拉刷新
+   */
+  onPullDownRefresh: function () {
+    wx.showNavigationBarLoading() //在标题栏中显示加载
+    this.init();
+    //模拟加载
+    setTimeout(function () {
+      // complete
+      wx.hideNavigationBarLoading() //完成停止加载
+      wx.stopPullDownRefresh() //停止下拉刷新
+    }, 800);
+  },
 }); 

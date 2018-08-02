@@ -4,7 +4,6 @@ const utils = require('./vendor/utils.js');
 App({
   config: {
     host: 'zhoucanzhendevelop.com',
-    request_head: 'https://zhoucanzhendevelop.com',
     index_hot_topic_num : 6,
   },
   
@@ -20,6 +19,7 @@ App({
     console.log('app onLaunch..');
     console.log('localstorage sessionid:' + utils.getStorageSync('sessionId'));
     if (!utils.getStorageSync('sessionId')) { //如果已经存好了sessionid则不需要重新获取
+      console.log('重新登录');
       utils.login((res) => {
         console.log('login成功：');
         console.log(res);
