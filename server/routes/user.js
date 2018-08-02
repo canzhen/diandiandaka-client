@@ -101,6 +101,7 @@ router.post('/getNameAvatar', function (req, res) {
           'avatar_url': result[0]['avatar_url']
         }
       });
+      return;
     })
   });
 });

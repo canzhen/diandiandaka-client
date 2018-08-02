@@ -220,23 +220,29 @@ function getUserTopicByUserId(id, cb) {
 /**
  * 通过用户id更新usertopic信息
  * @param id: 用户的openid
- * @param key: 对应数据库里的列名
- * @param data: 更新成的值
+ * @param list: maplist:['topic_name': '', insist_day':'', 'total_day':'']
  * @param cb: 回调函数
  */
-function updateUserTopicByUserId(id, key, data, cb) {
+function updateUserTopicByUserId(id, list, cb) {
   let client = connectServer();
+  let l = list.length / 2;
+  let sql = "UPDATE user_topic " +  
+            "SET insist_day = CASE topic_name ";
+  for (let i=0; i < l/2; i++) sql += "WHEN ? THEN ? ";
+  sql += "ELSE insist_day END, total_day = CASE topic_name ";
+  for (let i = 0; i < l / 2; i++) sql += "WHEN ? THEN ? ";
+  sql += "ELSE total_day END WHERE user_id = ?;"
+  list.push(id);
+
   client.query(
-    "UPDATE user_topic SET() VALUES() WHERE user_id = ?", [id],
+    sql, list,
     function (err, result) {
       if (err) {
         console.log("update user_topic by id失败，失败信息:" + err.message);
       } else {
         console.log('update user_topic by id成功');
       }
-
-      let result_list = JSON.parse(JSON.stringify(result));
-      cb(!err, result_list);
+      cb(!err);
     });
 
   client.end();
@@ -271,30 +277,30 @@ function getUserTopicByUserIdTopicName(id, topic_name, cb) {
  * 如果大于，则insist_day设置为0，否则insist_day为之前的加一，
  * total_day则无论如何都+1
  */
-function checkInsertuserTopic(id, topic_name, cb){
-  let client = connectServer();
-  let sql = "UPDATE user_topic SET insist_day = " +
-    "CASE WHEN HOUR(timediff(now(), last_update_time)) > 24 THEN 1 " +
-    "ELSE insist_day + 1 END, " +
-    "total_day = total_day + 1 " +
-    "WHERE user_id = ? AND topic_name = ?;";
+// function checkInsertuserTopic(id, topic_name, cb){
+//   let client = connectServer();
+//   let sql = "UPDATE user_topic SET insist_day = " +
+//     "CASE WHEN HOUR(timediff(now(), last_update_time)) > 24 THEN 1 " +
+//     "ELSE insist_day + 1 END, " +
+//     "total_day = total_day + 1 " +
+//     "WHERE user_id = ? AND topic_name = ?;";
 
-  console.log(sql);
+//   console.log(sql);
 
-  client.query(
-    sql, [id, topic_name],
-    function (err, result) {
-      if (err) {
-        console.log("打卡记录user_topic表失败，失败信息:" + err.message);
-      } else {
-        console.log('打卡记录user_topic表成功');
-      }
-      console.log(result);
-      cb(result['changedRows'] == 1); //回调函数传回结果
-    });
+//   client.query(
+//     sql, [id, topic_name],
+//     function (err, result) {
+//       if (err) {
+//         console.log("打卡记录user_topic表失败，失败信息:" + err.message);
+//       } else {
+//         console.log('打卡记录user_topic表成功');
+//       }
+//       console.log(result);
+//       cb(result['changedRows'] == 1); //回调函数传回结果
+//     });
 
-  client.end();
-}
+//   client.end();
+// }
 
 module.exports = {
   connectServer,
@@ -315,5 +321,5 @@ module.exports = {
   getUserTopicByUserId,
   getUserTopicByUserIdTopicName,
   updateUserTopicByUserId,
-  checkInsertuserTopic
+  // checkInsertuserTopic
 };

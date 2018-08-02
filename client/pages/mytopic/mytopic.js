@@ -97,7 +97,18 @@ Page({
    * 保存到当前打卡数据到数据库
    */
   saveCheckData: function(){
-    console.log(this.data.my_topic_data);
+    //过滤掉没有打卡的卡片，只剩下打过卡的卡片
+    let changed_topic_list = utils.filterUnchangeData(this.data.my_topic_data);
+    // console.log(typeof changed_topic_list);
+    api.postRequest({
+      'url': '/userTopic/udpateTopicListByUserId',
+      'data': { 
+        'changedTopicList': JSON.stringify(changed_topic_list)
+      },
+      'showLoading': false, 
+      'success': (res) => {},
+      'fail': (res) => {}
+    });
     // let check_data = this.data.my_topic_data;
     // check_data.pop(); //去除最后一个“添加新卡片”的元素
     // api.postRequest({
@@ -154,7 +165,7 @@ Page({
     if (origin_is_checked) {
       this.setData({
         [boolData]: false,
-        [insistData]: origin_insist_day == 1 ? 0 : origin_insist_day - 1,
+        [insistData]: origin_insist_day - 1,
         [totalData]: origin_total_day - 1
       });
       return;
@@ -271,6 +282,7 @@ Page({
    */
   preventTouchMove: function () {},
 
+
   /**
    * 隐藏模态对话框
    */
@@ -280,9 +292,10 @@ Page({
     });
   },
 
+
   /**
-     * 对话框取消按钮点击事件
-     */
+   * 对话框取消按钮点击事件
+   */
   onNeverShow: function () {
     this.hideModal();
   },
@@ -291,40 +304,55 @@ Page({
    * 对话框确认按钮点击事件
    */
   onConfirm: function () {
-    let that = this;
-    let data = this.data.my_topic_data[this.data.selected_id];
+    // let that = this;
+    // let data = this.data.my_topic_data[this.data.selected_id];
 
-    let showFailToast = function () {
-      wx.showToast({
-        title: '大哥饶命，打卡失败....55555...',
-        icon: 'none',
-        duration: 2000
-      })
-    };
+    // let showFailToast = function () {
+    //   wx.showToast({
+    //     title: '大哥饶命，打卡失败....55555...',
+    //     icon: 'none',
+    //     duration: 2000
+    //   })
+    // };
     
-    api.postRequest({
-      'url': '/userTopic/check',
-      'data': {
-        'topic_name': data['topic_name']
-      },
-      'success': (res) => {
-        if (res.error_code == 200) {
-          let boolData = 'my_topic_data[' + this.data.selected_id + '].is_checked';
-          let insistData = 'my_topic_data[' + this.data.selected_id + '].insist_day';
-          let totalData = 'my_topic_data[' + this.data.selected_id + '].total_day';
-          that.setData({
-            [boolData]: true,
-            [insistData]: res['result_list']['insist_day'],
-            [totalData]: res['result_list']['total_day']
-          });
-        } else showFailToast();
-      },
-      'fail': (res) => {
-        console.log('check user_topic 表失败');
-        showFailToast();
-      }
-    });
+    // api.postRequest({
+    //   'url': '/userTopic/check',
+    //   'data': {
+    //     'topic_name': data['topic_name']
+    //   },
+    //   'success': (res) => {
+    //     if (res.error_code == 200) {
+    //       let boolData = 'my_topic_data[' + this.data.selected_id + '].is_checked';
+    //       let insistData = 'my_topic_data[' + this.data.selected_id + '].insist_day';
+    //       let totalData = 'my_topic_data[' + this.data.selected_id + '].total_day';
+    //       that.setData({
+    //         [boolData]: true,
+    //         [insistData]: res['result_list']['insist_day'],
+    //         [totalData]: res['result_list']['total_day']
+    //       });
+    //     } else showFailToast();
+    //   },
+    //   'fail': (res) => {
+    //     console.log('check user_topic 表失败');
+    //     showFailToast();
+    //   }
+    // });
 
+
+
+    let data = this.data.my_topic_data[this.data.selected_id];
+    let boolData = 'my_topic_data[' + this.data.selected_id + '].is_checked';
+    let logData = 'my_topic_data[' + this.data.selected_id + '].log';
+    let insistData = 'my_topic_data[' + this.data.selected_id + '].insist_day';
+    let totalData = 'my_topic_data[' + this.data.selected_id + '].total_day';
+    this.setData({
+      [boolData]: true,
+      [logData]: this.data.textarea_value,
+      [insistData]: data['insist_day'] + 1,
+      [totalData]: data['total_day'] + 1,
+      textarea_value: '', 
+    });
+    console.log(this.data.my_topic_data);
     this.hideModal();
   },
 
@@ -334,7 +362,8 @@ Page({
   inputChange: function(e){
     console.log(e.detail.value);
     this.setData({
-      word_left_num: 140 - e.detail.value.length //默认最多输入140
+      word_left_num: 140 - e.detail.value.length, //默认最多输入140
+      textarea_value: e.detail.value
     });
   },
 

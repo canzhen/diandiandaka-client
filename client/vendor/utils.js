@@ -551,6 +551,21 @@ function filterDatedData(user_topic_list){
   }
 }
 
+/**
+ * 过滤掉没变化的数据，只剩下用户修改过的数据
+ */
+function filterUnchangeData(user_topic_list){
+  var filtered_list = [];
+  for (var i in user_topic_list){
+    var item = user_topic_list[i];
+    if (!item['is_checked']) continue;
+    filtered_list.push(item);
+  }
+  return filtered_list;
+}
+
+
+
 module.exports = {
   /* 功能方面 */
   login, 
@@ -589,4 +604,5 @@ module.exports = {
   /* mytopic部分 */
   getMyTopicTopicNumByLength, //计算下标
   filterDatedData, //过滤掉过期的数据，主要是看insist_day连续坚持天数是否正确
+  filterUnchangeData, //过滤掉没变化的数据，只剩下有变化的数据
 }
