@@ -400,6 +400,7 @@ function getCompletenessSubtitle (currentdate, timelapse, n) {
     default:
       break;
   }
+  if (startdate > moment()) return false;
 
   subtitle = startdate.format('YYYY.MM.DD') + ' 到 ' + enddate.format('YYYY.MM.DD');
 

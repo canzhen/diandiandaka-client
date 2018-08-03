@@ -237,9 +237,13 @@ Page({
     // console.log('n=' + n);
     // console.log('timelapse=' + timelapse);
     // console.log('before, current_date:' + this.data.completeness_week_current_date);
-
-
-    if (ans == false) return false;
+    if (ans == false) {
+      wx.showToast({
+        title: '无法查看未来的数据哟~',
+        icon: 'none'
+      })
+      return false;
+    }
     this.setData({
       completeness_week_subtitle: ans['subtitle'],
       completeness_week_current_date: ans['enddate']
