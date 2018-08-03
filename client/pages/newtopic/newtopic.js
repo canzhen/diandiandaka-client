@@ -181,7 +181,7 @@ Page({
     //将卡片姓名和卡片图像url添加到卡片表中
     api.postRequest({
       'url': '/topic/createtopic',
-      'showLoading': false, 
+      'showLoading': true, 
       'data': {
         'topicname': value.input_topic_name,
         'topicurl': this.data.topic_url,
