@@ -39,6 +39,12 @@ checkbox {
   margin-bottom: 20rpx;
 }
 
+
+/* 展示图标的整块左右可滑动的区域 */
+.icon-image-scroll-view{
+  height: 550rpx;
+}
+
 /* 大的整块选择图标区域 */
 .icon-image-view{
   display:flex; 
@@ -73,10 +79,16 @@ checkbox {
   height: 75rpx;
 }
 
+.image-punched-in {
+  width: 40rpx;
+  height: 40rpx;
+  margin-left: -40rpx;
+}
+
 .new-topic-button{
   width: 170rpx;
   height: 85rpx;
-  margin: 150rpx 70rpx 90rpx 220rpx;
+  margin: 100rpx 70rpx 90rpx 220rpx;
 
   display: flex;
   flex-direction: row;
@@ -97,15 +109,9 @@ checkbox {
 }
 
 
-.image-punched-in {
-  width: 40rpx;
-  height: 40rpx;
-  margin-left: -40rpx;
-}
-
-
+/* 
 .last-line-view{
   position: fixed;
   left: 75rpx;
   bottom: 1%;
-}
+} */

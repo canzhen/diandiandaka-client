@@ -29,24 +29,26 @@
     </view>
     <view class="line"></view>
 
-    <view class="pick-icon-text">选择图标</view>
+    <view class="pick-icon-text"> 选择图标
+      <text style="font-size:25rpx;">(滑动查看更多)</text>
+    </view>
 
-    <!-- 展示图标（每行六个图标） -->
-    <view class="icon-image-view" wx:for="{{icon_name_num}}" wx:key="idx" wx:for-item="row_data">
-      <!-- 每一行 -->
-      <view class="icon-image-row" wx:for="{{row_data}}" wx:key="col" wx:for-item="num">
-        <view class="icon-image-each-item" bindtap="checkIcon" data-src="/images/{{icon_data[num]}}" data-idx="{{num}}" data-url="{{icon_data[num]}}">
-          <image class="image" src="{{icon_data[num]}}"></image>
-          <icon class="image-punched-in" wx:if="{{icon_data[num] == topic_url}}"
-                  type="success_no_circle" size="30"></icon>
+    <scroll-view class="icon-image-scroll-view" scroll-y scroll-with-animation >
+      <!-- 展示图标（每行六个图标） -->
+      <view class="icon-image-view" wx:for="{{icon_name_num}}" wx:key="idx" wx:for-item="row_data">
+        <!-- 每一行 -->
+        <view class="icon-image-row" wx:for="{{row_data}}" wx:key="col" wx:for-item="num">
+          <view class="icon-image-each-item" bindtap="checkIcon" data-src="/images/{{icon_data[num]}}" data-idx="{{num}}" data-url="{{icon_data[num]}}">
+            <image class="image" src="{{icon_data[num]}}"></image>
+            <icon class="image-punched-in" wx:if="{{icon_data[num] == topic_url}}"
+                    type="success_no_circle" size="30"></icon>
+          </view>
         </view>
+        <!-- 每行结束 -->
       </view>
-      <!-- 每行结束 -->
-    </view>
+    </scroll-view>
 
 
-    <view class="last-line-view">
-      <button class="new-topic-button" form-type="submit"> 确定 </button>
-    </view>
+    <button class="new-topic-button" form-type="submit"> 确定 </button>
   </form>
 </view>
