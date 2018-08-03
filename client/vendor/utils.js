@@ -76,7 +76,10 @@ function getStorageSync(key) {
   }
 }
 
-function getMyTopicTopicNumByLength(l, numEachRow){
+/**
+ * 计算下标
+ */
+function getSubscriptByLength(l, numEachRow){
   /* 动态创建my_topic_data_num作为分行下标 */
   var r = parseInt(l / numEachRow),
       c = l % numEachRow;
@@ -101,6 +104,7 @@ function getMyTopicTopicNumByLength(l, numEachRow){
   // console.log(temp_topic_data_num)
   return temp_topic_data_num;
 }
+
 
 /**
   判断闰年还是平年
@@ -144,7 +148,8 @@ function addZero(num) {
 function generateCalendar(checkedDataList, year, month, color) {
   var arr = [];
   // 根据某年某月的第一天是星期几来填充空值
-  for (let j = 1; j < getFirstDayofGivenMonth(year + '-' + month); j++) arr.push(' ');
+  for (let j = 1; j < getFirstDayofGivenMonth(year + '-' + month); j++)    
+    arr.push(' ');
   // 根据当前月有多少天，循环把日期放入数组
   for (let i = 0; i < getDaysOfGivenMonth(year)[month-1]; i++) {
     let value = year + '-' + addZero(month) + '-' + addZero(i + 1);
@@ -195,9 +200,7 @@ function generateCalendar(checkedDataList, year, month, color) {
  * 将时间翻译成带有中文字符‘年’‘月’
  */
 function translateFormateDate(date) {
-  var year = date.split('-')[0];
-  var month = date.split('-')[1];
-  return year + '年' + month + '月';
+  return moment().format('YYYY年MM月');
 }
 
 
@@ -206,14 +209,7 @@ function translateFormateDate(date) {
  * 获取格式化日期和时间，中文版
  */
 function getFormateDatetimeCN(date) {
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  const hour = date.getHours();
-  const minute = date.getMinutes();
-
-  return year + '年' + month + '月' + 
-          day + '日 ' + hour + '时' + minute + '分';
+  return moment().format('YYYY年MM月DD日 hh时mm分');
 }
 
 
@@ -223,80 +219,15 @@ function getFormateDatetimeCN(date) {
  * 获取格式化日期和时间，英文版
  */
 function getFormateDatetimeEN(date) {
-  const year = date.getFullYear();
-  const month = date.getMonth() + 1;
-  const day = date.getDate();
-  const hour = date.getHours();
-  const minute = date.getMinutes();
-
-  return year + '.' + month + '.' +
-          day + ' ' + hour + ':' + minute;
+  return moment().format('YYYY.MM.DD hh:mm');
 }
 
 
-
-
-/*
-获取当前时间
-*/
-function getCurrentDate(date) {
-  // var today = new Date()
-  // var year = today.getFullYear()
-  // var month = today.getMonth() + 1
-  // var day = today.getDate()
-  // var week = today.getDay()
-
-  // function getFullDateSlash() {
-  //   return year + '-' + addZero(month) + '-' + addZero(day)
-  // }
-
-  // function getYearMonth() {
-  //   return year + '-' + addZero(month)
-  // }
-
-  // return {
-  //   getFullDateSlash,
-  //   getYearMonth,
-  // }
-}
-
-/*
-给year，month和day，返回'2018-07-08'格式的string
-*/
+/**
+ * 给year，month和day，返回'2018-07-08'格式的string
+ */
 function getFullDateSlash(year, month, day) {
-  if (arguments.length == 3){
-    return year + '-' + addZero(month) + '-' + addZero(day)
-  }else if (arguments.length == 1){
-    let date = arguments[0];
-    return date.getFullYear() + '-' + 
-            addZero(parseInt(date.getMonth() + 1)) + '-' +
-            addZero(date.getDate());
-  }
-}
-
-/*
-接受年月，返回下一个yyyy-mm
-*/
-function nextMonth(date) {
-  var year = date.split('-')[0]
-  var month = date.split('-')[1]
-  if (parseInt(month) < 11)
-    return year + '-' + addZero(parseInt(month) + 1)
-  else
-    return parseInt(year) + 1 + '-' + '01'
-}
-
-/* 
-接受年月，返回前一个yyyy-mm
-*/
-function lastMonth(date) {
-  var year = date.split('-')[0]
-  var month = date.split('-')[1]
-
-  if (month === '01')
-    return parseInt(year) - 1 + '-' + '12'
-  else
-    return year + '-' + addZero(parseInt(month) - 1)
+  return moment().format("YYYY-MM-DD");
 }
 
 
@@ -363,6 +294,8 @@ function getAndCalculateTopicInfo(dataMap, allTopic){
   return infoList;
 }
 
+
+
 // 把TopicInfo按照每size一组，分组
 function divideTopicInfoIntoGroups(dataMap, allTopic, size){
   var count = 0, dividedList = [], tmpList = [];
@@ -399,50 +332,29 @@ function getCheckDetailOnGivenDay(checkedList, givenDate){
   return checkedTopicList;
 }
 
-/*
-根据传入的日期，获取传入日期前或者后n天之后的日期，
-@date 传入的日期
-@n 之后或者之前n天
-返回格式 : '2018.04.03'
-*/
-function getDateByDiffDays(date, n) {
-  var nextweekdate = new Date(date);
-  nextweekdate.setDate(date.getDate() + n);
-  return getFullDateDot(nextweekdate);
-}
-
-function getFullDateDot(nextweekdate){
-  let formatNextWeekDate = nextweekdate.getFullYear() + '.' +
-    addZero(parseInt(nextweekdate.getMonth() + 1)) + '.' +
-    addZero(nextweekdate.getDate());
-  return formatNextWeekDate;
-} 
-
-/*
-获取本周的周一的日期
-*/
-function getWeekStartDate(currentdate) {
-  if (currentdate > new Date()) currentdate = new Date();
-  let diff = currentdate.getDay() == 0 ? 6 : currentdate.getDay() - 1 ;
-  currentdate.setDate(currentdate.getDate() - diff);
-  return currentdate;
+/**
+ * 获取本周的周一的日期
+ */
+function getWeekStartDate(date) {
+  var currentdate = moment(date);
+  let weekOfDay = parseInt(currentdate.format('E'));
+  return currentdate.subtract(weekOfDay - 1, 'days');//周一日期
 }
 
 
-/*
-获取本周日的时间
-*/
+/**
+ * 获取本周日的时间
+ */
 function getWeekEndDate(date) {
-  if (date > new Date()) date = new Date();
-  let diff = date.getDay() == 0 ? 0 : 7 - date.getDay();
-  date.setDate(date.getDate() + diff);
-  return new Date(date);
+  var currentdate = moment(date);
+  let weekOfDay = parseInt(currentdate.format('E'));
+  return currentdate.add(7 - weekOfDay, 'days');//周日日期
 }
 
 
-/*
-获取本月月初的日期
-*/
+/**
+ * 获取本月月初的日期
+ */
 function getMonthStartDate(date) {
   if (date > new Date()) date = new Date();
   let firstDateStr = date.getFullYear() + '-' + parseInt(date.getMonth() + 1);
@@ -450,92 +362,50 @@ function getMonthStartDate(date) {
 }
 
 
-/*
-获取本月月末的日期
-*/
-function getMonthEndDate(date){
-  if (date > new Date()) date = new Date();
-  let firstDate = new Date(getMonthStartDate(date));
-  let diffDay = getDaysOfGivenMonth(firstDate.getFullYear())[firstDate.getMonth()];
-  firstDate.setDate(firstDate.getDate() + diffDay - 1);
-  return firstDate;
-}
-
-/*
-获取从当前月往后数第三个月月末的日期
-*/
-function getThreeMonthEndDate(date) {
-  if (date > new Date()) date = new Date();
-  let year = date.getFullYear(), 
-      month = date.getMonth() + 1;
-
-  let enddate = new Date(year + '-' + month + '-1');
-  enddate.setMonth(enddate.getMonth() + 3);
-  return enddate;
-}
-
-
-/*
-获取当前日期的年份开始时间
-*/
-function getYearStartDate(date){
-  if (date > new Date()) date = new Date();
-  return new Date(date.getFullYear() + '.01.01');
-}
-
-/*
-获取当前日期的年份结束时间
-*/
-function getYearEndDate(date) {
-  if (date > new Date()) date = new Date();
-  return new Date(date.getFullYear() + '.12.31');
-}
-
-
-/*
-获取日期标题
-*/
+/**
+ * 获取日期标题
+ */
 function getCompletenessSubtitle (currentdate, timelapse, n) {
-  let enddate = currentdate == null ? new Date() : new Date(currentdate),
-      startdate = new Date(enddate),
+  let enddate = currentdate == null ? moment() : moment(currentdate),
+      startdate = moment(enddate),
       subtitle = '';
 
   if (n != -1 && n != 1 && n != 0) return;
 
   switch (timelapse) {
     case "1周":
-      if (n == -1 || n == 1) enddate.setDate(enddate.getDate() + n*7);
+      if (n == -1 || n == 1) enddate.add(n*7, 'days');
       enddate = getWeekEndDate(enddate);
-      startdate = getWeekStartDate(new Date(enddate));
+      startdate = getWeekStartDate(enddate);
       break;
     case "1个月":
-      enddate = new Date(enddate.getFullYear() + '-' + parseInt(enddate.getMonth() + 1));
-      if (n == -1 || n == 1) enddate.setMonth(enddate.getMonth() + n);
-      enddate = getMonthEndDate(enddate);
-      startdate = getMonthStartDate(new Date(enddate));
+      enddate = moment(enddate).startOf('month');
+      if (n == -1 || n == 1) enddate.add(n, 'month');
+      enddate = moment(enddate).endOf('month');
+      startdate = moment(enddate).startOf('month');
       break;
     case "3个月": 
-      enddate = new Date(enddate.getFullYear() + '-' + parseInt(enddate.getMonth() + 1));
-      if (n == 0) enddate = getThreeMonthEndDate(enddate);
-      else enddate.setMonth(enddate.getMonth() + n * 3);
-      startdate.setYear(enddate.getFullYear());
-      startdate.setMonth(enddate.getMonth() - 3);
-      startdate.setDate(enddate.getDate());
+      enddate = moment(enddate).startOf('month');
+      if (n == 0) enddate = moment(enddate).add(3, 'month').endOf('month');
+      else enddate = moment(enddate).add(n*3, 'month');
+      startdate = moment(enddate).subtract(3, 'month');
       break;
     case "1年":
-      if (n == -1 || n == 1) enddate.setYear(enddate.getFullYear() + n);
-      enddate = getYearEndDate(enddate);
-      startdate = getYearStartDate(enddate);
+      if (n == -1 || n == 1) enddate = moment(enddate).add(n, 'year');
+      enddate = enddate.endOf('year');
+      startdate = moment(enddate).startOf('year');
       break;
     case "全部":
       break;
     default:
       break;
   }
-  subtitle = getFullDateDot(startdate) + ' 到 ' + getFullDateDot(enddate);
+
+  subtitle = startdate.format('YYYY.MM.DD') + ' 到 ' + enddate.format('YYYY.MM.DD');
 
   return {'subtitle': subtitle, 'enddate': enddate};
 }
+
 
 /**
  * 将24小时未打卡的卡片insist_day设置为0
@@ -585,27 +455,17 @@ module.exports = {
   translateFormateDate,
   getFormateDatetimeCN,
   getFormateDatetimeEN,
-  getCurrentDate,
-  nextMonth,
-  lastMonth,
   getAllTopicList,
   getCheckedDataOfEveryTopic,
   getAndCalculateTopicInfo,
   divideTopicInfoIntoGroups,
   getCheckDetailOnGivenDay,
-  getDateByDiffDays,
   getWeekEndDate,
   getWeekStartDate,
-  getMonthStartDate,
-  getMonthEndDate,
-  getThreeMonthEndDate,
-  getYearStartDate,
-  getYearEndDate,
-  getFullDateDot,
   getCompletenessSubtitle,
 
   /* mytopic部分 */
-  getMyTopicTopicNumByLength, //计算下标
+  getSubscriptByLength, //计算下标
   filterDatedData, //过滤掉过期的数据，主要是看insist_day连续坚持天数是否正确
   filterUnchangeData, //过滤掉没变化的数据，只剩下有变化的数据
 }

@@ -39,7 +39,7 @@ Page({
         if (res.error_code == 200) {
           this.setData({
             icon_data: res.result_list,
-            icon_name_num: utils.getMyTopicTopicNumByLength(res.result_list.length, numEachRow),
+            icon_name_num: utils.getSubscriptByLength(res.result_list.length, numEachRow),
             topic_name: options.topic_name ? options.topic_name : '',
             topic_url: options.topic_url ? options.topic_url : '',
           });
@@ -49,7 +49,7 @@ Page({
     });
 
     this.setData({
-      icon_name_num: utils.getMyTopicTopicNumByLength(this.data.icon_data.length, numEachRow),
+      icon_name_num: utils.getSubscriptByLength(this.data.icon_data.length, numEachRow),
       topic_name: options.topic_name ? options.topic_name : '',
       topic_url: options.topic_url ? options.topic_url : '',
     });
@@ -307,7 +307,7 @@ Page({
               old_data_list.push(url);
               that.setData({
                 icon_data: old_data_list,
-                icon_name_num: utils.getMyTopicTopicNumByLength(old_data_list.length, numEachRow)
+                icon_name_num: utils.getSubscriptByLength(old_data_list.length, numEachRow)
               });
               // 更新数据库里的avatar_url字段
               insertNewTopicUrl(filename);

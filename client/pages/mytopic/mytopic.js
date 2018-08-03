@@ -51,7 +51,7 @@ Page({
     // 根据当前卡片数来生成每一行图片的的下标
     let createRowNum = function () {
       that.setData({
-        my_topic_data_num: utils.getMyTopicTopicNumByLength(that.data.my_topic_data.length, numEachRow)
+        my_topic_data_num: utils.getSubscriptByLength(that.data.my_topic_data.length, numEachRow)
       });
     }
 

@@ -10,7 +10,7 @@ var utils = require('../../vendor/utils.js');
 Page({
   data: {
     navbar: ['所有历史', '每日完成度'],
-    currentTab: 0,
+    currentTab: 1,
 
     /* 以下的data属于【所有历史】*/
     date: '', // 用户选择的date，随时都会变化
@@ -46,7 +46,8 @@ Page({
     let allTopic = utils.getAllTopicList(this.data.checked_data_list); //所有topic名字的集合
     let checkedTimeList = utils.getCheckedDataOfEveryTopic(this.data.checked_data_list, allTopic);
     let fullTopicInfo = utils.getAndCalculateTopicInfo(checkedTimeList, this.data.topic_info);
-    let allTopicInfoDivided = utils.divideTopicInfoIntoGroups(checkedTimeList,
+    let allTopicInfoDivided = utils.divideTopicInfoIntoGroups(
+      checkedTimeList,
       this.data.topic_info,
       this.data.topic_info_divided_size);
     this.setData({ //初始化当前日期，且不再改变
@@ -60,8 +61,6 @@ Page({
     this.setCompletenessSubtitle('1周', 0), //一周的历史记录上的文字
     this.newCanvas(['一', '二', '三', '四', '五', '六', '七'], 
                     [15, 20, 45, 37, 4, 80, 19]); //生成新的每周数据
-
-    // getDateByDiffDays(today, 7);
   },
 
 
@@ -89,10 +88,9 @@ Page({
 
 
 
-
-  /*
-  所有历史部分
-  */
+  /**
+   * 所有历史部分
+   */
   // 单击tap时触发的函数
   navbarTap: function (e) {
     let tabidx = e.currentTarget.dataset.idx;
@@ -194,9 +192,9 @@ Page({
     });
   },
 
-  /*
-  新建canvas并往里填充数据
-  */
+  /**
+   * 新建canvas并往里填充数据
+   */
   newCanvas: function (categories, data) {
     /* 新建图表 */
     new Charts({
@@ -217,10 +215,12 @@ Page({
     });
   },
 
-  /*
-  获取每日完成度-1周-的子标题： “2018.08.14到2018.08.21”
-  @param n int: 上周还是下周，还是当前，如果是上周则为-1，如果是下周则为1，如果是当前则为0
-  */
+  
+  
+  /**
+   * 获取每日完成度-1周-的子标题："2018.08.14到2018.08.21"
+   * @param n int: 上周还是下周，还是当前，如果是上周则为-1，如果是下周则为1，如果是当前则为0
+   */
   setCompletenessSubtitle: function (timelapse, n) {
     let ans = utils.getCompletenessSubtitle(this.data.completeness_week_current_date, timelapse, n);
     // console.log('n=' + n);
