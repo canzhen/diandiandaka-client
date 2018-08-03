@@ -195,26 +195,6 @@ function generateCalendar(checkedDataList, year, month, color) {
   return ans;
 }
 
-
-/**
- * 将时间翻译成带有中文字符‘年’‘月’
- */
-function translateFormateDate(date) {
-  return moment().format('YYYY年MM月');
-}
-
-
-
-/**
- * 获取格式化日期和时间，中文版
- */
-function getFormateDatetimeCN(date) {
-  return moment().format('YYYY年MM月DD日 hh时mm分');
-}
-
-
-
-
 /**
  * 获取格式化日期和时间，英文版
  */
@@ -372,41 +352,37 @@ function getMonthStartDate(date) {
  * 获取日期标题
  */
 function getCompletenessSubtitle (currentdate, timelapse, n) {
-  let enddate = currentdate == null ? moment() : moment(currentdate),
-      startdate = moment(enddate),
+  let startdate = currentdate == null ? moment() : moment(currentdate),
+      enddate = moment(startdate),
       subtitle = '';
 
   if (n != -1 && n != 1 && n != 0) return;
 
   switch (timelapse) {
     case "1周":
-      if (n == -1 || n == 1) enddate.add(n*7, 'days');
-      enddate = getWeekEndDate(enddate);
-      startdate = getWeekStartDate(enddate);
+      if (n != 0) startdate.add(n*7, 'days');
+      startdate = getWeekStartDate(startdate);
+      enddate = getWeekEndDate(startdate);
       break;
     case "1个月":
-      enddate = moment(enddate).startOf('month');
-      if (n == -1 || n == 1) enddate.add(n, 'month');
-      enddate = moment(enddate).endOf('month');
-      startdate = moment(enddate).startOf('month');
+      enddate = moment(enddate).add(n, 'month');
+      startdate = moment(enddate).subtract(1, 'month')
       break;
-    case "3个月": 
-      enddate = moment(enddate).startOf('month');
-      if (n == 0) enddate = moment(enddate).add(3, 'month').endOf('month');
-      else enddate = moment(enddate).add(n*3, 'month');
-      startdate = moment(enddate).subtract(3, 'month');
+    case "3个月":
+      enddate = moment(enddate).add(3*n, 'month').endOf('month');
+      startdate = moment(enddate).subtract(3, 'month')
       break;
     case "1年":
-      if (n == -1 || n == 1) enddate = moment(enddate).add(n, 'year');
-      enddate = enddate.endOf('year');
-      startdate = moment(enddate).startOf('year');
+      if (n != 0) startdate = moment(startdate).add(n, 'year');
+      startdate = startdate.startOf('year');
+      enddate = moment(startdate).endOf('year');
       break;
     case "全部":
       break;
     default:
       break;
   }
-  if (startdate > moment()) return false;
+  // if (startdate > moment()) return false;
 
   subtitle = startdate.format('YYYY.MM.DD') + ' 到 ' + enddate.format('YYYY.MM.DD');
 
@@ -460,8 +436,6 @@ module.exports = {
   generateCalendar,
   getFullDateSlash,
   getYearMonthSlash,
-  translateFormateDate,
-  getFormateDatetimeCN,
   getFormateDatetimeEN,
   // getAllTopicList,
   getCheckedDataOfEveryTopic,

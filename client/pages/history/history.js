@@ -5,13 +5,15 @@ import {
 } from './data'
 
 var Charts = require('wxcharts.js');
-var utils = require('../../vendor/utils.js');
+const utils = require('../../vendor/utils.js');
 const api = require('../../ajax/api.js');
+const moment = require('../../vendor/moment.min.js');
+
 
 Page({
   data: {
     navbar: ['所有历史', '每日完成度'],
-    currentTab: 0,
+    currentTab: 1,
 
     /* --------------以下的data属于【所有历史】-------------- */
     date: '', // 用户选择的date，随时都会变化
@@ -121,18 +123,19 @@ Page({
     let allTopic = this.data.topic_name_list; //所有topic名字的集合
     let topic = allTopic[this.data.selected_topic_idx]; //当前选中的topic名
     let checkedTime = this.data.checked_time_per_topic[topic]; //当前选中的topic的所有check信息
-
-    var year = date.split('-')[0];
-    var month = date.split('-')[1];
-    var preYear = month == 1 ? year - 1 : year;
-    var preMonth = month == 1 ? 12 : month - 1;
+    var currentMoment = moment(date);
+    var year = currentMoment.format('YYYY');
+    var month = currentMoment.format('MM');
+    var preYear = moment(date).subtract(1, 'month').format('YYYY');
+    var preMonth = moment(date).subtract(1, 'month').format('MM');
+    
 
     this.setData({
       // 获取当前月份的天数组，以及相应的每天的是否打卡的数据
       'year_month_list[1]': utils.generateCalendar(checkedTime, year, month, '#f8d3ad'),
       'year_month_list[0]': utils.generateCalendar(checkedTime, preYear, preMonth, '#f3c6ca'),
-      date: year + '-' + utils.addZero(month),
-      dateCN: utils.translateFormateDate(year + '-' + utils.addZero(month)),
+      date: moment(date).format('YYYY-MM'),
+      dateCN: moment(date).format('YYYY年MM月'),
       selected_topic: allTopic[0]
     });
   },
@@ -157,12 +160,12 @@ Page({
 
   // 获取上个月的数据
   getLastMonth: function (e) {
-    this.fillData(lastMonth(this.data.date));
+    this.fillData(moment(this.data.date).subtract(1, 'month').format('YYYY-MM-DD'));
   },
 
   // 获取下个月的数据
   getNextMonth: function (e) {
-    this.fillData(nextMonth(this.data.date));
+    this.fillData(moment(this.data.date).add(1, 'month').format('YYYY-MM-DD'));
   },
 
   // 文字卡片选择框改变时触发的事件
@@ -230,7 +233,6 @@ Page({
   selectTimeLapse: function (e) {
     let time = e.currentTarget.dataset.time;
     let index = e.currentTarget.dataset.index;
-    console.log('选中了' + time);
 
     let preCheckedStr = 'timelapses[' + this.data.selected_timelapse + '].checked';
     let newCheckedStr = 'timelapses[' + index + '].checked';
