@@ -220,18 +220,20 @@ function getUserTopicByUserId(id, cb) {
 /**
  * 通过用户id更新usertopic信息
  * @param id: 用户的openid
- * @param list: maplist:['topic_name': '', insist_day':'', 'total_day':'']
+ * @param list: maplist:['topic_name': '', insist_day':'', 'topic_name': '', 'total_day':'', 'topic_name': '', 'if_show_log': 0]
  * @param cb: 回调函数
  */
-function updateUserTopicByUserId(id, list, cb) {
+function updateUserTopicNumberByUserId(id, list, cb) {
   let client = connectServer();
-  let l = list.length / 2;
+  let l = list.length / 3;
   let sql = "UPDATE user_topic " +  
             "SET insist_day = CASE topic_name ";
   for (let i=0; i < l/2; i++) sql += "WHEN ? THEN ? ";
   sql += "ELSE insist_day END, total_day = CASE topic_name ";
   for (let i = 0; i < l / 2; i++) sql += "WHEN ? THEN ? ";
-  sql += "ELSE total_day END WHERE user_id = ?;"
+  sql += "ELSE total_day END, if_show_log = CASE topic_name ";
+  for (let i = 0; i < l / 2; i++) sql += "WHEN ? THEN ? ";
+  sql += "ELSE if_show_log END WHERE user_id = ?;"
   list.push(id);
 
   client.query(
@@ -266,6 +268,32 @@ function getUserTopicByUserIdTopicName(id, topic_name, cb) {
 
       let result_list = JSON.parse(JSON.stringify(result));
       cb(!err, result_list[0]);
+    });
+
+  client.end();
+}
+
+
+/**
+ * 通过用户id和topic_name确定一行数据，
+ * 并udpate指定数据中的某一栏
+ */
+function udpateUserTopicColumnByUserIdTopicName(
+    id, topic_name, column_name, column_value, cb){
+
+  let client = connectServer();
+  client.query(
+    "UPDATE user_topic SET ? = ? WHERE user_id = ? AND topic_name = ?;",
+    [column_name, column_value, id, topic_name],
+    function (err, result) {
+      let errmsg = '';
+      if (err) {
+        errmsg = err.message;
+        console.log("UPDATE user_topic某一栏失败，失败信息:" + err.message);
+      } else {
+        console.log('UPDATE user_topic某一栏成功');
+      }
+      cb(!err); //回调函数
     });
 
   client.end();
@@ -320,6 +348,7 @@ module.exports = {
   //user_topic部分
   getUserTopicByUserId,
   getUserTopicByUserIdTopicName,
-  updateUserTopicByUserId,
-  // checkInsertuserTopic
+  updateUserTopicNumberByUserId,
+  udpateUserTopicColumnByUserIdTopicName,
+
 };

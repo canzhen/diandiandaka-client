@@ -541,7 +541,6 @@ function getCompletenessSubtitle (currentdate, timelapse, n) {
  * 将24小时未打卡的卡片insist_day设置为0
  */
 function filterDatedData(user_topic_list){
-  console.log('filter dated data');
   for (var i in user_topic_list){
     var item = user_topic_list[i];
     if (item['insist_day'] == 0) continue; //0就不用管是否过期了
@@ -555,10 +554,14 @@ function filterDatedData(user_topic_list){
  * 过滤掉没变化的数据，只剩下用户修改过的数据
  */
 function filterUnchangeData(user_topic_list){
+  user_topic_list.pop();
   var filtered_list = [];
   for (var i in user_topic_list){
     var item = user_topic_list[i];
-    if (!item['is_checked']) continue;
+    // 打卡，或者取消弹框，则需要在数据库中修改
+    // 用户不可能在“我的打卡”这一页开启弹窗，
+    // 所以只需要判断是否为1即可，1就是没关闭
+    if (!item['is_checked'] && item['if_show_log'] == 1) continue;
     filtered_list.push(item);
   }
   return filtered_list;

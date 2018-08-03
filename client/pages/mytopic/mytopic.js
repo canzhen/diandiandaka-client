@@ -20,6 +20,7 @@ Page({
     textarea_value: '', //textarea默认字
   },
 
+
   /**
    * 页面初始化，获取数据
    */
@@ -29,6 +30,7 @@ Page({
     api.postRequest({
       'url': '/user/getNameAvatar',
       'data': [],
+      'showLoading': true, 
       'success': (res) => {
         if (res.error_code == 200 && res.result_list != []) {
           let reslist = res.result_list;
@@ -82,10 +84,13 @@ Page({
 
 
 
+
   /* 页面加载函数 */
   onLoad(){
     // this.init();
   },
+
+
 
   /* 页面显示函数，tab切换回来也会调用 */
   onShow(){
@@ -99,15 +104,17 @@ Page({
     this.init();
   },
 
+
   /**
    * 保存到当前打卡数据到数据库
    */
   saveCheckData: function(){
     //过滤掉没有打卡的卡片，只剩下打过卡的卡片
     let changed_topic_list = utils.filterUnchangeData(this.data.my_topic_data);
-    // console.log(typeof changed_topic_list);
+    if (changed_topic_list.length == 0) return;
+    console.log(changed_topic_list);
     api.postRequest({
-      'url': '/userTopic/udpateTopicListByUserId',
+      'url': '/userTopic/udpateNumberByUserId',
       'data': { 
         'changedTopicList': JSON.stringify(changed_topic_list)
       },
@@ -115,15 +122,6 @@ Page({
       'success': (res) => {},
       'fail': (res) => {}
     });
-    // let check_data = this.data.my_topic_data;
-    // check_data.pop(); //去除最后一个“添加新卡片”的元素
-    // api.postRequest({
-    //   'url': '/userTopic/udpateTopicListByUserId',
-    //   'data': { 'insist_day': check_data.insist_day},
-    //   'showLoading': false, 
-    //   'success': (res) => {},
-    //   'fail': (res) => {}
-    // });
   },
 
 
@@ -148,6 +146,22 @@ Page({
   },
 
 
+  /**
+   * 下拉刷新
+   */
+  onPullDownRefresh: function () {
+    this.saveCheckData();
+    wx.showNavigationBarLoading(); //在标题栏中显示加载
+    this.init();
+    //模拟加载
+    setTimeout(function () {
+      // complete
+      wx.hideNavigationBarLoading() //完成停止加载
+      wx.stopPullDownRefresh() //停止下拉刷新
+    }, 800);
+  },
+
+
 
   /**
    * 打卡功能
@@ -161,9 +175,9 @@ Page({
     if (data.insist_day == -1) return this.newtopic(event);
 
     // 查看是否之前单击过，如果单击过，则此次单击取消之前单击
-    let boolData = 'my_topic_data[' + this.data.selected_id + '].is_checked';
-    let insistData = 'my_topic_data[' + this.data.selected_id + '].insist_day';
-    let totalData = 'my_topic_data[' + this.data.selected_id + '].total_day';
+    let boolData = 'my_topic_data[' + id + '].is_checked';
+    let insistData = 'my_topic_data[' + id + '].insist_day';
+    let totalData = 'my_topic_data[' + id + '].total_day';
     let origin_is_checked = data.is_checked;
     let origin_insist_day = data.insist_day;
     let origin_total_day = data.total_day;
@@ -177,17 +191,26 @@ Page({
       return;
     }
 
+    if (data.if_show_log == 0){
+      this.setData({
+        [boolData]: true,
+        [insistData]: data['insist_day'] + 1,
+        [totalData]: data['total_day'] + 1,
+      });
+    } else { //如果选择要弹框，则弹出框
+      this.setData({
+        selected_id: id,
+        show_modal: true,
+        modal_todate_time: utils.getFormateDatetimeEN(new Date()),
+        modal_placeholder: '今天' + data.topic_name + '有什么感想咩~',
+      });
+    }
 
-    this.setData({
-      selected_id: id,
-      show_modal: true,
-      modal_todate_time: utils.getFormateDatetimeEN(new Date()),
-      modal_placeholder: '今天' + data.topic_name + '有什么感想咩~',
-    });
   },
 
 
   
+
   /**
    * 添加新卡片
    */
@@ -290,77 +313,81 @@ Page({
 
 
   /**
-   * 隐藏模态对话框
+   * 不再显示，隐藏模态对话框
    */
   hideModal: function () {
     this.setData({
       show_modal: false
     });
+    //设置数据库中if_show_log为false，下次不再显示
+
   },
+
+
+  /**
+   * 对话框确认按钮点击事件
+   */
+  onConfirm: function () {
+    let id = this.data.selected_id;
+    let data = this.data.my_topic_data[id];
+    let boolData = 'my_topic_data[' + id + '].is_checked';
+    let logData = 'my_topic_data[' + id + '].log';
+    let insistData = 'my_topic_data[' + id + '].insist_day';
+    let totalData = 'my_topic_data[' + id + '].total_day';
+    this.setData({
+      [boolData]: true,
+      [logData]: this.data.textarea_value,
+      [insistData]: data['insist_day'] + 1,
+      [totalData]: data['total_day'] + 1,
+      textarea_value: '',
+    });
+    console.log(this.data.my_topic_data);
+    this.hideModal();
+  },
+
 
 
   /**
    * 对话框取消按钮点击事件
    */
   onNeverShow: function () {
-    this.hideModal();
-  },
-
-  /**
-   * 对话框确认按钮点击事件
-   */
-  onConfirm: function () {
-    // let that = this;
-    // let data = this.data.my_topic_data[this.data.selected_id];
-
-    // let showFailToast = function () {
-    //   wx.showToast({
-    //     title: '大哥饶命，打卡失败....55555...',
-    //     icon: 'none',
-    //     duration: 2000
-    //   })
-    // };
-    
-    // api.postRequest({
-    //   'url': '/userTopic/check',
-    //   'data': {
-    //     'topic_name': data['topic_name']
-    //   },
-    //   'success': (res) => {
-    //     if (res.error_code == 200) {
-    //       let boolData = 'my_topic_data[' + this.data.selected_id + '].is_checked';
-    //       let insistData = 'my_topic_data[' + this.data.selected_id + '].insist_day';
-    //       let totalData = 'my_topic_data[' + this.data.selected_id + '].total_day';
-    //       that.setData({
-    //         [boolData]: true,
-    //         [insistData]: res['result_list']['insist_day'],
-    //         [totalData]: res['result_list']['total_day']
-    //       });
-    //     } else showFailToast();
-    //   },
-    //   'fail': (res) => {
-    //     console.log('check user_topic 表失败');
-    //     showFailToast();
-    //   }
-    // });
-
-
-
-    let data = this.data.my_topic_data[this.data.selected_id];
-    let boolData = 'my_topic_data[' + this.data.selected_id + '].is_checked';
-    let logData = 'my_topic_data[' + this.data.selected_id + '].log';
-    let insistData = 'my_topic_data[' + this.data.selected_id + '].insist_day';
-    let totalData = 'my_topic_data[' + this.data.selected_id + '].total_day';
-    this.setData({
-      [boolData]: true,
-      [logData]: this.data.textarea_value,
-      [insistData]: data['insist_day'] + 1,
-      [totalData]: data['total_day'] + 1,
-      textarea_value: '', 
+    let that = this;
+    //弹窗提示用户信息
+    wx.showModal({
+      title: '确认',
+      content: '确认在打卡该卡片时不再弹出打卡日志吗？可在[我]->[设置]中随时打开',
+      confirmText: "不再弹出",
+      cancelText: "取消",
+      success: function (res) {
+        if (!res.confirm) return;
+        console.log('用户确认不再弹出')
+        let data = that.data.my_topic_data[that.data.selected_id];
+        let topic_name = data.topic_name;
+        let not_show_log_str = 'my_topic_data[' + that.data.selected_id + 
+            '].if_show_log';
+        // 设置当前弹出框为0
+        that.setData({
+          [not_show_log_str]: 0
+        });
+        // 修改后台数据库
+        // api.postRequest({
+        //   'url': '/userTopic/udpateColumnByUserIdTopicName',
+        //   'data': {
+        //     'topic_name': topic_name,
+        //     'column_name': 'if_show_log',
+        //     'column_value': 0, //设置为不再弹出
+        //   },
+        //   'success': (res) => {
+        //     if (res) console.log('设置不再弹框成功');
+        //     else console.log('设置不再弹框失败');
+        //   },
+        //   'fail': (res) => { console.log('设置不再弹框失败'); }
+        // });
+        that.hideModal();
+      }
     });
-    console.log(this.data.my_topic_data);
-    this.hideModal();
   },
+
 
   /**
    * 输入框字数变化时触发的函数
@@ -373,17 +400,4 @@ Page({
     });
   },
 
-  /**
-   * 下拉刷新
-   */
-  onPullDownRefresh: function () {
-    wx.showNavigationBarLoading(); //在标题栏中显示加载
-    this.init();
-    //模拟加载
-    setTimeout(function () {
-      // complete
-      wx.hideNavigationBarLoading() //完成停止加载
-      wx.stopPullDownRefresh() //停止下拉刷新
-    }, 800);
-  },
 }); 
