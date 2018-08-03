@@ -6,7 +6,7 @@ const moment = require('./moment.min.js');
  * 每次发送post请求会在header里带一个sessionid，
  * sessionid的header这个功能直接写在api.js里了，封装在每个post请求里
  */
-function login(fnSuccess) {
+function login(cb) {
   const api = require('../ajax/api.js');
   wx.login({ //用户登录
     success(loginResult) {
@@ -19,7 +19,7 @@ function login(fnSuccess) {
         },
         'success': (res) => {
           setStorageSync('sessionId', res.sessionId, 1000 * 60 * 60 * 2); //服务端的session也是默认2小时过期
-          fnSuccess(res);
+          cb(res);
         },
         'fail': function (res) {
           console.log('更新或添加用户登录状态失败，请检查网络状态');

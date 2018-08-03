@@ -24,7 +24,6 @@ Page({
    * 页面初始化，获取数据
    */
   init: function () {
-    if (!utils.getStorageSync('sessionId')) utils.login();
     let that = this;
     /* 获取用户的个性化头像和姓名 */
     api.postRequest({
@@ -63,7 +62,7 @@ Page({
           console.log('获取用户打卡信息成功');
           utils.filterDatedData(res.result_list);
           res.result_list.push({
-            'topic_name': '添加新卡片\n\n\n',
+            'topic_name': '添加新卡片\n\n',
             'topic_url': '/images/xinkapian.png',
             'insist_day': -1,
             'is_checked': false
@@ -90,6 +89,13 @@ Page({
 
   /* 页面显示函数，tab切换回来也会调用 */
   onShow(){
+    if (!utils.getStorageSync('sessionId')) utils.login((res) => {
+      if (res) {
+        console.log('login success');
+        this.init();
+      }else 
+      console.log('login fail');
+    });
     this.init();
   },
 
