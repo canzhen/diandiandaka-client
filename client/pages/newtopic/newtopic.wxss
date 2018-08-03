@@ -55,8 +55,9 @@ checkbox {
 .topic-image-row{
   display:flex; 
   flex-direction:column; 
-  margin-left: 2rpx;
-  margin-right: 2rpx; 
+  justify-content: space-around;
+  margin-left: 7rpx;
+  /* margin-right: 2rpx;  */
 }
 
 /* 每一个卡片 */
@@ -67,6 +68,7 @@ checkbox {
   flex-direction: row;
   justify-content:center;
   align-items: center;
+  margin-right:5rpx;
 }
 
 .icon-image-each-item image{

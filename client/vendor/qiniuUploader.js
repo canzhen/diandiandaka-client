@@ -91,9 +91,6 @@ function doUpload(filePath, success, fail, options, progress, cancelTask) {
     if (!config.qiniuShouldUseQiniuFileName) {
       formData['key'] = fileName
     }
-    console.log('uploadurl:' + url);
-    console.log('filePath:' + filePath);
-    console.log('fileName:' + fileName);
     var uploadTask = wx.uploadFile({
         url: url,
         filePath: filePath,
@@ -105,13 +102,10 @@ function doUpload(filePath, success, fail, options, progress, cancelTask) {
             dataString = String.fromCharCode.apply(null, res.data.data)
           }
           try {
-            console.log(dataString);
             var dataObject = JSON.parse(dataString);
             //do something
             var imageUrl = config.qiniuImageURLPrefix + '/' + dataObject.key;
-            console.log(imageUrl);
             dataObject.imageURL = imageUrl;
-            console.log(dataObject);
             if (success) {
               success(dataObject);
             }

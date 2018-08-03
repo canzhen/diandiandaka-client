@@ -1,5 +1,6 @@
 const utils = require('../../vendor/utils');
 const api = require('../../ajax/api.js');
+const qiniuhelper = require('../../vendor/qiniuhelper.js');
 const numEachRow = 5;
 
 Page({
@@ -17,23 +18,12 @@ Page({
   },
 
 
-  /* 方法部分 */
-  onLoad: function (options) {
-    // //动态创建icon_name_num作为分行下标
-    // var l = this.data.icon_data.length,
-    //     r = l / numEachRow,
-    //     c = numEachRow;
-    
-    // var temp_icon_data_num = new Array();
-    // for (var r1 = 0; r1 < r; r1++) {
-    //   temp_icon_data_num[r1] = new Array();
-    //   for (var c1 = 0; c1 < c; c1++){
-    //     if (r1 * numEachRow + c1 >= l) break;
-    //     temp_icon_data_num[r1][c1] = r1 * numEachRow + c1;
-    //   }
-    // }
 
-    let showFailToast = function(){
+  /**
+   * 初始化
+   */
+  init: function(options){
+    let showFailToast = function () {
       wx.showToast({
         title: '好像除了点错~',
         icon: 'loading',
@@ -46,7 +36,7 @@ Page({
       'data': {},
       'showLoading': true,
       'success': (res) => {
-        if (res.error_code == 200){
+        if (res.error_code == 200) {
           this.setData({
             icon_data: res.result_list,
             icon_name_num: utils.getMyTopicTopicNumByLength(res.result_list.length, numEachRow),
@@ -57,12 +47,21 @@ Page({
       },
       'fail': (res) => { showFailToast(); }
     });
-    
+
     this.setData({
       icon_name_num: utils.getMyTopicTopicNumByLength(this.data.icon_data.length, numEachRow),
       topic_name: options.topic_name ? options.topic_name : '',
       topic_url: options.topic_url ? options.topic_url : '',
     });
+  },
+
+
+  
+  onLoad: function (options) {
+    this.init(options);
+  },
+
+  onShow: function (){
   },
 
 
@@ -251,5 +250,73 @@ Page({
       icon: 'none',
       duration: 2000
     })
-  }
+  },
+
+  /**
+   * 上传自定义图标
+   */
+  uploadIcon: function(){
+
+    let that = this;
+
+    let showFailToast = function () {
+      wx.showToast({
+        title: '大哥饶命，上传失败...',
+        icon: 'none',
+        duration: 2000
+      })
+    };
+
+    let insertNewTopicUrl = function (url) {
+      api.postRequest({
+        'url': '/topicUrl/insert',
+        'data': { 'url': url },
+        'success': (res) => {
+          if (res.error_code == 200)
+            console.log('在topic_url里新增图片url成功');
+          else
+            console.log('在topic_url里新增图片url失败');
+        },
+        'fail': (res) => {
+          console.log('在topic_url里新增图片url失败');
+        }
+      });
+    }
+
+
+    // 弹出选择图片的框
+    wx.chooseImage({
+      count: 1, // 允许选择的图片数
+      sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+      sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+      success: function (res) {
+        wx.showLoading({
+          title: '上传中',
+        })
+        let filepath = res.tempFilePaths[0];
+        let filename = 'topic/' + filepath.substring(filepath.indexOf('tmp/') + 4, filepath.lastIndexOf('.'));
+        // 向服务器端获取token
+        api.getRequest('/qiniu/getToken', {}, (res) => {
+          if (res.error_code == 200) {
+            // 成功获取token之后，开始上传图片
+            let token = res.token;
+            console.log('成功获取token:' + token);
+            qiniuhelper.upload(filepath, filename, token, (status, url) => {
+              if (!status) { showFailToast(); return; }
+              let old_data_list = that.data.icon_data;
+              old_data_list.push(url);
+              that.setData({
+                icon_data: old_data_list,
+                icon_name_num: utils.getMyTopicTopicNumByLength(old_data_list.length, numEachRow)
+              });
+              // 更新数据库里的avatar_url字段
+              insertNewTopicUrl(filename);
+              wx.hideLoading();
+              console.log('成功上传新头像！地址是：' + that.data.icon_data);
+            });
+          } else { showFailToast(); return; }
+        });
+      }
+    });
+  },
 });

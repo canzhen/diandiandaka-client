@@ -1,4 +1,5 @@
 const express = require('express');
+const config = require('../config.js');
 const dbhelper = require('../helpers/dbhelper.js')
 const redishelper = require('../helpers/redishelper.js');
 const router = express.Router();
@@ -43,13 +44,13 @@ router.post('/createtopic', function (req, res) {
           /* 如果存在，则在该卡片的记录的打卡人数上加一 */
           if (ifExist) {
             dbhelper.updateTopic(req.body.topicname, (updateStatus) => {
-              if (updateStatus) res.send({ 'error_code': 200, 'msg': '' });
-              else res.send({ 'error_code': 100, 'msg': '' });
+              let error_code = updateStatus ? 200 : 100;
+              res.send({ 'error_code': error_code, 'msg': '' });
             });
           } else {/* 如果不存在，则需要往卡片表新增一条数据 */
-            dbhelper.insertTopic(req.body.topicname, req.body.topicurl, 1, (result) => {
-              if (result) res.send({ 'error_code': 200, 'msg': '' });
-              else res.send({ 'error_code': 100, 'msg': '' });
+            dbhelper.insertTopic(req.body.topicname, req.body.topicurl, 1, (status) => {
+              let error_code = status ? 200 : 100;
+              res.send({ 'error_code': error_code, 'msg': '' });
             });
           }
         });
@@ -101,11 +102,14 @@ router.post('/checktopic', function (req, res) {
  * 获取topic表的所有数据
  */
 router.get('/gettopic', function (req, res) {
-  dbhelper.getTopic(req.query.limit_num, (status, alldata) => {
+  dbhelper.getTopic(req.query.limit_num, (status, result_list) => {
+    for (var i in result_list) {
+      result_list[i]['topic_url'] = config.qiniu.prefix + result_list[i]['topic_url'];
+    }
     let error_code = status ? 200 : 100;
     res.send({
       'error_code': error_code,
-      'data': alldata });
+      'data': result_list });
   });
 });
 

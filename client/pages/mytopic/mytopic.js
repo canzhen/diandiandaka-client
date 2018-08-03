@@ -279,7 +279,7 @@ Page({
       sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
       success: function (res) {
         let filepath = res.tempFilePaths[0];
-        let filename = filepath.substring(filepath.indexOf('tmp/') + 4, filepath.lastIndexOf('.'));
+        let filename = 'avatar/' + filepath.substring(filepath.indexOf('tmp/') + 4, filepath.lastIndexOf('.'));
         // 向服务器端获取token
         api.getRequest('/qiniu/getToken', {}, (res) => {
           if (res.error_code == 200) {
@@ -289,6 +289,7 @@ Page({
             console.log('成功获取token:' + token);
             qiniuhelper.upload(filepath, filename, token, (status, url) => {
               if (!status) { showFailToast(); return; }
+              // 头像需要剪裁成正方形，所以需要加上特定api
               url += qiniuhelper.config.scaleAPI;
               // 设置当前显示的头像为上传到七牛的图片url
               that.setData({
