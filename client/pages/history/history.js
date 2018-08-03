@@ -44,7 +44,9 @@ Page({
 
 
 
-
+  /**
+   * 初始化函数
+   */
   init: function(){
 
     let getTopicNameList = function(list){
@@ -61,6 +63,7 @@ Page({
     api.postRequest({
       'url': '/userTopic/getTopicListByUserId',
       'data': [],
+      'showLoading': true,
       'success': (res) => { //成功
         if (res.error_code == 200) {
           let result_list = res.result_list;
@@ -100,7 +103,14 @@ Page({
 
 
 
-  onLoad: function () {
+  onShow: function () {
+    if (!utils.getStorageSync('sessionId')) utils.login((res) => {
+      if (res) {
+        console.log('login success');
+        this.init();
+      } else
+        console.log('login fail');
+    });
     this.init();
   },
 

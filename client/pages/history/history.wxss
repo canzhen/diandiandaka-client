@@ -10,7 +10,7 @@ page{
   flex: none;
   display: flex;
   background: #fff;
-  margin-top: 20rpx;
+  margin-top: 15rpx;
 }
 
 .navbar .item{
@@ -43,7 +43,7 @@ page{
   display: flex;
   flex-direction: row;
   width: 100%;
-  margin-top: 30rpx;
+  margin-top: 20rpx;
 }
 
 .all-history-left{
@@ -115,8 +115,10 @@ image{
   display: flex;
   flex-direction: row;
   justify-content:center;
-  margin: 0rpx 10rpx 10rpx 10rpx;
+  align-items:center;
+  margin: 0rpx 10rpx 10rpx -10rpx;
   font-size: 30rpx;
+  color: #888888;
 }
 
 .all-history-emphasize{
@@ -126,10 +128,13 @@ image{
 .calendar-panel{
   display: flex; 
   flex-direction: row;
-  height: 390rpx;
-  margin: 0rpx 20rpx 20rpx 20rpx;
+  height: 380rpx;
+  margin: 10rpx 20rpx 10rpx 20rpx;
   background-color: #f6f6f6;
   padding-bottom: 20rpx;
+
+  border-radius: 20rpx;
+  box-shadow: 1px 1px 2px 2rpx #f4f3f3;
 }
 
 .year-month-circle{
@@ -176,16 +181,28 @@ image{
   display: flex;
   flex-direction: row;
   justify-content:center;
-  align-items: center;
+  align-items:center;
   margin-bottom:10rpx;
   color: #8c8c8c;
 }
 
-.picker{
-  margin: 0rpx 10rpx 0rpx 10rpx;
-  color: #888888;
-  /* box-sizing: border-box;
-  border: 2rpx solid #eee; */
+.select-topic-picker{
+  width: 250rpx;
+  /* height: rpx; */
+  padding: 2rpx 5rpx 2rpx 20rpx;
+  box-sizing: border-box;
+  border: 1rpx solid #f4f3f3;
+  background-color: rgba(0,0,0,0.02);
+  border-radius: 7rpx;
+  box-shadow: 1px 1px 2px 2rpx #f4f3f3;
+
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.all-history-first-row-right{
+  margin-left: 15rpx;
 }
 
 .checked{
@@ -197,8 +214,8 @@ image{
 .all-history-last-row{
   display: flex;
   flex-direction: row-reverse;
-  margin:-5rpx 20rpx 20rpx 10rpx;
-  /* font-size: 30rpx; */
+  margin:10rpx 20rpx 20rpx 10rpx;
+  color: #888888;
 }
 /* 所有历史部分结束 */
 

@@ -35,14 +35,17 @@
                 bindchange="bindTopicChange"
                 mode="selector"
                 range="{{topic_name_list}}">
-          <view class="picker">
-            <text>{{topic_info[selected_topic_idx].topic_name}}：已坚持</text>
-            <text class="all-history-emphasize">{{topic_info[selected_topic_idx].total_day}}</text>
-            <text>天，已连续</text>
-            <text class="all-history-emphasize">{{topic_info[selected_topic_idx].insist_day}}</text>
-            <text>天</text>
+          <view class="select-topic-picker">
+            {{topic_info[selected_topic_idx].topic_name}}
           </view>
         </picker>
+        <view class="all-history-first-row-right">
+          <text>已坚持</text>
+          <text class="all-history-emphasize">{{topic_info[selected_topic_idx].total_day}}</text>
+          <text>天，已连续</text>
+          <text class="all-history-emphasize">{{topic_info[selected_topic_idx].insist_day}}</text>
+          <text>天</text>
+        </view>
       </view>
 
       <!-- 日历板块 -->
