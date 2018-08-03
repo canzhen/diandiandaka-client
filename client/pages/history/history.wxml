@@ -34,8 +34,7 @@
                 mode="selector"
                 range="{{all_topic}}">
           <view class="picker">
-          {{topic_info[selected_topic_idx].number}}
-            <text>{{topic_info[selected_topic_idx].name}}，已坚持</text>
+            <text>{{topic_info[selected_topic_idx].name}}：已坚持</text>
             <text class="all-history-emphasize">{{topic_info[selected_topic_idx].total_day}}</text>
             <text>天，已连续</text>
             <text class="all-history-emphasize">{{topic_info[selected_topic_idx].successive_day}}</text>

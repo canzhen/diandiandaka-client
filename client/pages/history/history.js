@@ -10,9 +10,9 @@ var utils = require('../../vendor/utils.js');
 Page({
   data: {
     navbar: ['所有历史', '每日完成度'],
-    currentTab: 1,
+    currentTab: 0,
 
-    /* 以下的data属于【所有历史】*/
+    /* --------------以下的data属于【所有历史】-------------- */
     date: '', // 用户选择的date，随时都会变化
     current_date: '', // 当前的时间，一旦设置则不会改变
     year_month_list: [], // 包含两个元素，初始化时，第一个是当前月的上个月，第二个是当前月
@@ -26,7 +26,8 @@ Page({
     topic_info_divided_size: 5, // N = 5
     topic_info_divided_idx: 0, //当前显示哪一组data（每一组有N个）
 
-    /* 以下的data属于【每日完成度】*/
+
+    /* --------------以下的data属于【每日完成度】--------------*/
     timelapses: [ //所有的时间区间的选项
                   { 'name': '1周', 'checked': true },
                   { 'name': '1个月', 'checked': false },
@@ -40,7 +41,10 @@ Page({
     touchMoveXPos: -1, //鼠标拖动图表的距离
   },
 
-  onLoad: function () {
+
+
+
+  init: function(){
     /* 获取当前年、月 */
     let today = new Date();
     let allTopic = utils.getAllTopicList(this.data.checked_data_list); //所有topic名字的集合
@@ -57,10 +61,16 @@ Page({
       topic_info_divided: allTopicInfoDivided, //被N个N个分成一组的topics
       checked_time_per_topic: checkedTimeList, //根据topic分类的check信息
     });
-    this.fillData(this.data.current_date); 
+    this.fillData(this.data.current_date);
     this.setCompletenessSubtitle('1周', 0), //一周的历史记录上的文字
-    this.newCanvas(['一', '二', '三', '四', '五', '六', '七'], 
-                    [15, 20, 45, 37, 4, 80, 19]); //生成新的每周数据
+      this.newCanvas(['一', '二', '三', '四', '五', '六', '七'],
+        [15, 20, 45, 37, 4, 80, 19]); //生成新的每周数据
+  },
+
+
+
+  onLoad: function () {
+    this.init();
   },
 
 
@@ -285,4 +295,23 @@ Page({
     //   touchMoveXPos: -1
     // });
   },
+
+
+
+
+
+  /**
+   * 下拉刷新
+   */
+  onPullDownRefresh: function () {
+    wx.showNavigationBarLoading(); //在标题栏中显示加载
+    this.init();
+    //模拟加载
+    setTimeout(function () {
+      // complete
+      wx.hideNavigationBarLoading() //完成停止加载
+      wx.stopPullDownRefresh() //停止下拉刷新
+    }, 800);
+  },
+
 })

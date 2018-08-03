@@ -2,6 +2,7 @@ Page{
   font-size: 30rpx;
   display: flex;
   flex-direction: column;
+  position: fixed;
 }
 
 /* 去除button边框 */

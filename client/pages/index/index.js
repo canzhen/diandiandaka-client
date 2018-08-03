@@ -20,13 +20,16 @@ Page({
     helper.navigateToNewTopicPage(topicname, topicurl);
   },
 
-  init: function(){
+  init: function(ifShowLoading = true){
     // if (utils.getStorageSync('sessionId')) return;
     // 从数据库中获取topic
-    api.getRequest(
-      '/topic/gettopic',
-      { 'limit_num': getApp().config.index_hot_topic_num },
-      (res) => { //请求成功
+    api.postRequest({
+      'url': '/topic/gettopic',
+      'data': { 
+        'limit_num': getApp().config.index_hot_topic_num 
+      },
+      'showLoading': ifShowLoading,
+      'success': (res) => { //请求成功
         if (res.error_code == 200) {
           this.setData({
             hot_topic_data: res.data
@@ -38,15 +41,16 @@ Page({
             })
           }, 3000);
         }
-      },
-      (res) => { //失败
+      }, 
+      'fail': (res) => { //失败
         setTimeout(function () {
           wx.navigateTo({
             url: '/pages/index/index',
           })
         }, 1000);
         console.log('[index] get hot topic data failed');
-      });
+      }
+    });
 
       this.setData({
         topic_name: ''
@@ -92,7 +96,7 @@ Page({
    */
   onPullDownRefresh: function(e){
     wx.showNavigationBarLoading() //在标题栏中显示加载
-    this.init(); //重新加载
+    this.init(false); //重新加载
     //模拟加载
     setTimeout(function () {
       // complete

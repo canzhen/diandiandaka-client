@@ -24,13 +24,13 @@ Page({
   /**
    * 页面初始化，获取数据
    */
-  init: function () {
+  init: function (ifShowLoading = true) {
     let that = this;
     /* 获取用户的个性化头像和姓名 */
     api.postRequest({
       'url': '/user/getNameAvatar',
       'data': [],
-      'showLoading': true, 
+      'showLoading': ifShowLoading, 
       'success': (res) => {
         if (res.error_code == 200 && res.result_list != []) {
           let reslist = res.result_list;
@@ -152,7 +152,7 @@ Page({
   onPullDownRefresh: function () {
     this.saveCheckData();
     wx.showNavigationBarLoading(); //在标题栏中显示加载
-    this.init();
+    this.init(false);
     //模拟加载
     setTimeout(function () {
       // complete

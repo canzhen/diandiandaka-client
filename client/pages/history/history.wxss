@@ -3,6 +3,7 @@ page{
   display: flex;
   flex-direction: column;
   height: 100%;
+  position: fixed;
 }
 
 .navbar{
@@ -113,13 +114,12 @@ image{
   display: flex;
   flex-direction: row;
   justify-content:center;
-  margin:0rpx 10rpx 10rpx 20rpx;
+  margin: 0rpx 10rpx 10rpx 10rpx;
   font-size: 30rpx;
 }
 
 .all-history-emphasize{
   font-weight:900;
-  text-decoration:underline;
 }
 
 .calendar-panel{

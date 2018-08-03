@@ -101,8 +101,8 @@ router.post('/checktopic', function (req, res) {
 /**
  * 获取topic表的所有数据
  */
-router.get('/gettopic', function (req, res) {
-  dbhelper.getTopic(req.query.limit_num, (status, result_list) => {
+router.post('/gettopic', function (req, res) {
+  dbhelper.getTopic(req.body.limit_num, (status, result_list) => {
     for (var i in result_list) {
       result_list[i]['topic_url'] = config.qiniu.prefix + result_list[i]['topic_url'];
     }
