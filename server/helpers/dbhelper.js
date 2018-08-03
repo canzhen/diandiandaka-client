@@ -338,24 +338,24 @@ function udpateUserTopicColumnByUserIdTopicName(
 /**
  * 往topic_url表里插入一条新的数据
  */
-function insertTopicUrl(topic_url, cb) {
-  let client = connectServer();
-  client.query(
-    "INSERT INTO topic_url(url) VALUES(?)",
-    [topic_url],
-    function (err, result) {
-      let errmsg = '';
-      if (err) {
-        errmsg = err.message;
-        console.log("insert topic_url表失败，失败信息:" + err.message);
-      } else {
-        console.log('insert topic_url表成功');
-      }
-      cb(!err); //回调函数
-    });
+// function insertTopicUrl(topic_url, cb) {
+//   let client = connectServer();
+//   client.query(
+//     "INSERT INTO topic_url(url) VALUES(?)",
+//     [topic_url],
+//     function (err, result) {
+//       let errmsg = '';
+//       if (err) {
+//         errmsg = err.message;
+//         console.log("insert topic_url表失败，失败信息:" + err.message);
+//       } else {
+//         console.log('insert topic_url表成功');
+//       }
+//       cb(!err); //回调函数
+//     });
 
-  client.end();
-}
+//   client.end();
+// }
 
 
 
@@ -382,6 +382,54 @@ function getAllTopicUrl(cb) {
 }
 
 
+
+/* ------------------- topic_check表部分 -------------------- */
+/**
+ * 往topic_url表里插入一条新的数据
+ */
+// function insertTopicUrl(topic_url, cb) {
+//   let client = connectServer();
+//   client.query(
+//     "INSERT INTO topic_url(url) VALUES(?)",
+//     [topic_url],
+//     function (err, result) {
+//       let errmsg = '';
+//       if (err) {
+//         errmsg = err.message;
+//         console.log("insert topic_url表失败，失败信息:" + err.message);
+//       } else {
+//         console.log('insert topic_url表成功');
+//       }
+//       cb(!err); //回调函数
+//     });
+
+//   client.end();
+// }
+
+
+
+function insert(table_name, values_string, value_list, cb){
+  let client = connectServer();
+  sql = "INSERT INTO " + table_name + "(" + values_string + ") VALUES(?";
+  for (let i = 1; i < value_list; i++) sql += ",?";
+  sql += ");";
+
+  client.query(
+    sql, value_list,
+    function (err, result) {
+      let errmsg = '';
+      if (err) {
+        errmsg = err.message;
+        console.log('insert ' + table_name + '表失败，失败信息:' + err.message);
+      } else {
+        console.log('insert ' + table_name + '表成功');
+      }
+      cb(!err); //回调函数
+    });
+
+  client.end();
+}
+
 module.exports = {
   connectServer,
 
@@ -405,6 +453,6 @@ module.exports = {
 
 
   //topic_url部分
-  insertTopicUrl,
+  // insertTopicUrl,
   getAllTopicUrl,
 };

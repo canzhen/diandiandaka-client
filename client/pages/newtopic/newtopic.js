@@ -47,12 +47,6 @@ Page({
       },
       'fail': (res) => { showFailToast(); }
     });
-
-    this.setData({
-      icon_name_num: utils.getSubscriptByLength(this.data.icon_data.length, numEachRow),
-      topic_name: options.topic_name ? options.topic_name : '',
-      topic_url: options.topic_url ? options.topic_url : '',
-    });
   },
 
 

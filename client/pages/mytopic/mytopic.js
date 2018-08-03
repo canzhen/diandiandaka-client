@@ -30,7 +30,6 @@ Page({
     api.postRequest({
       'url': '/user/getNameAvatar',
       'data': [],
-      'showLoading': ifShowLoading, 
       'success': (res) => {
         if (res.error_code == 200 && res.result_list != []) {
           let reslist = res.result_list;
@@ -59,19 +58,19 @@ Page({
     api.postRequest({
       'url': '/userTopic/getTopicListByUserId',
       'data': [],
+      'showLoading': ifShowLoading, 
       'success': (res) => { //成功
         if (res.error_code == 200) {
           console.log('获取用户打卡信息成功');
-          utils.filterDatedData(res.result_list);
-          res.result_list.push({
-            'topic_name': '添加新卡片\n\n',
+          let result_list = utils.filterDatedData(res.result_list);
+          result_list.push({
+            'topic_name': '添加新卡片\n\n\n',
             'topic_url': '/images/xinkapian.png',
             'insist_day': -1,
             'is_checked': false
           });
-          console.log(res.result_list);
           this.setData({
-            my_topic_data: res.result_list
+            my_topic_data: result_list
           });
           createRowNum();
         } else console.log('获取用户打卡信息失败');

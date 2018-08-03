@@ -28,12 +28,13 @@ router.post('/getAll', function (req, res) {
  */
 router.post('/insert', function (req, res) {
   let topic_url = req.body.url;
-  dbhelper.insertTopicUrl(topic_url, (status) => {
-    if (!status) {
-      res.send({ 'error_code': 100, 'msg': ''});
-      return;
-    }
-    res.send({ 'error_code': 200, 'msg': ''});
+  dbhelper.insert('topic_url', 'url', [topic_url],
+   (status) => {
+      if (!status) {
+        res.send({ 'error_code': 100, 'msg': ''});
+        return;
+      }
+      res.send({ 'error_code': 200, 'msg': ''});
   });
 });
 

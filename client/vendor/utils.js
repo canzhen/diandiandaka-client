@@ -395,19 +395,20 @@ function getCompletenessSubtitle (currentdate, timelapse, n) {
  * 将过期的卡片删除（当前日期大于用户设置的end_date）
  */
 function filterDatedData(user_topic_list){
+  let currentMoment = moment(moment().format('YYYY-MM-DD'));
+  var filteredList = [];
   for (var i in user_topic_list) {
     var item = user_topic_list[i];
-    if (moment() > moment(item['end_date'])) {
-      user_topic_list.splice(i, i);
-      continue;
-    }
+    if (currentMoment > moment(item['end_date'])) continue;
 
-    if (item['insist_day'] == 0) continue; //0就不用管是否过期了
     //如果超过24小时未打卡，则显示的时候自动显示insist_day为0
     if (moment().diff(moment(item['update_time']), 'hours') > 24)
       item['insist_day'] = 0;
+    filteredList.push(item);
   }
+  return filteredList;
 }
+
 
 /**
  * 过滤掉没变化的数据，只剩下用户修改过的数据

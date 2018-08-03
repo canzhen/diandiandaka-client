@@ -10,6 +10,7 @@ var topic = require('./routes/topic');
 var qiniu = require('./routes/qiniu');
 var userTopic = require('./routes/userTopic');
 var topicUrl = require('./routes/topicUrl');
+var topicCheck = require('./routes/topicCheck');
 
 var app = express();
 
@@ -28,6 +29,7 @@ app.use('/topic', topic);
 app.use('/user', user);
 app.use('/userTopic', userTopic);
 app.use('/topicUrl', topicUrl);
+app.use('/topicCheck', topicCheck);
 
 
 
