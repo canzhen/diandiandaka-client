@@ -6,11 +6,12 @@ import {
 
 var Charts = require('wxcharts.js');
 var utils = require('../../vendor/utils.js');
+const api = require('../../ajax/api.js');
 
 Page({
   data: {
     navbar: ['所有历史', '每日完成度'],
-    currentTab: 1,
+    currentTab: 0,
 
     /* --------------以下的data属于【所有历史】-------------- */
     date: '', // 用户选择的date，随时都会变化
@@ -19,9 +20,9 @@ Page({
     checked_data_list: getCheckedDataList(), // checked_data_list包含打卡数据
     selected_topic_idx: 0,
     checked_time_per_topic: [], //每个topic的打卡天数：[{'跑步':['2018-06-13', '2018-06-24', '2018-06-21']}, {..}, {..}]
-    all_topic: [], //所有topic名字的集合：['减肥','跑步','早睡']
+    topic_name_list: [], //所有topic名字的集合：['减肥','跑步','早睡']
     successive_day_per_topic: [], //每个topic的【连续】打卡天数：[{'跑步':{'num':3,'image_url': 'xxxx'}},{...},..]
-    topic_info: getTopicInfo(), //存该用户所有topic的info，包括image_url（直接数据库调取）和连续打卡天数（经过计算的来）
+    topic_info: [], //该用的打卡数据：[{'topic_name':'', 'topic_url':'', 'insist_day':''}, {}, ...]
     topic_info_divided: {}, //每N个分为一组，方便显示
     topic_info_divided_size: 5, // N = 5
     topic_info_divided_idx: 0, //当前显示哪一组data（每一组有N个）
@@ -45,26 +46,56 @@ Page({
 
 
   init: function(){
-    /* 获取当前年、月 */
-    let today = new Date();
-    let allTopic = utils.getAllTopicList(this.data.checked_data_list); //所有topic名字的集合
-    let checkedTimeList = utils.getCheckedDataOfEveryTopic(this.data.checked_data_list, allTopic);
-    let fullTopicInfo = utils.getAndCalculateTopicInfo(checkedTimeList, this.data.topic_info);
-    let allTopicInfoDivided = utils.divideTopicInfoIntoGroups(
-      checkedTimeList,
-      this.data.topic_info,
-      this.data.topic_info_divided_size);
-    this.setData({ //初始化当前日期，且不再改变
-      current_date: today.getFullYear() + '-' + parseInt(today.getMonth() + 1),
-      all_topic: allTopic, //所有topic名字的集合
-      topic_info: fullTopicInfo, //所有topic info
-      topic_info_divided: allTopicInfoDivided, //被N个N个分成一组的topics
-      checked_time_per_topic: checkedTimeList, //根据topic分类的check信息
+
+    let getTopicNameList = function(list){
+      var ans = [];
+      for (let i in list){
+        ans.push(list[i].topic_name);
+      }
+      return ans;
+    }
+
+
+
+    /* 获取当前用户的打卡信息 */
+    api.postRequest({
+      'url': '/userTopic/getTopicListByUserId',
+      'data': [],
+      'success': (res) => { //成功
+        if (res.error_code == 200) {
+          let result_list = res.result_list;
+          console.log('获取用户打卡信息成功');
+          utils.filterDatedData(result_list);
+          // console.log(result_list);
+          let allTopic = getTopicNameList(result_list);
+          let checkedTimeList = utils.getCheckedDataOfEveryTopic(this.data.checked_data_list, allTopic);
+          let allTopicInfoDivided = utils.divideTopicInfoIntoGroups(
+            checkedTimeList,
+            result_list,
+            this.data.topic_info_divided_size);
+          console.log(allTopicInfoDivided);
+          this.setData({
+            current_date: utils.getYearMonthSlash(),
+            topic_info: result_list,
+            topic_name_list: allTopic,
+            //被N个N个分成一组的topics
+            topic_info_divided: allTopicInfoDivided, 
+            //根据topic分类的check信息
+            checked_time_per_topic: checkedTimeList, 
+          });
+
+          this.fillData(this.data.current_date);
+          this.setCompletenessSubtitle('1周', 0), //一周的历史记录上的文字
+            this.newCanvas(['一', '二', '三', '四', '五', '六', '七'],
+              [15, 20, 45, 37, 4, 80, 19]); //生成新的每周数据
+        } else console.log('获取用户打卡信息失败');
+      },
+      'fail': (res) => { //失败
+        console.log('获取用户打卡信息失败');
+      }
     });
-    this.fillData(this.data.current_date);
-    this.setCompletenessSubtitle('1周', 0), //一周的历史记录上的文字
-      this.newCanvas(['一', '二', '三', '四', '五', '六', '七'],
-        [15, 20, 45, 37, 4, 80, 19]); //生成新的每周数据
+
+
   },
 
 
@@ -77,7 +108,7 @@ Page({
   /* 具体实现往前端填充数据的方法 */
   fillData: function (date) {
     let allData = this.data.checked_data_list; //所有的data（按照topic分类的所有check信息
-    let allTopic = this.data.all_topic; //所有topic名字的集合
+    let allTopic = this.data.topic_name_list; //所有topic名字的集合
     let topic = allTopic[this.data.selected_topic_idx]; //当前选中的topic名
     let checkedTime = this.data.checked_time_per_topic[topic]; //当前选中的topic的所有check信息
 

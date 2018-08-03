@@ -230,14 +230,20 @@ function getFullDateSlash(year, month, day) {
   return moment().format("YYYY-MM-DD");
 }
 
-
-function getAllTopicList(dataList){
-  var allTopicList = new Set(); //去重
-  for (var i = 0; i < dataList.length; i++){
-    allTopicList.add(dataList[i].topic);
-  }
-  return Array.from(allTopicList);
+/**
+ * 返回年月，并以'-'连接
+ */
+function getYearMonthSlash(date){
+  return moment(date).format('YYYY-MM');
 }
+
+// function getAllTopicList(dataList){
+//   var allTopicList = new Set(); //去重
+//   for (var i = 0; i < dataList.length; i++){
+//     allTopicList.add(dataList[i].topic);
+//   }
+//   return Array.from(allTopicList);
+// }
 
 
 function getCheckedDataOfEveryTopic(dataList, topicList){
@@ -277,22 +283,22 @@ function getSuccessiveDayByDateList(dateList){
 }
 
 // 计算successiveDay，getImageUrl，完善topic信息
-function getAndCalculateTopicInfo(dataMap, allTopic){
-  var count = 0, infoList = [];
-  for (var i in allTopic) {
-    let info = allTopic[i];
-    // 计算连续打卡天数
-    dataMap[info.name].sort(function (a, b) { return a > b ? 1 : -1; });
-    let successiveNum = getSuccessiveDayByDateList(dataMap[info.name]);
-    infoList.push({
-      'name': info.name,
-      'image_url': info.image_url,
-      'successive_day': successiveNum,
-      'total_day': dataMap[info.name].length,
-    });
-  }
-  return infoList;
-}
+// function getAndCalculateTopicInfo(dataMap, allTopic){
+//   var count = 0, infoList = [];
+//   for (var i in allTopic) {
+//     let info = allTopic[i];
+//     // 计算连续打卡天数
+//     dataMap[info.name].sort(function (a, b) { return a > b ? 1 : -1; });
+//     let successiveNum = getSuccessiveDayByDateList(dataMap[info.name]);
+//     infoList.push({
+//       'name': info.name,
+//       'image_url': info.image_url,
+//       'successive_day': successiveNum,
+//       'total_day': dataMap[info.name].length,
+//     });
+//   }
+//   return infoList;
+// }
 
 
 
@@ -308,10 +314,10 @@ function divideTopicInfoIntoGroups(dataMap, allTopic, size){
     }
     let info = allTopic[i];
     tmpList.push({ 
-      'name': info.name, 
-      'image_url': info.image_url, 
+      'topic_name': info.topic_name, 
+      'topic_url': info.topic_url, 
       'number': count, //第n组的第number个，用于计算在总数组中的位置
-      'successive_day': info.successive_day });
+      'insist_day': info.insist_day });
     count++;
   }
 
@@ -453,12 +459,13 @@ module.exports = {
   addZero,
   generateCalendar,
   getFullDateSlash,
+  getYearMonthSlash,
   translateFormateDate,
   getFormateDatetimeCN,
   getFormateDatetimeEN,
-  getAllTopicList,
+  // getAllTopicList,
   getCheckedDataOfEveryTopic,
-  getAndCalculateTopicInfo,
+  // getAndCalculateTopicInfo,
   divideTopicInfoIntoGroups,
   getCheckDetailOnGivenDay,
   getWeekEndDate,

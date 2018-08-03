@@ -52,6 +52,7 @@ page{
   width: 15%;
   height: 100%;
   margin: 60rpx -10rpx 0rpx 10rpx;
+  color: #888888;
 }
 
 .all-history-left-item{
