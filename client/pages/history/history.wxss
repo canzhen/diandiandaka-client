@@ -223,6 +223,21 @@ image{
   margin-top: 5%;
  }
 
+.completeness-canvas{
+  display:flex;
+  position: fixed;
+  flex-direction: row;
+  justify-content: space-around; 
+  left: 3.8%;
+  width: 95%;
+  height: 70%;
+  top: 15%;
+  margin-top: 40rpx;
+  margin-right: 5%;
+  /* width: 95%;
+  height: 600rpx; */
+}
+
  .completeness-panel-bottom{
   display:flex;
   flex-direction: row;
@@ -275,21 +290,6 @@ image{
 /* 去除button边框 */
 button::after{
   border: none;
-}
-
-.completeness-canvas{
-  display:flex;
-  position: fixed;
-  flex-direction: row;
-  justify-content: space-around; 
-  left: 3.8%;
-  width: 95%;
-  height: 100%;
-  top: 15%;
-  margin-top: 40rpx;
-  margin-right: 5%;
-  /* width: 95%;
-  height: 600rpx; */
 }
 
 .subitem-row{

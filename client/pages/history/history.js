@@ -10,7 +10,7 @@ var utils = require('../../vendor/utils.js');
 Page({
   data: {
     navbar: ['所有历史', '每日完成度'],
-    currentTab: 0,
+    currentTab: 1,
 
     /* --------------以下的data属于【所有历史】-------------- */
     date: '', // 用户选择的date，随时都会变化
@@ -189,6 +189,7 @@ Page({
   selectTimeLapse: function (e) {
     let time = e.currentTarget.dataset.time;
     let index = e.currentTarget.dataset.index;
+    console.log('选中了' + time);
 
     let preCheckedStr = 'timelapses[' + this.data.selected_timelapse + '].checked';
     let newCheckedStr = 'timelapses[' + index + '].checked';
