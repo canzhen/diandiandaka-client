@@ -102,3 +102,10 @@ checkbox {
   height: 40rpx;
   margin-left: -40rpx;
 }
+
+
+.last-line-view{
+  position: fixed;
+  left: 75rpx;
+  bottom: 1%;
+}

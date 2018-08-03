@@ -330,6 +330,58 @@ function udpateUserTopicColumnByUserIdTopicName(
 //   client.end();
 // }
 
+
+
+
+
+/* ------------------- topic_url表部分 -------------------- */
+/**
+ * 往topic_url表里插入一条新的数据
+ */
+function insertUserTopic(topic_url, cb) {
+  let client = connectServer();
+  client.query(
+    "INSERT INTO topic_url(topic_url) VALUES(?)",
+    [topic_url],
+    function (err, result) {
+      let errmsg = '';
+      if (err) {
+        errmsg = err.message;
+        console.log("insert topic_url表失败，失败信息:" + err.message);
+      } else {
+        console.log('insert topic_url表成功');
+      }
+      cb(!err); //回调函数
+    });
+
+  client.end();
+}
+
+
+
+
+/* 
+ * 返回所有topic_url
+ **/
+function getAllTopicUrl(cb) {
+  let client = connectServer();
+  client.query(
+    "SELECT topic_url FROM topic_url;", [],
+    function (err, result) {
+      if (err) {
+        console.log("get all topic_url失败，失败信息:" + err.message);
+      } else {
+        console.log('get all topic_url成功');
+      }
+
+      let result_list = JSON.parse(JSON.stringify(result));
+      cb(!err, result_list);
+    });
+
+  client.end();
+}
+
+
 module.exports = {
   connectServer,
 
@@ -351,4 +403,8 @@ module.exports = {
   updateUserTopicNumberByUserId,
   udpateUserTopicColumnByUserIdTopicName,
 
+
+  //topic_url部分
+  insertUserTopic,
+  getAllTopicUrl,
 };

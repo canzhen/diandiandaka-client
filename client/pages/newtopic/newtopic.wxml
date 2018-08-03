@@ -45,6 +45,8 @@
     </view>
 
 
-    <button class="new-topic-button" form-type="submit"> 确定 </button>
+    <view class="last-line-view">
+      <button class="new-topic-button" form-type="submit"> 确定 </button>
+    </view>
   </form>
 </view>

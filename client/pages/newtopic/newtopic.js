@@ -1,28 +1,16 @@
-import {
-  login,
-  getFullDateSlash,
-  setStorageSync
-
-} from '../../vendor/utils'
+const utils = require('../../vendor/utils');
 const api = require('../../ajax/api.js');
 const numEachRow = 5;
 
 Page({
   data: {
-    icon_data: [
-      '/images/fuqi.png', '/images/cake.png', '/images/guozhi.png',
-      '/images/saozhou.png', '/images/huatong.png', '/images/cat.png',
-      '/images/dog.png', '/images/zixingche.png', '/images/camera.png', 
-      '/images/medicine.png', '/images/shufa.png', '/images/paobu.png', 
-      '/images/jianshen.png', '/images/jianfei.png',  '/images/yuedu.png', 
-      '/images/chizaocan.png', '/images/qingchenyibeishui.png',
-      '/images/zaoqi.png', '/images/zaoshui.png'],
+    icon_data: [], //可供选择的topic图标
     icon_name_num: [],
     // selected_icon_num: -1,
     topic_name: '',
     topic_url: '', //topic图片的url
-    start_date: getFullDateSlash(new Date()),
-    end_date: getFullDateSlash(new Date()),
+    start_date: utils.getFullDateSlash(new Date()),
+    end_date: utils.getFullDateSlash(new Date()),
     pre_end_date: '', //在取消永不结束checkbox时，就把之前选好的end_date再放上去
     never_end: false, //永不结束的checkbox是否选中
     has_special_character: false, //计划名称中是否包含特殊字符
@@ -31,22 +19,47 @@ Page({
 
   /* 方法部分 */
   onLoad: function (options) {
-    //动态创建icon_name_num作为分行下标
-    var l = this.data.icon_data.length,
-        r = l / numEachRow,
-        c = numEachRow;
+    // //动态创建icon_name_num作为分行下标
+    // var l = this.data.icon_data.length,
+    //     r = l / numEachRow,
+    //     c = numEachRow;
     
-    var temp_icon_data_num = new Array();
-    for (var r1 = 0; r1 < r; r1++) {
-      temp_icon_data_num[r1] = new Array();
-      for (var c1 = 0; c1 < c; c1++){
-        if (r1 * numEachRow + c1 >= l) break;
-        temp_icon_data_num[r1][c1] = r1 * numEachRow + c1;
-      }
-    }
+    // var temp_icon_data_num = new Array();
+    // for (var r1 = 0; r1 < r; r1++) {
+    //   temp_icon_data_num[r1] = new Array();
+    //   for (var c1 = 0; c1 < c; c1++){
+    //     if (r1 * numEachRow + c1 >= l) break;
+    //     temp_icon_data_num[r1][c1] = r1 * numEachRow + c1;
+    //   }
+    // }
+
+    let showFailToast = function(){
+      wx.showToast({
+        title: '好像除了点错~',
+        icon: 'loading',
+        duration: 1000
+      })
+    };
+
+    api.postRequest({
+      'url': '/topicUrl/getAll',
+      'data': {},
+      'showLoading': true,
+      'success': (res) => {
+        if (res.error_code == 200){
+          this.setData({
+            icon_data: res.result_list,
+            icon_name_num: utils.getMyTopicTopicNumByLength(res.result_list.length, numEachRow),
+            topic_name: options.topic_name ? options.topic_name : '',
+            topic_url: options.topic_url ? options.topic_url : '',
+          });
+        } else showFailToast();
+      },
+      'fail': (res) => { showFailToast(); }
+    });
     
     this.setData({
-      icon_name_num: temp_icon_data_num,
+      icon_name_num: utils.getMyTopicTopicNumByLength(this.data.icon_data.length, numEachRow),
       topic_name: options.topic_name ? options.topic_name : '',
       topic_url: options.topic_url ? options.topic_url : '',
     });
@@ -144,7 +157,7 @@ Page({
       return;
     }
 
-    if (value.end_date == getFullDateSlash(new Date())) {
+    if (value.end_date == utils.getFullDateSlash(new Date())) {
       this.showReminderAlert('好像忘记选结束日期啦？');
       return;
     }

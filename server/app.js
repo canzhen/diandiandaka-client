@@ -6,9 +6,10 @@ var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
 var user = require('./routes/user');
-var userTopic = require('./routes/userTopic');
 var topic = require('./routes/topic');
 var qiniu = require('./routes/qiniu');
+var userTopic = require('./routes/userTopic');
+var topicUrl = require('./routes/topicUrl');
 
 var app = express();
 
@@ -26,6 +27,7 @@ app.use('/qiniu', qiniu);
 app.use('/topic', topic);
 app.use('/user', user);
 app.use('/userTopic', userTopic);
+app.use('/topicUrl', topicUrl);
 
 
 
