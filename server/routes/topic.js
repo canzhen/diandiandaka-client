@@ -5,6 +5,31 @@ const redishelper = require('../helpers/redishelper.js');
 const router = express.Router();
 
 
+
+/**
+ * 获取topic表的所有数据
+ */
+router.post('/getAll', function (req, res) {
+  dbhelper.select(
+    'topic', '', '', [],
+    'ORDER BY use_people_num DESC LIMIT ' + req.body.limit_num,
+    (status, result_list) => {
+      for (var i in result_list) {
+        result_list[i]['topic_url'] = config.qiniu.prefix + result_list[i]['topic_url'];
+      }
+      let error_code = status ? 200 : 100;
+      res.send({
+        'error_code': error_code,
+        'data': result_list
+      });
+    });
+});
+
+
+
+
+
+
 /**
  * 往topic table里添加一条数据
  */
@@ -24,93 +49,35 @@ router.post('/createtopic', function (req, res) {
       res.send({ 'error_code': 102, 'msg': 'redis数据库里找不到对应用户数据' });
       return;
     }
-    dbhelper.insertUserTopic(value, req.body.topicname,
-      req.body.topicurl, 0, req.body.startdate,
-      req.body.enddate, (result, errmsg) => {
-        if (!result) {
-          console.log(errmsg);
+    dbhelper.insert('user_topic', 
+      'user_id, topic_name, topic_url, insist_day, start_date, end_date', 
+      [value, req.body.topicname, req.body.topicurl, 0, req.body.startdate,
+      req.body.enddate,], '',
+      (status, errmsg) => {
+        if (!status){
           let errReason = errmsg.substr(0, errmsg.indexOf(':'));
-          if (errReason == 'ER_DUP_ENTRY') {
+          if (errReason == 'ER_DUP_ENTRY')
             res.send({ 'error_code': 101, 'msg': errmsg });
-          }else{
-            res.send({ 'error_code': 100, 'msg': errmsg });
-          }
+          else res.send({ 'error_code': 100, 'msg': errmsg });
           return;
         }
 
+
+
         /* 2. 如果成功插入user_topic，则开始更新topic表 */
-        // 查看topic表是否已经存在相应的数据
-        dbhelper.checkTopic(req.body.topicname, (ifExist) => {
-          /* 如果存在，则在该卡片的记录的打卡人数上加一 */
-          if (ifExist) {
-            dbhelper.updateTopic(req.body.topicname, (updateStatus) => {
-              let error_code = updateStatus ? 200 : 100;
-              res.send({ 'error_code': error_code, 'msg': '' });
-            });
-          } else {/* 如果不存在，则需要往卡片表新增一条数据 */
-            dbhelper.insertTopic(req.body.topicname, req.body.topicurl, 1, (status) => {
-              let error_code = status ? 200 : 100;
-              res.send({ 'error_code': error_code, 'msg': '' });
-            });
-          }
-        });
-      });
-  });
-  
-  
-});
-
-
-/**
- * 往topic table里添加一条数据
- */
-router.post('/inserttopic', function (req, res) {
-  if (!req.body.topicname || !req.body.topicurl) return false;
-  dbhelper.insertTopic(req.body.topicname, req.body.topicurl, 
-                        1, (result) => {
-    if (result) res.send({'error_code': 200});
-    else res.send({'error_code': 100});
-  })
-});
-
-/**
- * 更新topic table里的使用人数
- */
-router.post('/updatetopic', function (req, res) {
-  if (!req.body.topicname) {
-    res.send({'error_code': 100});
-    return;
-  }
-  dbhelper.updateTopic(req.body.topicname, (updateStatus) => {
-    let error_code = updateStatus ? 200 : 100;
-    res.send({ 'error_code': updateStatus});
-  });
-});
-
-/**
- * 查看是否topic table里存在name为指定值的行
- */
-router.post('/checktopic', function (req, res) {
-  if (!req.body.topicname) return false;
-  dbhelper.checkTopic(req.body.topicname, (ifExist) => {
-    res.send({'ifExist': ifExist});
+        // 存在，则打卡人数加一；不存在，新增数据
+        dbhelper.insert('topic', 'topic_name, topic_url, use_people_num',
+          [req.body.topicname, req.body.topicurl, 1],
+          "ON DUPLICATE KEY UPDATE use_people_num=use_people_num+1",
+          (status, errmsg) => {
+            let error_code = status ? 200 : 100;
+            res.send({ 'error_code': error_code, 'msg': '' });
+            return;
+          });
+    });
   });
 });
 
 
-/**
- * 获取topic表的所有数据
- */
-router.post('/gettopic', function (req, res) {
-  dbhelper.getTopic(req.body.limit_num, (status, result_list) => {
-    for (var i in result_list) {
-      result_list[i]['topic_url'] = config.qiniu.prefix + result_list[i]['topic_url'];
-    }
-    let error_code = status ? 200 : 100;
-    res.send({
-      'error_code': error_code,
-      'data': result_list });
-  });
-});
 
 module.exports = router;

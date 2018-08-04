@@ -14,19 +14,22 @@ router.post('/getTopicListByUserId', function (req, res) {
       res.send({ 'error_code': 102, 'msg': '' });
       return;
     }
-    dbhelper.getUserTopicByUserId(openid, (status, result) => {
-      if (status){
-        //删除user_id，不要暴露给前端
-        for (let i in result) {
-          delete result[i].user_id;
+
+    dbhelper.select('user_topic', '', 'user_id=?', [openid], '',
+      (status, result) => {
+        if (status) {
+          //删除user_id，不要暴露给前端
+          for (let i in result) {
+            delete result[i].user_id;
+          }
+          res.send({ 'error_code': 200, 'msg': '', 'result_list': result });
+          return;
+        } else {
+          res.send({ 'error_code': 100, 'msg': result, 'result_list': '' });
+          return;
         }
-        res.send({ 'error_code': 200, 'msg': '', 'result_list': result});
-        return;
-      }else {
-        res.send({ 'error_code': 100, 'msg': result, 'result_list':''});
-        return;
       }
-    });
+    );
   });
 
 });
@@ -79,63 +82,27 @@ router.post('/udpateNumberByUserId', function (req, res) {
 /**
  * 通过用户id和卡片名称在数据库中更新该条数据的某一栏
  */
-router.post('/udpateColumnByUserIdTopicName', function (req, res) {
-  let id = req.header('session-id');
-  let topic_name = req.body.topic_name;
-  let column_name = req.body.column_name;
-  let column_value = req.body.column_value;
-
-  redishelper.getValue(id, (openid) => {
-    if (!openid) {
-      res.send({ 'error_code': 102, 'msg': '' });
-      return;
-    }
-    dbhelper.udpateUserTopicColumnByUserIdTopicName(
-      openid, topic_name, column_name, column_value, 
-      (status) => {
-        if (status)
-          res.send({ 'error_code': 200, 'msg': '' });
-        else res.send({ 'error_code': 100, 'msg': '' });
-      });
-  });
-});
-
-
-
-/**
- * 打卡user_topic表
- * 返回给前端新的insist_day和total_day
- */
-// router.post('/check', function (req, res) {
+// router.post('/udpateColumnByUserIdTopicName', function (req, res) {
 //   let id = req.header('session-id');
-//   let topic_name = req.body.topic_name; //打卡的卡片名称
+//   let topic_name = req.body.topic_name;
+//   let column_name = req.body.column_name;
+//   let column_value = req.body.column_value;
+
 //   redishelper.getValue(id, (openid) => {
 //     if (!openid) {
 //       res.send({ 'error_code': 102, 'msg': '' });
 //       return;
 //     }
-//     dbhelper.checkInsertuserTopic(
-//       openid, topic_name,
-//       (status) => {
-//         if (!status) {
-//           res.send({ 'error_code': 100, 'msg': result, 'result_list': ''})
-//           return;
-//         }
-//         //如果成功，则向数据库获取最新的insist_day和total_day
-//         dbhelper.getUserTopicByUserIdTopicName(openid, topic_name, 
-//           (status, result) => {
-//             if (status) res.send({ 
-//               'error_code': 200, 'msg': '', 
-//               'result_list': {
-//                 'insist_day': result['insist_day'],
-//                 'total_day': result['total_day']
-//               }});
-//             else 
-//               res.send({ 'error_code': 100, 'msg': result, 'result_list': '' })
-//           });
-        
+
+//     dbhelper.update('user_topic', column_name +'=?', [column_value],
+//       "user_id = '" + openid + "' AND topic_name = " + topic_name,
+//       (status, errmsg) => {
+//         if (status)
+//           res.send({ 'error_code': 200, 'msg': '' });
+//         else res.send({ 'error_code': 100, 'msg': errmsg });
 //       });
 //   });
 // });
+
 
 module.exports = router;

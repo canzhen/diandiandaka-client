@@ -1,6 +1,7 @@
 var qiniu = require('qiniuUploader.js');
 
 const config = {
+  'prefix': 'http://pcjzq4ixp.bkt.clouddn.com/',
   'scaleAPI': '?imageView2/1/w/90/h/90/q/75|imageslim',
 }
 

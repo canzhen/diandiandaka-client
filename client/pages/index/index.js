@@ -24,7 +24,7 @@ Page({
     // if (utils.getStorageSync('sessionId')) return;
     // 从数据库中获取topic
     api.postRequest({
-      'url': '/topic/gettopic',
+      'url': '/topic/getAll',
       'data': { 
         'limit_num': getApp().config.index_hot_topic_num 
       },

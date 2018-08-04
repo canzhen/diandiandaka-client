@@ -22,15 +22,28 @@ router.post('/login', function(req, res) {
   let that = this;
   let redis_ttl = config.redis.ttl;
 
-  let generateRandomSessionId = function(openid){
+  let regenerateRandomId = function(openid){
     utils.generateRandom((random) => {
       redishelper.storeValue(random, openid, redis_ttl);
       res.send({ 'error_code': 200, 'msg': '', 'sessionId': random });
+      return;
     });
   };
 
   // 如果sessionid存在且在服务端redis没过期，则直接返回
+  if (sessionid){
+    redishelper.getValue(sessionid, (value) => {
+      if(value) { //sessionid存在，且redis没过期，直接原装打包返回
+        res.send({ 'error_code': 200, 'msg': '', 'sessionId': sessionid });
+        return;
+      }
+      // sessionid存在，但是redis过期了，这时候要重新生成sessionid，前端再保存
+      // 所以直接往下走
+    });
+  }
+
   // 如果sessionid不存在，或者在redis过期了，都需要重新获取openid
+  // 这时候有个问题，前端的sessionid先过期了，后端的redis还存在，就会有些废redis留着
   let getOpenID = function (code) {
     request({
       'url': config.getUserInfoUrl,
@@ -44,18 +57,19 @@ router.post('/login', function(req, res) {
       'json': true
     }, (error, response, body) => {
       if (!error && response.statusCode == 200) {
-        //先查看数据库里是否存在该用户，如果已存在，则不需要重新插入
-        dbhelper.getUserById(body.openid, (result, result_list) => {
-          if (result && result_list.length != 0) {//数据库中已存在，不需要重新插入，直接生成sessionid给前端发过去
-            generateRandomSessionId(body.openid);
-          } else {  //不存在该用户，此时插入新的一行用户数据
-            dbhelper.insertUser(body.openid, (result, errmsg) => {
-              if (result) { //插入成功，则在redis里存储sessionid
-                generateRandomSessionId(body.openid);
-              } else res.send({ 'error_code': 100, 'msg': errmsg, 'sessionId': '' });
-            });
-          }
-        });
+        dbhelper.insert('user', 'user_id', [body.openid], 
+          "ON DUPLICATE KEY UPDATE user_id='" + body.openid + "'",
+          (status, errmsg) => {
+            // 不管是不是duplicate，只要前端sessionid不存在
+            // 就要重新生成sessionid返回给前端
+            console.log('insert into user status:' + status);
+            console.log(errmsg);
+            if (!status) { //数据库insert失败，返回失败
+              res.send({ 'error_code': 100, 'msg': errmsg, 'sessionId': '' });
+              return;
+            }
+            regenerateRandomId(body.openid);
+          });
       }
     });
   }
@@ -86,23 +100,25 @@ router.post('/getNameAvatar', function (req, res) {
       });
       return;
     }
-    dbhelper.getUserById(openid, (status, result) => {
-      if (!status || (status && result.length == 0)){
+
+    dbhelper.select('user', '', 'user_id=?', [openid], '',
+      (status, result) => {
+        if (!status || (status && result.length == 0)) {
+          res.send({
+            'error_code': 100, 'msg': '',
+            'result_list': {}
+          });
+          return;
+        }
         res.send({
-          'error_code': 100, 'msg': '',
-          'result_list': {}
+          'error_code': 200, 'msg': '',
+          'result_list': {
+            'user_name': result[0]['user_name'],
+            'avatar_url': result[0]['avatar_url']
+          }
         });
         return;
-      }
-      res.send({
-        'error_code': 200, 'msg': '',
-        'result_list': {
-          'user_name': result[0]['user_name'],
-          'avatar_url': result[0]['avatar_url']
-        }
       });
-      return;
-    })
   });
 });
 
@@ -118,10 +134,12 @@ router.post('/updateAvatarUrl', function (req, res) {
     }
     // console.log('openid:' + openid);
     let url = req.body.url;
-    dbhelper.updateUser('avatar_url', url, openid, (status, result) => {
-      if (status) res.send({ 'error_code': 200, 'msg': '' });
-      else res.send({ 'error_code': 100, 'msg': result });
-    })
+    dbhelper.update('user', 'avatar_url=?', [url], 
+      "user_id='" + openid + "'", 
+      (status, result) => {
+        if (status) res.send({ 'error_code': 200, 'msg': '' });
+        else res.send({ 'error_code': 100, 'msg': result });
+      });
   });
   
 });

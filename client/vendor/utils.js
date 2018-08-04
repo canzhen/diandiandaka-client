@@ -21,8 +21,8 @@ function login(cb) {
           setStorageSync('sessionId', res.sessionId, 1000 * 60 * 60 * 2); //服务端的session也是默认2小时过期
           cb(res);
         },
-        'fail': function (res) {
-          console.log('更新或添加用户登录状态失败，请检查网络状态');
+        'fail': (res) => {
+          console.log('从数据库中更新或添加用户登录状态失败，请检查网络状态');
         }
       });
     },

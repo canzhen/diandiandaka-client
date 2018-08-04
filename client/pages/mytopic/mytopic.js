@@ -21,6 +21,33 @@ Page({
   },
 
 
+
+
+
+  /* 页面加载函数 */
+  onLoad() {
+    // this.init();
+  },
+
+
+
+  /* 页面显示函数，tab切换回来也会调用 */
+  onShow() {
+    if (!utils.getStorageSync('sessionId')) {
+      utils.login((res) => {
+        if (res) {
+          console.log('login success');
+          this.init();
+        } else
+          console.log('login fail');
+      });
+    } else {
+      this.init();
+    }
+  },
+
+
+
   /**
    * 页面初始化，获取数据
    */
@@ -60,6 +87,7 @@ Page({
       'data': [],
       'showLoading': ifShowLoading, 
       'success': (res) => { //成功
+        console.log(res);
         if (res.error_code == 200) {
           console.log('获取用户打卡信息成功');
           let result_list = utils.filterDatedData(res.result_list);
@@ -79,28 +107,6 @@ Page({
         console.log('获取用户打卡信息失败');
       }
     });
-  },
-
-
-
-
-  /* 页面加载函数 */
-  onLoad(){
-    // this.init();
-  },
-
-
-
-  /* 页面显示函数，tab切换回来也会调用 */
-  onShow(){
-    if (!utils.getStorageSync('sessionId')) utils.login((res) => {
-      if (res) {
-        console.log('login success');
-        this.init();
-      }else 
-      console.log('login fail');
-    });
-    this.init();
   },
 
 
@@ -238,10 +244,13 @@ Page({
     //用七牛删除之前的头像（不继续保存）
     let deletePreAvatar = function(){
       if (that.data.avatar_url) {
+        let avatar_string = that.data.avatar_url;
+        avatar_string.replace(qiniuhelper.config.scaleAPI, '');
+        avatar_string.replace(qiniuhelper.config.prefix, '');
         api.postRequest({
           'url': '/qiniu/delete',
           'data': {
-            'key': that.data.avatar_url
+            'key': avatar_string
           },
           'showLoading': false,
           'success': (res) => {
@@ -369,20 +378,6 @@ Page({
         that.setData({
           [not_show_log_str]: 0
         });
-        // 修改后台数据库
-        // api.postRequest({
-        //   'url': '/userTopic/udpateColumnByUserIdTopicName',
-        //   'data': {
-        //     'topic_name': topic_name,
-        //     'column_name': 'if_show_log',
-        //     'column_value': 0, //设置为不再弹出
-        //   },
-        //   'success': (res) => {
-        //     if (res) console.log('设置不再弹框成功');
-        //     else console.log('设置不再弹框失败');
-        //   },
-        //   'fail': (res) => { console.log('设置不再弹框失败'); }
-        // });
         that.hideModal();
       }
     });
