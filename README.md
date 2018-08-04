@@ -16,8 +16,22 @@
 #### 项目介绍
 微信小程序，点点打卡
 
-#### 软件架构
-软件架构说明
+#### 开发教程
+
+服务器
+
+1. 进入/home/ubuntu/receiver，运行node server.js打开本地和服务器同步的接口
+2. redis-server & 在后端打开redis
+3. mysql -uroot diandiandaka -p （mysql123）打开数据库
+4. 进入/home/ubuntu/diandiandaka，运行pm2 log bin/www --watch --name dddk，再运行pm2 log dddk即可查看日志
+5. 进入/usr/local/nginx（nginx当时是用编译安装的），运行sbin/nginx -c conf/nginx.conf，启动nginx
+
+
+本地
+1. 进入开发目录，进入server目录，运行fis3 release -w，即可自动监控改动同步到服务器
+
+至此，可以开始开发了。
+
 
 
 #### 安装教程
