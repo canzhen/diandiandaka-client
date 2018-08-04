@@ -101,7 +101,6 @@ function getSubscriptByLength(l, numEachRow){
         temp_topic_data_num[r1][c1] = r1 * numEachRow + c1;
     }
   }
-  // console.log(temp_topic_data_num)
   return temp_topic_data_num;
 }
 
@@ -354,6 +353,7 @@ function filterUnchangeData(user_topic_list){
     // 所以只需要判断是否为1即可，1就是没关闭
     if (!item['data_changed']) continue;
     if (item['is_checked']) item['last_check_time'] = moment().format('YYYY-MM-DD');
+    item['log'] = '[' + moment().format('YYYY-MM-DD HH:MM') + ']' + item['log'];
     filtered_list.push(item);
   }
   return filtered_list;

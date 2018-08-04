@@ -8,26 +8,26 @@ const moment = require('../../vendor/moment.min.js');
 Page({
   data: {
     navbar: ['所有历史', '每日完成度'],
-    currentTab: 1,
+    currentTab: 0,
 
     /* --------------以下的data属于【所有历史】-------------- */
     date: '', // 用户选择的date，随时都会变化
     current_date: '', // 当前的时间，一旦设置则不会改变
     year_month_list: [], // 包含两个元素，初始化时，第一个是当前月的上个月，第二个是当前月
-    checked_data_list: [], // checked_data_list包含打卡数据
     selected_topic_idx: 0, //选中的topic
+    topic_info: [], //该用户的打卡数据：[{'topic_name':'', 'topic_url':'', 'insist_day':''}, {}, ...] 用于【所有历史】标题栏
+    topic_info_divided: {}, //每N个分为一组，方便显示
+    topic_info_divided_size: 5, // N = 5
+    topic_info_divided_idx: 0, //当前显示哪一组data（每一组有N个）
+    checked_data_list: [], // 用于展示每日具体打卡信息
+
+
+    /* --------------以下的data属于【每日完成度】--------------*/
     checked_time_per_topic: [], //每个topic的打卡天数：[{'跑步':['2018-06-13', '2018-06-24', '2018-06-21']}, {..}, {..}]
     check_time_list: [], // 所有打卡的日期的集合['2018-07-04', '', ..]
     topic_name_list: [], // 所有topic名字的集合：['减肥','跑步','早睡']
     topic_list_per_day: {}, // 每天打卡的卡片列表：{'2018-05-23': ['跑步'], ...}
     successive_day_per_topic: [], //每个topic的【连续】打卡天数：[{'跑步':{'num':3,'image_url': 'xxxx'}},{...},..]
-    topic_info: [], //该用的打卡数据：[{'topic_name':'', 'topic_url':'', 'insist_day':''}, {}, ...]
-    topic_info_divided: {}, //每N个分为一组，方便显示
-    topic_info_divided_size: 5, // N = 5
-    topic_info_divided_idx: 0, //当前显示哪一组data（每一组有N个）
-
-
-    /* --------------以下的data属于【每日完成度】--------------*/
     timelapses: [ //所有的时间区间的选项
                   { 'name': '1周', 'checked': true },
                   { 'name': '1个月', 'checked': false },
@@ -60,7 +60,7 @@ Page({
     data.getCheckedDataList((checked_data_list) => {
       if (!checked_data_list) return;
       this.setData({
-        checked_data_list: checked_data_list
+        checked_data_list: checked_data_list //用于展示每日具体打卡信息
       });
       data.getTopicInfoList((topic_info_list) => {
         console.log('获取用户打卡信息成功');
@@ -68,7 +68,6 @@ Page({
         // console.log(result_list);
         let allTopic = getTopicNameList(topic_info_list);
         let checkTimeListPerTopic = data.getCheckedDataOfEveryTopic(checked_data_list, allTopic); //按照每个topic分类的打卡时间集合
-        let [checkTimeList, topicListPerDay] = data.getTopicListPerDay(checked_data_list);
         let allTopicInfoDivided = data.divideTopicInfoIntoGroups(
           checkTimeListPerTopic,
           topic_info_list,
@@ -77,24 +76,12 @@ Page({
           current_date: utils.getYearMonthSlash(),
           topic_info: topic_info_list,
           topic_name_list: allTopic,
-          check_time_list: checkTimeList, 
-          topic_list_per_day: topicListPerDay,
           //被N个N个分成一组的topics
           topic_info_divided: allTopicInfoDivided,
           //根据topic分类的check信息
           checked_time_per_topic: checkTimeListPerTopic,
         });
-        this.fillData(this.data.current_date);
-        this.setCompletenessSubtitle('1周', 0); //一周的历史记录上的文字
-        // 生成当前周的数据
-        this.newCanvas(
-          ['一', '二', '三', '四', '五', '六', '七'],
-          data.getCompletenessData(
-            this.data.check_time_list,
-            this.data.topic_list_per_day,
-            this.data.completeness_current_date, 
-            this.data.topic_name_list.length,
-            '1周')); //生成新的每周数据
+        this.fillCalendar(this.data.current_date);
       });
     });
   },
@@ -114,7 +101,7 @@ Page({
 
 
   /* 具体实现往前端填充数据的方法 */
-  fillData: function (date) {
+  fillCalendar: function (date) {
     let allData = this.data.checked_data_list; //所有的data（按照topic分类的所有check信息
     let allTopic = this.data.topic_name_list; //所有topic名字的集合
     let topic = allTopic[this.data.selected_topic_idx]; //当前选中的topic名
@@ -140,27 +127,46 @@ Page({
   /**
    * 所有历史部分
    */
-  // 单击tap时触发的函数
+  // 切换tap时触发的函数
   navbarTap: function (e) {
     let tabidx = e.currentTarget.dataset.idx;
     this.setData({
       currentTab: tabidx
     });
+    if (tabidx == 1){
+      let [checkTimeList, topicListPerDay] = data.getTopicListPerDay(this.data.checked_data_list);
+      console.log(topicListPerDay)
+      this.setData({
+        check_time_list: checkTimeList,
+        topic_list_per_day: topicListPerDay,
+      });
+
+      this.setCompletenessSubtitle('1周', 0); //一周的历史记录上的文字
+      // 生成当前周的数据
+      this.newCanvas(
+        ['一', '二', '三', '四', '五', '六', '七'],
+        data.getCompletenessData(
+          this.data.check_time_list,
+          this.data.topic_list_per_day,
+          this.data.completeness_current_date,
+          this.data.topic_name_list.length,
+          '1周')); //生成新的每周数据
+    }
   },
 
   // 日期选择框改变时触发的事件
   bindPickerChange: function (e) {
-    this.fillData(e.detail.value);
+    this.fillCalendar(e.detail.value);
   },
 
   // 获取上个月的数据
   getLastMonth: function (e) {
-    this.fillData(moment(this.data.date).subtract(1, 'month').format('YYYY-MM-DD'));
+    this.fillCalendar(moment(this.data.date).subtract(1, 'month').format('YYYY-MM-DD'));
   },
 
   // 获取下个月的数据
   getNextMonth: function (e) {
-    this.fillData(moment(this.data.date).add(1, 'month').format('YYYY-MM-DD'));
+    this.fillCalendar(moment(this.data.date).add(1, 'month').format('YYYY-MM-DD'));
   },
 
   // 文字卡片选择框改变时触发的事件
@@ -170,7 +176,7 @@ Page({
       selected_topic_idx: topicIndx,
       topic_info_divided_idx: parseInt(topicIndx / this.data.topic_info_divided_size),
     });
-    this.fillData(this.data.date);
+    this.fillCalendar(this.data.date);
   },
 
   // 单击左侧topic触发的事件
@@ -179,7 +185,7 @@ Page({
     this.setData({
       selected_topic_idx: topicIdx,
     });
-    this.fillData(this.data.date);
+    this.fillCalendar(this.data.date);
   },
 
   // 单击获取下一组的topic
@@ -226,9 +232,9 @@ Page({
 
   /*--------------------------以下是每日完成度部分---------------------------*/
   
-  /*
-  单击时间区间触发的方法
-  */
+  /**
+   *  单击时间区间触发的方法
+   */
   selectTimeLapse: function (e) {
     let time = e.currentTarget.dataset.time;
     let index = e.currentTarget.dataset.index;

@@ -189,7 +189,6 @@ Page({
     let origin_is_checked = data.is_checked;
     let origin_insist_day = data.insist_day;
     let origin_total_day = data.total_day;
-    console.log(data);
 
     if (origin_is_checked) {
       this.setData({
@@ -201,7 +200,6 @@ Page({
     }
 
     if (data.if_show_log == 0) {
-      console.log(-1);
       this.setData({
         [dataChangedData]: true,
         [boolData]: true,
@@ -209,7 +207,6 @@ Page({
         [totalData]: data['total_day'] + 1,
       });
     } else { //如果选择要弹框，则弹出框
-      console.log(1);
       this.setData({
         selected_id: id,
         show_modal: true,
@@ -358,7 +355,6 @@ Page({
       [totalData]: data['total_day'] + 1,
       textarea_value: '',
     });
-    console.log(this.data.my_topic_data);
     this.hideModal();
   },
 
@@ -377,7 +373,6 @@ Page({
       cancelText: "取消",
       success: function (res) {
         if (!res.confirm) return;
-        console.log('用户确认不再弹出')
         let data = that.data.my_topic_data[that.data.selected_id];
         let topic_name = data.topic_name;
         let dataChangedData = 'my_topic_data[' + id + '].data_changed';
@@ -395,7 +390,6 @@ Page({
    * 输入框字数变化时触发的函数
    */
   inputChange: function(e){
-    console.log(e.detail.value);
     this.setData({
       word_left_num: 140 - e.detail.value.length, //默认最多输入140
       textarea_value: e.detail.value
