@@ -20,7 +20,7 @@
 
       <view class="all-history-left-bottom">
         <image class="all-history-left-bottom-image-left" src="/images/date-left.png" bindtap="getPreTopicGroup" wx:if="{{topic_info_divided_idx != 0}}"/>
-        <image class="all-history-left-bottom-image-right" src="/images/date-right.png" bindtap="getNextTopicGroup" wx:if="{{topic_info.length > topic_info_divided_size}}"/>
+        <image class="all-history-left-bottom-image-right" src="/images/date-right.png" bindtap="getNextTopicGroup" wx:if="{{(topic_info_divided_idx+1) * topic_info_divided_size <= topic_info.length}}"/>
       </view>
     </view>
 

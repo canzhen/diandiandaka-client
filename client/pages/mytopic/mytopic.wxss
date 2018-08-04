@@ -115,7 +115,7 @@ Page{
   width: 540rpx;
   overflow: hidden;
   position: fixed;
-  top: 35%;
+  top: 32%;
   left: 0;
   z-index: 9999;
   background: #f9f9f9;
@@ -152,6 +152,7 @@ Page{
 .textarea {
   width: 100%;
   height: 300rpx;
+  min-height:  300rpx;
   font-size: 30rpx;
   line-height: 28rpx;
   padding: 0 10rpx;

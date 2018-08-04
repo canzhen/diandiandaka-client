@@ -13,14 +13,14 @@ const moment = require('../../vendor/moment.min.js');
 Page({
   data: {
     navbar: ['所有历史', '每日完成度'],
-    currentTab: 1,
+    currentTab: 0,
 
     /* --------------以下的data属于【所有历史】-------------- */
     date: '', // 用户选择的date，随时都会变化
     current_date: '', // 当前的时间，一旦设置则不会改变
     year_month_list: [], // 包含两个元素，初始化时，第一个是当前月的上个月，第二个是当前月
     checked_data_list: getCheckedDataList(), // checked_data_list包含打卡数据
-    selected_topic_idx: 0,
+    selected_topic_idx: 0, //选中的topic
     checked_time_per_topic: [], //每个topic的打卡天数：[{'跑步':['2018-06-13', '2018-06-24', '2018-06-21']}, {..}, {..}]
     topic_name_list: [], //所有topic名字的集合：['减肥','跑步','早睡']
     successive_day_per_topic: [], //每个topic的【连续】打卡天数：[{'跑步':{'num':3,'image_url': 'xxxx'}},{...},..]
