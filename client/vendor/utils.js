@@ -155,7 +155,8 @@ function generateCalendar(checkedDataList, year, month, color) {
     let value = year + '-' + addZero(month) + '-' + addZero(i + 1);
     let day = addZero(i + 1);
     var checked = false;
-    if (checkedDataList.indexOf(value) != -1) checked = true;//该天的数据是被打卡的
+    if (checkedDataList.indexOf(value) != -1) 
+      checked = true;//该天的数据是被打卡的
     arr.push({
       '_day': day,
       '_checked': checked

@@ -8,7 +8,7 @@ const moment = require('../../vendor/moment.min.js');
 Page({
   data: {
     navbar: ['所有历史', '每日完成度'],
-    currentTab: 0,
+    currentTab: 1,
 
     /* --------------以下的data属于【所有历史】-------------- */
     date: '', // 用户选择的date，随时都会变化
@@ -17,7 +17,9 @@ Page({
     checked_data_list: [], // checked_data_list包含打卡数据
     selected_topic_idx: 0, //选中的topic
     checked_time_per_topic: [], //每个topic的打卡天数：[{'跑步':['2018-06-13', '2018-06-24', '2018-06-21']}, {..}, {..}]
-    topic_name_list: [], //所有topic名字的集合：['减肥','跑步','早睡']
+    check_time_list: [], // 所有打卡的日期的集合['2018-07-04', '', ..]
+    topic_name_list: [], // 所有topic名字的集合：['减肥','跑步','早睡']
+    topic_list_per_day: {}, // 每天打卡的卡片列表：{'2018-05-23': ['跑步'], ...}
     successive_day_per_topic: [], //每个topic的【连续】打卡天数：[{'跑步':{'num':3,'image_url': 'xxxx'}},{...},..]
     topic_info: [], //该用的打卡数据：[{'topic_name':'', 'topic_url':'', 'insist_day':''}, {}, ...]
     topic_info_divided: {}, //每N个分为一组，方便显示
@@ -35,7 +37,7 @@ Page({
     selected_timelapse: 0, //当前选中的时间区间的下标
     selected_canvas: 'week', //当前选择展示的图表，默认显示的是本周的
     completeness_week_subtitle: '', //每日完成度第一行要显示的标语
-    completeness_week_current_date: null, //每日完成度-1周-当前查看的周
+    completeness_current_date: null, //每日完成度-1周-当前查看的周
     touchMoveXPos: -1, //鼠标拖动图表的距离
   },
 
@@ -55,35 +57,44 @@ Page({
     }
 
     /* 获取当前用户具体打卡信息 */
-    data.getCheckedDataList((result_list) => {
-      if (!result_list) return;
+    data.getCheckedDataList((checked_data_list) => {
+      if (!checked_data_list) return;
       this.setData({
-        checked_data_list: result_list
+        checked_data_list: checked_data_list
       });
-      console.log(this.data.checked_data_list);
-      data.getTopicInfoList((result_list) => {
+      data.getTopicInfoList((topic_info_list) => {
         console.log('获取用户打卡信息成功');
-        utils.filterDatedData(result_list);
+        topic_info_list = utils.filterDatedData(topic_info_list);
         // console.log(result_list);
-        let allTopic = getTopicNameList(result_list);
-        let checkedTimeList = data.getCheckedDataOfEveryTopic(this.data.checked_data_list, allTopic);
+        let allTopic = getTopicNameList(topic_info_list);
+        let checkTimeListPerTopic = data.getCheckedDataOfEveryTopic(checked_data_list, allTopic); //按照每个topic分类的打卡时间集合
+        let [checkTimeList, topicListPerDay] = data.getTopicListPerDay(checked_data_list);
         let allTopicInfoDivided = data.divideTopicInfoIntoGroups(
-          checkedTimeList,
-          result_list,
+          checkTimeListPerTopic,
+          topic_info_list,
           this.data.topic_info_divided_size);
         this.setData({
           current_date: utils.getYearMonthSlash(),
-          topic_info: result_list,
+          topic_info: topic_info_list,
           topic_name_list: allTopic,
+          check_time_list: checkTimeList, 
+          topic_list_per_day: topicListPerDay,
           //被N个N个分成一组的topics
           topic_info_divided: allTopicInfoDivided,
           //根据topic分类的check信息
-          checked_time_per_topic: checkedTimeList,
+          checked_time_per_topic: checkTimeListPerTopic,
         });
         this.fillData(this.data.current_date);
-        this.setCompletenessSubtitle('1周', 0), //一周的历史记录上的文字
-          this.newCanvas(['一', '二', '三', '四', '五', '六', '七'],
-            [15, 20, 45, 37, 4, 80, 19]); //生成新的每周数据
+        this.setCompletenessSubtitle('1周', 0); //一周的历史记录上的文字
+        // 生成当前周的数据
+        this.newCanvas(
+          ['一', '二', '三', '四', '五', '六', '七'],
+          data.getCompletenessData(
+            this.data.check_time_list,
+            this.data.topic_list_per_day,
+            this.data.completeness_current_date, 
+            this.data.topic_name_list.length,
+            '1周')); //生成新的每周数据
       });
     });
   },
@@ -113,7 +124,7 @@ Page({
     var month = currentMoment.format('MM');
     var preYear = moment(date).subtract(1, 'month').format('YYYY');
     var preMonth = moment(date).subtract(1, 'month').format('MM');
-    
+
     this.setData({
       // 获取当前月份的天数组，以及相应的每天的是否打卡的数据
       'year_month_list[1]': utils.generateCalendar(checkedTime, year, month, '#f8d3ad'),
@@ -189,15 +200,19 @@ Page({
 
   // 单击日历上的某一天，跳转显示当前具体打的卡片
   bindTapOnDate: function (e) {
-    let checkedDetail = utils.getCheckDetailOnGivenDay(
-      this.data.checked_data_list,
-      e.currentTarget.dataset.currentDate);
-    let completeness = (checkedDetail.length / this.data.topic_info.length).toFixed(2);
-    var content = '您在' + e.currentTarget.dataset.currentDate;
-    checkedDetail.length == 0 ? content += '没打卡,继续努力哟~'
-      : content += '打了' + checkedDetail.length + "张卡：[" + checkedDetail.toString() +
-      ']，当日打卡完成度为' + parseInt(completeness * 100) + '%';
+    let chosenDate = e.currentTarget.dataset.currentDate;
+    if (moment(chosenDate) > moment()){
+      content = '未来的事情宝宝无法预测嗷~';
+    }else{
+      let checkedDetail = data.getCheckDetailOnGivenDay(
+        this.data.checked_data_list, chosenDate);
+      let completeness = (checkedDetail.length / this.data.topic_info.length).toFixed(2);
+      var content = '您在' + chosenDate;
+      checkedDetail.length == 0 ? content += '没打卡,继续努力哟~'
+        : content += '打了' + checkedDetail.length + "张卡：[" + checkedDetail.toString() +
+        ']，当日打卡完成度为' + parseInt(completeness * 100) + '%';
 
+    }
     wx.showModal({
       content: content,
       showCancel: false,
@@ -260,10 +275,10 @@ Page({
    * @param n int: 上周还是下周，还是当前，如果是上周则为-1，如果是下周则为1，如果是当前则为0
    */
   setCompletenessSubtitle: function (timelapse, n) {
-    let ans = utils.getCompletenessSubtitle(this.data.completeness_week_current_date, timelapse, n);
+    let ans = utils.getCompletenessSubtitle(this.data.completeness_current_date, timelapse, n);
     // console.log('n=' + n);
     // console.log('timelapse=' + timelapse);
-    // console.log('before, current_date:' + this.data.completeness_week_current_date);
+    // console.log('before, current_date:' + this.data.completeness_current_date);
     if (ans == false) {
       wx.showToast({
         title: '无法查看未来的数据哟~',
@@ -273,12 +288,11 @@ Page({
     }
     this.setData({
       completeness_week_subtitle: ans['subtitle'],
-      completeness_week_current_date: ans['enddate']
+      completeness_current_date: ans['enddate']
     });
-    
     return true;
 
-    // console.log('after, current_date:' + this.data.completeness_week_current_date);
+    // console.log('after, current_date:' + this.data.completeness_current_date);
 
   },
 

@@ -1,4 +1,5 @@
 const api = require('../../ajax/api.js');
+const moment = require('../../vendor/moment.min.js');
 
 /* 获取当前用户具体打卡信息 */
 function getCheckedDataList(cb){
@@ -54,7 +55,7 @@ function getCheckedDataOfEveryTopic(dataList, topicList) {
 
   for (var i = 0; i < topicList.length; i++)
     checkedDataOfTopic[topicList[i]] = Array.from(checkedDataOfTopic[topicList[i]]); //重新变成Array
-
+    
   return checkedDataOfTopic;
 }
 
@@ -92,8 +93,6 @@ function divideTopicInfoIntoGroups(dataMap, allTopic, size) {
 @param givenDate '2018-07-02'
 */
 function getCheckDetailOnGivenDay(checkedList, givenDate) {
-  console.log(checkedList);
-  console.log(givenDate);
   var checkedTopicList = [];
   for (var i = 0; i < checkedList.length; i++) {
     if (checkedList[i].check_time === givenDate)
@@ -102,6 +101,64 @@ function getCheckDetailOnGivenDay(checkedList, givenDate) {
   return checkedTopicList;
 }
 
+/**
+ * 计算获得每日完成度：
+ */
+function getCompletenessData(
+            check_time_list, 
+            topic_list_per_day, 
+            current_date, 
+            total_topic_num,
+            time_lapse){
+  var percentageList = [];
+  let end_date = moment(current_date);
+
+
+  switch(time_lapse){
+    case '1周':
+      for (let i = 6; i >= 0; i--){
+        let date = moment(end_date).subtract(i, 'days').format('YYYY-MM-DD');
+        let percentage = 0;
+        if (check_time_list.indexOf(date) != -1) 
+          percentage = topic_list_per_day[date].length / total_topic_num * 100;
+        percentageList.push((percentage.toFixed(2)));
+      }
+      break;
+    case '1个月':
+      break;
+    case '3个月':
+      break;
+    case '1年':
+      break;
+    case '全部':
+      break;
+    default:
+      break;
+  }
+  // console.log(checked_data_list);
+  // console.log(percentageList);
+
+  return percentageList;
+  // return [4, 5, 10, 24, 10, 56, 33];
+};
+
+
+/**
+ * 返回所有打卡时间的列表以及
+ * {时间：卡片列表}的map
+ */
+function getTopicListPerDay(checked_data_list){
+  var map = new Map(); //{time: topic_list}
+  var checkedTimeList = new Set();
+  for (let i in checked_data_list){
+    let time = checked_data_list[i]['check_time'];
+    checkedTimeList.add(time);
+    if (map[time] == undefined) 
+      map[time] = [];
+    map[time].push(checked_data_list[i]['topic_name']);
+  }
+  return [Array.from(checkedTimeList), map];
+}
 
 module.exports = {
   getCheckedDataList,
@@ -109,4 +166,6 @@ module.exports = {
   getCheckedDataOfEveryTopic,
   divideTopicInfoIntoGroups,
   getCheckDetailOnGivenDay,
+  getCompletenessData,
+  getTopicListPerDay,
 }
