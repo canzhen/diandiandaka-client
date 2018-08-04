@@ -1,13 +1,7 @@
-
-import {
-  getCheckedDataList,
-  getTopicInfoList, 
-  getTopicInfo,
-} from './data'
-
 var Charts = require('wxcharts.js');
 const utils = require('../../vendor/utils.js');
 const api = require('../../ajax/api.js');
+const data = require('data.js');
 const moment = require('../../vendor/moment.min.js');
 
 
@@ -61,19 +55,19 @@ Page({
     }
 
     /* 获取当前用户具体打卡信息 */
-    getCheckedDataList((result_list) => {
+    data.getCheckedDataList((result_list) => {
       if (!result_list) return;
       this.setData({
         checked_data_list: result_list
       });
       console.log(this.data.checked_data_list);
-      getTopicInfoList((result_list) => {
+      data.getTopicInfoList((result_list) => {
         console.log('获取用户打卡信息成功');
         utils.filterDatedData(result_list);
         // console.log(result_list);
         let allTopic = getTopicNameList(result_list);
-        let checkedTimeList = utils.getCheckedDataOfEveryTopic(this.data.checked_data_list, allTopic);
-        let allTopicInfoDivided = utils.divideTopicInfoIntoGroups(
+        let checkedTimeList = data.getCheckedDataOfEveryTopic(this.data.checked_data_list, allTopic);
+        let allTopicInfoDivided = data.divideTopicInfoIntoGroups(
           checkedTimeList,
           result_list,
           this.data.topic_info_divided_size);

@@ -218,30 +218,6 @@ function getYearMonthSlash(date){
   return moment(date).format('YYYY-MM');
 }
 
-// function getAllTopicList(dataList){
-//   var allTopicList = new Set(); //去重
-//   for (var i = 0; i < dataList.length; i++){
-//     allTopicList.add(dataList[i].topic);
-//   }
-//   return Array.from(allTopicList);
-// }
-
-
-function getCheckedDataOfEveryTopic(dataList, topicList){
-  var checkedDataOfTopic = new Map();
-  for (var i = 0; i < topicList.length; i++)
-    checkedDataOfTopic[topicList[i]] = new Set(); //去重，初始化
-
-  for (var i = 0; i < dataList.length; i++)
-    checkedDataOfTopic[dataList[i].topic_name]
-        .add(dataList[i].check_time);
-
-  for (var i = 0; i < topicList.length; i++)
-    checkedDataOfTopic[topicList[i]] = Array.from(checkedDataOfTopic[topicList[i]]); //重新变成Array
-
-  return checkedDataOfTopic;
-}
-
 /*
 通过给定的排好序的打卡时间列表，返回到今天为止的连续打卡天数
 @dateList : ["2018-06-03", "2018-06-04", "2018-06-23", "2018-07-01", "2018-07-02"]
@@ -263,64 +239,6 @@ function getSuccessiveDayByDateList(dateList){
     else break;
   }
   return count;
-}
-
-// 计算successiveDay，getImageUrl，完善topic信息
-// function getAndCalculateTopicInfo(dataMap, allTopic){
-//   var count = 0, infoList = [];
-//   for (var i in allTopic) {
-//     let info = allTopic[i];
-//     // 计算连续打卡天数
-//     dataMap[info.name].sort(function (a, b) { return a > b ? 1 : -1; });
-//     let successiveNum = getSuccessiveDayByDateList(dataMap[info.name]);
-//     infoList.push({
-//       'name': info.name,
-//       'image_url': info.image_url,
-//       'successive_day': successiveNum,
-//       'total_day': dataMap[info.name].length,
-//     });
-//   }
-//   return infoList;
-// }
-
-
-
-// 把TopicInfo按照每size一组，分组
-function divideTopicInfoIntoGroups(dataMap, allTopic, size){
-  var count = 0, dividedList = [], tmpList = [];
-  // 每size个，分成一组
-  for (var i in allTopic) {
-    if (count == size) {
-      dividedList.push(tmpList);
-      tmpList = [];
-      count = 0;
-    }
-    let info = allTopic[i];
-    tmpList.push({ 
-      'topic_name': info.topic_name, 
-      'topic_url': info.topic_url, 
-      'number': count, //第n组的第number个，用于计算在总数组中的位置
-      'insist_day': info.insist_day });
-    count++;
-  }
-
-  dividedList.push(tmpList);
-  return dividedList;
-}
-
-/*
-@param checkedList [{'topic':'减肥', 'created_time':'2018-06-23'}, {}, {}, ...]
-@param givenDate '2018-07-02'
-*/
-function getCheckDetailOnGivenDay(checkedList, givenDate){
-  console.log(checkedList);
-  console.log(givenDate);
-  var checkedTopicList = [];
-  for (var i = 0; i < checkedList.length; i++){
-    if (checkedList[i].check_time === givenDate)
-      checkedTopicList.push(checkedList[i].topic_name);
-  }
-  return checkedTopicList;
 }
 
 /**
@@ -457,16 +375,13 @@ module.exports = {
   getFullDateSlash,
   getYearMonthSlash,
   getFormateDatetimeEN,
-  // getAllTopicList,
-  getCheckedDataOfEveryTopic,
-  // getAndCalculateTopicInfo,
-  divideTopicInfoIntoGroups,
-  getCheckDetailOnGivenDay,
   getWeekEndDate,
   getWeekStartDate,
+
+  /* 打卡历史部分 */
   getCompletenessSubtitle,
 
-  /* mytopic部分 */
+  /* 我的打卡mytopic 部分 */
   getSubscriptByLength, //计算下标
   filterDatedData, //过滤掉过期的数据，主要是看insist_day连续坚持天数是否正确
   filterUnchangeData, //过滤掉没变化的数据，只剩下有变化的数据

@@ -1,57 +1,5 @@
 const api = require('../../ajax/api.js');
 
-let checked_data_list = [
-  { 'topic': '写五个自己的优点', 'created_time': '2018-08-03' },
-  // { 'topic': '减肥', 'created_time': '2018-07-01' },
-  // { 'topic': '减肥', 'created_time': '2018-07-02' },
-  // { 'topic': '减肥', 'created_time': '2018-07-03' },
-  // { 'topic': '减肥', 'created_time': '2018-07-04' },
-  // { 'topic': '减肥', 'created_time': '2018-07-05' },
-  // { 'topic': '减肥', 'created_time': '2018-07-06' },
-  // { 'topic': '减肥', 'created_time': '2018-07-07' },
-  // { 'topic': '减肥', 'created_time': '2018-07-08' },
-  // { 'topic': '减肥', 'created_time': '2018-07-09' },
-  // { 'topic': '减肥', 'created_time': '2018-06-09' },
-  // { 'topic': '跑步', 'created_time': '2018-06-03' },
-  // { 'topic': '跑步', 'created_time': '2018-06-13' },
-  // { 'topic': '跑步', 'created_time': '2018-06-30' },
-  // { 'topic': '跑步', 'created_time': '2018-06-22' },
-  // { 'topic': '跑步', 'created_time': '2018-06-11' },
-  // { 'topic': '跑步', 'created_time': '2018-06-17' },
-  // { 'topic': '减肥', 'created_time': '2018-06-23' },
-  // { 'topic': '跑步', 'created_time': '2018-07-07' },
-  // { 'topic': '跑步', 'created_time': '2018-07-08' },
-  // { 'topic': '早睡', 'created_time': '2018-07-08' },
-  // { 'topic': '早睡', 'created_time': '2018-06-12' },
-  // { 'topic': '早睡', 'created_time': '2018-07-06' },
-  // { 'topic': '早睡', 'created_time': '2018-07-07' },
-  // { 'topic': '早睡', 'created_time': '2018-07-08' },
-  // { 'topic': '早睡', 'created_time': '2018-07-09' },
-  // { 'topic': '早睡', 'created_time': '2018-07-01' },
-  // { 'topic': '早睡', 'created_time': '2018-06-01' },
-  // { 'topic': '清晨一杯水', 'created_time': '2018-06-01' },
-  // { 'topic': '清晨一杯水', 'created_time': '2018-07-08' },
-  // { 'topic': '清晨一杯水', 'created_time': '2018-07-09' },
-  // { 'topic': '吃早餐', 'created_time': '2018-07-01' },
-  // { 'topic': '吃早餐', 'created_time': '2018-07-03' },
-  // { 'topic': '健身', 'created_time': '2018-06-01' },
-  // { 'topic': '健身', 'created_time': '2018-06-11' },
-  // { 'topic': '阅读', 'created_time': '2018-06-01' },
-  // { 'topic': '阅读', 'created_time': '2018-06-29' },
-  // { 'topic': '阅读', 'created_time': '2018-07-02' },
-  ];
-
-
-let topic_info = [ //存该用户所有topic的info，包括image_url（直接数据库调取）和连续打卡天数（经过计算的来）
-  { 'name': '减肥', 'image_url': '/images/jianfei.png' },
-  { 'name': '跑步', 'image_url': '/images/paobu.png' },
-  { 'name': '早睡', 'image_url': '/images/zaoshui.png' },
-  { 'name': '清晨一杯水', 'image_url': '/images/qingchenyibeishui.png' },
-  { 'name': '吃早餐', 'image_url': '/images/chizaocan.png' },
-  { 'name': '健身', 'image_url': '/images/jianshen.png' },
-  { 'name': '阅读', 'image_url': '/images/yuedu.png' },];
-
-
 /* 获取当前用户具体打卡信息 */
 function getCheckedDataList(cb){
   api.postRequest({
@@ -69,10 +17,7 @@ function getCheckedDataList(cb){
       cb(false);
     }
   });
-  return checked_data_list;
 }
-
-
 
 /* 获取当前用户的卡片信息 */
 function getTopicInfoList(cb) {
@@ -98,12 +43,70 @@ function getTopicInfoList(cb) {
 
 
 
-function getTopicInfo(){
-  return topic_info;
+function getCheckedDataOfEveryTopic(dataList, topicList) {
+  var checkedDataOfTopic = new Map();
+  for (var i = 0; i < topicList.length; i++)
+    checkedDataOfTopic[topicList[i]] = new Set(); //去重，初始化
+
+  for (var i = 0; i < dataList.length; i++)
+    checkedDataOfTopic[dataList[i].topic_name]
+      .add(dataList[i].check_time);
+
+  for (var i = 0; i < topicList.length; i++)
+    checkedDataOfTopic[topicList[i]] = Array.from(checkedDataOfTopic[topicList[i]]); //重新变成Array
+
+  return checkedDataOfTopic;
 }
+
+
+
+
+// 把TopicInfo按照每size一组，分组
+function divideTopicInfoIntoGroups(dataMap, allTopic, size) {
+  var count = 0, dividedList = [], tmpList = [];
+  // 每size个，分成一组
+  for (var i in allTopic) {
+    if (count == size) {
+      dividedList.push(tmpList);
+      tmpList = [];
+      count = 0;
+    }
+    let info = allTopic[i];
+    tmpList.push({
+      'topic_name': info.topic_name,
+      'topic_url': info.topic_url,
+      'number': count, //第n组的第number个，用于计算在总数组中的位置
+      'insist_day': info.insist_day
+    });
+    count++;
+  }
+
+  dividedList.push(tmpList);
+  return dividedList;
+}
+
+
+
+/*
+@param checkedList [{'topic':'减肥', 'created_time':'2018-06-23'}, {}, {}, ...]
+@param givenDate '2018-07-02'
+*/
+function getCheckDetailOnGivenDay(checkedList, givenDate) {
+  console.log(checkedList);
+  console.log(givenDate);
+  var checkedTopicList = [];
+  for (var i = 0; i < checkedList.length; i++) {
+    if (checkedList[i].check_time === givenDate)
+      checkedTopicList.push(checkedList[i].topic_name);
+  }
+  return checkedTopicList;
+}
+
 
 module.exports = {
   getCheckedDataList,
   getTopicInfoList,
-  getTopicInfo,
+  getCheckedDataOfEveryTopic,
+  divideTopicInfoIntoGroups,
+  getCheckDetailOnGivenDay,
 }
