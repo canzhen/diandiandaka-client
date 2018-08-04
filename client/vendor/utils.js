@@ -391,6 +391,7 @@ function getCompletenessSubtitle (currentdate, timelapse, n) {
 
 
 /**
+ * 从数据库中获取，显示到前台的时候的过滤函数
  * 1. 将24小时未打卡的卡片insist_day设置为0，
  * 2. 将过期的卡片删除（当前日期大于用户设置的end_date）
  * 3. 今日打过卡的，直接is_checked设置为true
@@ -406,7 +407,7 @@ function filterDatedData(user_topic_list){
     if (moment().diff(moment(item['update_time']), 'hours') > 24)
       item['insist_day'] = 0;
     // 今日打过卡的，直接is_checked设置为true
-    if (moment(item['update_time']).format('MM-DD') == 
+    if (moment(item['last_check_time']).format('MM-DD') == 
           moment().format('MM-DD'))
       item['is_checked'] = true;
     filteredList.push(item);
@@ -416,6 +417,7 @@ function filterDatedData(user_topic_list){
 
 
 /**
+ * 要发送到数据库前的过滤函数
  * 过滤掉没变化的数据，只剩下用户修改过的数据
  */
 function filterUnchangeData(user_topic_list){
@@ -426,7 +428,8 @@ function filterUnchangeData(user_topic_list){
     // 打卡，或者取消弹框，则需要在数据库中修改
     // 用户不可能在“我的打卡”这一页开启弹窗，
     // 所以只需要判断是否为1即可，1就是没关闭
-    if (!item['is_checked'] && item['if_show_log'] == 1) continue;
+    if (!item['data_changed']) continue;
+    if (item['is_checked']) item['last_check_time'] = moment().format('YYYY-MM-DD HH:mm');
     filtered_list.push(item);
   }
   return filtered_list;

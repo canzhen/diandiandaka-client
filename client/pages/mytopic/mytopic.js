@@ -178,13 +178,18 @@ Page({
     // 查看是否是添加新卡片，如果是，就直接跳转到newtopic function
     if (data.insist_day == -1) return this.newtopic(event);
 
+
     // 查看是否之前单击过，如果单击过，则此次单击取消之前单击
+    // 新增data_changed 是因为：同一天打过卡的，is_checked本身就为true，
+    // 这样在save的时候，就又会被save一次
+    let dataChangedData = 'my_topic_data[' + id + '].data_changed';
     let boolData = 'my_topic_data[' + id + '].is_checked';
     let insistData = 'my_topic_data[' + id + '].insist_day';
     let totalData = 'my_topic_data[' + id + '].total_day';
     let origin_is_checked = data.is_checked;
     let origin_insist_day = data.insist_day;
     let origin_total_day = data.total_day;
+    console.log(data);
 
     if (origin_is_checked) {
       this.setData({
@@ -195,13 +200,16 @@ Page({
       return;
     }
 
-    if (data.if_show_log == 0){
+    if (data.if_show_log == 0) {
+      console.log(-1);
       this.setData({
+        [dataChangedData]: true,
         [boolData]: true,
         [insistData]: data['insist_day'] + 1,
         [totalData]: data['total_day'] + 1,
       });
     } else { //如果选择要弹框，则弹出框
+      console.log(1);
       this.setData({
         selected_id: id,
         show_modal: true,
@@ -337,11 +345,13 @@ Page({
   onConfirm: function () {
     let id = this.data.selected_id;
     let data = this.data.my_topic_data[id];
+    let dataChangedData = 'my_topic_data[' + id + '].data_changed';
     let boolData = 'my_topic_data[' + id + '].is_checked';
     let logData = 'my_topic_data[' + id + '].log';
     let insistData = 'my_topic_data[' + id + '].insist_day';
     let totalData = 'my_topic_data[' + id + '].total_day';
     this.setData({
+      [dataChangedData]: true,
       [boolData]: true,
       [logData]: this.data.textarea_value,
       [insistData]: data['insist_day'] + 1,
@@ -370,11 +380,10 @@ Page({
         console.log('用户确认不再弹出')
         let data = that.data.my_topic_data[that.data.selected_id];
         let topic_name = data.topic_name;
-        let not_show_log_str = 'my_topic_data[' + that.data.selected_id + 
-            '].if_show_log';
+        let dataChangedData = 'my_topic_data[' + id + '].data_changed';
         // 设置当前弹出框为0
         that.setData({
-          [not_show_log_str]: 0
+          [dataChangedData]: true
         });
         that.hideModal();
       }

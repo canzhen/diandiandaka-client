@@ -30,6 +30,12 @@ router.post('/check', function (req, res) {
     reformat_user_topic_list.push(changed_topic_list[i]['if_show_log']);
   }
 
+  // push last_check_time
+  for (let i in changed_topic_list) {
+    reformat_user_topic_list.push(changed_topic_list[i]['topic_name']);
+    reformat_user_topic_list.push(changed_topic_list[i]['last_check_time']);
+  }
+
   redishelper.getValue(id, (openid) => {
     if (!openid) {
       res.send({ 'error_code': 102, 'msg': '' });
@@ -43,14 +49,17 @@ router.post('/check', function (req, res) {
       tmp_list.push("'" + changed_topic_list[i]['log'] + "'");
       reformat_check_list.push(tmp_list);
     }
-    dbhelper.updateUserTopicNumberByUserId(
+
+
+    //update user_topic，记录用户卡片的总数据
+    dbhelper.updateUserTopicNumberByUserId( 
       openid, reformat_user_topic_list,
       (status) => {
         if (!status){
           res.send({ 'error_code': 100, 'msg': '' });
           return;
         }
-        dbhelper.insertMulti(
+        dbhelper.insertMulti( //update topic_check，记录具体打卡详情
           'topic_check', 'user_id, topic_name, log', reformat_check_list,'',
           (status, errmsg) => {
             if (!status) res.send({ 'error_code': 100, 'msg': errmsg });

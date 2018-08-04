@@ -105,7 +105,7 @@ function insertMulti(table_name, column_string, value_list, other_operation_stri
   sql = "INSERT INTO " + table_name + "(" + column_string + ") VALUES(";
   for (let i = 0; i < value_list.length; i++) {
     sql += value_list[i].toString() + ")";
-    if ( i != value_list.length -1 ) sql += ",";
+    if ( i != value_list.length -1 ) sql += ", (";
   }
   sql += ' ';
   sql += other_operation_string;
@@ -175,15 +175,21 @@ function update(table_name, column_string, value_list, condition_string, cb){
  */
 function updateUserTopicNumberByUserId(id, list, cb) {
   let client = connectServer();
-  let l = list.length / 3;
+  let l = list.length / 4;
   let sql = "UPDATE user_topic " +  
             "SET insist_day = CASE topic_name ";
-  for (let i=0; i < l/2; i++) sql += "WHEN ? THEN ? ";
-  sql += "ELSE insist_day END, total_day = CASE topic_name ";
+  for (let i=0; i < l/2; i++) sql += "WHEN ? THEN ? "; //insist_day
+
+  sql += "ELSE insist_day END, total_day = CASE topic_name "; //total_day
   for (let i = 0; i < l / 2; i++) sql += "WHEN ? THEN ? ";
-  sql += "ELSE total_day END, if_show_log = CASE topic_name ";
+
+  sql += "ELSE total_day END, if_show_log = CASE topic_name "; //if_show_log
   for (let i = 0; i < l / 2; i++) sql += "WHEN ? THEN ? ";
-  sql += "ELSE if_show_log END WHERE user_id = ?;"
+
+  sql += "ELSE if_show_log END, last_check_time = CASE topic_name "; //last_check_time
+  for (let i = 0; i < l / 2; i++) sql += "WHEN ? THEN ? ";
+
+  sql += "ELSE last_check_time END WHERE user_id = ?;"
   list.push(id);
 
   client.query(
