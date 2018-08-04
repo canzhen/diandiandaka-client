@@ -87,7 +87,6 @@ Page({
       'data': [],
       'showLoading': ifShowLoading, 
       'success': (res) => { //成功
-        console.log(res);
         if (res.error_code == 200) {
           console.log('获取用户打卡信息成功');
           let result_list = utils.filterDatedData(res.result_list);
@@ -119,7 +118,7 @@ Page({
     if (changed_topic_list.length == 0) return;
     console.log(changed_topic_list);
     api.postRequest({
-      'url': '/userTopic/udpateNumberByUserId',
+      'url': '/topicCheck/check',
       'data': { 
         'changedTopicList': JSON.stringify(changed_topic_list)
       },
@@ -214,7 +213,6 @@ Page({
   },
 
 
-  
 
   /**
    * 添加新卡片

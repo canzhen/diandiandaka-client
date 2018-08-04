@@ -26,10 +26,6 @@ router.post('/getAll', function (req, res) {
 });
 
 
-
-
-
-
 /**
  * 往topic table里添加一条数据
  */
@@ -77,7 +73,6 @@ router.post('/createtopic', function (req, res) {
     });
   });
 });
-
 
 
 module.exports = router;

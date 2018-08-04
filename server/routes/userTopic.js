@@ -36,45 +36,11 @@ router.post('/getTopicListByUserId', function (req, res) {
 
 
 
-/**
- * 通过用户id在数据库中更新该用户的打卡数据：连续天数、坚持天数
- */
-router.post('/udpateNumberByUserId', function (req, res) {
-  let id = req.header('session-id');
-  var changed_topic_list = JSON.parse(req.body.changedTopicList);
-
-  //整理数据成[['topic_name1','insist_day1',...., 'topic_name1', 'total_day1',...,'topic_name1', 'if_show_log1',..]
-  var reformat_list = [];
-  // push insist_day
-  for (let i in changed_topic_list){
-    reformat_list.push(changed_topic_list[i]['topic_name']);
-    reformat_list.push(changed_topic_list[i]['insist_day']);
-  }
-  // push total_day
-  for (let i in changed_topic_list) {
-    reformat_list.push(changed_topic_list[i]['topic_name']);
-    reformat_list.push(changed_topic_list[i]['total_day']);
-  }
-  // push if_show_log
-  for (let i in changed_topic_list) {
-    reformat_list.push(changed_topic_list[i]['topic_name']);
-    reformat_list.push(changed_topic_list[i]['if_show_log']);
-  }
-
-  redishelper.getValue(id, (openid) => {
-    if (!openid) {
-      res.send({ 'error_code': 102, 'msg': '' });
-      return;
-    }
-    dbhelper.updateUserTopicNumberByUserId(
-      openid, reformat_list,
-      (status) => {
-        if (status)
-          res.send({ 'error_code': 200, 'msg': '' });
-        else res.send({ 'error_code': 100, 'msg': ''});
-    });
-  });
-});
+// /**
+//  * 通过用户id在数据库中更新该用户的打卡数据：连续天数、坚持天数
+//  */
+// router.post('/udpateNumberByUserId', function (req, res) {
+// });
 
 
 

@@ -90,6 +90,51 @@ function insert(table_name, column_string, value_list, other_operation_string, c
 
 
 
+
+
+/**
+ * 向表中新增多条数据
+ * @param table_name: 表名称，string
+ * @param column_string: 要添加的栏，以英文逗号分隔，string（id,name,..)
+ * @param value_list: 要添加进去的value，list of list：[[], [], [],...]
+ * @param other_operation_string: 要跟在insert后的其他操作符，例如on duplicate key update等等
+ * @cb(status是否成功, errmsg错误信息): 如果是duplicate的话，status为false，errmsg为"duplicate"
+ */
+function insertMulti(table_name, column_string, value_list, other_operation_string, cb) {
+  let client = connectServer();
+  sql = "INSERT INTO " + table_name + "(" + column_string + ") VALUES(";
+  for (let i = 0; i < value_list.length; i++) {
+    sql += value_list[i].toString() + ")";
+    if ( i != value_list.length -1 ) sql += ",";
+  }
+  sql += ' ';
+  sql += other_operation_string;
+
+  console.log(sql);
+
+  client.query(
+    sql, value_list,
+    function (err, result) {
+      let errmsg = '';
+      if (err) {
+        errmsg = err.message;
+        console.log('insert ' + table_name + '表【多列】失败，失败信息:' + err.message);
+      } else {
+        if (result['changedRows'] == 0) { //为0代表duplicate key
+          cb(true, 'duplicate');
+          return;
+        }
+        console.log('insert ' + table_name + '表【多列】成功');
+      }
+      cb(!err, errmsg); //回调函数
+    });
+
+  client.end();
+}
+
+
+
+
 /**
  * 更新表中的一行数据
  * @param table_name: 表名，string
@@ -158,6 +203,7 @@ function updateUserTopicNumberByUserId(id, list, cb) {
 module.exports = {
   connectServer,
   insert,
+  insertMulti,
   select, 
   update,
 
