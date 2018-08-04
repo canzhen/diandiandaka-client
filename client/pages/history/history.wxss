@@ -78,21 +78,21 @@ page{
 }
 
 .all-history-left-bottom-image-left{
-  width: 40rpx;
-  height: 40rpx;
+  width: 45rpx;
+  height: 45rpx;
 
   position: fixed;
   left: 10rpx;
-  top: 985rpx;
+  top: 1010rpx;
 }
 
 .all-history-left-bottom-image-right{
-  width: 40rpx;
-  height: 40rpx;
+  width: 45rpx;
+  height: 45rpx;
 
   position: fixed;
   left: 80rpx;
-  top: 985rpx;
+  top: 1010rpx;
 }
 
 

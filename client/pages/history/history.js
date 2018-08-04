@@ -1,6 +1,7 @@
 
 import {
   getCheckedDataList,
+  getTopicInfoList, 
   getTopicInfo,
 } from './data'
 
@@ -19,7 +20,7 @@ Page({
     date: '', // 用户选择的date，随时都会变化
     current_date: '', // 当前的时间，一旦设置则不会改变
     year_month_list: [], // 包含两个元素，初始化时，第一个是当前月的上个月，第二个是当前月
-    checked_data_list: getCheckedDataList(), // checked_data_list包含打卡数据
+    checked_data_list: [], // checked_data_list包含打卡数据
     selected_topic_idx: 0, //选中的topic
     checked_time_per_topic: [], //每个topic的打卡天数：[{'跑步':['2018-06-13', '2018-06-24', '2018-06-21']}, {..}, {..}]
     topic_name_list: [], //所有topic名字的集合：['减肥','跑步','早睡']
@@ -59,48 +60,38 @@ Page({
       return ans;
     }
 
-
-
-    /* 获取当前用户的打卡信息 */
-    api.postRequest({
-      'url': '/userTopic/getTopicListByUserId',
-      'data': [],
-      'showLoading': true,
-      'success': (res) => { //成功
-        if (res.error_code == 200) {
-          let result_list = res.result_list;
-          console.log('获取用户打卡信息成功');
-          utils.filterDatedData(result_list);
-          // console.log(result_list);
-          let allTopic = getTopicNameList(result_list);
-          let checkedTimeList = utils.getCheckedDataOfEveryTopic(this.data.checked_data_list, allTopic);
-          let allTopicInfoDivided = utils.divideTopicInfoIntoGroups(
-            checkedTimeList,
-            result_list,
-            this.data.topic_info_divided_size);
-          console.log(allTopicInfoDivided);
-          this.setData({
-            current_date: utils.getYearMonthSlash(),
-            topic_info: result_list,
-            topic_name_list: allTopic,
-            //被N个N个分成一组的topics
-            topic_info_divided: allTopicInfoDivided, 
-            //根据topic分类的check信息
-            checked_time_per_topic: checkedTimeList, 
-          });
-
-          this.fillData(this.data.current_date);
-          this.setCompletenessSubtitle('1周', 0), //一周的历史记录上的文字
-            this.newCanvas(['一', '二', '三', '四', '五', '六', '七'],
-              [15, 20, 45, 37, 4, 80, 19]); //生成新的每周数据
-        } else console.log('获取用户打卡信息失败');
-      },
-      'fail': (res) => { //失败
-        console.log('获取用户打卡信息失败');
-      }
+    /* 获取当前用户具体打卡信息 */
+    getCheckedDataList((result_list) => {
+      if (!result_list) return;
+      this.setData({
+        checked_data_list: result_list
+      });
+      console.log(this.data.checked_data_list);
+      getTopicInfoList((result_list) => {
+        console.log('获取用户打卡信息成功');
+        utils.filterDatedData(result_list);
+        // console.log(result_list);
+        let allTopic = getTopicNameList(result_list);
+        let checkedTimeList = utils.getCheckedDataOfEveryTopic(this.data.checked_data_list, allTopic);
+        let allTopicInfoDivided = utils.divideTopicInfoIntoGroups(
+          checkedTimeList,
+          result_list,
+          this.data.topic_info_divided_size);
+        this.setData({
+          current_date: utils.getYearMonthSlash(),
+          topic_info: result_list,
+          topic_name_list: allTopic,
+          //被N个N个分成一组的topics
+          topic_info_divided: allTopicInfoDivided,
+          //根据topic分类的check信息
+          checked_time_per_topic: checkedTimeList,
+        });
+        this.fillData(this.data.current_date);
+        this.setCompletenessSubtitle('1周', 0), //一周的历史记录上的文字
+          this.newCanvas(['一', '二', '三', '四', '五', '六', '七'],
+            [15, 20, 45, 37, 4, 80, 19]); //生成新的每周数据
+      });
     });
-
-
   },
 
 
@@ -129,7 +120,6 @@ Page({
     var preYear = moment(date).subtract(1, 'month').format('YYYY');
     var preMonth = moment(date).subtract(1, 'month').format('MM');
     
-
     this.setData({
       // 获取当前月份的天数组，以及相应的每天的是否打卡的数据
       'year_month_list[1]': utils.generateCalendar(checkedTime, year, month, '#f8d3ad'),
@@ -211,8 +201,8 @@ Page({
     let completeness = (checkedDetail.length / this.data.topic_info.length).toFixed(2);
     var content = '您在' + e.currentTarget.dataset.currentDate;
     checkedDetail.length == 0 ? content += '没打卡,继续努力哟~'
-      : content += '打了' + checkedDetail.length + "张卡：" + checkedDetail.toString() +
-      '，当日打卡完成度为' + parseInt(completeness * 100) + '%';
+      : content += '打了' + checkedDetail.length + "张卡：[" + checkedDetail.toString() +
+      ']，当日打卡完成度为' + parseInt(completeness * 100) + '%';
 
     wx.showModal({
       content: content,

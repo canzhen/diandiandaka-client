@@ -160,8 +160,8 @@ function generateCalendar(checkedDataList, year, month, color) {
       '_day': day,
       '_checked': checked
     });
-
   }
+
 
   // 将得出的数组每7个分成一组
   var splitedArr = [], tmpArr = [], count = 0;
@@ -194,6 +194,7 @@ function generateCalendar(checkedDataList, year, month, color) {
 
   return ans;
 }
+
 
 /**
  * 获取格式化日期和时间，英文版
@@ -232,10 +233,12 @@ function getCheckedDataOfEveryTopic(dataList, topicList){
     checkedDataOfTopic[topicList[i]] = new Set(); //去重，初始化
 
   for (var i = 0; i < dataList.length; i++)
-    checkedDataOfTopic[dataList[i].topic].add(dataList[i].created_time);
+    checkedDataOfTopic[dataList[i].topic_name]
+        .add(dataList[i].check_time);
 
   for (var i = 0; i < topicList.length; i++)
     checkedDataOfTopic[topicList[i]] = Array.from(checkedDataOfTopic[topicList[i]]); //重新变成Array
+
   return checkedDataOfTopic;
 }
 
@@ -310,10 +313,12 @@ function divideTopicInfoIntoGroups(dataMap, allTopic, size){
 @param givenDate '2018-07-02'
 */
 function getCheckDetailOnGivenDay(checkedList, givenDate){
+  console.log(checkedList);
+  console.log(givenDate);
   var checkedTopicList = [];
   for (var i = 0; i < checkedList.length; i++){
-    if (checkedList[i].created_time === givenDate)
-      checkedTopicList.push(checkedList[i].topic);
+    if (checkedList[i].check_time === givenDate)
+      checkedTopicList.push(checkedList[i].topic_name);
   }
   return checkedTopicList;
 }
@@ -429,7 +434,7 @@ function filterUnchangeData(user_topic_list){
     // 用户不可能在“我的打卡”这一页开启弹窗，
     // 所以只需要判断是否为1即可，1就是没关闭
     if (!item['data_changed']) continue;
-    if (item['is_checked']) item['last_check_time'] = moment().format('YYYY-MM-DD HH:mm');
+    if (item['is_checked']) item['last_check_time'] = moment().format('YYYY-MM-DD');
     filtered_list.push(item);
   }
   return filtered_list;

@@ -46,6 +46,7 @@ router.post('/check', function (req, res) {
       var tmp_list = [];
       tmp_list.push("'" + openid + "'");
       tmp_list.push("'" + changed_topic_list[i]['topic_name'] + "'");
+      tmp_list.push("'" + changed_topic_list[i]['last_check_time'] + "'");
       tmp_list.push("'" + changed_topic_list[i]['log'] + "'");
       reformat_check_list.push(tmp_list);
     }
@@ -60,13 +61,37 @@ router.post('/check', function (req, res) {
           return;
         }
         dbhelper.insertMulti( //update topic_check，记录具体打卡详情
-          'topic_check', 'user_id, topic_name, log', reformat_check_list,'',
+          'topic_check', 'user_id, topic_name, check_time, log', reformat_check_list, '',
           (status, errmsg) => {
             if (!status) res.send({ 'error_code': 100, 'msg': errmsg });
             else res.send({ 'error_code': 200, 'msg': '' });
           });
       });
   });
+});
+
+
+
+/**
+ * 获取某个用户的所有打卡记录
+ */
+router.post('/getAll', function (req, res) {
+  let id = req.header('session-id');
+
+  redishelper.getValue(id, (openid) => {
+    if (!openid) {
+      res.send({ 'error_code': 102, 'msg': '' });
+      return;
+    }
+    dbhelper.select('topic_check', 'topic_name,check_time,log',
+      'user_id=?', [openid], '',
+      (status, result_list) => {
+        let statusCode = status ? 200 : 100;
+        let resList = status ? result_list : false;
+        res.send({'error_code': statusCode,'msg':'','result_list':resList});
+      });
+  });
+
 });
 
 

@@ -1,3 +1,5 @@
+const api = require('../../ajax/api.js');
+
 let checked_data_list = [
   { 'topic': '写五个自己的优点', 'created_time': '2018-08-03' },
   // { 'topic': '减肥', 'created_time': '2018-07-01' },
@@ -50,9 +52,51 @@ let topic_info = [ //存该用户所有topic的info，包括image_url（直接�
   { 'name': '阅读', 'image_url': '/images/yuedu.png' },];
 
 
-function getCheckedDataList(){
+/* 获取当前用户具体打卡信息 */
+function getCheckedDataList(cb){
+  api.postRequest({
+    'url': '/topicCheck/getAll',
+    'data': {},
+    'success': (res) => {
+      if (res){
+        cb(res.result_list);
+      }else{
+        cb(false);
+      }
+    },
+    'fail': (res) => {
+      console.log('从数据库中获取用户具体每日打卡信息失败');
+      cb(false);
+    }
+  });
   return checked_data_list;
 }
+
+
+
+/* 获取当前用户的卡片信息 */
+function getTopicInfoList(cb) {
+  api.postRequest({
+    'url': '/userTopic/getTopicListByUserId',
+    'data': [],
+    'showLoading': true,
+    'success': (res) => { //成功
+      if (res.error_code == 200) {
+        cb(res.result_list);
+      } else {
+        cb(false);
+        console.log('获取用户打卡信息失败');
+      }
+    },
+    'fail': (res) => { //失败
+      cb(false);
+      console.log('获取用户打卡信息失败');
+    }
+  });
+
+}
+
+
 
 function getTopicInfo(){
   return topic_info;
@@ -60,5 +104,6 @@ function getTopicInfo(){
 
 module.exports = {
   getCheckedDataList,
+  getTopicInfoList,
   getTopicInfo,
 }
