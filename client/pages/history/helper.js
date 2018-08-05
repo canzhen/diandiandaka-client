@@ -256,6 +256,12 @@ function getCanvasSubtitleList(timelapse, enddate){
   }
 }
 
+function checkIfAllZero(list){
+  for (let i = 0; i < list.length; i++){
+    if (list[i]) return false;
+  }
+  return true;
+}
 
 module.exports = {
   isLeap,
@@ -271,4 +277,5 @@ module.exports = {
   getDaysListOfGivenMonth,
   getCompletenessSubtitle,
   getCanvasSubtitleList,
+  checkIfAllZero,
 }

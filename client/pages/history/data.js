@@ -131,7 +131,7 @@ function getCanvasDataList(
         let percentage = 0;
         if (check_time_list.indexOf(date) != -1) 
           percentage = topic_list_per_day[date].length / total_topic_num * 100;
-        percentageList.push((percentage.toFixed(2)));
+        percentageList.push(parseInt(percentage.toFixed(2)));
       }
       break;
     case '1个月':

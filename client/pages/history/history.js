@@ -314,9 +314,23 @@ Page({
       this.data.topic_name_list.length,
       '1周'); //生成新的每周数据
 
+    console.log(helper.checkIfAllZero(canvasData))
+    if (canvasData && helper.checkIfAllZero(canvasData))
+      canvasData = '';
+
+    console.log(canvasData)
+
     if (!status){
       wx.showToast({
         title: '未来的事情宝宝不知道呢~',
+        icon: 'none',
+        duration: 4000,
+      })
+    }
+
+    if (!canvasData){
+      wx.showToast({
+        title: '该段时间您没有打卡嗷~',
         icon: 'none',
         duration: 4000,
       })
@@ -331,9 +345,12 @@ Page({
         data: canvasData
       }],
       yAxis: {
+        title: '百分比',
         format: function (val) {
           return val + '%';
-        }
+        },
+        min: 0,
+        max: 100
       },
       width: 350,
       height: 380,
