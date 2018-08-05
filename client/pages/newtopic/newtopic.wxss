@@ -36,8 +36,11 @@ checkbox {
 }
 
 .pick-icon-text{
-  margin-top: 40rpx;
-  margin-bottom: 20rpx;
+  display: flex;
+  flex-direction: row;
+  /* margin-top: 40rpx; */
+  /* margin-bottom: 20rpx; */
+  align-items: center;
 }
 
 

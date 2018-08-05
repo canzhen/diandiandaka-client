@@ -98,8 +98,8 @@
   </view>
 
   <canvas hidden="{{selected_canvas != 'week'}}" 
-          class="completeness-canvas" 
           canvas-id="myCanvas" 
+          class="completeness-canvas"
           bindtouchstart='bindCanvasTouchStart'
           bindtouchmove='bindCanvasTouchMove'
           bindtouchend='bindCanvasTouchEnd'

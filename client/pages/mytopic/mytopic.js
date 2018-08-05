@@ -1,5 +1,6 @@
 const qiniuhelper = require('../../vendor/qiniuhelper.js');
 const utils = require('../../vendor/utils.js');
+const moment = require('../../vendor/moment.min.js');
 const api = require('../../ajax/api.js');
 const numEachRow = 4;
 
@@ -209,7 +210,7 @@ Page({
       this.setData({
         selected_id: id,
         show_modal: true,
-        modal_todate_time: utils.getFormateDatetimeEN(new Date()),
+        modal_todate_time: moment().format('YYYY-MM-DD'),
         modal_placeholder: '今天' + data.topic_name + '有什么感想咩~',
       });
     }

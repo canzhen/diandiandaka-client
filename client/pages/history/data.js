@@ -135,6 +135,15 @@ function getCanvasDataList(
       }
       break;
     case '1个月':
+      let preMonth = moment(end_date).subtract(1, 'month');
+      let diff = end_date.diff(preMonth) / (1000 * 60 * 60 * 24);
+      for (let i = diff; i >= 0; i--) {
+        let date = moment(end_date).subtract(i, 'days').format('YYYY-MM-DD');
+        let percentage = 0;
+        if (check_time_list.indexOf(date) != -1)
+          percentage = topic_list_per_day[date].length / total_topic_num * 100;
+        percentageList.push(parseInt(percentage.toFixed(2)));
+      }
       break;
     case '3个月':
       break;

@@ -16,6 +16,7 @@ function getDaysOfGivenMonth(year) {
  */
 function getDaysListOfGivenMonth(year, month) {
   let daysNum = getDaysOfGivenMonth(year)[month - 1];
+  console.log(daysNum);
   let daysList = [];
   for (let i = 1; i <= daysNum; i++) {
     daysList.push(i);
@@ -192,6 +193,8 @@ function getCompletenessSubtitle(currentdate, timelapse, n) {
     startdate = moment(enddate),
     subtitle = '';
 
+
+  // console.log(timelapse);
   if (n != -1 && n != 1 && n != 0) return;
 
   switch (timelapse) {
@@ -201,8 +204,9 @@ function getCompletenessSubtitle(currentdate, timelapse, n) {
       enddate = getWeekEndDate(startdate);
       break;
     case "1个月":
-      enddate = moment(enddate).add(n, 'month');
-      startdate = moment(enddate).subtract(1, 'month')
+      enddate.add(n, 'month');
+      enddate = moment(enddate).endOf('month');
+      startdate = moment(enddate).startOf('month')
       break;
     case "3个月":
       enddate = moment(enddate).add(3 * n, 'month').endOf('month');
@@ -236,7 +240,7 @@ function getCanvasSubtitleList(timelapse, enddate){
         status = false;
       return [status, weekList];
     case '1个月':
-      let daysList = helper.getDaysListOfGivenMonth(
+      let daysList = getDaysListOfGivenMonth(
         enddate.year(), enddate.month());
       if (enddate.subtract(1, 'month') > moment())
         status = false;

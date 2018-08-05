@@ -29,9 +29,13 @@
     </view>
     <view class="line"></view>
 
-    <view class="pick-icon-text"> 选择图标
+    <view class="pick-icon-text"> 
+      选择图标
       <text style="font-size:25rpx;">(滑动查看更多)</text>
-      <text style="font-size:25rpx; margin-left:110rpx;" bindtap="uploadIcon">上传自定义图标</text>
+      <view bindtap="uploadIcon" style="margin-left:110rpx;margin-bottom:10rpx;">
+        <text style="font-size:25rpx;">上传自定义图标</text>
+        <image src="/images/upload.png" style="width:40rpx; height:40rpx;"></image>
+      </view>
     </view>
 
     <scroll-view class="icon-image-scroll-view" scroll-y scroll-with-animation enable-back-to-top>

@@ -119,7 +119,7 @@ Page({
 
     this.setCompletenessSubtitle('1周', 0); //一周的历史记录上的文字
     // 生成当前周的数据
-    this.newCanvas();
+    this.newCanvas('1周');
   },
 
 
@@ -289,21 +289,27 @@ Page({
 
     let preCheckedStr = 'timelapses[' + this.data.selected_timelapse + '].checked';
     let newCheckedStr = 'timelapses[' + index + '].checked';
-    
-    this.setCompletenessSubtitle(time, 0);
 
     this.setData({
       'selected_timelapse': index,
       [preCheckedStr]: false,
-      [newCheckedStr]: true 
+      [newCheckedStr]: true
     });
+
+    let selectedCanvasName = this.data.timelapses[this.data.selected_timelapse].name;
+
+
+    this.setCompletenessSubtitle(time, 0)
+    this.newCanvas(time);
   },
+
+
 
   /**
    * 新建canvas并往里填充数据
    */
-  newCanvas: function () {
-    let [status, canvasSubtitle] = helper.getCanvasSubtitleList('1周', this.data.completeness_current_date);
+  newCanvas: function (timelapse) {
+    let [status, canvasSubtitle] = helper.getCanvasSubtitleList(timelapse, this.data.completeness_current_date);
     let canvasData = [];
     if (!status) canvasData = '';
     // console.log(this.data.check_time_list);
@@ -312,13 +318,11 @@ Page({
       this.data.topic_list_per_day,
       this.data.completeness_current_date,
       this.data.topic_name_list.length,
-      '1周'); //生成新的每周数据
+      timelapse); //生成新的每周数据
 
-    console.log(helper.checkIfAllZero(canvasData))
     if (canvasData && helper.checkIfAllZero(canvasData))
       canvasData = '';
 
-    console.log(canvasData)
 
     if (!status){
       wx.showToast({
@@ -352,8 +356,10 @@ Page({
         min: 0,
         max: 100
       },
-      width: 350,
+      width: 360,
       height: 380,
+      legend: false, //不显示图标
+      dataLabel: false,
     });
   },
 
@@ -365,24 +371,10 @@ Page({
    */
   setCompletenessSubtitle: function (timelapse, n) {
     let ans = helper.getCompletenessSubtitle(this.data.completeness_current_date, timelapse, n);
-    // console.log('n=' + n);
-    // console.log('timelapse=' + timelapse);
-    // console.log('before, current_date:' + this.data.completeness_current_date);
-    if (ans == false) {
-      wx.showToast({
-        title: '无法查看未来的数据哟~',
-        icon: 'none'
-      })
-      return false;
-    }
     this.setData({
       completeness_week_subtitle: ans['subtitle'],
       completeness_current_date: ans['enddate']
     });
-    return true;
-
-    // console.log('after, current_date:' + this.data.completeness_current_date);
-
   },
 
 
@@ -407,12 +399,13 @@ Page({
     }
     if (Math.abs(this.data.touchMoveXPos - currentXPos) <= 200) return;
 
+    let selectedCanvasName = this.data.timelapses[this.data.selected_timelapse].name;
     if (currentXPos - this.data.touchMoveXPos >= 200) { //右滑，显示上一周
-      if (this.setCompletenessSubtitle(this.data.timelapses[this.data.selected_timelapse].name, -1))
-        this.newCanvas();
+      this.setCompletenessSubtitle(selectedCanvasName, -1);
+      this.newCanvas(selectedCanvasName);
     } else if (this.data.touchMoveXPos - currentXPos >= 200) { //左滑，显示下周
-      if (this.setCompletenessSubtitle(this.data.timelapses[this.data.selected_timelapse].name, 1))
-        this.newCanvas();
+      this.setCompletenessSubtitle(selectedCanvasName, 1);
+      this.newCanvas(selectedCanvasName);
     }
 
     this.setData({
@@ -420,9 +413,9 @@ Page({
     });
   },
 
-  /*
-  canvas被单击并拖拽结束时触发的函数
-  */
+  /**
+   * canvas被单击并拖拽结束时触发的函数
+   */
   bindCanvasTouchEnd: function (e) {
     // this.setData({
     //   touchMoveXPos: -1
