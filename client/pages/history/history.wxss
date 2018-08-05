@@ -37,9 +37,9 @@ page{
 
 
 
-/* 所有历史部分 */
+/* 打卡日历部分 */
 
-.all-history-panel{
+.check-calendar-panel{
   display: flex;
   flex-direction: row;
   width: 100%;
@@ -217,14 +217,16 @@ image{
   margin:10rpx 20rpx 20rpx 10rpx;
   color: #888888;
 }
-/* 所有历史部分结束 */
+/* 打卡日历部分结束 */
+
+
+
+
 
 
 /*---------------------------------------*/
 
- 
  /* 每日完成度部分开始  */
-
  .completeness-panel{
   display:flex;
   flex-direction: column;
@@ -347,3 +349,62 @@ button::after{
   font-size: 25rpx;
 }
 /* 每日完成度部分结束 */
+
+
+
+
+/*---------------------------------------*/
+
+ /* 历史日志部分开始  */
+ .check-log-panel{
+   display: flex;
+   flex-direction: column;
+   margin: 50rpx 40rpx 20rpx 40rpx;
+ }
+
+ 
+.check-log-scroll-view{
+  height: 990rpx;
+  /* width: auto; */
+  /* overflow:hidden; */
+}
+
+.block{
+  display: flex;
+  flex-direction: column;
+  padding-left: 20rpx;
+  /* width: 400rpx;
+  height: 400rpx; */
+  /* border: 1 solid #888888; */
+  /* margin-top: 20rpx;   */
+}
+
+.block-selected{
+  display: flex;
+  flex-direction: column;
+  padding-left: 20rpx;
+  background-color: #fffbf7;
+}
+
+.line{
+  margin-top: 20rpx;
+  margin-bottom: 40rpx;
+  width: 100%;
+  height:2rpx;
+  background:#aaa;
+}
+
+.check-log-topic-image-text{
+  display:flex; 
+  flex-direction: row;
+  align-items: center;
+}
+
+.check-log-topic-image{
+  width: 100rpx;
+  height: 100rpx;
+}
+
+.check-log-topic-text{
+  margin-left: 30rpx;
+}

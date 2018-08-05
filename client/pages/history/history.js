@@ -7,15 +7,15 @@ const moment = require('../../vendor/moment.min.js');
 
 Page({
   data: {
-    navbar: ['所有历史', '每日完成度', '历史日志'],
+    navbar: ['打卡日历', '每日完成度', '历史日志'],
     currentTab: 2,
 
-    /* --------------以下的data属于【所有历史】-------------- */
+    /* --------------以下的data属于【打卡日历】-------------- */
     date: '', // 用户选择的date，随时都会变化
     current_date: '', // 当前的时间，一旦设置则不会改变
     year_month_list: [], // 包含两个元素，初始化时，第一个是当前月的上个月，第二个是当前月
     selected_topic_idx: 0, //选中的topic
-    topic_info: [], //该用户的打卡数据：[{'topic_name':'', 'topic_url':'', 'insist_day':''}, {}, ...] 用于【所有历史】标题栏
+    topic_info: [], //该用户的打卡数据：[{'topic_name':'', 'topic_url':'', 'insist_day':''}, {}, ...] 用于【打卡日历】标题栏
     topic_info_divided: {}, //每N个分为一组，方便显示
     topic_info_divided_size: 5, // N = 5
     topic_info_divided_idx: 0, //当前显示哪一组data（每一组有N个）
@@ -28,7 +28,6 @@ Page({
     check_time_list: [], // 所有打卡的日期的集合['2018-07-04', '', ..]
     topic_name_list: [], // 所有topic名字的集合：['减肥','跑步','早睡']
     topic_list_per_day: {}, // 每天打卡的卡片列表：{'2018-05-23': ['跑步'], ...}
-    successive_day_per_topic: [], //每个topic的【连续】打卡天数：[{'跑步':{'num':3,'image_url': 'xxxx'}},{...},..]
     timelapses: [ //所有的时间区间的选项
                   { 'name': '1周', 'checked': true },
                   { 'name': '1个月', 'checked': false },
@@ -44,6 +43,8 @@ Page({
 
 
     /* --------------以下的data属于【历史日志】--------------*/
+    topic_url_map:[], //用于存每个topic对应的图标url
+    selected_topic_log: '', //被选中要查看日志的topic名字
   },
 
 
@@ -51,29 +52,40 @@ Page({
   /**
    * 初始化函数
    */
-  init: function () {
-    let getTopicNameList = function(list){
-      var ans = [];
-      for (let i in list){
-        ans.push(list[i].topic_name);
+  init: function (tab) {
+    if (tab == undefined) tab = this.data.currentTab;
+    if (tab == 0){
+      this.initCheckCalendar();
+    } else if (tab == 1) {
+      this.initCompleteness();
+    } else if (tab == 2) {
+      this.initCheckLog();
+    }
+  },
+
+  // 初始化每日打卡
+  initCheckCalendar: function(){
+    let getTopicNameAndUrlList = function (list) {
+      var nameList = [];
+      var topicUrlMap = {};
+      for (let i in list) {
+        nameList.push(list[i].topic_name);
+        topicUrlMap[[list[i].topic_name]] = list[i].topic_url;
       }
-      return ans;
+      return [nameList, topicUrlMap];
     }
 
     /* 获取当前用户具体打卡信息 */
     data.getCheckedDataList((checked_data_list) => {
       if (!checked_data_list) return;
-      console.log(checked_data_list);
       this.setData({
         checked_data_list: checked_data_list //用于展示每日具体打卡信息
       });
       data.getTopicInfoList((topic_info_list) => {
         console.log('获取用户打卡信息成功');
         topic_info_list = utils.filterDatedData(topic_info_list);
-        // console.log(result_list);
-        let allTopic = getTopicNameList(topic_info_list);
+        let [allTopic, topicUrlMap] = getTopicNameAndUrlList(topic_info_list);
         let [checkTimeListPerTopic, checkInfoListPerTopic] = data.getCheckedDataOfEveryTopic(checked_data_list, allTopic); //按照每个topic分类的打卡时间集合
-        console.log(checkInfoListPerTopic);
         let allTopicInfoDivided = data.divideTopicInfoIntoGroups(
           checkInfoListPerTopic,
           topic_info_list,
@@ -82,6 +94,7 @@ Page({
           current_date: utils.getYearMonthSlash(),
           topic_info: topic_info_list,
           topic_name_list: allTopic,
+          topic_url_map: topicUrlMap, 
           //被N个N个分成一组的topics
           topic_info_divided: allTopicInfoDivided,
           //根据topic分类的check信息
@@ -94,17 +107,64 @@ Page({
   },
 
 
+  // 初始化每日完成度
+  initCompleteness: function(){
+    let [checkTimeList, topicListPerDay] = data.getTopicListPerDay(this.data.checked_data_list);
+    this.setData({
+      check_time_list: checkTimeList,
+      topic_list_per_day: topicListPerDay,
+    });
+
+    this.setCompletenessSubtitle('1周', 0); //一周的历史记录上的文字
+    // 生成当前周的数据
+    this.newCanvas(
+      ['一', '二', '三', '四', '五', '六', '七'],
+      data.getCompletenessData(
+        this.data.check_time_list,
+        this.data.topic_list_per_day,
+        this.data.completeness_current_date,
+        this.data.topic_name_list.length,
+        '1周')); //生成新的每周数据
+  },
+
+
+  // 初始化历史日志
+  initCheckLog: function(){
+
+  },
+
 
   onShow: function () {
-    if (!utils.getStorageSync('sessionId')) utils.login((res) => {
-      if (res) {
-        console.log('login success');
-        this.init();
-      } else
-        console.log('login fail');
-    });
-    this.init();
+    if (!utils.getStorageSync('sessionId')){ 
+      utils.login((res) => {
+        if (res) {
+          console.log('login success');
+          this.init(0); //默认先初始化打卡日志
+          this.init(1); //默认先初始化打卡日志
+        } else
+          console.log('login fail');
+      });
+    }else{
+      this.init(0);
+      this.init(1);
+    }
   },
+
+
+  /**
+   * 下拉刷新
+   */
+  onPullDownRefresh: function () {
+    wx.showNavigationBarLoading(); //在标题栏中显示加载
+    this.init();
+    //模拟加载
+    setTimeout(function () {
+      // complete
+      wx.hideNavigationBarLoading() //完成停止加载
+      wx.stopPullDownRefresh() //停止下拉刷新
+    }, 800);
+  },
+
 
 
   /* 具体实现往前端填充数据的方法 */
@@ -131,32 +191,21 @@ Page({
 
 
 
-  /**
-   * 所有历史部分
-   */
+
+  /*--------------------------以下是打卡日历部分---------------------------*/
+
   // 切换tap时触发的函数
   navbarTap: function (e) {
     let tabidx = e.currentTarget.dataset.idx;
     this.setData({
       currentTab: tabidx
     });
-    if (tabidx == 1){
-      let [checkTimeList, topicListPerDay] = data.getTopicListPerDay(this.data.checked_data_list);
-      this.setData({
-        check_time_list: checkTimeList,
-        topic_list_per_day: topicListPerDay,
-      });
-
-      this.setCompletenessSubtitle('1周', 0); //一周的历史记录上的文字
-      // 生成当前周的数据
-      this.newCanvas(
-        ['一', '二', '三', '四', '五', '六', '七'],
-        data.getCompletenessData(
-          this.data.check_time_list,
-          this.data.topic_list_per_day,
-          this.data.completeness_current_date,
-          this.data.topic_name_list.length,
-          '1周')); //生成新的每周数据
+    if (tabidx == 0){
+      this.initCheckCalendar();
+    } else if (tabidx == 1){
+      this.initCompleteness();
+    } else if (tabidx == 2){
+      this.initCheckLog();
     }
   },
 
@@ -356,20 +405,13 @@ Page({
 
 
 
-
-
-  /**
-   * 下拉刷新
-   */
-  onPullDownRefresh: function () {
-    wx.showNavigationBarLoading(); //在标题栏中显示加载
-    this.init();
-    //模拟加载
-    setTimeout(function () {
-      // complete
-      wx.hideNavigationBarLoading() //完成停止加载
-      wx.stopPullDownRefresh() //停止下拉刷新
-    }, 800);
-  },
+  /*--------------------------以下是每日完成度部分---------------------------*/
+  selectTopicLog: function(e){
+    let indexKey = e.currentTarget.dataset.idx;
+    console.log(indexKey);
+    this.setData({
+      selected_topic_log: indexKey,
+    });
+  }
 
 })

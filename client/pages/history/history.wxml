@@ -4,11 +4,11 @@
 
 <!-- <view class="line"></view> -->
  
-<!-- 所有历史 -->
+<!-- 打卡日历 -->
 <view hidden="{{currentTab!==0}}">
-  <view class="all-history-panel">
+  <view class="check-calendar-panel">
     <view class="all-history-left">
-      <!-- 显示出所有正在打卡的topic -->
+      <!-- 显示出所有正在打卡的topic|左侧 -->
        <view class="all-history-left-item" 
         wx:for="{{topic_info_divided[topic_info_divided_idx]}}" 
         wx:key="idx" wx:for-item="data"
@@ -119,13 +119,26 @@
 
 
 
-<!-- 所有历史 -->
+<!-- 历史日志 -->
 <view hidden="{{currentTab!==2}}">
-  <view wx:for="{{check_info_per_topic}}" wx:key="key" wx:for-index="index" wx:for-item="check_info">
-    {{index}}
-    <view wx:for="{{check_info}}" wx:key="key" wx:for-item="info">
-      [{{info.check_time}} {{info.check_timestamp}}] {{info.log}}
-    </view>
+  <view class="check-log-panel">
+    <scroll-view class="check-log-scroll-view" scroll-y scroll-with-animation enable-back-to-top>
+      <view class="{{selected_topic_log != index ? 'block' : 'block-selected'}}" wx:for="{{check_info_per_topic}}" 
+      wx:key="key" wx:for-index="index" wx:for-item="check_info" 
+      data-idx="{{index}}" bindtap="selectTopicLog">
+        <view class="check-log-topic-image-text">
+          <image class="check-log-topic-image" src="{{topic_url_map[index]}}"></image>
+          <text class="check-log-topic-text">{{index}}</text>
+        </view>
+        <!-- {{selected_topic_log != index}} -->
+        <view class="detail" hidden="{{selected_topic_log != index}}">
+          <view wx:for="{{check_info}}" wx:key="key" wx:for-item="info">
+            [{{info.check_time}} {{info.check_timestamp}}] {{info.log}}
+          </view>
+        </view>
+        <!-- <view class="line"></view> -->
+      </view>
+    </scroll-view>
   </view>
 </view>
  

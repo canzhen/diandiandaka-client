@@ -34,7 +34,7 @@
       <text style="font-size:25rpx; margin-left:110rpx;" bindtap="uploadIcon">上传自定义图标</text>
     </view>
 
-    <scroll-view class="icon-image-scroll-view" scroll-y scroll-with-animation >
+    <scroll-view class="icon-image-scroll-view" scroll-y scroll-with-animation enable-back-to-top>
       <!-- 展示图标（每行六个图标） -->
       <view class="icon-image-view" wx:for="{{icon_name_num}}" wx:key="idx" wx:for-item="row_data">
         <!-- 每一行 -->
