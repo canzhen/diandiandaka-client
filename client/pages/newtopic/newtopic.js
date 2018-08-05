@@ -1,5 +1,6 @@
 const utils = require('../../vendor/utils');
 const api = require('../../ajax/api.js');
+const moment = require('../../vendor/moment.min.js');
 const qiniuhelper = require('../../vendor/qiniuhelper.js');
 const numEachRow = 5;
 
@@ -10,8 +11,8 @@ Page({
     // selected_icon_num: -1,
     topic_name: '',
     topic_url: '', //topic图片的url
-    start_date: utils.getFullDateSlash(new Date()),
-    end_date: utils.getFullDateSlash(new Date()),
+    start_date: moment().format('YYYY-MM-DD'),
+    end_date: moment().format('YYYY-MM-DD'),
     pre_end_date: '', //在取消永不结束checkbox时，就把之前选好的end_date再放上去
     never_end: false, //永不结束的checkbox是否选中
     has_special_character: false, //计划名称中是否包含特殊字符
@@ -150,7 +151,7 @@ Page({
       return;
     }
 
-    if (value.end_date == utils.getFullDateSlash(new Date())) {
+    if (value.end_date == moment().format('YYYY-MM-DD')) {
       this.showReminderAlert('好像忘记选结束日期啦？');
       return;
     }

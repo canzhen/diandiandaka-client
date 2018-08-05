@@ -1,14 +1,14 @@
 var Charts = require('wxcharts.js');
+const moment = require('../../vendor/moment.min.js');
 const utils = require('../../vendor/utils.js');
 const api = require('../../ajax/api.js');
 const data = require('data.js');
-const moment = require('../../vendor/moment.min.js');
-
+const helper = require('helper.js');
 
 Page({
   data: {
     navbar: ['打卡日历', '每日完成度', '历史日志'],
-    currentTab: 2,
+    currentTab: 0,
 
     /* --------------以下的data属于【打卡日历】-------------- */
     date: '', // 用户选择的date，随时都会变化
@@ -57,14 +57,16 @@ Page({
     if (tab == 0){
       this.initCheckCalendar();
     } else if (tab == 1) {
+      this.initCheckCalendar();
       this.initCompleteness();
     } else if (tab == 2) {
+      this.initCheckCalendar();
       this.initCheckLog();
     }
   },
 
   // 初始化每日打卡
-  initCheckCalendar: function(){
+  initCheckCalendar: function () {
     let getTopicNameAndUrlList = function (list) {
       var nameList = [];
       var topicUrlMap = {};
@@ -76,7 +78,7 @@ Page({
     }
 
     /* 获取当前用户具体打卡信息 */
-    data.getCheckedDataList((checked_data_list) => {
+    data.getCheckDataList((checked_data_list) => {
       if (!checked_data_list) return;
       this.setData({
         checked_data_list: checked_data_list //用于展示每日具体打卡信息
@@ -91,7 +93,7 @@ Page({
           topic_info_list,
           this.data.topic_info_divided_size);
         this.setData({
-          current_date: utils.getYearMonthSlash(),
+          current_date: moment().format('YYYY-MM-DD'),
           topic_info: topic_info_list,
           topic_name_list: allTopic,
           topic_url_map: topicUrlMap, 
@@ -108,7 +110,7 @@ Page({
 
 
   // 初始化每日完成度
-  initCompleteness: function(){
+  initCompleteness: function () {
     let [checkTimeList, topicListPerDay] = data.getTopicListPerDay(this.data.checked_data_list);
     this.setData({
       check_time_list: checkTimeList,
@@ -117,14 +119,7 @@ Page({
 
     this.setCompletenessSubtitle('1周', 0); //一周的历史记录上的文字
     // 生成当前周的数据
-    this.newCanvas(
-      ['一', '二', '三', '四', '五', '六', '七'],
-      data.getCompletenessData(
-        this.data.check_time_list,
-        this.data.topic_list_per_day,
-        this.data.completeness_current_date,
-        this.data.topic_name_list.length,
-        '1周')); //生成新的每周数据
+    this.newCanvas();
   },
 
 
@@ -139,14 +134,12 @@ Page({
       utils.login((res) => {
         if (res) {
           console.log('login success');
-          this.init(0); //默认先初始化打卡日志
-          this.init(1); //默认先初始化打卡日志
+          this.init(); 
         } else
           console.log('login fail');
       });
     }else{
-      this.init(0);
-      this.init(1);
+      this.init();
     }
   },
 
@@ -174,15 +167,15 @@ Page({
     let topic = allTopic[this.data.selected_topic_idx]; //当前选中的topic名
     let checkedTime = this.data.check_time_per_topic[topic]; //当前选中的topic的所有check信息
     var currentMoment = moment(date);
-    var year = currentMoment.format('YYYY');
-    var month = currentMoment.format('MM');
-    var preYear = moment(date).subtract(1, 'month').format('YYYY');
-    var preMonth = moment(date).subtract(1, 'month').format('MM');
+    var year = currentMoment.year();
+    var month = currentMoment.month();
+    var preYear = moment(date).subtract(1, 'month').year();
+    var preMonth = moment(date).subtract(1, 'month').month();;
 
     this.setData({
       // 获取当前月份的天数组，以及相应的每天的是否打卡的数据
-      'year_month_list[1]': utils.generateCalendar(checkedTime, year, month, '#f8d3ad'),
-      'year_month_list[0]': utils.generateCalendar(checkedTime, preYear, preMonth, '#f3c6ca'),
+      'year_month_list[1]': helper.generateCalendar(checkedTime, year, month, '#f8d3ad'),
+      'year_month_list[0]': helper.generateCalendar(checkedTime, preYear, preMonth, '#f3c6ca'),
       date: moment(date).format('YYYY-MM'),
       dateCN: moment(date).format('YYYY年MM月'),
       selected_topic: allTopic[0]
@@ -309,15 +302,33 @@ Page({
   /**
    * 新建canvas并往里填充数据
    */
-  newCanvas: function (categories, data) {
+  newCanvas: function () {
+    let [status, canvasSubtitle] = helper.getCanvasSubtitleList('1周', this.data.completeness_current_date);
+    let canvasData = [];
+    if (!status) canvasData = '';
+    // console.log(this.data.check_time_list);
+    else canvasData = data.getCanvasDataList(
+      this.data.check_time_list,
+      this.data.topic_list_per_day,
+      this.data.completeness_current_date,
+      this.data.topic_name_list.length,
+      '1周'); //生成新的每周数据
+
+    if (!status){
+      wx.showToast({
+        title: '未来的事情宝宝不知道呢~',
+        icon: 'none',
+        duration: 4000,
+      })
+    }
     /* 新建图表 */
     new Charts({
       canvasId: 'myCanvas',
       type: 'column',
-      categories: categories,
+      categories: canvasSubtitle,
       series: [{
         name: '完成度',
-        data: data
+        data: canvasData
       }],
       yAxis: {
         format: function (val) {
@@ -325,7 +336,7 @@ Page({
         }
       },
       width: 350,
-      height: 380
+      height: 380,
     });
   },
 
@@ -336,7 +347,7 @@ Page({
    * @param n int: 上周还是下周，还是当前，如果是上周则为-1，如果是下周则为1，如果是当前则为0
    */
   setCompletenessSubtitle: function (timelapse, n) {
-    let ans = utils.getCompletenessSubtitle(this.data.completeness_current_date, timelapse, n);
+    let ans = helper.getCompletenessSubtitle(this.data.completeness_current_date, timelapse, n);
     // console.log('n=' + n);
     // console.log('timelapse=' + timelapse);
     // console.log('before, current_date:' + this.data.completeness_current_date);
@@ -358,18 +369,18 @@ Page({
   },
 
 
-  /*
-  canvas被单击并拖拽时开始触发的函数
-  */
+  /**
+   * canvas被单击并拖拽时开始触发的函数
+   */
   bindCanvasTouchStart: function (e) {
     this.setData({
       touchMoveXPos: -1
     });
   },
 
-  /*
-  canvas被单击并拖拽时触发的函数
-  */
+  /**
+   *  canvas被单击并拖拽时触发的函数
+   */
   bindCanvasTouchMove: function (e) {
     if (e.touches.length == 0) return;
     let currentXPos = e.touches[0].x;
@@ -381,12 +392,10 @@ Page({
 
     if (currentXPos - this.data.touchMoveXPos >= 200) { //右滑，显示上一周
       if (this.setCompletenessSubtitle(this.data.timelapses[this.data.selected_timelapse].name, -1))
-        this.newCanvas(['一', '二', '三', '四', '五', '六', '七'], 
-                      [0, 0, 0, 41, 52, 23, 48]);
+        this.newCanvas();
     } else if (this.data.touchMoveXPos - currentXPos >= 200) { //左滑，显示下周
       if (this.setCompletenessSubtitle(this.data.timelapses[this.data.selected_timelapse].name, 1))
-      this.newCanvas(['一', '二', '三', '四', '五', '六', '七'],
-                      [41, 52, 23, 48, 0, 0, 0]);
+        this.newCanvas();
     }
 
     this.setData({
@@ -405,7 +414,7 @@ Page({
 
 
 
-  /*--------------------------以下是每日完成度部分---------------------------*/
+  /*--------------------------以下是打卡日志部分---------------------------*/
   selectTopicLog: function(e){
     let indexKey = e.currentTarget.dataset.idx;
     console.log(indexKey);

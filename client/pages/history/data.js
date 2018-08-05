@@ -2,7 +2,7 @@ const api = require('../../ajax/api.js');
 const moment = require('../../vendor/moment.min.js');
 
 /* 获取当前用户具体打卡信息 */
-function getCheckedDataList(cb){
+function getCheckDataList(cb){
   api.postRequest({
     'url': '/topicCheck/getAll',
     'data': {},
@@ -115,7 +115,7 @@ function getCheckDetailOnGivenDay(checkedList, givenDate) {
 /**
  * 计算获得每日完成度：
  */
-function getCompletenessData(
+function getCanvasDataList(
             check_time_list, 
             topic_list_per_day, 
             current_date, 
@@ -123,7 +123,6 @@ function getCompletenessData(
             time_lapse){
   var percentageList = [];
   let end_date = moment(current_date);
-
 
   switch(time_lapse){
     case '1周':
@@ -150,7 +149,6 @@ function getCompletenessData(
   // console.log(percentageList);
 
   return percentageList;
-  // return [4, 5, 10, 24, 10, 56, 33];
 };
 
 
@@ -171,12 +169,13 @@ function getTopicListPerDay(checked_data_list){
   return [Array.from(checkedTimeList), map];
 }
 
+
 module.exports = {
-  getCheckedDataList,
+  getCheckDataList,
   getTopicInfoList,
   getCheckedDataOfEveryTopic,
   divideTopicInfoIntoGroups,
   getCheckDetailOnGivenDay,
-  getCompletenessData,
+  getCanvasDataList,
   getTopicListPerDay,
 }
