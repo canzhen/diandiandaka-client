@@ -110,3 +110,27 @@
     <button wx:for="{{timelapses}}" wx:key="key" wx:for-index="index" wx:for-item="timelapse" class='{{timelapse.checked ? "completeness-button-checked" : "completeness-button"}}' bindtap="selectTimeLapse" data-time="{{timelapse.name}}" data-index="{{index}}"> {{timelapse.name}}</button>
   </view>
 </view>
+
+
+
+
+
+
+
+
+
+<!-- 所有历史 -->
+<view hidden="{{currentTab!==2}}">
+  <view wx:for="{{check_info_per_topic}}" wx:key="key" wx:for-index="index" wx:for-item="check_info">
+    {{index}}
+    <view wx:for="{{check_info}}" wx:key="key" wx:for-item="info">
+      [{{info.check_time}} {{info.check_timestamp}}] {{info.log}}
+    </view>
+  </view>
+</view>
+ 
+
+
+
+
+

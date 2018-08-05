@@ -47,6 +47,7 @@ router.post('/check', function (req, res) {
       tmp_list.push("'" + openid + "'");
       tmp_list.push("'" + changed_topic_list[i]['topic_name'] + "'");
       tmp_list.push("'" + changed_topic_list[i]['last_check_time'] + "'");
+      tmp_list.push("'" + changed_topic_list[i]['last_check_timestamp'] + "'");
       tmp_list.push("'" + changed_topic_list[i]['log'] + "'");
       reformat_check_list.push(tmp_list);
     }
@@ -61,7 +62,7 @@ router.post('/check', function (req, res) {
           return;
         }
         dbhelper.insertMulti( //update topic_check，记录具体打卡详情
-          'topic_check', 'user_id, topic_name, check_time, log', reformat_check_list, '',
+          'topic_check', 'user_id, topic_name, check_time, check_timestamp, log', reformat_check_list, '',
           (status, errmsg) => {
             if (!status) res.send({ 'error_code': 100, 'msg': errmsg });
             else res.send({ 'error_code': 200, 'msg': '' });
@@ -83,8 +84,7 @@ router.post('/getAll', function (req, res) {
       res.send({ 'error_code': 102, 'msg': '' });
       return;
     }
-    dbhelper.select('topic_check', 'topic_name,check_time,log',
-      'user_id=?', [openid], '',
+    dbhelper.select('topic_check', 'topic_name, check_time, check_timestamp, log', 'user_id=?', [openid], 'ORDER BY check_time DESC',
       (status, result_list) => {
         let statusCode = status ? 200 : 100;
         let resList = status ? result_list : false;

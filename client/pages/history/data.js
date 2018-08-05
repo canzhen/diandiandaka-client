@@ -45,18 +45,29 @@ function getTopicInfoList(cb) {
 
 
 function getCheckedDataOfEveryTopic(dataList, topicList) {
-  var checkedDataOfTopic = new Map();
-  for (var i = 0; i < topicList.length; i++)
-    checkedDataOfTopic[topicList[i]] = new Set(); //去重，初始化
+  var checkTimePerTopic = new Map(); //check time只有时间 
+  var checkInfoPerTopic = new Map(); //check info还包括log
+  for (var i = 0; i < topicList.length; i++){
+    checkTimePerTopic[topicList[i]] = new Set(); //去重，初始化
+    checkInfoPerTopic[topicList[i]] = []; //去重，初始化
+  }
 
-  for (var i = 0; i < dataList.length; i++)
-    checkedDataOfTopic[dataList[i].topic_name]
-      .add(dataList[i].check_time);
+  for (var i = 0; i < dataList.length; i++){
+    checkTimePerTopic[dataList[i]['topic_name']]
+        .add(dataList[i]['check_time']);
+    checkInfoPerTopic[dataList[i]['topic_name']].push({
+      'check_time': dataList[i]['check_time'],
+      'check_timestamp': dataList[i]['check_timestamp'],
+      'log': dataList[i]['log']
+    });
+  }
 
-  for (var i = 0; i < topicList.length; i++)
-    checkedDataOfTopic[topicList[i]] = Array.from(checkedDataOfTopic[topicList[i]]); //重新变成Array
+  for (var i = 0; i < topicList.length; i++){
+    checkTimePerTopic[topicList[i]] = Array.from(checkTimePerTopic[topicList[i]]); //重新变成Array
+    // checkInfoPerTopic[topicList[i]] = Array.from(checkTimePerTopic[topicList[i]]); //重新变成Array
+  }
     
-  return checkedDataOfTopic;
+  return [checkTimePerTopic, checkInfoPerTopic];
 }
 
 

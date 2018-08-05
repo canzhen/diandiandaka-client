@@ -352,8 +352,11 @@ function filterUnchangeData(user_topic_list){
     // 用户不可能在“我的打卡”这一页开启弹窗，
     // 所以只需要判断是否为1即可，1就是没关闭
     if (!item['data_changed']) continue;
-    if (item['is_checked']) item['last_check_time'] = moment().format('YYYY-MM-DD');
-    item['log'] = '[' + moment().format('YYYY-MM-DD HH:MM') + ']' + item['log'];
+    if (item['is_checked']) {
+      item['last_check_time'] = moment().format('YYYY-MM-DD');
+      item['last_check_timestamp'] = moment().format('HH:MM:ss');
+    }
+    item['log'] = item['log'];
     filtered_list.push(item);
   }
   return filtered_list;

@@ -7,8 +7,8 @@ const moment = require('../../vendor/moment.min.js');
 
 Page({
   data: {
-    navbar: ['所有历史', '每日完成度'],
-    currentTab: 0,
+    navbar: ['所有历史', '每日完成度', '历史日志'],
+    currentTab: 2,
 
     /* --------------以下的data属于【所有历史】-------------- */
     date: '', // 用户选择的date，随时都会变化
@@ -23,7 +23,8 @@ Page({
 
 
     /* --------------以下的data属于【每日完成度】--------------*/
-    checked_time_per_topic: [], //每个topic的打卡天数：[{'跑步':['2018-06-13', '2018-06-24', '2018-06-21']}, {..}, {..}]
+    check_time_per_topic: [], //每个topic的打卡天数：[{'跑步':['2018-06-13', '2018-06-24', '2018-06-21']}, {..}, {..}]
+    check_info_per_topic: [], //每个topic的具体信息：[{'跑步': {check_time': '2018-06-13', 'log': '很好'}, {check_time': '2018-06-24', 'log': '还是很好'}}, {'起床': {{}, {}, ..}}, {},...]
     check_time_list: [], // 所有打卡的日期的集合['2018-07-04', '', ..]
     topic_name_list: [], // 所有topic名字的集合：['减肥','跑步','早睡']
     topic_list_per_day: {}, // 每天打卡的卡片列表：{'2018-05-23': ['跑步'], ...}
@@ -39,6 +40,10 @@ Page({
     completeness_week_subtitle: '', //每日完成度第一行要显示的标语
     completeness_current_date: null, //每日完成度-1周-当前查看的周
     touchMoveXPos: -1, //鼠标拖动图表的距离
+
+
+
+    /* --------------以下的data属于【历史日志】--------------*/
   },
 
 
@@ -46,8 +51,7 @@ Page({
   /**
    * 初始化函数
    */
-  init: function(){
-
+  init: function () {
     let getTopicNameList = function(list){
       var ans = [];
       for (let i in list){
@@ -59,6 +63,7 @@ Page({
     /* 获取当前用户具体打卡信息 */
     data.getCheckedDataList((checked_data_list) => {
       if (!checked_data_list) return;
+      console.log(checked_data_list);
       this.setData({
         checked_data_list: checked_data_list //用于展示每日具体打卡信息
       });
@@ -67,9 +72,10 @@ Page({
         topic_info_list = utils.filterDatedData(topic_info_list);
         // console.log(result_list);
         let allTopic = getTopicNameList(topic_info_list);
-        let checkTimeListPerTopic = data.getCheckedDataOfEveryTopic(checked_data_list, allTopic); //按照每个topic分类的打卡时间集合
+        let [checkTimeListPerTopic, checkInfoListPerTopic] = data.getCheckedDataOfEveryTopic(checked_data_list, allTopic); //按照每个topic分类的打卡时间集合
+        console.log(checkInfoListPerTopic);
         let allTopicInfoDivided = data.divideTopicInfoIntoGroups(
-          checkTimeListPerTopic,
+          checkInfoListPerTopic,
           topic_info_list,
           this.data.topic_info_divided_size);
         this.setData({
@@ -79,7 +85,8 @@ Page({
           //被N个N个分成一组的topics
           topic_info_divided: allTopicInfoDivided,
           //根据topic分类的check信息
-          checked_time_per_topic: checkTimeListPerTopic,
+          check_time_per_topic: checkTimeListPerTopic,
+          check_info_per_topic: checkInfoListPerTopic,
         });
         this.fillCalendar(this.data.current_date);
       });
@@ -105,7 +112,7 @@ Page({
     let allData = this.data.checked_data_list; //所有的data（按照topic分类的所有check信息
     let allTopic = this.data.topic_name_list; //所有topic名字的集合
     let topic = allTopic[this.data.selected_topic_idx]; //当前选中的topic名
-    let checkedTime = this.data.checked_time_per_topic[topic]; //当前选中的topic的所有check信息
+    let checkedTime = this.data.check_time_per_topic[topic]; //当前选中的topic的所有check信息
     var currentMoment = moment(date);
     var year = currentMoment.format('YYYY');
     var month = currentMoment.format('MM');
@@ -135,7 +142,6 @@ Page({
     });
     if (tabidx == 1){
       let [checkTimeList, topicListPerDay] = data.getTopicListPerDay(this.data.checked_data_list);
-      console.log(topicListPerDay)
       this.setData({
         check_time_list: checkTimeList,
         topic_list_per_day: topicListPerDay,

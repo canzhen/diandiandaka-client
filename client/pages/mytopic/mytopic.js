@@ -116,7 +116,6 @@ Page({
     //过滤掉没有打卡的卡片，只剩下打过卡的卡片
     let changed_topic_list = utils.filterUnchangeData(this.data.my_topic_data);
     if (changed_topic_list.length == 0) return;
-    console.log(changed_topic_list);
     api.postRequest({
       'url': '/topicCheck/check',
       'data': { 
