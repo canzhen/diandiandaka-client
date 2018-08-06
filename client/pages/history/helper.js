@@ -185,6 +185,7 @@ function getCanvasXText(timelapse, enddate){
 }
 
 function checkIfAllZero(list){
+  console.log('check if all zero');
   for (let i = 0; i < list.length; i++){
     if (list[i]) return false;
   }

@@ -106,16 +106,43 @@ function getCheckDetailOnGivenDay(checkedList, givenDate) {
 
 
 function _getCanvasData(percentageList, startdate, enddate, check_time_list, topic_list_per_day, total_topic_num, ifAverage) {
+  let allZero = true;
   let diff = parseInt(enddate.diff(startdate, 'days'));
-  console.log(diff)
-  for (let i = diff; i >= 0; i--) {
-    let date = moment(enddate).subtract(i, 'days').format('YYYY-MM-DD');
-    let percentage = 0;
-    if (check_time_list.indexOf(date) != -1)
-      percentage = topic_list_per_day[date].length / total_topic_num * 100;
-    percentage = percentage? parseInt(percentage.toFixed(2)) : null;    
-    percentageList.push(percentage);
+  if (!ifAverage){
+    for (let i = diff; i >= 0; i--) {
+      let percentage = 0.0;
+      let date = moment(enddate).subtract(i, 'days').format('YYYY-MM-DD');
+      if (check_time_list.indexOf(date) != -1)
+        percentage = topic_list_per_day[date].length / total_topic_num * 100;
+      percentage = percentage ? parseFloat(percentage.toFixed(1)) : null;
+      if (!percentage) allZero = false;
+      percentageList.push(percentage);
+    }
+  }else{
+    let curMonth = 0; //下标从0开始，0代表1月
+    let tmpList = [];
+    for (let i = diff; i >= 0; i--) {
+      let percentage = 0.0;
+      let date = moment(enddate).subtract(i, 'days');
+      if (date.month() > curMonth){ //进入到下一个月了
+        let sum = 0;
+        for (let j in tmpList) sum += tmpList[j];
+        percentageList.push(parseFloat((sum/tmpList.length).toFixed(1)))
+        tmpList = []; //清空tmpList
+        curMonth += 1; //把当前月份加一
+      }
+
+      let formattedDate = date.format('YYYY-MM-DD');
+
+      if (check_time_list.indexOf(formattedDate) != -1)
+        percentage = topic_list_per_day[formattedDate].length / total_topic_num * 100;
+      percentage = percentage ? parseInt(percentage.toFixed(1)) : null;
+      if (!percentage) allZero = false;
+      tmpList.push(percentage);
+    }
   }
+
+  if (allZero) percentage = [];
 }
 
 
@@ -173,6 +200,7 @@ function getCanvasData(
       if (n != 0) enddate = moment(enddate).add(n, 'year');
       enddate = enddate.endOf('year');
       startdate = moment(enddate).startOf('year');
+      ifAverage = true;
       break;
     case "全部":
       break;

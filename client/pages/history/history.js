@@ -272,7 +272,7 @@ Page({
     }else{
       let checkedDetail = data.getCheckDetailOnGivenDay(
         this.data.checked_data_list, chosenDate);
-      let completeness = (checkedDetail.length / this.data.topic_info.length).toFixed(2);
+      let completeness = (checkedDetail.length / this.data.topic_info.length).toFixed(1);
       var content = '您在' + chosenDate;
       checkedDetail.length == 0 ? content += '没打卡,继续努力哟~'
         : content += '打了' + checkedDetail.length + "张卡：[" + checkedDetail.toString() +
@@ -330,6 +330,8 @@ Page({
     let canvasYData = ans['data'];
     let avg = 0;
 
+    console.log(canvasYData);
+
     if (ans['startdate'] > moment()){
       this.setData({
         user_click_on_future: true,
@@ -345,7 +347,10 @@ Page({
       for (let i in canvasYData)
         sum += canvasYData[i];
 
-      avg = parseInt((sum / canvasYData.length).toFixed(2));
+      console.log(sum / canvasYData.length)
+
+      avg = (sum/canvasYData.length).toFixed(1);
+      
 
       this.setData({
         user_click_on_future: false,
