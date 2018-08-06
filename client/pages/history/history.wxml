@@ -93,9 +93,9 @@
 <view hidden="{{currentTab!==1}}">
   <view class="completeness-panel">
     <view class="completeness-first-row">
-      <image src="/images/graph-left.png" style="width:35rpx;height:35rpx;margin-right:10rpx;margin-top:10rpx;" bindtap="completenessPreTimelapse"></image>
+      <image src="/images/graph-left.png" style="width:35rpx;height:35rpx;margin-right:30rpx;margin-top:10rpx;" bindtap="completenessPreTimelapse"></image>
       <text> {{completeness_week_subtitle}}完成度</text>
-      <image src="/images/graph-right.png" style="width:35rpx;height:35rpx;margin-left:10rpx;margin-top:10rpx;" bindtap="completenessNextTimelapse"></image>
+      <image src="/images/graph-right.png" style="width:35rpx;height:35rpx;margin-left:30rpx;margin-top:10rpx;" bindtap="completenessNextTimelapse"></image>
     </view>
   </view>
 

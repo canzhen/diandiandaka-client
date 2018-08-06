@@ -164,10 +164,13 @@ Page({
   },
 
 
-  _check: function (id, data, boolData, insistData, totalData){
+  _check: function (id, data){
     let dataChangedData = 'my_topic_data[' + id + '].data_changed';
+    let boolData = 'my_topic_data[' + id + '].is_checked';
     let lastCheckTimeData = 'my_topic_data[' + id + '].last_check_time';
     let lastCheckTimestampData = 'my_topic_data[' + id + '].last_check_timestamp';
+    let insistData = 'my_topic_data[' + id + '].insist_day';
+    let totalData = 'my_topic_data[' + id + '].total_day';
 
 
     this.setData({
@@ -215,7 +218,7 @@ Page({
     }
 
     if (data.if_show_log == 0) {
-      this._check(id, data, boolData, insistData, totalData);
+      this._check(id, data);
     } else { //如果选择要弹框，则弹出框
       this.setData({
         selected_id: id,
@@ -338,6 +341,9 @@ Page({
    * 不再显示，隐藏模态对话框
    */
   hideModal: function () {
+    let id = this.data.selected_id;
+    let data = this.data.my_topic_data[id];
+    this._check(id, data);
     this.setData({
       show_modal: false
     });
@@ -351,11 +357,7 @@ Page({
     
     let id = this.data.selected_id;
     let data = this.data.my_topic_data[id];
-    let boolData = 'my_topic_data[' + id + '].is_checked';
-    let insistData = 'my_topic_data[' + id + '].insist_day';
-    let totalData = 'my_topic_data[' + id + '].total_day';
-
-    this._check(id, data, boolData, insistData, totalData);
+    this._check(id, data);
 
     let logData = 'my_topic_data[' + id + '].log';
     this.setData({
@@ -406,11 +408,7 @@ Page({
         let id = that.data.selected_id;
         let data = that.data.my_topic_data[id];
         let topic_name = data.topic_name;
-
-        let boolData = 'my_topic_data[' + id + '].is_checked';
-        let insistData = 'my_topic_data[' + id + '].insist_day';
-        let totalData = 'my_topic_data[' + id + '].total_day';
-        that._check(id, data, boolData, insistData, totalData);
+        that._check(id, data);
         
         updateDBNotShowLog(topic_name);
       }
