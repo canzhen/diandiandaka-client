@@ -5,6 +5,12 @@ Page{
   flex-direction: column;
 }
 
+
+image{
+  border-radius: 50%;
+}
+
+
 .first-line-view{
   display:flex; 
   flex-direction:row; 
