@@ -320,59 +320,53 @@ Page({
    * 新建canvas并往里填充数据
    */
   newCanvas: function (timelapse, n) {
-    let [status, canvasSubtitle] = helper.getCanvasXText(timelapse, this.data.completeness_current_date);
-    let canvasData = [], ans = {};
-    if (!status) canvasData = '';
-    else ans = data.getCanvasData(
-      this.data.check_time_list,
-      this.data.topic_list_per_day,
-      this.data.completeness_current_date,
-      this.data.topic_name_list.length,
-      timelapse, n); //生成新的每周数据
+    let ans = data.getCanvasData(
+                this.data.check_time_list,
+                this.data.topic_list_per_day,
+                this.data.completeness_current_date,
+                this.data.topic_name_list.length,
+                timelapse, n); //生成新的每周数据
 
-    canvasData = ans['data'];
-    let sum = 0;
-    for (let i in canvasData)
-      sum += canvasData[i];
-    
-    this.setData({
-      average_completeness: parseInt((sum / canvasData.length).toFixed(2)),
-      completeness_week_subtitle: ans['subtitle'],
-      completeness_current_date: ans['enddate']
-    });
+    let canvasXText = [];
+    let canvasYData = [];
 
 
-    if (canvasData && helper.checkIfAllZero(canvasData))
-      canvasData = '';
-
-
-    if (!status) {
+    if (ans['startdate'] > moment()){
       this.setData({
         user_click_on_future: true,
         average_completeness: 0
       });
-      // wx.showToast({
-      //   title: '未来的事情宝宝不知道呢~',
-      //   icon: 'none',
-      //   duration: 4000,
-      // })
-    } else if (!canvasData){
-      this.setData({
-        user_click_no_data: true,
-        average_completeness: 0
-      });
-      // wx.showToast({
-      //   title: '该段时间您没有打卡嗷~',
-      //   icon: 'none',
-      //   duration: 4000,
-      // })
-    } else {
-      this.setData({
-        user_click_on_future: false,
-        user_click_no_data: false
-      });
+    }else{
+      canvasYData = ans['data'];
+      if (!canvasYData) {
+        this.setData({
+          user_click_no_data: true,
+          average_completeness: 0
+        });
+      } else {
+        if (canvasYData && helper.checkIfAllZero(canvasYData)){
+          this.setData({
+            user_click_no_data: true,
+            average_completeness: 0
+          });
+        }else{
+          canvasXText = helper.getCanvasXText(
+            timelapse, this.data.completeness_current_date);
+          let sum = 0;
+          for (let i in canvasYData)
+            sum += canvasYData[i];
+
+          this.setData({
+            user_click_on_future: false,
+            user_click_no_data: false,
+            average_completeness: parseInt((sum / canvasYData.length).toFixed(2)),
+            completeness_week_subtitle: ans['subtitle'],
+            completeness_current_date: ans['enddate']
+          });
+        }
+      }
     }
-    setChart(canvasSubtitle, canvasData);
+    setChart(canvasXText, canvasYData);
   },
 
 

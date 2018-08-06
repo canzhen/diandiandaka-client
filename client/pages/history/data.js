@@ -188,6 +188,7 @@ function getCanvasData(
 
   return {'data': percentageList, 
           'subtitle': subtitle, 
+          'startdate': startdate,
           'enddate': enddate, };
 
   // switch(time_lapse){

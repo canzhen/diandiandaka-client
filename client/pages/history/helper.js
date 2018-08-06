@@ -215,28 +215,21 @@ function getMonthStartDate(date) {
  */
 function getCanvasXText(timelapse, enddate){
   enddate = moment(enddate);
-  let status = true;
   switch (timelapse){
     case '1周':
-      if (enddate.subtract(6, 'days') > moment())
-        status = false;
-      return [status, weekList];
+      return weekList;
     case '1个月':
       let daysList = getDaysListOfGivenMonth(
         enddate.year(), enddate.month() + 1);
-      if (enddate.subtract(1, 'month') > moment())
-        status = false;
-      return [status, daysList];
+      return daysList;
     case '3个月':
       let startdate = enddate.subtract(3, 'month');
       let monthList = [];
       for (let i = startdate.month() + 1; i <= enddate.month() + 1; i++)
         monthList.push(i);
-      if (startdate > moment()) status = false;
-      return [status, monthList];
+      return monthList;
     case '1年':
-      if (enddate.startOf('year') > moment()) status = false;
-      return [status, yearList];
+      return yearList;
     case '全部': break;
     default: break;
   }
