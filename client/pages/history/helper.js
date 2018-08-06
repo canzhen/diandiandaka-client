@@ -106,6 +106,9 @@ function generateCalendar(checkedDataList, year, month, color) {
   ans['background'] = color;
   ans['selected_row'] = 0;
 
+
+  console.log(ans);
+
   return ans;
 }
 

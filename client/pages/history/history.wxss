@@ -6,6 +6,11 @@ page{
   position: fixed;
 }
 
+
+image{
+  border-radius: 50%;
+}
+
 .navbar{
   flex: none;
   display: flex;
