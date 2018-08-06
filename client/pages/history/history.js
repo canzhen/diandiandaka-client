@@ -30,6 +30,7 @@ Page({
     ec:{
       onInit: initChart
     },
+    average_completeness: 0,
     check_time_per_topic: [], //每个topic的打卡天数：[{'跑步':['2018-06-13', '2018-06-24', '2018-06-21']}, {..}, {..}]
     check_info_per_topic: [], //每个topic的具体信息：[{'跑步': {check_time': '2018-06-13', 'log': '很好'}, {check_time': '2018-06-24', 'log': '还是很好'}}, {'起床': {{}, {}, ..}}, {},...]
     check_time_list: [], // 所有打卡的日期的集合['2018-07-04', '', ..]
@@ -293,10 +294,6 @@ Page({
 
   /*------------------------以下是每日完成度部分-------------------------*/
   
-
-
-
-
   /**
    *  单击时间区间触发的方法
    */
@@ -326,15 +323,24 @@ Page({
    * 新建canvas并往里填充数据
    */
   newCanvas: function (timelapse) {
-    let [status, canvasSubtitle] = helper.getCanvasSubtitleList(timelapse, this.data.completeness_current_date);
+    let [status, canvasSubtitle] = helper.getCanvasXText(timelapse, this.data.completeness_current_date);
     let canvasData = [];
     if (!status) canvasData = '';
-    else canvasData = data.getCanvasDataList(
+    else canvasData = data.getCanvasYData(
       this.data.check_time_list,
       this.data.topic_list_per_day,
       this.data.completeness_current_date,
       this.data.topic_name_list.length,
       timelapse); //生成新的每周数据
+
+    let sum = 0;
+    for (let i in canvasData)
+      sum += canvasData[i];
+    
+    this.setData({
+      average_completeness: parseInt((sum/canvasData.length).toFixed(2))
+    });
+
 
     if (canvasData && helper.checkIfAllZero(canvasData))
       canvasData = '';
@@ -394,7 +400,6 @@ Page({
    * “每日完成度”单击向左图片所触发的函数
    */
   completenessPreTimelapse: function () {
-    console.log('completenessPreTimelapse');
     this.completenessChangeTimelapse(-1);
   },
 
@@ -403,7 +408,6 @@ Page({
    * “每日完成度”单击向右图片所触发的函数
    */
   completenessNextTimelapse: function () {
-    console.log('completenessNextTimelapse');
     this.completenessChangeTimelapse(1);
   },
   
@@ -469,7 +473,7 @@ var option = {
     right: 0,
     bottom: 10,
     width: 340,
-    height: 400,
+    height: 370,
     containLabel: true
   },
   xAxis: [
@@ -484,6 +488,7 @@ var option = {
         show: false
       },
       axisLabel: {
+        margin: 30,
         textStyle: {
           color: '#888888'
         }

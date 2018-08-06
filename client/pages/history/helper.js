@@ -16,7 +16,6 @@ function getDaysOfGivenMonth(year) {
  */
 function getDaysListOfGivenMonth(year, month) {
   let daysNum = getDaysOfGivenMonth(year)[month - 1];
-  console.log(daysNum);
   let daysList = [];
   for (let i = 1; i <= daysNum; i++) {
     daysList.push(i);
@@ -105,10 +104,7 @@ function generateCalendar(checkedDataList, year, month, color) {
   ans['month'] = addZero(month);
   ans['background'] = color;
   ans['selected_row'] = 0;
-
-
-  console.log(ans);
-
+  
   return ans;
 }
 
@@ -233,8 +229,10 @@ function getCompletenessSubtitle(currentdate, timelapse, n) {
 
 
 
-
-function getCanvasSubtitleList(timelapse, enddate){
+/**
+ * 获取图标的横坐标文字（周、月、三个月等，都不同）
+ */
+function getCanvasXText(timelapse, enddate){
   enddate = moment(enddate);
   let status = true;
   switch (timelapse){
@@ -244,7 +242,7 @@ function getCanvasSubtitleList(timelapse, enddate){
       return [status, weekList];
     case '1个月':
       let daysList = getDaysListOfGivenMonth(
-        enddate.year(), enddate.month());
+        enddate.year(), enddate.month() + 1);
       if (enddate.subtract(1, 'month') > moment())
         status = false;
       return [status, daysList];
@@ -283,6 +281,6 @@ module.exports = {
   getDaysOfGivenMonth,
   getDaysListOfGivenMonth,
   getCompletenessSubtitle,
-  getCanvasSubtitleList,
+  getCanvasXText,
   checkIfAllZero,
 }

@@ -103,10 +103,22 @@ function getCheckDetailOnGivenDay(checkedList, givenDate) {
   return checkedTopicList;
 }
 
+function _getCanvasYData(percentageList, end_date, check_time_list, topic_list_per_day, total_topic_num, start, end){
+  for (let i = start; i >= end; i--) {
+    let date = moment(end_date).subtract(i, 'days').format('YYYY-MM-DD');
+    let percentage = 0;
+    if (check_time_list.indexOf(date) != -1)
+      percentage = topic_list_per_day[date].length / total_topic_num * 100;
+    let p = parseInt(percentage.toFixed(2));
+    if (!p) percentageList.push(null);
+    else percentageList.push(p);
+  }
+}
+
 /**
  * 计算获得每日完成度：
  */
-function getCanvasDataList(
+function getCanvasYData(
             check_time_list, 
             topic_list_per_day, 
             current_date, 
@@ -117,24 +129,12 @@ function getCanvasDataList(
 
   switch(time_lapse){
     case '1周':
-      for (let i = 6; i >= 0; i--){
-        let date = moment(end_date).subtract(i, 'days').format('YYYY-MM-DD');
-        let percentage = 0;
-        if (check_time_list.indexOf(date) != -1) 
-          percentage = topic_list_per_day[date].length / total_topic_num * 100;
-        percentageList.push(parseInt(percentage.toFixed(2)));
-      }
+      _getCanvasYData(percentageList, end_date, check_time_list, topic_list_per_day, total_topic_num, 6, 0);
       break;
     case '1个月':
       let preMonth = moment(end_date).subtract(1, 'month');
       let diff = end_date.diff(preMonth) / (1000 * 60 * 60 * 24);
-      for (let i = diff; i >= 0; i--) {
-        let date = moment(end_date).subtract(i, 'days').format('YYYY-MM-DD');
-        let percentage = 0;
-        if (check_time_list.indexOf(date) != -1)
-          percentage = topic_list_per_day[date].length / total_topic_num * 100;
-        percentageList.push(parseInt(percentage.toFixed(2)));
-      }
+      _getCanvasYData(percentageList, end_date, check_time_list, topic_list_per_day, total_topic_num, diff, 0);
       break;
     case '3个月':
       break;
@@ -145,8 +145,6 @@ function getCanvasDataList(
     default:
       break;
   }
-  // console.log(checked_data_list);
-  // console.log(percentageList);
 
   return percentageList;
 };
@@ -178,6 +176,6 @@ module.exports = {
   getCheckedDataOfEveryTopic,
   divideTopicInfoIntoGroups,
   getCheckDetailOnGivenDay,
-  getCanvasDataList,
+  getCanvasYData,
   getTopicListPerDay,
 }
