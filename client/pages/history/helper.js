@@ -165,51 +165,6 @@ function getMonthStartDate(date) {
 }
 
 
-// /**
-//  * 获取日期标题
-//  */
-// function getCompletenessSubtitle(currentdate, timelapse, n) {
-//   let enddate = currentdate == null ? moment() : moment(currentdate),
-//     startdate = moment(enddate),
-//     subtitle = '';
-
-
-//   // console.log(timelapse);
-//   if (n != -1 && n != 1 && n != 0) return;
-
-//   switch (timelapse) {
-//     case "1周":
-//       if (n != 0) startdate.add(n * 7, 'days');
-//       startdate = getWeekStartDate(startdate);
-//       enddate = getWeekEndDate(startdate);
-//       break;
-//     case "1个月":
-//       enddate.add(n, 'month');
-//       enddate = moment(enddate).endOf('month');
-//       startdate = moment(enddate).startOf('month')
-//       break;
-//     case "3个月":
-//       enddate = moment(enddate).add(3 * n, 'month').endOf('month');
-//       startdate = moment(enddate).subtract(3, 'month')
-//       break;
-//     case "1年":
-//       if (n != 0) enddate = moment(enddate).add(n, 'year');
-//       enddate = enddate.endOf('year');
-//       startdate = moment(enddate).startOf('year');
-//       break;
-//     case "全部":
-//       break;
-//     default:
-//       break;
-//   }
-
-//   subtitle = startdate.format('YYYY-MM-DD') + ' 到 ' + enddate.format('YYYY-MM-DD');
-
-//   return { 'subtitle': subtitle, 'enddate': enddate };
-// }
-
-
-
 /**
  * 获取图标的横坐标文字（周、月、三个月等，都不同）
  */
@@ -222,12 +177,6 @@ function getCanvasXText(timelapse, enddate){
       let daysList = getDaysListOfGivenMonth(
         enddate.year(), enddate.month() + 1);
       return daysList;
-    case '3个月':
-      let startdate = enddate.subtract(3, 'month');
-      let monthList = [];
-      for (let i = startdate.month() + 1; i <= enddate.month() + 1; i++)
-        monthList.push(i);
-      return monthList;
     case '1年':
       return yearList;
     case '全部': break;

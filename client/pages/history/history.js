@@ -39,7 +39,6 @@ Page({
     timelapses: [ //所有的时间区间的选项
                   { 'name': '1周', 'checked': true },
                   { 'name': '1个月', 'checked': false },
-                  { 'name': '3个月', 'checked': false },
                   { 'name': '1年', 'checked': false },
                   { 'name': '全部', 'checked': false }], 
     selected_timelapse: 0, //当前选中的时间区间的下标
@@ -299,7 +298,6 @@ Page({
   selectTimeLapse: function (e) {
     let time = e.currentTarget.dataset.time;
     let index = e.currentTarget.dataset.index;
-    console.log(time);
 
     let preCheckedStr = 'timelapses[' + this.data.selected_timelapse + '].checked';
     let newCheckedStr = 'timelapses[' + index + '].checked';
@@ -392,7 +390,6 @@ Page({
   /*--------------------------以下是打卡日志部分---------------------------*/
   selectTopicLog: function(e){
     let indexKey = e.currentTarget.dataset.idx;
-    console.log(indexKey);
     this.setData({
       selected_topic_log: indexKey,
     });

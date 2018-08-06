@@ -124,7 +124,7 @@
     <image></image>
   </view> -->
 
-  <!-- 底部固定的1周/1个月/3个月/1年/全部的选项卡 -->
+  <!-- 底部固定的1周/1个月/1年/全部的选项卡 -->
   <view class="completeness-panel-bottom">
     <button wx:for="{{timelapses}}" wx:key="key" wx:for-index="index" wx:for-item="timelapse" class='{{timelapse.checked ? "completeness-button-checked" : "completeness-button"}}' bindtap="selectTimeLapse" data-time="{{timelapse.name}}" data-index="{{index}}"> {{timelapse.name}}</button>
   </view>

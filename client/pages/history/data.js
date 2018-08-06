@@ -103,16 +103,18 @@ function getCheckDetailOnGivenDay(checkedList, givenDate) {
   return checkedTopicList;
 }
 
-function _getCanvasData(percentageList, startdate, enddate, check_time_list, topic_list_per_day, total_topic_num){
-  let diff = enddate.diff(startdate) / (1000 * 60 * 60 * 24);
+
+
+function _getCanvasData(percentageList, startdate, enddate, check_time_list, topic_list_per_day, total_topic_num, ifAverage) {
+  let diff = parseInt(enddate.diff(startdate, 'days'));
+  console.log(diff)
   for (let i = diff; i >= 0; i--) {
     let date = moment(enddate).subtract(i, 'days').format('YYYY-MM-DD');
     let percentage = 0;
     if (check_time_list.indexOf(date) != -1)
       percentage = topic_list_per_day[date].length / total_topic_num * 100;
-    let p = parseInt(percentage.toFixed(2));
-    if (!p) percentageList.push(null);
-    else percentageList.push(p);
+    percentage = percentage? parseInt(percentage.toFixed(2)) : null;    
+    percentageList.push(percentage);
   }
 }
 
@@ -152,6 +154,7 @@ function getCanvasData(
   var percentageList = [];
   let enddate = moment(current_date);
   let startdate = moment(current_date);
+  let ifAverage = false;
 
   if (n != -1 && n != 1 && n != 0) return;
 
@@ -166,10 +169,6 @@ function getCanvasData(
       enddate = moment(enddate).endOf('month');
       startdate = moment(enddate).startOf('month')
       break;
-    case "3个月":
-      enddate = moment(enddate).add(3 * n, 'month').endOf('month');
-      startdate = moment(enddate).subtract(3, 'month')
-      break;
     case "1年":
       if (n != 0) enddate = moment(enddate).add(n, 'year');
       enddate = enddate.endOf('year');
@@ -181,9 +180,8 @@ function getCanvasData(
       break;
   }
 
-
   _getCanvasData(percentageList, startdate, enddate, check_time_list, 
-                  topic_list_per_day, total_topic_num);
+                  topic_list_per_day, total_topic_num, ifAverage);
 
   let subtitle = startdate.format('YYYY-MM-DD') + ' 到 ' + enddate.format('YYYY-MM-DD');
 
