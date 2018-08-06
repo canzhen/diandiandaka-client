@@ -104,7 +104,7 @@ function generateCalendar(checkedDataList, year, month, color) {
   ans['month'] = addZero(month);
   ans['background'] = color;
   ans['selected_row'] = 0;
-  
+
   return ans;
 }
 
@@ -154,25 +154,6 @@ function getSuccessiveDayByDateList(dateList) {
   return count;
 }
 
-/**
- * 获取本周的周一的日期
- */
-function getWeekStartDate(date) {
-  var currentdate = moment(date);
-  let weekOfDay = parseInt(currentdate.format('E'));
-  return currentdate.subtract(weekOfDay - 1, 'days');//周一日期
-}
-
-
-/**
- * 获取本周日的时间
- */
-function getWeekEndDate(date) {
-  var currentdate = moment(date);
-  let weekOfDay = parseInt(currentdate.format('E'));
-  return currentdate.add(7 - weekOfDay, 'days');//周日日期
-}
-
 
 /**
  * 获取本月月初的日期
@@ -184,48 +165,48 @@ function getMonthStartDate(date) {
 }
 
 
-/**
- * 获取日期标题
- */
-function getCompletenessSubtitle(currentdate, timelapse, n) {
-  let enddate = currentdate == null ? moment() : moment(currentdate),
-    startdate = moment(enddate),
-    subtitle = '';
+// /**
+//  * 获取日期标题
+//  */
+// function getCompletenessSubtitle(currentdate, timelapse, n) {
+//   let enddate = currentdate == null ? moment() : moment(currentdate),
+//     startdate = moment(enddate),
+//     subtitle = '';
 
 
-  // console.log(timelapse);
-  if (n != -1 && n != 1 && n != 0) return;
+//   // console.log(timelapse);
+//   if (n != -1 && n != 1 && n != 0) return;
 
-  switch (timelapse) {
-    case "1周":
-      if (n != 0) startdate.add(n * 7, 'days');
-      startdate = getWeekStartDate(startdate);
-      enddate = getWeekEndDate(startdate);
-      break;
-    case "1个月":
-      enddate.add(n, 'month');
-      enddate = moment(enddate).endOf('month');
-      startdate = moment(enddate).startOf('month')
-      break;
-    case "3个月":
-      enddate = moment(enddate).add(3 * n, 'month').endOf('month');
-      startdate = moment(enddate).subtract(3, 'month')
-      break;
-    case "1年":
-      if (n != 0) enddate = moment(enddate).add(n, 'year');
-      enddate = enddate.endOf('year');
-      startdate = moment(enddate).startOf('year');
-      break;
-    case "全部":
-      break;
-    default:
-      break;
-  }
+//   switch (timelapse) {
+//     case "1周":
+//       if (n != 0) startdate.add(n * 7, 'days');
+//       startdate = getWeekStartDate(startdate);
+//       enddate = getWeekEndDate(startdate);
+//       break;
+//     case "1个月":
+//       enddate.add(n, 'month');
+//       enddate = moment(enddate).endOf('month');
+//       startdate = moment(enddate).startOf('month')
+//       break;
+//     case "3个月":
+//       enddate = moment(enddate).add(3 * n, 'month').endOf('month');
+//       startdate = moment(enddate).subtract(3, 'month')
+//       break;
+//     case "1年":
+//       if (n != 0) enddate = moment(enddate).add(n, 'year');
+//       enddate = enddate.endOf('year');
+//       startdate = moment(enddate).startOf('year');
+//       break;
+//     case "全部":
+//       break;
+//     default:
+//       break;
+//   }
 
-  subtitle = startdate.format('YYYY-MM-DD') + ' 到 ' + enddate.format('YYYY-MM-DD');
+//   subtitle = startdate.format('YYYY-MM-DD') + ' 到 ' + enddate.format('YYYY-MM-DD');
 
-  return { 'subtitle': subtitle, 'enddate': enddate };
-}
+//   return { 'subtitle': subtitle, 'enddate': enddate };
+// }
 
 
 
@@ -276,11 +257,8 @@ module.exports = {
   getFullDateSlash,
   getYearMonthSlash,
   getFormateDatetimeEN,
-  getWeekEndDate,
-  getWeekStartDate,
   getDaysOfGivenMonth,
   getDaysListOfGivenMonth,
-  getCompletenessSubtitle,
   getCanvasXText,
   checkIfAllZero,
 }

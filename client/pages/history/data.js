@@ -103,9 +103,10 @@ function getCheckDetailOnGivenDay(checkedList, givenDate) {
   return checkedTopicList;
 }
 
-function _getCanvasYData(percentageList, end_date, check_time_list, topic_list_per_day, total_topic_num, start, end){
-  for (let i = start; i >= end; i--) {
-    let date = moment(end_date).subtract(i, 'days').format('YYYY-MM-DD');
+function _getCanvasData(percentageList, startdate, enddate, check_time_list, topic_list_per_day, total_topic_num){
+  let diff = enddate.diff(startdate) / (1000 * 60 * 60 * 24);
+  for (let i = diff; i >= 0; i--) {
+    let date = moment(enddate).subtract(i, 'days').format('YYYY-MM-DD');
     let percentage = 0;
     if (check_time_list.indexOf(date) != -1)
       percentage = topic_list_per_day[date].length / total_topic_num * 100;
@@ -115,38 +116,102 @@ function _getCanvasYData(percentageList, end_date, check_time_list, topic_list_p
   }
 }
 
+
+
+/**
+ * 获取本周的周一的日期
+ */
+function getWeekStartDate(date) {
+  var currentdate = moment(date);
+  let weekOfDay = parseInt(currentdate.format('E'));
+  return currentdate.subtract(weekOfDay - 1, 'days');//周一日期
+}
+
+
+/**
+ * 获取本周日的时间
+ */
+function getWeekEndDate(date) {
+  var currentdate = moment(date);
+  let weekOfDay = parseInt(currentdate.format('E'));
+  return currentdate.add(7 - weekOfDay, 'days');//周日日期
+}
+
+
 /**
  * 计算获得每日完成度：
  */
-function getCanvasYData(
+function getCanvasData(
             check_time_list, 
             topic_list_per_day, 
             current_date, 
             total_topic_num,
-            time_lapse){
+            time_lapse,
+            n){
   var percentageList = [];
-  let end_date = moment(current_date);
+  let enddate = moment(current_date);
+  let startdate = moment(current_date);
 
-  switch(time_lapse){
-    case '1周':
-      _getCanvasYData(percentageList, end_date, check_time_list, topic_list_per_day, total_topic_num, 6, 0);
+  if (n != -1 && n != 1 && n != 0) return;
+
+  switch (time_lapse) {
+    case "1周":
+      if (n != 0) startdate.add(n * 7, 'days');
+      startdate = getWeekStartDate(startdate);
+      enddate = getWeekEndDate(startdate);
       break;
-    case '1个月':
-      let preMonth = moment(end_date).subtract(1, 'month');
-      let diff = end_date.diff(preMonth) / (1000 * 60 * 60 * 24);
-      _getCanvasYData(percentageList, end_date, check_time_list, topic_list_per_day, total_topic_num, diff, 0);
+    case "1个月":
+      enddate.add(n, 'month');
+      enddate = moment(enddate).endOf('month');
+      startdate = moment(enddate).startOf('month')
       break;
-    case '3个月':
+    case "3个月":
+      enddate = moment(enddate).add(3 * n, 'month').endOf('month');
+      startdate = moment(enddate).subtract(3, 'month')
       break;
-    case '1年':
+    case "1年":
+      if (n != 0) enddate = moment(enddate).add(n, 'year');
+      enddate = enddate.endOf('year');
+      startdate = moment(enddate).startOf('year');
       break;
-    case '全部':
+    case "全部":
       break;
     default:
       break;
   }
 
-  return percentageList;
+
+  _getCanvasData(percentageList, startdate, enddate, check_time_list, 
+                  topic_list_per_day, total_topic_num);
+
+  let subtitle = startdate.format('YYYY-MM-DD') + ' 到 ' + enddate.format('YYYY-MM-DD');
+
+  return {'data': percentageList, 
+          'subtitle': subtitle, 
+          'enddate': enddate, };
+
+  // switch(time_lapse){
+  //   case '1周':
+  //     break;
+  //   case '1个月':
+  //     let preMonth = moment(end_date).subtract(1, 'month');
+  //     let diff = end_date.diff(preMonth) / (1000 * 60 * 60 * 24);
+  //     _getCanvasData(percentageList, end_date, check_time_list, topic_list_per_day, total_topic_num, diff, 0);
+  //     break;
+  //   case '3个月':
+  //     let preMonth = moment(end_date).subtract(3, 'month');
+  //     let diff = end_date.diff(preMonth) / (1000 * 60 * 60 * 24);
+  //     _getCanvasData(percentageList, end_date, check_time_list, topic_list_per_day, total_topic_num, diff, 0);
+  //     break;
+  //   case '1年':
+  //     break;
+  //   case '全部':
+  //     break;
+  //   default:
+  //     break;
+  // }
+
+  // return percentageList;
 };
 
 
@@ -176,6 +241,6 @@ module.exports = {
   getCheckedDataOfEveryTopic,
   divideTopicInfoIntoGroups,
   getCheckDetailOnGivenDay,
-  getCanvasYData,
+  getCanvasData,
   getTopicListPerDay,
 }

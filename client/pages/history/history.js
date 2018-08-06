@@ -45,7 +45,7 @@ Page({
     selected_timelapse: 0, //当前选中的时间区间的下标
     selected_canvas: 'week', //当前选择展示的图表，默认显示的是本周的
     completeness_week_subtitle: '', //每日完成度第一行要显示的标语
-    completeness_current_date: null, //每日完成度-1周-当前查看的周
+    completeness_current_date: moment(), //每日完成度-1周-当前查看的周
     touchMoveXPos: -1, //鼠标拖动图表的距离
 
 
@@ -131,9 +131,8 @@ Page({
       topic_list_per_day: topicListPerDay,
     });
 
-    this.setCompletenessSubtitle('1周', 0); //一周的历史记录上的文字
     // 生成当前周的数据
-    this.newCanvas('1周');
+    this.newCanvas('1周', 0);
   },
 
 
@@ -312,9 +311,7 @@ Page({
 
     let selectedCanvasName = this.data.timelapses[this.data.selected_timelapse].name;
 
-
-    this.setCompletenessSubtitle(time, 0)
-    this.newCanvas(time);
+    this.newCanvas(time, 0);
   },
 
 
@@ -322,23 +319,26 @@ Page({
   /**
    * 新建canvas并往里填充数据
    */
-  newCanvas: function (timelapse) {
+  newCanvas: function (timelapse, n) {
     let [status, canvasSubtitle] = helper.getCanvasXText(timelapse, this.data.completeness_current_date);
-    let canvasData = [];
+    let canvasData = [], ans = {};
     if (!status) canvasData = '';
-    else canvasData = data.getCanvasYData(
+    else ans = data.getCanvasData(
       this.data.check_time_list,
       this.data.topic_list_per_day,
       this.data.completeness_current_date,
       this.data.topic_name_list.length,
-      timelapse); //生成新的每周数据
+      timelapse, n); //生成新的每周数据
 
+    canvasData = ans['data'];
     let sum = 0;
     for (let i in canvasData)
       sum += canvasData[i];
     
     this.setData({
-      average_completeness: parseInt((sum/canvasData.length).toFixed(2))
+      average_completeness: parseInt((sum / canvasData.length).toFixed(2)),
+      completeness_week_subtitle: ans['subtitle'],
+      completeness_current_date: ans['enddate']
     });
 
 
@@ -348,7 +348,8 @@ Page({
 
     if (!status) {
       this.setData({
-        user_click_on_future: true
+        user_click_on_future: true,
+        average_completeness: 0
       });
       // wx.showToast({
       //   title: '未来的事情宝宝不知道呢~',
@@ -357,7 +358,8 @@ Page({
       // })
     } else if (!canvasData){
       this.setData({
-        user_click_no_data: true
+        user_click_no_data: true,
+        average_completeness: 0
       });
       // wx.showToast({
       //   title: '该段时间您没有打卡嗷~',
@@ -373,26 +375,10 @@ Page({
     setChart(canvasSubtitle, canvasData);
   },
 
-  
-  
-  /**
-   * 获取每日完成度-1周-的子标题："2018.08.14到2018.08.21"
-   * @param n int: 上周还是下周，还是当前，如果是上周则为-1，如果是下周则为1，如果是当前则为0
-   */
-  setCompletenessSubtitle: function (timelapse, n) {
-    let ans = helper.getCompletenessSubtitle(this.data.completeness_current_date, timelapse, n);
-    this.setData({
-      completeness_week_subtitle: ans['subtitle'],
-      completeness_current_date: ans['enddate']
-    });
-  },
-
-
 
   completenessChangeTimelapse: function (n) {
     let selectedTimelapseName = this.data.timelapses[this.data.selected_timelapse].name;
-    this.setCompletenessSubtitle(selectedTimelapseName, n);
-    this.newCanvas(selectedTimelapseName);
+    this.newCanvas(selectedTimelapseName, n);
   },
 
 
@@ -412,32 +398,6 @@ Page({
   },
   
 
-
-  // /**
-  //  *  canvas被单击并拖拽时触发的函数
-  //  */
-  // bindCanvasTouchMove: function (e) {
-  //   if (e.touches.length == 0) return;
-  //   let currentXPos = e.touches[0].clientX;
-  //   if (this.data.touchMoveXPos == -1) {
-  //     this.setData({ touchMoveXPos: currentXPos });
-  //     return;
-  //   }
-  //   if (Math.abs(this.data.touchMoveXPos - currentXPos) <= 200) return;
-
-  //   let selectedCanvasName = this.data.timelapses[this.data.selected_timelapse].name;
-  //   if (currentXPos - this.data.touchMoveXPos >= 200) { //右滑，显示上一周
-  //     this.setCompletenessSubtitle(selectedCanvasName, -1);
-  //     this.newCanvas(selectedCanvasName);
-  //   } else if (this.data.touchMoveXPos - currentXPos >= 200) { //左滑，显示下周
-  //     this.setCompletenessSubtitle(selectedCanvasName, 1);
-  //     this.newCanvas(selectedCanvasName);
-  //   }
-
-  //   this.setData({
-  //     touchMoveXPos: -1
-  //   });
-  // },
 
 
   /*--------------------------以下是打卡日志部分---------------------------*/
@@ -488,7 +448,7 @@ var option = {
         show: false
       },
       axisLabel: {
-        margin: 30,
+        margin: 10,
         textStyle: {
           color: '#888888'
         }
