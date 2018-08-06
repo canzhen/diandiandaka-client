@@ -1,9 +1,12 @@
-var Charts = require('wxcharts.js');
+// var Charts = require('wxcharts.js');
 const moment = require('../../vendor/moment.min.js');
 const utils = require('../../vendor/utils.js');
 const api = require('../../ajax/api.js');
-const data = require('data.js');
 const helper = require('helper.js');
+const data = require('data.js');
+const echarts = require('../../vendor/ec-canvas/echarts');
+let chart = null;
+
 
 Page({
   data: {
@@ -23,6 +26,10 @@ Page({
 
 
     /* --------------以下的data属于【每日完成度】--------------*/
+    //用于展示的图表对象
+    ec:{
+      onInit: initChart
+    },
     check_time_per_topic: [], //每个topic的打卡天数：[{'跑步':['2018-06-13', '2018-06-24', '2018-06-21']}, {..}, {..}]
     check_info_per_topic: [], //每个topic的具体信息：[{'跑步': {check_time': '2018-06-13', 'log': '很好'}, {check_time': '2018-06-24', 'log': '还是很好'}}, {'起床': {{}, {}, ..}}, {},...]
     check_time_list: [], // 所有打卡的日期的集合['2018-07-04', '', ..]
@@ -46,7 +53,6 @@ Page({
     topic_url_map:[], //用于存每个topic对应的图标url
     selected_topic_log: '', //被选中要查看日志的topic名字
   },
-
 
 
   /**
@@ -285,8 +291,12 @@ Page({
 
 
 
-  /*--------------------------以下是每日完成度部分---------------------------*/
+  /*------------------------以下是每日完成度部分-------------------------*/
   
+
+
+
+
   /**
    *  单击时间区间触发的方法
    */
@@ -319,7 +329,6 @@ Page({
     let [status, canvasSubtitle] = helper.getCanvasSubtitleList(timelapse, this.data.completeness_current_date);
     let canvasData = [];
     if (!status) canvasData = '';
-    // console.log(this.data.check_time_list);
     else canvasData = data.getCanvasDataList(
       this.data.check_time_list,
       this.data.topic_list_per_day,
@@ -331,42 +340,31 @@ Page({
       canvasData = '';
 
 
-    if (!status){
-      wx.showToast({
-        title: '未来的事情宝宝不知道呢~',
-        icon: 'none',
-        duration: 4000,
-      })
+    if (!status) {
+      this.setData({
+        user_click_on_future: true
+      });
+      // wx.showToast({
+      //   title: '未来的事情宝宝不知道呢~',
+      //   icon: 'none',
+      //   duration: 4000,
+      // })
+    } else if (!canvasData){
+      this.setData({
+        user_click_no_data: true
+      });
+      // wx.showToast({
+      //   title: '该段时间您没有打卡嗷~',
+      //   icon: 'none',
+      //   duration: 4000,
+      // })
+    } else {
+      this.setData({
+        user_click_on_future: false,
+        user_click_no_data: false
+      });
     }
-
-    if (!canvasData){
-      wx.showToast({
-        title: '该段时间您没有打卡嗷~',
-        icon: 'none',
-        duration: 4000,
-      })
-    }
-    /* 新建图表 */
-    new Charts({
-      canvasId: 'myCanvas',
-      type: 'column',
-      categories: canvasSubtitle,
-      series: [{
-        name: '完成度',
-        data: canvasData
-      }],
-      yAxis: {
-        title: '百分比',
-        format: function (val) {
-          return val + '%';
-        },
-        min: 0,
-        max: 100
-      },
-      width: 360,
-      height: 380,
-      legend: false, //不显示图标
-    });
+    setChart(canvasSubtitle, canvasData);
   },
 
   
@@ -384,50 +382,58 @@ Page({
   },
 
 
-  /**
-   * canvas被单击并拖拽时开始触发的函数
-   */
-  bindCanvasTouchStart: function (e) {
-    this.setData({
-      touchMoveXPos: -1
-    });
+
+  completenessChangeTimelapse: function (n) {
+    let selectedTimelapseName = this.data.timelapses[this.data.selected_timelapse].name;
+    this.setCompletenessSubtitle(selectedTimelapseName, n);
+    this.newCanvas(selectedTimelapseName);
   },
 
-  /**
-   *  canvas被单击并拖拽时触发的函数
-   */
-  bindCanvasTouchMove: function (e) {
-    if (e.touches.length == 0) return;
-    let currentXPos = e.touches[0].x;
-    if (this.data.touchMoveXPos == -1) {
-      this.setData({ touchMoveXPos: currentXPos });
-      return;
-    }
-    if (Math.abs(this.data.touchMoveXPos - currentXPos) <= 200) return;
-
-    let selectedCanvasName = this.data.timelapses[this.data.selected_timelapse].name;
-    if (currentXPos - this.data.touchMoveXPos >= 200) { //右滑，显示上一周
-      this.setCompletenessSubtitle(selectedCanvasName, -1);
-      this.newCanvas(selectedCanvasName);
-    } else if (this.data.touchMoveXPos - currentXPos >= 200) { //左滑，显示下周
-      this.setCompletenessSubtitle(selectedCanvasName, 1);
-      this.newCanvas(selectedCanvasName);
-    }
-
-    this.setData({
-      touchMoveXPos: -1
-    });
-  },
 
   /**
-   * canvas被单击并拖拽结束时触发的函数
+   * “每日完成度”单击向左图片所触发的函数
    */
-  bindCanvasTouchEnd: function (e) {
-    // this.setData({
-    //   touchMoveXPos: -1
-    // });
+  completenessPreTimelapse: function () {
+    console.log('completenessPreTimelapse');
+    this.completenessChangeTimelapse(-1);
   },
 
+
+  /**
+   * “每日完成度”单击向右图片所触发的函数
+   */
+  completenessNextTimelapse: function () {
+    console.log('completenessNextTimelapse');
+    this.completenessChangeTimelapse(1);
+  },
+  
+
+
+  // /**
+  //  *  canvas被单击并拖拽时触发的函数
+  //  */
+  // bindCanvasTouchMove: function (e) {
+  //   if (e.touches.length == 0) return;
+  //   let currentXPos = e.touches[0].clientX;
+  //   if (this.data.touchMoveXPos == -1) {
+  //     this.setData({ touchMoveXPos: currentXPos });
+  //     return;
+  //   }
+  //   if (Math.abs(this.data.touchMoveXPos - currentXPos) <= 200) return;
+
+  //   let selectedCanvasName = this.data.timelapses[this.data.selected_timelapse].name;
+  //   if (currentXPos - this.data.touchMoveXPos >= 200) { //右滑，显示上一周
+  //     this.setCompletenessSubtitle(selectedCanvasName, -1);
+  //     this.newCanvas(selectedCanvasName);
+  //   } else if (this.data.touchMoveXPos - currentXPos >= 200) { //左滑，显示下周
+  //     this.setCompletenessSubtitle(selectedCanvasName, 1);
+  //     this.newCanvas(selectedCanvasName);
+  //   }
+
+  //   this.setData({
+  //     touchMoveXPos: -1
+  //   });
+  // },
 
 
   /*--------------------------以下是打卡日志部分---------------------------*/
@@ -440,3 +446,109 @@ Page({
   }
 
 })
+
+
+
+
+
+/**
+ * 图表配置部分
+ */
+
+var option = {
+  color: ['#37a2da', '#32c5e9', '#67e0e3'],
+  tooltip: {
+    trigger: 'axis',
+    axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+      type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+    }
+  },
+  grid: {
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 10,
+    width: 340,
+    height: 400,
+    containLabel: true
+  },
+  xAxis: [
+    {
+      type: 'category',
+      data: [],
+      silent: true,
+      axisLine: {
+        show: false
+      },
+      axisTick: {
+        show: false
+      },
+      axisLabel: {
+        textStyle: {
+          color: '#888888'
+        }
+      },
+    }
+  ],
+  yAxis: {
+    show: false,
+    min: 0,
+    max: 100,
+  },
+  series: [{
+      type: 'bar',
+      data: [],
+      silent: true,
+      clickable: false,
+      barCategoryGap: '25%',
+      label: {
+        show: true,
+        // position: 'top',
+        color: 'rgba(136, 136, 136, 1)',
+        rotate: 90,
+        fontSize: 10,
+        formatter: (obj) => {
+          return obj.data + '%'
+        }
+      },
+      itemStyle: {
+        emphasis: {
+          barBorderRadius: 5,
+          color: '#f8cd9b'
+        },
+        normal: {
+          barBorderRadius: 5,
+          color: '#feddbb'
+        }
+      }
+    },{
+      type: 'line',
+      data: [],
+      silent: true,
+      smooth: true,
+      clickable: false,
+      itemStyle: {
+        normal: {
+          color: 'rgba(136, 136, 136, 0.5)'
+        }
+      }
+    }]
+};
+
+function setChart(xdata, ydata){
+  option.xAxis[0].data = xdata;
+  option.series[0].data = ydata;
+  option.series[1].data = ydata;
+  chart.setOption(option);
+};
+
+function initChart(canvas, width = 375, height = 400) { //初始化图表
+  chart = echarts.init(canvas, null, {
+    width: width,
+    height: height
+  });
+  canvas.setChart(chart);
+
+  // chart.setOption(data.option);
+  return chart;
+}

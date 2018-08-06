@@ -31,7 +31,7 @@ const CONF = {
    * redis要设置得比小程序端的storage时间久（多一小时）
    * 的原因是，redis过期，storage却存在的情况，很难处理，
    * 所以还不如让redis久一点，storage过期的情况好处理，
-   * 直接后端重新生成即可，这么做的缺点在于redis会有一些冗余数据/
+   * 直接后端重新生成即可，这么做的缺点在于redis会有一些冗余数据
    */
   redis: {
     host: 'localhost',

@@ -7,6 +7,7 @@ function getCheckDataList(cb){
     'url': '/topicCheck/getAll',
     'data': {},
     'success': (res) => {
+      console.log('从数据库中获取用户具体每日打卡信息成功');
       cb(res.error_code, res.msg, res.result_list);
     },
     'fail': (res) => {
@@ -167,6 +168,8 @@ function getTopicListPerDay(checked_data_list){
   }
   return [Array.from(checkedTimeList), map];
 }
+
+
 
 
 module.exports = {

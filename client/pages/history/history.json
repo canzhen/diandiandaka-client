@@ -1,4 +1,7 @@
 {
+  "usingComponents": {
+    "ec-canvas": "../../vendor/ec-canvas/ec-canvas"
+  },
   "navigationBarTextStyle": "black",
   "navigationBarTitleText": "打卡历史",
   "enablePullDownRefresh": true,

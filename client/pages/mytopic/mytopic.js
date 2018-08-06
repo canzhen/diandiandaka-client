@@ -341,8 +341,6 @@ Page({
     this.setData({
       show_modal: false
     });
-    //设置数据库中if_show_log为false，下次不再显示
-
   },
 
 
