@@ -148,6 +148,7 @@ function getCanvasData(
             total_topic_num,
             time_lapse,
             n){
+
   var percentageList = [];
   let enddate = moment(current_date);
   let startdate = moment(current_date);
@@ -190,29 +191,6 @@ function getCanvasData(
           'subtitle': subtitle, 
           'startdate': startdate,
           'enddate': enddate, };
-
-  // switch(time_lapse){
-  //   case '1周':
-  //     break;
-  //   case '1个月':
-  //     let preMonth = moment(end_date).subtract(1, 'month');
-  //     let diff = end_date.diff(preMonth) / (1000 * 60 * 60 * 24);
-  //     _getCanvasData(percentageList, end_date, check_time_list, topic_list_per_day, total_topic_num, diff, 0);
-  //     break;
-  //   case '3个月':
-  //     let preMonth = moment(end_date).subtract(3, 'month');
-  //     let diff = end_date.diff(preMonth) / (1000 * 60 * 60 * 24);
-  //     _getCanvasData(percentageList, end_date, check_time_list, topic_list_per_day, total_topic_num, diff, 0);
-  //     break;
-  //   case '1年':
-  //     break;
-  //   case '全部':
-  //     break;
-  //   default:
-  //     break;
-  // }
-
-  // return percentageList;
 };
 
 

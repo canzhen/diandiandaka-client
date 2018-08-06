@@ -299,6 +299,7 @@ Page({
   selectTimeLapse: function (e) {
     let time = e.currentTarget.dataset.time;
     let index = e.currentTarget.dataset.index;
+    console.log(time);
 
     let preCheckedStr = 'timelapses[' + this.data.selected_timelapse + '].checked';
     let newCheckedStr = 'timelapses[' + index + '].checked';
@@ -328,44 +329,38 @@ Page({
                 timelapse, n); //生成新的每周数据
 
     let canvasXText = [];
-    let canvasYData = [];
-
+    let canvasYData = ans['data'];
+    let avg = 0;
 
     if (ans['startdate'] > moment()){
       this.setData({
         user_click_on_future: true,
-        average_completeness: 0
+      });
+    } else if (!canvasYData || (canvasYData && helper.checkIfAllZero(canvasYData))){
+      this.setData({
+        user_click_no_data: true,
       });
     }else{
-      canvasYData = ans['data'];
-      if (!canvasYData) {
-        this.setData({
-          user_click_no_data: true,
-          average_completeness: 0
-        });
-      } else {
-        if (canvasYData && helper.checkIfAllZero(canvasYData)){
-          this.setData({
-            user_click_no_data: true,
-            average_completeness: 0
-          });
-        }else{
-          canvasXText = helper.getCanvasXText(
-            timelapse, this.data.completeness_current_date);
-          let sum = 0;
-          for (let i in canvasYData)
-            sum += canvasYData[i];
+      canvasXText = helper.getCanvasXText(
+        timelapse, this.data.completeness_current_date);
+      let sum = 0;
+      for (let i in canvasYData)
+        sum += canvasYData[i];
 
-          this.setData({
-            user_click_on_future: false,
-            user_click_no_data: false,
-            average_completeness: parseInt((sum / canvasYData.length).toFixed(2)),
-            completeness_week_subtitle: ans['subtitle'],
-            completeness_current_date: ans['enddate']
-          });
-        }
-      }
+      avg = parseInt((sum / canvasYData.length).toFixed(2));
+
+      this.setData({
+        user_click_on_future: false,
+        user_click_no_data: false,
+      });
     }
+
+    this.setData({
+      average_completeness: avg,
+      completeness_current_date: ans['enddate'],
+      completeness_week_subtitle: ans['subtitle'],
+    });
+
     setChart(canvasXText, canvasYData);
   },
 
