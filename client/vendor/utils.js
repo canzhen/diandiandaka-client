@@ -19,15 +19,17 @@ function login(cb) {
         },
         'success': (res) => {
           setStorageSync('sessionId', res.sessionId, 1000 * 60 * 60 * 2); //服务端的session也是默认2小时过期
-          cb(res);
+          cb(res.error_code, res.msg);
         },
         'fail': (res) => {
           console.log('从数据库中更新或添加用户登录状态失败，请检查网络状态');
+          cb(100, '');
         }
       });
     },
     fail(loginError) {
       console.log('微信登录失败，请检查网络状态');
+      cb(100, '');
     }
   })
 }
@@ -131,7 +133,7 @@ function filterDatedData(user_topic_list){
 
 
 /**
- * 要发送到数据库前的过滤函数
+ * 要发送到数据库打卡前的过滤函数
  * 过滤掉没变化的数据，只剩下用户修改过的数据
  */
 function filterUnchangeData(user_topic_list){
@@ -139,15 +141,9 @@ function filterUnchangeData(user_topic_list){
   var filtered_list = [];
   for (var i in user_topic_list){
     var item = user_topic_list[i];
-    // 打卡，或者取消弹框，则需要在数据库中修改
-    // 用户不可能在“我的打卡”这一页开启弹窗，
-    // 所以只需要判断是否为1即可，1就是没关闭
     if (!item['data_changed']) continue;
-    if (item['is_checked']) {
-      item['last_check_time'] = moment().format('YYYY-MM-DD');
-      item['last_check_timestamp'] = moment().format('HH:MM:ss');
-    }
-    item['log'] = item['log'];
+    if (item['log'] == undefined) item['log'] = '';
+    console.log(item);
     filtered_list.push(item);
   }
   return filtered_list;

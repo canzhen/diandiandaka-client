@@ -14,9 +14,7 @@ const CONF = {
   getUserInfoUrl: 'https://api.weixin.qq.com/sns/jscode2session',
 
   /**
-   * MySQL 配置，用来存储 session 和用户信息
-   * 若使用了腾讯云微信小程序解决方案
-   * 开发环境下，MySQL 的初始密码为您的微信小程序 appid
+   * MySQL 配置
    */
   mysql: {
     host: 'localhost',
@@ -29,12 +27,16 @@ const CONF = {
   },
 
   /**
-   * Redis缓存配置，默认过期时间为24小时
+   * Redis缓存配置，默认过期时间为3小时
+   * redis要设置得比小程序端的storage时间久（多一小时）
+   * 的原因是，redis过期，storage却存在的情况，很难处理，
+   * 所以还不如让redis久一点，storage过期的情况好处理，
+   * 直接后端重新生成即可，这么做的缺点在于redis会有一些冗余数据
    */
   redis: {
     host: 'localhost',
     port : 6379,
-    ttl: 60 * 60 * 2 //单位为秒，2小时
+    ttl: 60 * 60 * 3 //单位为秒，3小时
   },
 
   /**

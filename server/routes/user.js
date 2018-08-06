@@ -60,7 +60,8 @@ router.post('/login', function(req, res) {
         dbhelper.insert('user', 'user_id', [body.openid], 
           "ON DUPLICATE KEY UPDATE user_id='" + body.openid + "'",
           (status, errmsg) => {
-            // 不管是不是duplicate，只要前端sessionid不存在
+            // 不管是不是duplicate，
+            // 只要前端sessionid不存在，或者后端redis过期
             // 就要重新生成sessionid返回给前端
             console.log('insert into user status:' + status);
             console.log(errmsg);

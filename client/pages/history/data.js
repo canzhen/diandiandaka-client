@@ -7,15 +7,11 @@ function getCheckDataList(cb){
     'url': '/topicCheck/getAll',
     'data': {},
     'success': (res) => {
-      if (res){
-        cb(res.result_list);
-      }else{
-        cb(false);
-      }
+      cb(res.error_code, res.msg, res.result_list);
     },
     'fail': (res) => {
       console.log('从数据库中获取用户具体每日打卡信息失败');
-      cb(false);
+      cb(100, '', []);
     }
   });
 }
@@ -27,16 +23,10 @@ function getTopicInfoList(cb) {
     'data': [],
     'showLoading': true,
     'success': (res) => { //成功
-      if (res.error_code == 200) {
-        cb(res.result_list);
-      } else {
-        cb(false);
-        console.log('获取用户打卡信息失败');
-      }
+      cb(res.error_code, res.msg, res.result_list)
     },
     'fail': (res) => { //失败
-      cb(false);
-      console.log('获取用户打卡信息失败');
+      cb(100, '', []);
     }
   });
 

@@ -69,8 +69,6 @@ Page({
               user_name: reslist['user_name'] ? reslist['user_name'] : '',
               avatar_url: reslist['avatar_url'] ? reslist['avatar_url'] : ''
             });
-          // console.log(this.data.is_reset_avatar);
-          // console.log(this.data.avatar_url);
         }
       }
     });
@@ -166,6 +164,22 @@ Page({
   },
 
 
+  _check: function (id, data, boolData, insistData, totalData){
+    let dataChangedData = 'my_topic_data[' + id + '].data_changed';
+    let lastCheckTimeData = 'my_topic_data[' + id + '].last_check_time';
+    let lastCheckTimestampData = 'my_topic_data[' + id + '].last_check_timestamp';
+
+
+    this.setData({
+      [dataChangedData]: true,
+      [boolData]: true,
+      [insistData]: data['insist_day'] + 1,
+      [totalData]: data['total_day'] + 1,
+      [lastCheckTimeData]: moment().format('YYYY-MM-DD'),
+      [lastCheckTimestampData]: moment().format('HH:MM:ss'),
+    });
+  },
+
 
   /**
    * 打卡功能
@@ -182,10 +196,11 @@ Page({
     // 查看是否之前单击过，如果单击过，则此次单击取消之前单击
     // 新增data_changed 是因为：同一天打过卡的，is_checked本身就为true，
     // 这样在save的时候，就又会被save一次
-    let dataChangedData = 'my_topic_data[' + id + '].data_changed';
     let boolData = 'my_topic_data[' + id + '].is_checked';
     let insistData = 'my_topic_data[' + id + '].insist_day';
     let totalData = 'my_topic_data[' + id + '].total_day';
+    let lastCheckTimeData = 'my_topic_data[' + id + '].last_check_time';
+    let lastCheckTimestampData = 'my_topic_data[' + id + '].last_check_timestamp';
     let origin_is_checked = data.is_checked;
     let origin_insist_day = data.insist_day;
     let origin_total_day = data.total_day;
@@ -200,12 +215,7 @@ Page({
     }
 
     if (data.if_show_log == 0) {
-      this.setData({
-        [dataChangedData]: true,
-        [boolData]: true,
-        [insistData]: data['insist_day'] + 1,
-        [totalData]: data['total_day'] + 1,
-      });
+      this._check(id, data, boolData, insistData, totalData);
     } else { //如果选择要弹框，则弹出框
       this.setData({
         selected_id: id,
@@ -340,19 +350,18 @@ Page({
    * 对话框确认按钮点击事件
    */
   onConfirm: function () {
+    
     let id = this.data.selected_id;
     let data = this.data.my_topic_data[id];
-    let dataChangedData = 'my_topic_data[' + id + '].data_changed';
     let boolData = 'my_topic_data[' + id + '].is_checked';
-    let logData = 'my_topic_data[' + id + '].log';
     let insistData = 'my_topic_data[' + id + '].insist_day';
     let totalData = 'my_topic_data[' + id + '].total_day';
+
+    this._check(id, data, boolData, insistData, totalData);
+
+    let logData = 'my_topic_data[' + id + '].log';
     this.setData({
-      [dataChangedData]: true,
-      [boolData]: true,
       [logData]: this.data.textarea_value,
-      [insistData]: data['insist_day'] + 1,
-      [totalData]: data['total_day'] + 1,
       textarea_value: '',
     });
     this.hideModal();
@@ -365,6 +374,29 @@ Page({
    */
   onNeverShow: function () {
     let that = this;
+    let updateDBNotShowLog = function (topic_name){
+      api.postRequest({
+        'url': '/userTopic/udpateColumnByUserIdTopicName',
+        'data': {
+          'topic_name': topic_name,
+          'column_name': 'if_show_log',
+          'column_value': 0
+        },
+        'success': (res) => {
+          if (res.error_code != 200){
+            console.log('取消用户[' + topic_name + ']卡片的showlog失败T_T');
+            return;
+          }
+          console.log('取消用户[' + topic_name + ']卡片的showlog成功');
+          that.hideModal();
+        },
+        'fail': (res) => {
+          console.log('取消用户[' + topic_name + ']卡片的showlog失败T_T');
+        },
+      });
+    };
+
+
     //弹窗提示用户信息
     wx.showModal({
       title: '确认',
@@ -373,14 +405,16 @@ Page({
       cancelText: "取消",
       success: function (res) {
         if (!res.confirm) return;
-        let data = that.data.my_topic_data[that.data.selected_id];
+        let id = that.data.selected_id;
+        let data = that.data.my_topic_data[id];
         let topic_name = data.topic_name;
-        let dataChangedData = 'my_topic_data[' + id + '].data_changed';
-        // 设置当前弹出框为0
-        that.setData({
-          [dataChangedData]: true
-        });
-        that.hideModal();
+
+        let boolData = 'my_topic_data[' + id + '].is_checked';
+        let insistData = 'my_topic_data[' + id + '].insist_day';
+        let totalData = 'my_topic_data[' + id + '].total_day';
+        that._check(id, data, boolData, insistData, totalData);
+        
+        updateDBNotShowLog(topic_name);
       }
     });
   },

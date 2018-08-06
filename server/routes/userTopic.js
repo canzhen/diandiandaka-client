@@ -48,27 +48,28 @@ router.post('/getTopicListByUserId', function (req, res) {
 /**
  * 通过用户id和卡片名称在数据库中更新该条数据的某一栏
  */
-// router.post('/udpateColumnByUserIdTopicName', function (req, res) {
-//   let id = req.header('session-id');
-//   let topic_name = req.body.topic_name;
-//   let column_name = req.body.column_name;
-//   let column_value = req.body.column_value;
+router.post('/udpateColumnByUserIdTopicName', function (req, res) {
+  let id = req.header('session-id');
+  let topic_name = req.body.topic_name;
+  let column_name = req.body.column_name;
+  let column_value = req.body.column_value;
 
-//   redishelper.getValue(id, (openid) => {
-//     if (!openid) {
-//       res.send({ 'error_code': 102, 'msg': '' });
-//       return;
-//     }
+  redishelper.getValue(id, (openid) => {
+    if (!openid) {
+      res.send({ 'error_code': 102, 'msg': '' });
+      return;
+    }
 
-//     dbhelper.update('user_topic', column_name +'=?', [column_value],
-//       "user_id = '" + openid + "' AND topic_name = " + topic_name,
-//       (status, errmsg) => {
-//         if (status)
-//           res.send({ 'error_code': 200, 'msg': '' });
-//         else res.send({ 'error_code': 100, 'msg': errmsg });
-//       });
-//   });
-// });
+    dbhelper.update('user_topic', column_name + '=?', 
+      [column_value, openid, topic_name],
+      "user_id = ? AND topic_name = ?" ,
+      (status, errmsg) => {
+        if (status)
+          res.send({ 'error_code': 200, 'msg': '' });
+        else res.send({ 'error_code': 100, 'msg': errmsg });
+      });
+  });
+});
 
 
 module.exports = router;

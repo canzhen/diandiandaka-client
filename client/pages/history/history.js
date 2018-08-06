@@ -67,6 +67,8 @@ Page({
 
   // 初始化每日打卡
   initCheckCalendar: function () {
+    let that = this;
+    /* 返回所有topic名字的list和topic对应的图片url的map */
     let getTopicNameAndUrlList = function (list) {
       var nameList = [];
       var topicUrlMap = {};
@@ -77,13 +79,10 @@ Page({
       return [nameList, topicUrlMap];
     }
 
-    /* 获取当前用户具体打卡信息 */
-    data.getCheckDataList((checked_data_list) => {
-      if (!checked_data_list) return;
-      this.setData({
-        checked_data_list: checked_data_list //用于展示每日具体打卡信息
-      });
-      data.getTopicInfoList((topic_info_list) => {
+    /* 获取用户卡片信息 */
+    let getTopicInfoList = function (checked_data_list){
+      data.getTopicInfoList((error_code, msg, topic_info_list) => {
+        if (error_code != 200) return;
         console.log('获取用户打卡信息成功');
         topic_info_list = utils.filterDatedData(topic_info_list);
         let [allTopic, topicUrlMap] = getTopicNameAndUrlList(topic_info_list);
@@ -91,22 +90,30 @@ Page({
         let allTopicInfoDivided = data.divideTopicInfoIntoGroups(
           checkInfoListPerTopic,
           topic_info_list,
-          this.data.topic_info_divided_size);
-        this.setData({
+          that.data.topic_info_divided_size);
+        that.setData({
+          checked_data_list: checked_data_list, //用于展示每日具体打卡信息
           current_date: moment().format('YYYY-MM-DD'),
           topic_info: topic_info_list,
           topic_name_list: allTopic,
-          topic_url_map: topicUrlMap, 
+          topic_url_map: topicUrlMap,
           //被N个N个分成一组的topics
           topic_info_divided: allTopicInfoDivided,
           //根据topic分类的check信息
           check_time_per_topic: checkTimeListPerTopic,
           check_info_per_topic: checkInfoListPerTopic,
         });
-        this.fillCalendar(this.data.current_date);
+        that.fillCalendar(that.data.current_date);
       });
+    }
+
+    /* 获取当前用户具体打卡信息 */
+    data.getCheckDataList((error_code, msg, checked_data_list) => {
+      if (error_code != 200 || !checked_data_list) return;
+      getTopicInfoList(checked_data_list); /* 获取用户卡片信息 */
     });
   },
+
 
 
   // 初始化每日完成度
@@ -123,7 +130,7 @@ Page({
   },
 
 
-  // 初始化历史日志
+  // 初始化历史日志tab
   initCheckLog: function(){
 
   },
@@ -168,9 +175,9 @@ Page({
     let checkedTime = this.data.check_time_per_topic[topic]; //当前选中的topic的所有check信息
     var currentMoment = moment(date);
     var year = currentMoment.year();
-    var month = currentMoment.month();
+    var month = currentMoment.month() + 1;
     var preYear = moment(date).subtract(1, 'month').year();
-    var preMonth = moment(date).subtract(1, 'month').month();;
+    var preMonth = moment(date).subtract(1, 'month').month() + 1;
 
     this.setData({
       // 获取当前月份的天数组，以及相应的每天的是否打卡的数据
@@ -359,7 +366,6 @@ Page({
       width: 360,
       height: 380,
       legend: false, //不显示图标
-      dataLabel: false,
     });
   },
 
