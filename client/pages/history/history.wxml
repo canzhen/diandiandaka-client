@@ -91,6 +91,7 @@
 
 <!-- 每日完成度 -->
 <view hidden="{{currentTab!==1}}">
+  <!-- <view class='mask' catchtouchmove="move"></view> -->
   <view class="completeness-panel">
     <view class="completeness-first-row">
       <image src="/images/graph-left.png" 

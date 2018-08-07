@@ -46,7 +46,8 @@ Page({
     selected_canvas: 'week', //当前选择展示的图表，默认显示的是本周的
     completeness_week_subtitle: '', //每日完成度第一行要显示的标语
     completeness_current_date: moment().format('YYYY-MM-DD'), //每日完成度-1周-当前查看的周
-    touch_move_x_start_pos: -1, //鼠标拖动图表的距离
+    touch_move_x_start_pos: -1, //鼠标拖动图表的初始x值
+    touch_move_y_start_pos: -1, //鼠标拖动图表的初始y值
 
 
 
@@ -312,15 +313,13 @@ Page({
     this.newCanvas(time, 0);
   },
 
-
-
   /**
    * 处理用户在canvas上的拖拽开始事件
    */
   canvasTouchStart: function(e){
-    console.log('start')
     this.setData({
-      touch_move_x_start_pos: e.changedTouches[0].pageX
+      touch_move_x_start_pos: e.changedTouches[0].pageX,
+      touch_move_y_start_pos: e.changedTouches[0].pageY
     });
   },
 
@@ -330,10 +329,10 @@ Page({
    */
   canvasTouchMove: function(e){
     if (this.data.touch_move_x_start_pos == -1) return;
-    // console.log(e)
     let x = e.changedTouches[0].pageX;
+    let y = e.changedTouches[0].pageY;
     if (Math.abs(this.data.touch_move_x_start_pos - x) <= 200) return;
-    // console.log(e.touches.pageX)
+    if (Math.abs(this.data.touch_move_y_start_pos - y) >= 30) return;
     // 向右划，时间往回
     if (x - this.data.touch_move_x_start_pos > 200) {
       console.log('move' + parseInt(x - this.data.touch_move_x_start_pos))

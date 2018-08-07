@@ -3,7 +3,7 @@ page{
   flex-direction: column;
   height: 100%;
   font-size: 30rpx;
-  position: fixed;
+  /* position: fixed; */
   /* overflow:hidden; */
 }
 
@@ -232,6 +232,21 @@ image{
 /*---------------------------------------*/
 
  /* 每日完成度部分开始  */
+ /* .mask{
+  display:none;
+  position:fixed;
+  left:0;
+  top:0;
+  right:0;
+  bottom:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,.5);
+  z-index:11;
+  transition: all 1s ease;
+ } */
+
+
  .completeness-panel{
   display:flex;
   flex-direction: column;
