@@ -46,7 +46,7 @@ Page({
     selected_canvas: 'week', //当前选择展示的图表，默认显示的是本周的
     completeness_week_subtitle: '', //每日完成度第一行要显示的标语
     completeness_current_date: moment().format('YYYY-MM-DD'), //每日完成度-1周-当前查看的周
-    touchMoveXPos: -1, //鼠标拖动图表的距离
+    touch_move_x_start_pos: -1, //鼠标拖动图表的距离
 
 
 
@@ -182,10 +182,6 @@ Page({
     let checkedTime = this.data.check_time_per_topic[topic]; //当前选中的topic的所有check信息
     var currentMoment = moment(date);
     var preMonthMoment = moment(date).subtract(1, 'month');
-    // var year = currentMoment.year();
-    // var month = currentMoment.month() + 1;
-    // var preYear = moment(date).subtract(1, 'month').year();
-    // var preMonth = moment(date).subtract(1, 'month').month() + 1;
 
     this.setData({
       // 获取当前月份的天数组，以及相应的每天的是否打卡的数据
@@ -319,6 +315,43 @@ Page({
 
 
   /**
+   * 处理用户在canvas上的拖拽开始事件
+   */
+  canvasTouchStart: function(e){
+    console.log('start')
+    this.setData({
+      touch_move_x_start_pos: e.changedTouches[0].pageX
+    });
+  },
+
+
+  /**
+   * 处理用户在canvas上拖拽的事件
+   */
+  canvasTouchMove: function(e){
+    if (this.data.touch_move_x_start_pos == -1) return;
+    // console.log(e)
+    let x = e.changedTouches[0].pageX;
+    if (Math.abs(this.data.touch_move_x_start_pos - x) <= 200) return;
+    // console.log(e.touches.pageX)
+    // 向右划，时间往回
+    if (x - this.data.touch_move_x_start_pos > 200) {
+      console.log('move' + parseInt(x - this.data.touch_move_x_start_pos))
+      this.completenessPreTimelapse();
+    } else if (this.data.touch_move_x_start_pos - x > 200) {
+      //向左滑，时间往前
+      this.completenessNextTimelapse();
+    }
+
+
+    this.setData({
+      touch_move_x_start_pos: -1
+    });
+  },
+
+
+
+  /**
    * 新建canvas并往里填充数据
    */
   newCanvas: function (timelapse, n) {
@@ -369,7 +402,10 @@ Page({
       completeness_week_subtitle: ans['subtitle'],
     });
 
-    setChart(canvasXText, canvasYData, avg);
+    if (this.data.user_click_no_data || this.data.user_click_on_future)
+      canvasXText = [];
+
+    setChart(canvasXText, canvasYData);
   },
 
 
@@ -417,16 +453,10 @@ Page({
 
 var option = {
   color: ['#37a2da', '#32c5e9', '#67e0e3'],
-  tooltip: {
-    trigger: 'axis',
-    axisPointer: {            // 坐标轴指示器，坐标轴触发有效
-      type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
-    }
-  },
   grid: {
-    left: 0,
+    left: 10,
     top: 0,
-    right: 0,
+    right: 10,
     bottom: 10,
     width: 340,
     height: 370,
@@ -454,6 +484,7 @@ var option = {
   yAxis: {
     show: false,
     min: 0,
+    max: 100
   },
   series: [{
       type: 'bar',
@@ -483,10 +514,6 @@ var option = {
         formatter: '{c}%'
       },
       itemStyle: {
-        // emphasis: {
-        //   barBorderRadius: 5,
-        //   color: '#f8cd9b'
-        // },
         normal: {
           barBorderRadius: 5,
           color: '#feddbb',

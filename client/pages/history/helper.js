@@ -1,16 +1,5 @@
 const moment = require('../../vendor/moment.min.js');
 
-
-
-
-/**
- * 获取格式化日期和时间，英文版
- */
-function getFormateDatetimeEN(date) {
-  return moment().format('YYYY.MM.DD HH:mm');
-}
-
-
 /**
  * 给year，month和day，返回'2018-07-08'格式的string
  */
@@ -42,15 +31,6 @@ function getSuccessiveDayByDateList(dateList) {
 }
 
 
-/**
- * 获取本月月初的日期
- */
-function getMonthStartDate(date) {
-  if (date > new Date()) date = new Date();
-  let firstDateStr = date.getFullYear() + '-' + parseInt(date.getMonth() + 1);
-  return new Date(firstDateStr + '-1');
-}
-
 function checkIfAllZero(list){
   for (let i = 0; i < list.length; i++){
     if (list[i]) return false;
@@ -60,6 +40,5 @@ function checkIfAllZero(list){
 
 module.exports = {
   getFullDateSlash,
-  getFormateDatetimeEN,
   checkIfAllZero,
 }

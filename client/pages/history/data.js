@@ -141,17 +141,11 @@ function _getCanvasData(percentageList, startdate, enddate,
         if (validDaysPerMonth == 0) percentageList.push(null);
         else{
           let sum = 0;
-          for (let j in tmpList) {
+          for (let j in tmpList) 
             sum += tmpList[j];
-            // console.log(tmpList[j]);
-          }
           percentage = sum ? parseFloat((sum / validDaysPerMonth).toFixed(1)) : null;
           percentageList.push(percentage)
         }
-        // console.log('current month: ' + parseInt(curMonth + 1))
-        // console.log('sum: '+sum)
-        // console.log(tmpList)
-        // console.log('current month valid days: ' + validDaysPerMonth)
 
         validDaysPerMonth = 0; //清零
         tmpList = []; //清空tmpList
@@ -159,8 +153,6 @@ function _getCanvasData(percentageList, startdate, enddate,
       }
 
       let formattedDate = date.format('YYYY-MM-DD');
-      // console.log(formattedDate)
-
       if (check_time_list.indexOf(formattedDate) != -1){
         validDaysPerMonth+=1;
         percentage = topic_list_per_day[formattedDate].length / total_topic_num * 100;
@@ -333,7 +325,6 @@ function getCalendar(checkedDataList, currentMoment, color) {
       '_checked': checked
     });
   }
-  console.log(arr)
 
 
   // 将得出的数组每7个分成一组
@@ -364,9 +355,6 @@ function getCalendar(checkedDataList, currentMoment, color) {
   ans['month'] = addZero(currentMoment.month()+1);
   ans['background'] = color;
   ans['selected_row'] = 0;
-
-
-  console.log(ans)
 
   return ans;
 }

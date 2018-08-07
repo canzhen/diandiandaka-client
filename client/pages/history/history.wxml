@@ -107,11 +107,13 @@
   </view>
 
   
-  <ec-canvas id="mychart-dom-bar" 
-             class="completeness-canvas" 
-             canvas-id="mychart-bar" 
+  <ec-canvas id='mychart-dom-bar' 
+             class='completeness-canvas' 
+             canvas-id='mychart-bar' 
+             bindtouchstart='canvasTouchStart'
+             bindtouchmove='canvasTouchMove' 
              ec="{{ec}}"
-             disable-scroll="true"> </ec-canvas>
+             disable-scroll='true'> </ec-canvas>
 
 
 
