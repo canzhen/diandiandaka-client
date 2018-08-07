@@ -335,10 +335,12 @@ Page({
     if (ans['startdate'] > moment()){
       this.setData({
         user_click_on_future: true,
+        user_click_no_data: false
       });
     } else if (!canvasYData || (canvasYData && helper.checkIfAllZero(canvasYData))){
       this.setData({
         user_click_no_data: true,
+        user_click_on_future: false
       });
     }else{
       canvasXText = helper.getCanvasXText(
@@ -468,13 +470,15 @@ var option = {
         }
       },
       itemStyle: {
-        emphasis: {
-          barBorderRadius: 5,
-          color: '#f8cd9b'
-        },
+        // emphasis: {
+        //   barBorderRadius: 5,
+        //   color: '#f8cd9b'
+        // },
         normal: {
           barBorderRadius: 5,
-          color: '#feddbb'
+          color: '#feddbb',
+          shadowColor: 'rgba(0, 0, 0, 0.2)',
+          shadowBlur: 5,
         }
       }
     },{

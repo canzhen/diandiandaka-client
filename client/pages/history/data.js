@@ -142,7 +142,7 @@ function _getCanvasData(percentageList, startdate, enddate, check_time_list, top
     }
   }
 
-  if (allZero) percentage = [];
+  if (allZero) percentageList = [];
 }
 
 
