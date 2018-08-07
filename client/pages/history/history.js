@@ -4,7 +4,8 @@ const utils = require('../../vendor/utils.js');
 const api = require('../../ajax/api.js');
 const helper = require('helper.js');
 const data = require('data.js');
-const echarts = require('../../vendor/ec-canvas/echarts');
+// const echarts = require('../../vendor/ec-canvas/echarts');
+import * as echarts from '../../vendor/ec-canvas/echarts';
 let chart = null;
 
 
@@ -15,7 +16,7 @@ Page({
 
     /* --------------以下的data属于【打卡日历】-------------- */
     date: '', // 用户选择的date，随时都会变化
-    current_date: '', // 当前的时间，一旦设置则不会改变
+    current_date: '', // 当前的时间，用于打卡日历底部日期选择的enddate
     year_month_list: [], // 包含两个元素，初始化时，第一个是当前月的上个月，第二个是当前月
     selected_topic_idx: 0, //选中的topic
     topic_info: [], //该用户的打卡数据：[{'topic_name':'', 'topic_url':'', 'insist_day':''}, {}, ...] 用于【打卡日历】标题栏
@@ -44,7 +45,7 @@ Page({
     selected_timelapse: 0, //当前选中的时间区间的下标
     selected_canvas: 'week', //当前选择展示的图表，默认显示的是本周的
     completeness_week_subtitle: '', //每日完成度第一行要显示的标语
-    completeness_current_date: moment(), //每日完成度-1周-当前查看的周
+    completeness_current_date: moment().format('YYYY-MM-DD'), //每日完成度-1周-当前查看的周
     touchMoveXPos: -1, //鼠标拖动图表的距离
 
 
@@ -109,7 +110,7 @@ Page({
           check_time_per_topic: checkTimeListPerTopic,
           check_info_per_topic: checkInfoListPerTopic,
         });
-        that.fillCalendar(that.data.current_date);
+        that.fillCalendar(moment().format('YYYY-MM'));
       });
     }
 
@@ -174,20 +175,22 @@ Page({
 
   /* 具体实现往前端填充数据的方法 */
   fillCalendar: function (date) {
+    date = moment(date, 'YYYY-MM');
     let allData = this.data.checked_data_list; //所有的data（按照topic分类的所有check信息
     let allTopic = this.data.topic_name_list; //所有topic名字的集合
     let topic = allTopic[this.data.selected_topic_idx]; //当前选中的topic名
     let checkedTime = this.data.check_time_per_topic[topic]; //当前选中的topic的所有check信息
     var currentMoment = moment(date);
-    var year = currentMoment.year();
-    var month = currentMoment.month() + 1;
-    var preYear = moment(date).subtract(1, 'month').year();
-    var preMonth = moment(date).subtract(1, 'month').month() + 1;
+    var preMonthMoment = moment(date).subtract(1, 'month');
+    // var year = currentMoment.year();
+    // var month = currentMoment.month() + 1;
+    // var preYear = moment(date).subtract(1, 'month').year();
+    // var preMonth = moment(date).subtract(1, 'month').month() + 1;
 
     this.setData({
       // 获取当前月份的天数组，以及相应的每天的是否打卡的数据
-      'year_month_list[1]': data.getCalendar(checkedTime, year, month, '#f8d3ad'),
-      'year_month_list[0]': data.getCalendar(checkedTime, preYear, preMonth, '#f3c6ca'),
+      'year_month_list[1]': data.getCalendar(checkedTime, currentMoment,'#f8d3ad'),
+      'year_month_list[0]': data.getCalendar(checkedTime, preMonthMoment,'#f3c6ca'),
       date: moment(date).format('YYYY-MM'),
       dateCN: moment(date).format('YYYY年MM月'),
       selected_topic: allTopic[0]
@@ -221,12 +224,12 @@ Page({
 
   // 获取上个月的数据
   getLastMonth: function (e) {
-    this.fillCalendar(moment(this.data.date).subtract(1, 'month').format('YYYY-MM-DD'));
+    this.fillCalendar(moment(this.data.date, 'YYYY-MM').subtract(1, 'month').format('YYYY-MM'));
   },
 
   // 获取下个月的数据
   getNextMonth: function (e) {
-    this.fillCalendar(moment(this.data.date).add(1, 'month').format('YYYY-MM-DD'));
+    this.fillCalendar(moment(this.data.date, 'YYYY-MM').add(1, 'month').format('YYYY-MM'));
   },
 
   // 文字卡片选择框改变时触发的事件
@@ -267,7 +270,7 @@ Page({
   // 单击日历上的某一天，跳转显示当前具体打的卡片
   bindTapOnDate: function (e) {
     let chosenDate = e.currentTarget.dataset.currentDate;
-    if (moment(chosenDate) > moment()){
+    if (moment(chosenDate, 'YYYY-MM-DD') > moment()){
       content = '未来的事情宝宝无法预测嗷~';
     }else{
       let checkedDetail = data.getCheckDetailOnGivenDay(
@@ -330,6 +333,7 @@ Page({
     let canvasYData = ans['ydata'];
     let avg = 0;
 
+
     if (ans['startdate'] > moment()){
       this.setData({
         user_click_on_future: true,
@@ -344,10 +348,13 @@ Page({
       // canvasXText = helper.getCanvasXText(
       //   timelapse, this.data.completeness_current_date);
       let sum = 0;
-      for (let i in canvasYData)
+      let validNum = 0;
+      for (let i in canvasYData){
         sum += canvasYData[i];
+        validNum += canvasYData[i] ? 1 : 0;
+      }
 
-      avg = (sum/canvasYData.length).toFixed(1);
+      avg = (sum/validNum).toFixed(2);
       
 
       this.setData({
@@ -358,11 +365,11 @@ Page({
 
     this.setData({
       average_completeness: avg,
-      completeness_current_date: ans['enddate'],
+      completeness_current_date: ans['enddate'].format('YYYY-MM-DD'),
       completeness_week_subtitle: ans['subtitle'],
     });
 
-    setChart(canvasXText, canvasYData);
+    setChart(canvasXText, canvasYData, avg);
   },
 
 
@@ -451,6 +458,19 @@ var option = {
   series: [{
       type: 'bar',
       data: [],
+      markLine:{
+        data: [{ type: 'average' }],
+        label:{
+          show: true,
+          position: 'middle',
+          formatter:  '平均{c}%',
+        },
+        lineStyle: {
+          color: 'rgba(0, 0, 0, 0.5)',
+          shadowBlur: 10,
+          opacity: 1
+        },
+      },
       silent: true,
       clickable: false,
       barCategoryGap: '25%',
@@ -460,9 +480,7 @@ var option = {
         color: 'rgba(136, 136, 136, 1)',
         rotate: 90,
         fontSize: 10,
-        formatter: (obj) => {
-          return obj.data + '%'
-        }
+        formatter: '{c}%'
       },
       itemStyle: {
         // emphasis: {
@@ -476,7 +494,7 @@ var option = {
           shadowBlur: 5,
         }
       }
-    },{
+    },{ // 连接柱状图的曲线
       type: 'line',
       data: [],
       silent: true,
@@ -493,7 +511,7 @@ var option = {
 function setChart(xdata, ydata){
   option.xAxis[0].data = xdata;
   option.series[0].data = ydata;
-  option.series[1].data = ydata;
+  // option.series[1].data = ydata;
   chart.setOption(option);
 };
 

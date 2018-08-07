@@ -113,17 +113,18 @@ function getSubscriptByLength(l, numEachRow){
  * 3. 今日打过卡的，直接is_checked设置为true
  */
 function filterDatedData(user_topic_list){
-  let currentMoment = moment(moment().format('YYYY-MM-DD'));
+  let currentMoment = moment(moment().format('YYYY-MM-DD'), 'YYYY-MM-DD');
   var filteredList = [];
   for (var i in user_topic_list) {
     var item = user_topic_list[i];
     // 将过期的卡片删除（当前日期大于用户设置的end_date）
-    if (currentMoment > moment(item['end_date'])) continue;
+    if (currentMoment > moment(item['end_date'], 'YYYY-MM-DD')) continue;
     //如果超过24小时未打卡，则显示的时候自动显示insist_day为0
-    if (moment().diff(moment(item['update_time']), 'hours') > 24)
+    let lastupdateMoment = moment(item['last_check_time'], 'YYYY-MM-DD');
+    if (moment().diff(lastupdateMoment, 'hours') > 24)
       item['insist_day'] = 0;
     // 今日打过卡的，直接is_checked设置为true
-    if (moment(item['last_check_time']).format('MM-DD') == 
+    if (lastupdateMoment.format('MM-DD') == 
           moment().format('MM-DD'))
       item['is_checked'] = true;
     filteredList.push(item);

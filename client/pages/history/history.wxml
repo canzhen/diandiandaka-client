@@ -93,9 +93,15 @@
 <view hidden="{{currentTab!==1}}">
   <view class="completeness-panel">
     <view class="completeness-first-row">
-      <image src="/images/graph-left.png" style="width:35rpx;height:35rpx;margin-right:30rpx;margin-top:10rpx;" bindtap="completenessPreTimelapse"></image>
+      <image src="/images/graph-left.png" 
+      style="width:35rpx;height:35rpx;margin-right:30rpx;margin-top:10rpx;"
+      bindtap="completenessPreTimelapse"
+      hidden="{{selected_timelapse==3}}"></image>
       <text> {{completeness_week_subtitle}}</text>
-      <image src="/images/graph-right.png" style="width:35rpx;height:35rpx;margin-left:30rpx;margin-top:10rpx;" bindtap="completenessNextTimelapse"></image>
+      <image src="/images/graph-right.png" 
+      style="width:35rpx;height:35rpx;margin-left:30rpx;margin-top:10rpx;" 
+      bindtap="completenessNextTimelapse"
+      hidden="{{selected_timelapse==3}}"></image>
     </view>
     <text>平均完成度{{average_completeness}}%</text>
   </view>

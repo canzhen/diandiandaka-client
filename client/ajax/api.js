@@ -35,7 +35,7 @@ function postRequest(params) {
       }
       //添加header
       if (!params.header) params.header = {};
-      params.header['content-type'] = 'application/x-www-form-urlencoded';
+      params.header['content-type'] = 'application/json';
       params.header['session-id'] = utils.getStorageSync('sessionId');
       wx.request({
         url: root + params.url,

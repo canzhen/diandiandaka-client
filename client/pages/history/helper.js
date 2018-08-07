@@ -18,13 +18,6 @@ function getFullDateSlash(year, month, day) {
   return moment().format("YYYY-MM-DD");
 }
 
-/**
- * 返回年月，并以'-'连接
- */
-function getYearMonthSlash(date) {
-  return moment(date).format('YYYY-MM');
-}
-
 /*
 通过给定的排好序的打卡时间列表，返回到今天为止的连续打卡天数
 @dateList : ["2018-06-03", "2018-06-04", "2018-06-23", "2018-07-01", "2018-07-02"]
@@ -58,27 +51,6 @@ function getMonthStartDate(date) {
   return new Date(firstDateStr + '-1');
 }
 
-
-/**
- * 获取图标的横坐标文字（周、月、三个月等，都不同）
- */
-function getCanvasXText(timelapse, enddate){
-  enddate = moment(enddate);
-  switch (timelapse){
-    case '1周':
-      return weekList;
-    case '1个月':
-      let daysList = getDaysListOfGivenMonth(
-        enddate.year(), enddate.month() + 1);
-      return daysList;
-    case '1年':
-      return yearList;
-    case '全部': break;
-
-    default: break;
-  }
-}
-
 function checkIfAllZero(list){
   for (let i = 0; i < list.length; i++){
     if (list[i]) return false;
@@ -88,8 +60,6 @@ function checkIfAllZero(list){
 
 module.exports = {
   getFullDateSlash,
-  getYearMonthSlash,
   getFormateDatetimeEN,
-  getCanvasXText,
   checkIfAllZero,
 }

@@ -122,7 +122,7 @@ function _getCanvasData(percentageList, startdate, enddate,
       let date = moment(enddate).subtract(i, 'days');
       let formatDate = date.format('YYYY-MM-DD');
       if (ifAddXTestList)
-        xTextList.push(date.format('MM.DD'));
+        xTextList.push(date.format('MM月DD日'));
       if (check_time_list.indexOf(formatDate) != -1)
         percentage = topic_list_per_day[formatDate].length / total_topic_num * 100;
       percentage = percentage ? parseFloat(percentage.toFixed(1)) : null;
@@ -206,8 +206,8 @@ function getCanvasData(
             time_lapse,
             n){
   var percentageList = [];
-  let enddate = moment(current_date);
-  let startdate = moment(current_date);
+  let enddate = moment(current_date, 'YYYY-MM-DD');
+  let startdate = moment(current_date, 'YYYY-MM-DD');
   let xTextList = [];
   let ifAverage = false;
   let ifAddXTextList = false;
@@ -240,8 +240,8 @@ function getCanvasData(
     case "全部":
       // check_time_list是按照时间降序排列的
       // 所以直接第一个是enddate和最后一个就是startdate
-      enddate = moment(check_time_list[0]);
-      startdate = moment(check_time_list[check_time_list.length-1]);
+      enddate = moment(check_time_list[0], 'YYYY-MM-DD');
+      startdate = moment(check_time_list[check_time_list.length - 1], 'YYYY-MM-DD');
       ifAddXTextList = true;
       break;
     default:
@@ -302,8 +302,8 @@ function addZero(num) {
 /**
  * 获取某年某月的第一天是星期几
  */
-function getFirstDayofGivenMonth(date) {
-  let day = new Date(date + '-1').getDay();
+function getFirstDayofGivenMonth(currentMoment) {
+  let day = parseInt(currentMoment.startOf('month').format('d'));
   return day == 0 ? 7 : day;
 }
 
@@ -315,16 +315,17 @@ function getFirstDayofGivenMonth(date) {
  * @param month 要生成的月份
  * @param color 当前月份的‘年月小圆圈’要显示的颜色 #f8d2e9
  */
-function getCalendar(checkedDataList, year, month, color) {
+function getCalendar(checkedDataList, currentMoment, color) {
   var arr = [];
   // 根据某年某月的第一天是星期几来填充空值
-  for (let j = 1; j < getFirstDayofGivenMonth(year + '-' + month); j++)
+  for (let j = 1; j < getFirstDayofGivenMonth(currentMoment); j++)
     arr.push(' ');
+
   // 根据当前月有多少天，循环把日期放入数组
-  for (let i = 0; i < getDaysOfGivenMonth(year)[month - 1]; i++) {
-    let value = year + '-' + addZero(month) + '-' + addZero(i + 1);
+  for (let i = 0; i < getDaysOfGivenMonth(currentMoment.year())[currentMoment.month()]; i++) {
     let day = addZero(i + 1);
-    var checked = false;
+    let value = currentMoment.format('YYYY-MM-') + day;
+    let checked = false;
     if (checkedDataList.indexOf(value) != -1)
       checked = true;//该天的数据是被打卡的
     arr.push({
@@ -332,6 +333,7 @@ function getCalendar(checkedDataList, year, month, color) {
       '_checked': checked
     });
   }
+  console.log(arr)
 
 
   // 将得出的数组每7个分成一组
@@ -358,10 +360,13 @@ function getCalendar(checkedDataList, year, month, color) {
   //最后补充上year和month的字段
   var ans = new Map();
   ans['days'] = splitedArr;
-  ans['year'] = year;
-  ans['month'] = addZero(month);
+  ans['year'] = currentMoment.year();
+  ans['month'] = addZero(currentMoment.month()+1);
   ans['background'] = color;
   ans['selected_row'] = 0;
+
+
+  console.log(ans)
 
   return ans;
 }
