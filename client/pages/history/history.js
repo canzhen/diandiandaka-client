@@ -186,8 +186,8 @@ Page({
 
     this.setData({
       // 获取当前月份的天数组，以及相应的每天的是否打卡的数据
-      'year_month_list[1]': helper.generateCalendar(checkedTime, year, month, '#f8d3ad'),
-      'year_month_list[0]': helper.generateCalendar(checkedTime, preYear, preMonth, '#f3c6ca'),
+      'year_month_list[1]': data.getCalendar(checkedTime, year, month, '#f8d3ad'),
+      'year_month_list[0]': data.getCalendar(checkedTime, preYear, preMonth, '#f3c6ca'),
       date: moment(date).format('YYYY-MM'),
       dateCN: moment(date).format('YYYY年MM月'),
       selected_topic: allTopic[0]
@@ -325,12 +325,10 @@ Page({
                 this.data.completeness_current_date,
                 this.data.topic_name_list.length,
                 timelapse, n); //生成新的每周数据
-
-    let canvasXText = [];
-    let canvasYData = ans['data'];
+    
+    let canvasXText = ans['xtext'];
+    let canvasYData = ans['ydata'];
     let avg = 0;
-
-    console.log(canvasYData);
 
     if (ans['startdate'] > moment()){
       this.setData({
@@ -343,13 +341,11 @@ Page({
         user_click_on_future: false
       });
     }else{
-      canvasXText = helper.getCanvasXText(
-        timelapse, this.data.completeness_current_date);
+      // canvasXText = helper.getCanvasXText(
+      //   timelapse, this.data.completeness_current_date);
       let sum = 0;
       for (let i in canvasYData)
         sum += canvasYData[i];
-
-      console.log(sum / canvasYData.length)
 
       avg = (sum/canvasYData.length).toFixed(1);
       
@@ -451,7 +447,6 @@ var option = {
   yAxis: {
     show: false,
     min: 0,
-    max: 100,
   },
   series: [{
       type: 'bar',
