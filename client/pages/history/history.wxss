@@ -397,6 +397,7 @@ button::after{
   display: flex;
   flex-direction: column;
   padding-left: 20rpx;
+  margin-bottom:50rpx;
   /* width: 400rpx;
   height: 400rpx; */
   /* border: 1 solid #888888; */
@@ -408,15 +409,61 @@ button::after{
   flex-direction: column;
   padding-left: 20rpx;
   background-color: #fffbf7;
+  margin-bottom:50rpx;
 }
 
-.line{
-  margin-top: 20rpx;
-  margin-bottom: 40rpx;
-  width: 100%;
-  height:2rpx;
-  background:#aaa;
+.detail{
+  display: flex;
+  flex-direction: row;
+  padding: 0rpx 10rpx 10rpx 10rpx;
 }
+
+.timeline{
+  width: 5px;
+  height: auto; 
+  background: rgba(250, 227, 227, 0.5);
+  margin-left: 40rpx;
+  margin-right: 20rpx;
+}
+
+.detail-text{
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 30rpx;
+}
+
+.detail-loop-panel{
+  display: flex;
+  flex-direction: row;
+  margin-top: 0rpx;
+  margin-bottom: 0rpx;
+}
+
+.detail-loop-panel-left{
+  margin-left: -45rpx;
+  margin-top: 40rpx;
+}
+
+.detail-loop-panel-right{
+  display: flex;
+  flex-direction: column;
+  margin-top: 0rpx;
+  margin-bottom: 0rpx;
+  margin-left: 40rpx;
+}
+
+
+.detail-date{
+  margin-top: 0rpx;
+}
+
+.detail-log{
+  margin-top: -35rpx;
+  margin-left: 20rpx;
+  font-size: 25rpx;
+  color: #888888;
+}
+
 
 .check-log-topic-image-text{
   display:flex; 
@@ -431,4 +478,11 @@ button::after{
 
 .check-log-topic-text{
   margin-left: 30rpx;
+}
+
+.check-log-topic-more{
+  width: 25rpx;
+  height: 25rpx;
+  margin-top: 10rpx;
+  margin-left: 40rpx;
 }

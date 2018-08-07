@@ -153,14 +153,27 @@
         <view class="check-log-topic-image-text">
           <image class="check-log-topic-image" src="{{topic_url_map[index]}}"></image>
           <text class="check-log-topic-text">{{index}}</text>
+          <!-- <image class="check-log-topic-more" src="/images/log-down.png" hidden="{{selected_topic_log == index}}"></image> -->
+          <!-- <image class="check-log-topic-more" src="/images/log-up.png" hidden="{{selected_topic_log != index}}"></image> -->
         </view>
-        <!-- {{selected_topic_log != index}} -->
+        
         <view class="detail" hidden="{{selected_topic_log != index}}">
-          <view wx:for="{{check_info}}" wx:key="key" wx:for-item="info">
-            [{{info.check_time}} {{info.check_timestamp}}] {{info.log}}
+        <!-- <view class="detail"> -->
+          <view class="timeline"></view>
+          <view class="detail-text">
+            <view class="detail-loop-panel" wx:for="{{check_info}}" wx:key="key" wx:for-item="info">
+              <image class="detail-loop-panel-left" src="/images/log-dot.png"></image>
+              <view class="detail-loop-panel-right">
+                <text class="detail-date">
+                    {{info.check_time}}　{{info.check_timestamp}}
+                  </text>
+                  <text class="detail-log">
+                    {{info.log}}
+                  </text>
+              </view>
+            </view>
           </view>
         </view>
-        <!-- <view class="line"></view> -->
       </view>
     </scroll-view>
   </view>

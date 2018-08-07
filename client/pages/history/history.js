@@ -12,7 +12,7 @@ let chart = null;
 Page({
   data: {
     navbar: ['打卡日历', '每日完成度', '历史日志'],
-    currentTab: 0,
+    currentTab: 2,
 
     /* --------------以下的data属于【打卡日历】-------------- */
     date: '', // 用户选择的date，随时都会变化
@@ -436,6 +436,9 @@ Page({
   /*--------------------------以下是打卡日志部分---------------------------*/
   selectTopicLog: function(e){
     let indexKey = e.currentTarget.dataset.idx;
+    // console.log(indexKey)
+    if (indexKey == this.data.selected_topic_log)
+      indexKey = '';
     this.setData({
       selected_topic_log: indexKey,
     });
