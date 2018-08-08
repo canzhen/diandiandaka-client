@@ -29,7 +29,7 @@ Page({
     /* --------------以下的data属于【每日完成度】--------------*/
     //用于展示的图表对象
     ec:{
-      onInit: initChart
+      onInit: initChart,
     },
     average_completeness: 0,
     check_time_per_topic: [], //每个topic的打卡天数：[{'跑步':['2018-06-13', '2018-06-24', '2018-06-21']}, {..}, {..}]
@@ -72,6 +72,11 @@ Page({
       this.initCheckLog();
     }
   },
+
+  tapCanvas: function(params){
+    console.log(params)
+  },
+
 
   // 初始化每日打卡
   initCheckCalendar: function () {
@@ -272,11 +277,12 @@ Page({
     }else{
       let checkedDetail = data.getCheckDetailOnGivenDay(
         this.data.checked_data_list, chosenDate);
-      let completeness = (checkedDetail.length / this.data.topic_info.length).toFixed(1);
+      let completeness = checkedDetail.length / this.data.topic_info.length;
+      console.log(completeness)
       var content = '您在' + chosenDate;
       checkedDetail.length == 0 ? content += '没打卡,继续努力哟~'
         : content += '打了' + checkedDetail.length + "张卡：[" + checkedDetail.toString() +
-        ']，当日打卡完成度为' + parseInt(completeness * 100) + '%';
+        ']，当日打卡完成度为' + parseFloat((completeness * 100).toFixed(2)) + '%';
 
     }
     wx.showModal({
@@ -335,7 +341,6 @@ Page({
     if (Math.abs(this.data.touch_move_y_start_pos - y) >= 30) return;
     // 向右划，时间往回
     if (x - this.data.touch_move_x_start_pos > 200) {
-      console.log('move' + parseInt(x - this.data.touch_move_x_start_pos))
       this.completenessPreTimelapse();
     } else if (this.data.touch_move_x_start_pos - x > 200) {
       //向左滑，时间往前
@@ -486,7 +491,6 @@ var option = {
   yAxis: {
     show: false,
     min: 0,
-    max: 100
   },
   series: [{
       type: 'bar',

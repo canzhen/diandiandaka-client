@@ -1,5 +1,5 @@
 MYSQL="mysql -hlocalhost -P3306 -uroot diandiandaka -pmysql123 $test --default-character-set=utf8  -A -N"
-sql="UPDATE user_topic SET insist_day = CASE WHEN HOUR(timediff(now(), last_update_time)) > 24 THEN 0 END;"
+sql="UPDATE user_topic SET insist_day = CASE WHEN (to_days(now()) - to_days(last_check_time)) >= 2 THEN 0 ELSE insist_day END;"
 
 result="$($MYSQL -e "$sql")"
 

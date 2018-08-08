@@ -113,6 +113,7 @@
              canvas-id='mychart-bar' 
              bindtouchstart='canvasTouchStart'
              bindtouchmove='canvasTouchMove' 
+             bindtap="tapCanvas"
              ec="{{ec}}"
              disable-scroll='true'> </ec-canvas>
 
