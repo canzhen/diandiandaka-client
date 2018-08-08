@@ -54,6 +54,7 @@ Page{
 }
 
 .me-lower-part{
+  font-size: 27rpx;
   display:flex; 
   flex-direction:column;
   height: auto;
@@ -62,7 +63,7 @@ Page{
   justify-content: space-between;
   justify-items: space-between;
   align-items: space-between;
-  padding: 10rpx 5rpx 10rpx 2rpx; /* 留下右侧阴影距离 */
+  padding: 10rpx 10rpx 10rpx 0rpx; /* 留下右侧阴影距离 */
 }
 
 /* 
@@ -79,7 +80,7 @@ Page{
 .me-lower-part-row{
   display:flex; 
   flex-direction:row; 
-  margin-bottom: 30rpx; 
+  margin-bottom: 20rpx; 
   /* margin-left: 25rpx; 
   margin-right: 25rpx; */
   align-items: space-between;
@@ -93,16 +94,30 @@ Page{
   flex-direction: column; 
   /* margin-left: 5rpx;
   margin-right: 5rpx;  */
-  align-items: center;
+  /* align-items: center; */
   align-content: flex-start;
   justify-content: flex-start;
+  width: 315rpx;
+  height: 80rpx;
+  background-color: #fdfaf7c7;
+  box-shadow: darkgrey 5px 2px 5px 1px;
+  margin: 10rpx 15rpx 10rpx 10rpx;
+  padding: 10rpx 10rpx 10rpx 10rpx;
 }
 
-.me-card{
-  width: 320rpx;
-  height: 500rpx;
-  background-color: #fdf6ee;
-  box-shadow: darkgrey 5px 2px 5px 1px;
-  margin: 10rpx 15rpx 10rpx 15rpx;
-  padding: 5rpx 5rpx 5rpx 5rpx;
+.me-lower-part-item-first-row{
+  display: flex;
+  flex-direction: row;
+  /* align-items: center; */
+}
+
+.me-lower-part-item-image{
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+}
+
+.me-lower-part-item-text{
+  margin-left: 20rpx;
+  margin-top: 5rpx;
 }

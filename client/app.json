@@ -1,9 +1,9 @@
 {
   "pages": [
+    "pages/mytopic/mytopic",
     "pages/me/me",
     "pages/history/history",
     "pages/newtopic/newtopic",
-    "pages/mytopic/mytopic",
     "pages/index/index"
   ],
 
@@ -28,7 +28,7 @@
         "selectedIconPath": "/images/toolbar/2selected.png",
         "iconPath": "/images/toolbar/2.png",
         "pagePath": "pages/mytopic/mytopic",
-        "text": "今日打卡"
+        "text": "今天"
       },{
         "selectedIconPath": "/images/toolbar/3selected.png",
         "iconPath": "/images/toolbar/3.png",

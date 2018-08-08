@@ -1,6 +1,6 @@
 {
   "navigationBarTextStyle": "black",
-  "navigationBarTitleText": "我的打卡",
+  "navigationBarTitleText": "今天",
   "enablePullDownRefresh": true,
   "backgroundTextStyle": "dark"
 }

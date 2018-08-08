@@ -10,7 +10,7 @@ Page({
     my_topic_data_num: [], //用于布局的下标
     selected_id: -1, //用户单击打卡的id
     user_name: '', 
-    avatar_url:'', //从本地缓存中获取
+    avatar_url:'', //从数据库（本地缓存）中获取
     is_reset_avatar: false, //默认用户没有修改头像
     is_reset_name: false, //默认用户没修改过名字
 
@@ -27,7 +27,20 @@ Page({
 
   /* 页面加载函数 */
   onLoad() {
-    // this.init();
+    let that = this;
+
+    //设置scroll-view高度，自适应屏幕
+    wx.getSystemInfo({
+      success: function (res) {
+        wx.createSelectorQuery().selectAll('.me-upper-part').boundingClientRect((rects) => {
+          rects.forEach((rect) => {
+            that.setData({
+              scrollHeight: res.windowHeight - rect.bottom - 80
+            });
+          })
+        }).exec();
+      }
+    });
   },
 
 
@@ -54,25 +67,40 @@ Page({
    */
   init: function (ifShowLoading = true) {
     let that = this;
-    /* 获取用户的个性化头像和姓名 */
-    api.postRequest({
-      'url': '/user/getNameAvatar',
-      'data': [],
-      'success': (res) => {
-        if (res.error_code == 200 && res.result_list != []) {
-          let reslist = res.result_list;
-          if (reslist == undefined) return;
-          if (reslist['user_name'] || reslist['avatar_url'])
-            this.setData({
-              is_reset_name: !(reslist['user_name'] == false),
-              is_reset_avatar: !(reslist['avatar_url'] == false),
-              user_name: reslist['user_name'] ? reslist['user_name'] : '',
-              avatar_url: reslist['avatar_url'] ? reslist['avatar_url'] : ''
-            });
-        }
-      }
-    });
 
+    if (wx.getStorageSync('avatarUrl')) {
+      this.setData({
+        avatar_url: wx.getStorageSync('avatarUrl')
+      });
+    } else if (wx.getStorageSync('userName')) {
+      this.setData({
+        user_name: wx.getStorageSync('userName')
+      });
+    } else {
+
+      /* 获取用户的个性化头像和姓名 */
+      api.postRequest({
+        'url': '/user/getNameAvatar',
+        'data': [],
+        'success': (res) => {
+          if (res.error_code == 200 && res.result_list != []) {
+            let reslist = res.result_list;
+            if (reslist == undefined) return;
+            if (reslist['user_name'] || reslist['avatar_url']) {
+              this.setData({
+                is_reset_name: !(reslist['user_name'] == false),
+                is_reset_avatar: !(reslist['avatar_url'] == false),
+                user_name: reslist['user_name'] ? reslist['user_name'] : '',
+                avatar_url: reslist['avatar_url'] ? reslist['avatar_url'] : ''
+              });
+              wx.setStorageSync('avatarUrl', this.data.avatar_url);
+              wx.setStorageSync('userName', this.data.user_name);
+            }
+          }
+        }
+      });
+    }
+    
     // 根据当前卡片数来生成每一行图片的的下标
     let createRowNum = function () {
       that.setData({

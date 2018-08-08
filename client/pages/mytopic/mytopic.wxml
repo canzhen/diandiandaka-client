@@ -11,22 +11,24 @@
     <open-data type="userNickName" lang="zh_CN" class="username" wx:if="{{!is_reset_name}}"></open-data>
   </view>
   
-  <!-- 我的卡片（每行四个卡片） -->
-  <view class="topic-image-row" wx:for="{{my_topic_data_num}}" wx:key="idx" wx:for-item="row_data">
-    <!-- 每一行 -->
-    <view class="topic-image-each-item" wx:for="{{row_data}}" wx:key="col" wx:for-item="num">
-      <view class="topic-image-each-image" bindtap="check" data-src="{{my_topic_data[num].topic_url}}" data-idx="{{num}}">
-        <image class="image" src="{{my_topic_data[num].topic_url}}"></image>
-        <icon class="image-punched-in" wx:if="{{my_topic_data[num].is_checked && my_topic_data[num].insist_day}}" type="success_no_circle" size="40"></icon>
+  <scroll-view class="me-lower-part" style="height:{{scrollHeight}}px;" scroll-y scroll-with-animation enable-back-to-top >
+    <!-- 我的卡片（每行四个卡片） -->
+    <view class="topic-image-row" wx:for="{{my_topic_data_num}}" wx:key="idx" wx:for-item="row_data">
+      <!-- 每一行 -->
+      <view class="topic-image-each-item" wx:for="{{row_data}}" wx:key="col" wx:for-item="num">
+        <view class="topic-image-each-image" bindtap="check" data-src="{{my_topic_data[num].topic_url}}" data-idx="{{num}}">
+          <image class="image" src="{{my_topic_data[num].topic_url}}"></image>
+          <icon class="image-punched-in" wx:if="{{my_topic_data[num].is_checked && my_topic_data[num].insist_day}}" type="success_no_circle" size="40"></icon>
+        </view>
+        <text style="text-align:center; margin-top: -5rpx;">{{my_topic_data[num].topic_name}}</text>
+        <text wx:if="{{my_topic_data[num].is_checked}}" 
+              style="text-align:center;font-size:23rpx; margin-top: -30rpx;" >
+              连续{{my_topic_data[num].insist_day}}天
+        </text>
       </view>
-      <text style="text-align:center; margin-top: -5rpx;">{{my_topic_data[num].topic_name}}</text>
-      <text wx:if="{{my_topic_data[num].is_checked}}" 
-            style="text-align:center;font-size:23rpx; margin-top: -30rpx;" >
-            连续{{my_topic_data[num].insist_day}}天
-      </text>
+      <!-- 每行结束 -->
     </view>
-    <!-- 每行结束 -->
-  </view>
+  </scroll-view>
 </view>
 
 

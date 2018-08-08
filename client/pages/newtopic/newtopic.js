@@ -55,6 +55,7 @@ Page({
   onLoad: function (options) {
     let that = this;
 
+    //设置scroll-view高度，自适应屏幕
     wx.getSystemInfo({
       success: function (res) {
         console.info(res.windowHeight);
