@@ -42,6 +42,7 @@
 3. mysql -uroot diandiandaka -p （mysql123）打开数据库
 4. 进入/home/ubuntu/diandiandaka，运行pm2 log bin/www --watch --name dddk，再运行pm2 log dddk即可查看日志
 5. 进入/usr/local/nginx（nginx当时是用编译安装的），运行sbin/nginx -c conf/nginx.conf，启动nginx
+6. 进入/home/ubuntu/diandiandaka，运行crontab crontab_file启动定时任务
 
 
 本地
