@@ -148,7 +148,7 @@
 <!-- 历史日志 -->
 <view hidden="{{currentTab!==2}}">
   <view class="check-log-panel">
-    <scroll-view class="check-log-scroll-view" scroll-y scroll-with-animation enable-back-to-top>
+    <scroll-view class="check-log-scroll-view" style="height:{{scrollHeight}}px;" scroll-y scroll-with-animation enable-back-to-top>
       <view class="{{selected_topic_log != index ? 'block' : 'block-selected'}}" wx:for="{{check_info_per_topic}}" 
       wx:key="key" wx:for-index="index" wx:for-item="check_info" 
       data-idx="{{index}}" bindtap="selectTopicLog">

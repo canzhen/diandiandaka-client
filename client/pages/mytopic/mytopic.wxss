@@ -47,6 +47,8 @@ Page{
   margin-bottom: 30rpx; 
   margin-left: 25rpx; 
   margin-right: 25rpx;
+  align-items: space-between;
+  justify-content: space-between;
 }
 
 /* 每一个卡片 */
@@ -56,6 +58,7 @@ Page{
   margin-left: 15rpx;
   margin-right: 15rpx; 
   align-items: center;
+  justify-items: space-between;
   justify-content: space-between;
 }
 

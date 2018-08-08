@@ -5,5 +5,6 @@
   "navigationBarTextStyle": "black",
   "navigationBarTitleText": "打卡历史",
   "enablePullDownRefresh": true,
-  "backgroundTextStyle": "dark"
+  "backgroundTextStyle": "dark",
+  "disableScroll": true
 }

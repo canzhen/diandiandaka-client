@@ -12,20 +12,29 @@
     <text class="edit-data" bindtap="editPersonalData">编辑个人资料 ></text>
   </view>
 
-
-
-  <view class="me-lower-part">
+  <scroll-view class="me-lower-part" style="height:{{scrollHeight}}px;" scroll-y scroll-with-animation enable-back-to-top >
     <!-- 设置 -->
-    <view class="me-lower-part-each-item">
-      <image class="image" src="/images/shezhi.png"></image>
-      <text> 设置 </text>
-    </view>
+    <!-- <view class="me-lower-part-each-item">
+      <image class="image" src="/images/kapian.png"></image>
+      <text> 我的卡片 </text>
+    </view> -->
 
     <!-- 意见反馈 -->
-    <view class="me-lower-part-each-item">
-      <image class="image" src="/images/yijianfankui.png"></image>
+    <!-- <view class="me-lower-part-each-item">
+      <image class="image" src="/images/fankui.png"></image>
       <text> 意见反馈 </text>
+    </view> -->
+
+
+    <view class="me-lower-part-row" wx:for="{{topic_num_list}}" wx:for-item="row" wx:key="key">
+      <view class="me-lower-part-item" wx:for="{{row}}" wx:for-item="idx" wx:key="key">
+        <view class="me-card">
+          {{topic_list[idx].topic_name}}
+        </view>
+      </view>
     </view>
-  </view>
+
+    
+  </scroll-view>
   
 </view>

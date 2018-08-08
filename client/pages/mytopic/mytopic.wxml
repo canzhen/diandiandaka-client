@@ -20,9 +20,9 @@
         <icon class="image-punched-in" wx:if="{{my_topic_data[num].is_checked && my_topic_data[num].insist_day}}" type="success_no_circle" size="40"></icon>
       </view>
       <text style="text-align:center; margin-top: -5rpx;">{{my_topic_data[num].topic_name}}</text>
-      <text wx:if="{{my_topic_data[num].insist_day != -1}}" 
+      <text wx:if="{{my_topic_data[num].is_checked}}" 
             style="text-align:center;font-size:23rpx; margin-top: -30rpx;" >
-            连续了{{my_topic_data[num].insist_day}}天 \n 坚持了{{my_topic_data[num].total_day}}天
+            连续{{my_topic_data[num].insist_day}}天
       </text>
     </view>
     <!-- 每行结束 -->

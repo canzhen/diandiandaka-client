@@ -26,7 +26,7 @@ Page({
   init: function(options){
     let showFailToast = function () {
       wx.showToast({
-        title: '好像除了点错~',
+        title: '好像出了点错~',
         icon: 'loading',
         duration: 1000
       })
@@ -53,6 +53,23 @@ Page({
 
   
   onLoad: function (options) {
+    let that = this;
+
+    wx.getSystemInfo({
+      success: function (res) {
+        console.info(res.windowHeight);
+        // let height = res.windowHeight;
+        wx.createSelectorQuery().selectAll('.pick-icon-text').boundingClientRect((rects) => {
+          rects.forEach((rect) => {
+            that.setData({
+              scrollHeight: res.windowHeight - rect.bottom - 
+                    res.windowHeight*0.1 - 20
+            });
+          })
+        }).exec();
+      }
+    });
+
     this.init(options);
   },
 

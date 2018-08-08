@@ -1,4 +1,5 @@
 {
   "navigationBarTextStyle": "black",
-  "navigationBarTitleText": "我"
+  "navigationBarTitleText": "我",
+  "disableScroll": true
 }

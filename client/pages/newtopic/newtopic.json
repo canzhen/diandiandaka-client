@@ -1,4 +1,5 @@
 {
   "navigationBarTextStyle": "black",
-  "navigationBarTitleText": "新卡片"
+  "navigationBarTitleText": "新卡片",
+  "disableScroll": true
 }

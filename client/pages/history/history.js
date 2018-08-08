@@ -148,6 +148,25 @@ Page({
   },
 
 
+  onLoad: function (options) {
+    let that = this;
+
+    wx.getSystemInfo({
+      success: function (res) {
+        console.info(res.windowHeight);
+        // let height = res.windowHeight;
+        wx.createSelectorQuery().selectAll('.navbar').boundingClientRect((rects) => {
+          rects.forEach((rect) => {
+            that.setData({
+              scrollHeight: res.windowHeight - rect.bottom - 10
+            });
+          })
+        }).exec();
+      }
+    });
+
+  },
+
   onShow: function () {
     if (!utils.getStorageSync('sessionId')){ 
       utils.login((res) => {

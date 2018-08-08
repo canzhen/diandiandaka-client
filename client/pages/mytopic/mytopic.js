@@ -6,8 +6,8 @@ const numEachRow = 4;
 
 Page({
   data: {
-    my_topic_data: [],
-    my_topic_data_num: [],
+    my_topic_data: [], //我的topic的数据
+    my_topic_data_num: [], //用于布局的下标
     selected_id: -1, //用户单击打卡的id
     user_name: '', 
     avatar_url:'', //从本地缓存中获取
@@ -172,7 +172,6 @@ Page({
     let insistData = 'my_topic_data[' + id + '].insist_day';
     let totalData = 'my_topic_data[' + id + '].total_day';
 
-
     this.setData({
       [dataChangedData]: true,
       [boolData]: true,
@@ -200,16 +199,16 @@ Page({
     // 新增data_changed 是因为：同一天打过卡的，is_checked本身就为true，
     // 这样在save的时候，就又会被save一次
     let boolData = 'my_topic_data[' + id + '].is_checked';
+    let dataChangedData = 'my_topic_data[' + id + '].data_changed';
     let insistData = 'my_topic_data[' + id + '].insist_day';
     let totalData = 'my_topic_data[' + id + '].total_day';
-    let lastCheckTimeData = 'my_topic_data[' + id + '].last_check_time';
-    let lastCheckTimestampData = 'my_topic_data[' + id + '].last_check_timestamp';
     let origin_is_checked = data.is_checked;
     let origin_insist_day = data.insist_day;
     let origin_total_day = data.total_day;
 
     if (origin_is_checked) {
       this.setData({
+        [dataChangedData]: false,
         [boolData]: false,
         [insistData]: origin_insist_day - 1,
         [totalData]: origin_total_day - 1
