@@ -12,6 +12,7 @@
 9. “历史”部分完成历史日志的数据简单显示 【完成】 ✔️ 2018.08.05 12:42
 10. “历史”部分完成图表数据计算与展示 【完成】 ✔️ 2018.08.07 13:17
 11. “历史”部分完成历史日志的界面优化 【完成】 ✔️ 2018.08.07 20:24
+12. “历史”图表新增单击显示当日完成计划（除了[一年]之外，因为[一年]显示的是平均值）
 12. 完成“卡片设置”页面
 13. 完成“卡片设置”后端数据库的增删改查
 
@@ -42,6 +43,7 @@
 3. mysql -uroot diandiandaka -p （mysql123）打开数据库
 4. 进入/home/ubuntu/diandiandaka，运行pm2 log bin/www --watch --name dddk，再运行pm2 log dddk即可查看日志
 5. 进入/usr/local/nginx（nginx当时是用编译安装的），运行sbin/nginx -c conf/nginx.conf，启动nginx
+6. 进入/home/ubuntu/diandiandaka，运行crontab crontab_file启动定时任务
 
 
 本地
