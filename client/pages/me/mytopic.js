@@ -15,13 +15,6 @@ Page({
 
   init: function(){
     let that = this;
-    // // 根据当前卡片数来生成每一行图片的的下标
-    // let createRowNum = function () {
-    //   that.setData({
-    //     topic_num_list: utils.getSubscriptByLength(that.data.topic_list.length, numEachRow)
-    //   });
-    // }
-
     let list = [];
     let generateRandomPos = function(l){
       wx.getSystemInfo({
@@ -40,13 +33,30 @@ Page({
             that.setData({
               random_position_list: list
             });
+
+            createAnimation();
             console.log(that.data.random_position_list)
           }).exec();
 
         },
       })
-
     }
+
+    let createAnimation = function () {
+      // 制作动画效果
+      let animation = wx.createAnimation({
+        duration: 6000,
+        timingFunction: 'ease',
+      });
+
+      animation.translate3d(-3, -3, 10).step();
+
+      // let setAnimationData = 'my_topic_data[' + id + '].animation';
+      that.setData({
+        animationData: animation.export(),
+      });
+    }
+
 
     api.postRequest({
       'url': '/userTopic/getTopicListByUserId',
@@ -63,8 +73,6 @@ Page({
           topic_list: res.result_list
         });
         generateRandomPos(res.result_list.length);
-        // createRowNum();
-        // console.log(res.result_list);
       },
       'fail': (res) => { //失败
         console.log('从数据库中获取用户卡片信息失败');
@@ -123,21 +131,14 @@ Page({
 
   longTapTopic: function() {
     console.log('长按……')
-    this.setData({
-      long_tap: true
-    });
   },
 
 
   tapTopic: function() {
-    if (!this.data.long_tap)
-      console.log('单击……')
+    console.log('单击……')
   },
 
 
   tapTopicEnd: function() {
-    this.setData({
-      long_tap: false
-    });
   },
 })

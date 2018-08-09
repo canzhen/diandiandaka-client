@@ -19,7 +19,6 @@
         <view class="topic-image-each-image" bindtap="check" data-src="{{my_topic_data[num].topic_url}}" data-idx="{{num}}">
           <image animation="{{my_topic_data[num].animation}}" class="image" src="{{my_topic_data[num].topic_url}}"></image>
           <image src="/images/duigou.png" class="image-punched-in" wx:if="{{my_topic_data[num].is_checked && my_topic_data[num].insist_day}}"></image>
-          <!-- <view  wx:if="{{my_topic_data[num].animation}}" style="background:white;height:150rpx;width:150rpx"></view> -->
         </view>
         <text style="text-align:center; margin-top: -5rpx;">{{my_topic_data[num].topic_name}}</text>
         <text wx:if="{{my_topic_data[num]&&my_topic_data[num].insist_day != -1}}" 
