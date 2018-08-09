@@ -34,15 +34,21 @@
       <scroll-view style="height:{{scrollHeight - 30}}px;" bindscroll="calendarScroll" scroll-into-view="{{scroll_into_view_id}}" scroll-y scroll-with-animation enable-back-to-top>
         <view class="calendar-panel" id="id{{date.year}}-{{date.month}}" wx:for="{{year_month_list}}" wx:key="idx" wx:for-item="date">
           <!-- 圆形块，显示当前月份 -->
-          <view class="year-month-circle" style="background-color:{{date.background}};">
+          <view class="year-month-circle" bindtap= style="background-color:{{date.background}};"><picker value="{{date}}"
+                bindchange="bindPickerChange"
+                fields="month"
+                mode="date"
+                start="{{check_first_date}}"
+                end="{{current_date}}">
             <text class="year-month-text">{{date.year}}年\n{{date.month}}月</text>
+        </picker>
           </view>
           <view class="calendar-right-part">
             <view class="calendar-days-row" wx:for="{{date.days}}" wx:key="idx" wx:for-item="sevenDays">
                 <view space="emsp" class="calendar-days-each-item" wx:for="{{sevenDays}}" wx:key="idx" wx:for-item="day"
                       bindtap="bindTapOnDate" data-current-date="{{date.year}}-{{date.month}}-{{day._day}}">
                   <text>{{day._day}}</text>
-                  <icon wx:if="{{day._checked}}" class="checked" type="success_no_circle" size="20" color="red"></icon>
+                  <icon hidden="{{!day._checked}}" class="checked" type="success_no_circle" size="20" color="#f76f6f"></icon>
                 </view> 
             </view>
           </view> 
@@ -132,7 +138,7 @@
 <!-- 历史日志 -->
 <view hidden="{{currentTab!==2}}">
   <view class="check-log-panel">
-    <scroll-view class="check-log-scroll-view" style="height:{{scrollHeight}}px;" scroll-y scroll-with-animation enable-back-to-top>
+    <scroll-view class="check-log-scroll-view" style="height:{{scrollHeight-20}}px;" scroll-y scroll-with-animation enable-back-to-top>
       <view class="{{selected_topic_log != index ? 'block' : 'block-selected'}}" wx:for="{{check_info_per_topic}}" 
       wx:key="key" wx:for-index="index" wx:for-item="check_info" 
       data-idx="{{index}}" bindtap="selectTopicLog">

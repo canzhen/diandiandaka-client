@@ -109,8 +109,8 @@ Page({
 
         that.setData({
           checked_data_list: checked_data_list, //用于展示每日具体打卡信息
-          check_first_date: checked_data_list[checked_data_list.length-1].check_time, //所有卡片最早开始打卡的时间
-          check_last_date: checked_data_list[0].check_time, //所有卡片中最晚打卡的时间
+          check_first_date: moment(checked_data_list[checked_data_list.length-1].check_time, 'YYYY-MM-DD'), //所有卡片最早开始打卡的时间
+          check_last_date: moment(checked_data_list[0].check_time, 'YYYY-MM-DD'), //所有卡片中最晚打卡的时间
           current_date: moment().format('YYYY-MM-DD'),
           start_date_list: startDateList,  //一个都是moment的list
           end_date_list: endDateList,
@@ -156,7 +156,6 @@ Page({
 
   onLoad: function (options) {
     let that = this;
-
     //设置scroll-view高度，自适应屏幕
     wx.getSystemInfo({
       success: function (res) {
@@ -212,15 +211,31 @@ Page({
     let checkedTime = this.data.check_time_per_topic[topic]; //当前选中的topic的所有check信息
     var currentMoment = moment(date);
     var preMoment = moment(date).subtract(1, 'month');
-    var prepreMoment = moment(date).subtract(2, 'month');
+
+
+    if (preMoment.endOf('month') < this.data.check_first_date){
+      this.setData({
+        'year_month_list[0]': data.getCalendar(checkedTime, currentMoment, colorList[currentMoment.month() % 2]),
+      });
+    } else {
+      var prepreMoment = moment(date).subtract(2, 'month');
+      if (prepreMoment.endOf('month') < this.data.check_first_date) {
+        this.setData({
+          'year_month_list[1]': data.getCalendar(checkedTime, currentMoment, colorList[preMoment.month() % 2]),
+          'year_month_list[0]': data.getCalendar(checkedTime, preMoment, colorList[currentMoment.month() % 2]),
+        });
+      }else{
+        this.setData({
+          'year_month_list[2]': data.getCalendar(checkedTime, currentMoment, colorList[currentMoment.month() % 2]),
+          'year_month_list[1]': data.getCalendar(checkedTime, preMoment, colorList[preMoment.month() % 2]),
+          'year_month_list[0]': data.getCalendar(checkedTime, prepreMoment, colorList[prepreMoment.month() % 2]),
+        });
+      }
+    }
 
     this.setData({
       scroll_into_view_id: 'id'+currentMoment.format('YYYY-MM'),
-      'year_month_list[2]': data.getCalendar(checkedTime, currentMoment, colorList[currentMoment.month()%2]),
-      'year_month_list[1]': data.getCalendar(checkedTime, preMoment, colorList[preMoment.month() % 2]),
-      'year_month_list[0]': data.getCalendar(checkedTime, prepreMoment, colorList[prepreMoment.month() % 2]),
       date: currentMoment,
-      dateCN: moment(date).format('YYYY年MM月'),
       selected_topic: allTopic[0]
     });
   },
@@ -250,13 +265,10 @@ Page({
    */
   calendarScroll: function (e) {
     // let deltaY = e.detail.deltaY; //大于0上滑小于0下滑
-    console.log('scrollTop:' + e.detail.scrollTop)
+    // console.log('scrollTop:' + e.detail.scrollTop)
 
 
     if (e.detail.scrollTop == 0 ) {//上滑到顶了
-      wx.showLoading({
-        title: '正在加载数据',
-      })
       // let idx = this.data.year_month_list_max_idx;
       let currentSelectedDate = moment(this.data.date);
       let allTopic = this.data.topic_name_list; //所有topic名字的集合
@@ -264,6 +276,18 @@ Page({
       let checkedTime = this.data.check_time_per_topic[topic]; //当前选中的topic的所有check信息
 
       let newDate = moment(currentSelectedDate).subtract(3, 'month');
+      if (newDate < this.data.check_last_date) {
+        wx.showToast({
+          title: '没有更多打卡数据惹~',
+          icon: 'none'
+        })
+        return;
+      }
+
+
+      wx.showLoading({
+        title: '正在加载数据',
+      })
 
       let new_year_month_list = this.data.year_month_list;
       new_year_month_list.unshift(data.getCalendar(checkedTime, newDate, colorList[newDate.month() % 2]));
@@ -277,10 +301,10 @@ Page({
     }
   },
 
-  // // 日期选择框改变时触发的事件
-  // bindPickerChange: function (e) {
-  //   this.fillCalendar(e.detail.value);
-  // },
+  // 日期选择框改变时触发的事件
+  bindPickerChange: function (e) {
+    this.fillCalendar(e.detail.value);
+  },
 
   // 获取上个月的数据
   getLastMonth: function (e) {

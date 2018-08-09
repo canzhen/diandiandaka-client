@@ -54,7 +54,7 @@ image{
 .all-history-left{
   display: flex;
   flex-direction: column;
-  width: 15%;
+  width: 20%;
   height: 100%;
   margin: 10rpx 0rpx 0rpx 10rpx;
   color: #888888;
@@ -104,11 +104,12 @@ image{
 .all-history-right{
   display: flex;
   flex-direction: column;
-  width: 85%;
+  width: 80%;
   height: 100%;
   margin-top: 10rpx;
-  margin-left: 10rpx;
+  margin-left: 5rpx;
   margin-right:10rpx;
+  font-size: 28rpx;
 }
 
 
@@ -124,7 +125,6 @@ image{
   justify-content:center;
   align-items:center;
   margin: 0rpx 10rpx 20rpx 0rpx;
-  font-size: 28rpx;
   color: #888888;
 }
 
@@ -137,25 +137,26 @@ image{
   flex-direction: row;
   height: auto;
   /* height: 800rpx; */
-  margin: 10rpx 20rpx 40rpx 20rpx;
+  margin: 40rpx 20rpx 10rpx 20rpx;
   background-color: #f6f6f6;
   padding-bottom: 5rpx;
   align-items: center;
 
   border-radius: 40rpx;
-  box-shadow: 1px 1px 3px 2px #f4f3f3;
+  box-shadow: 2px 2px 3px 2px #f4f3f3;
 }
 
 .year-month-circle{
   /* 形状、位置 */
-  width: 150rpx;
-  height: 150rpx;
-  margin: auto 10rpx auto 20rpx;
+  width: 140rpx;
+  height: 140rpx;
+  margin: auto 20rpx auto 20rpx;
 
   /* 圆形相关 */
   border: 0 solid #fff;
   border-radius: 500px;
-  box-shadow: 10px 10px #f4f3f3;
+  box-shadow: 2px 2px 15px 2px rgb(146, 142, 142);
+
   background-size: 100% 100%;
   /* font-size: 25rpx; */
   display: flex;
@@ -171,11 +172,11 @@ image{
 }
 
 .calendar-right-part{
-  width: 410rpx;
+  width: 380rpx;
   height: auto;
   display:flex;
   flex-direction: column; 
-  margin: 20rpx 0rpx 30rpx 0rpx;
+  margin: 20rpx 10rpx 30rpx 0rpx;
   font-size: 30rpx;
   /* font-weight: 0; */
 }
@@ -197,6 +198,7 @@ image{
   align-items:center;
   margin-bottom:10rpx;
   color: #8c8c8c;
+  /* color: #f76f6f; */
 }
 
 .select-topic-picker{

@@ -70,11 +70,13 @@ Page({
 
     if (wx.getStorageSync('avatarUrl')) {
       this.setData({
-        avatar_url: wx.getStorageSync('avatarUrl')
+        avatar_url: wx.getStorageSync('avatarUrl'),
+        is_reset_avatar: true
       });
     } else if (wx.getStorageSync('userName')) {
       this.setData({
-        user_name: wx.getStorageSync('userName')
+        user_name: wx.getStorageSync('userName'),
+        is_reset_name: true
       });
     } else {
 
@@ -84,8 +86,9 @@ Page({
         'data': [],
         'success': (res) => {
           if (res.error_code == 200 && res.result_list != []) {
+            if (res.result_list == undefined) return;
+
             let reslist = res.result_list;
-            if (reslist == undefined) return;
             if (reslist['user_name'] || reslist['avatar_url']) {
               this.setData({
                 is_reset_name: !(reslist['user_name'] == false),
