@@ -13,7 +13,7 @@ let colorList = ['#f8d3ad', '#f3c6ca'];
 Page({
   data: {
     navbar: ['打卡日历', '每日完成度', '历史日志'],
-    currentTab: 2,
+    currentTab: 0,
 
     /* --------------以下的data属于【打卡日历】-------------- */
     date: '', // 用户选择的date，随时都会变化

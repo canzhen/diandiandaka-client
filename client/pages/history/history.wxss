@@ -107,7 +107,7 @@ image{
   width: 80%;
   height: 100%;
   margin-top: 10rpx;
-  margin-left: 5rpx;
+  /* margin-left: 5rpx; */
   margin-right:10rpx;
   font-size: 28rpx;
 }
@@ -148,14 +148,14 @@ image{
 
 .year-month-circle{
   /* 形状、位置 */
-  width: 140rpx;
-  height: 140rpx;
-  margin: auto 20rpx auto 20rpx;
+  width: 135rpx;
+  height: 135rpx;
+  margin: auto 20rpx auto 30rpx;
 
   /* 圆形相关 */
   border: 0 solid #fff;
   border-radius: 500px;
-  box-shadow: 2px 2px 15px 2px rgb(146, 142, 142);
+  box-shadow: 5px 5px 10px 2px rgb(146, 142, 142);
 
   background-size: 100% 100%;
   /* font-size: 25rpx; */
@@ -171,7 +171,7 @@ image{
 }
 
 .calendar-right-part{
-  width: 380rpx;
+  width: 360rpx;
   height: auto;
   display:flex;
   flex-direction: column; 
@@ -419,7 +419,7 @@ button::after{
   padding-left: 20rpx;
   padding-top: 20rpx;
   padding-bottom: 20rpx;
-  margin-bottom: 40rpx;
+  margin-bottom: 30rpx;
   background-color:  #faf3f47c;
   box-shadow: 5px 5px 10px 2px #f4f3f3;
   /* width: 400rpx;
