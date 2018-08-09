@@ -101,12 +101,14 @@ Page({
         if (error_code != 200) return;
         console.log('获取用户打卡信息成功');
         topic_info_list = utils.filterDatedData(topic_info_list);
+
         let [allTopic, topicUrlMap] = getTopicNameAndUrlList(topic_info_list);
         let [checkTimeListPerTopic, checkInfoListPerTopic] = data.getCheckedDataOfEveryTopic(checked_data_list, allTopic); //按照每个topic分类的打卡时间集合
-        let allTopicInfoDivided = data.divideTopicInfoIntoGroups(
-          checkInfoListPerTopic,
-          topic_info_list,
-          that.data.topic_info_divided_size);
+
+        // let allTopicInfoDivided = data.divideTopicInfoIntoGroups(
+        //   checkInfoListPerTopic,
+        //   topic_info_list,
+        //   that.data.topic_info_divided_size);
         that.setData({
           checked_data_list: checked_data_list, //用于展示每日具体打卡信息
           check_first_date: checked_data_list[checked_data_list.length-1].check_time, //所有卡片最早开始打卡的时间
@@ -116,11 +118,13 @@ Page({
           topic_name_list: allTopic,
           topic_url_map: topicUrlMap,
           //被N个N个分成一组的topics
-          topic_info_divided: allTopicInfoDivided,
+          // topic_info_divided: allTopicInfoDivided,
           //根据topic分类的check信息
           check_time_per_topic: checkTimeListPerTopic,
           check_info_per_topic: checkInfoListPerTopic,
         });
+
+        console.log(that.data.topic_info)
         that.fillCalendar(moment().format('YYYY-MM'));
       });
     }
@@ -167,7 +171,7 @@ Page({
         wx.createSelectorQuery().selectAll('.navbar').boundingClientRect((rects) => {
           rects.forEach((rect) => {
             that.setData({
-              scrollHeight: res.windowHeight - rect.bottom - 10
+              scrollHeight: res.windowHeight - rect.bottom - 30
             });
           })
         }).exec();
@@ -273,7 +277,7 @@ Page({
   },
 
   // 单击左侧topic触发的事件
-  topicTap: function (e) {
+  tapTopic: function (e) {
     var topicIdx = e.currentTarget.dataset.topicIdx;
     this.setData({
       selected_topic_idx: topicIdx,

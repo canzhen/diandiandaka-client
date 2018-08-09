@@ -398,7 +398,7 @@ button::after{
  .check-log-panel{
    display: flex;
    flex-direction: column;
-   margin: 50rpx 40rpx 20rpx 40rpx;
+   margin: 80rpx 40rpx 20rpx 40rpx;
  }
 
  

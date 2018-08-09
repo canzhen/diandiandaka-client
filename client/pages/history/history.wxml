@@ -9,19 +9,14 @@
   <view class="check-calendar-panel">
     <view class="all-history-left">
       <!-- 显示出所有正在打卡的topic|左侧 -->
-       <view class="all-history-left-item" 
-        wx:for="{{topic_info_divided[topic_info_divided_idx]}}" 
-        wx:key="idx" wx:for-item="data"
-        bindtap="topicTap"
-        data-topic-idx="{{topic_info_divided_size*topic_info_divided_idx + data.number}}">
-        <image class="all-history-left-image" src="{{data.topic_url}}"></image>
-        <text style="font-size: 25rpx;">{{data.topic_name}}</text>
-      </view> 
-
-      <view class="all-history-left-bottom">
-        <image class="all-history-left-bottom-image-left" src="/images/date-left.png" bindtap="getPreTopicGroup" wx:if="{{topic_info_divided_idx != 0}}"/>
-        <image class="all-history-left-bottom-image-right" src="/images/date-right.png" bindtap="getNextTopicGroup" wx:if="{{(topic_info_divided_idx+1) * topic_info_divided_size <= topic_info.length}}"/>
-      </view>
+      <scroll-view style="height:{{scrollHeight-80}}px;" scroll-y scroll-with-animation enable-back-to-top>
+        <view class="all-history-left-item" bindtap="tapTopic"
+              wx:for="{{topic_info}}" wx:for-item="data" wx:key="key"
+              wx:for-index="index" data-topic-idx="{{index}}">
+          <image class="all-history-left-image" src="{{data.topic_url}}"></image>
+          <text style="font-size: 25rpx;">{{data.topic_name}}</text>
+        </view> 
+      </scroll-view>
     </view>
 
 
@@ -31,16 +26,16 @@
     <view class="all-history-right">
       <view class="all-history-first-row">
         <!-- 卡片选择 -->
-        <picker value="{{selected_topic_idx}}"
+        <!-- <picker value="{{selected_topic_idx}}"
                 bindchange="bindTopicChange"
                 mode="selector"
-                range="{{topic_name_list}}">
-          <view class="select-topic-picker">
+                range="{{topic_name_list}}"> -->
+          <!-- <view class="select-topic-picker">
             {{topic_info[selected_topic_idx].topic_name}}
-          </view>
-        </picker>
+          </view> -->
+        <!-- </picker> -->
         <view class="all-history-first-row-right">
-          <text>已坚持</text>
+          <text>「{{topic_info[selected_topic_idx].topic_name}}」已坚持</text>
           <text class="all-history-emphasize">{{topic_info[selected_topic_idx].total_day}}</text>
           <text>天，已连续</text>
           <text class="all-history-emphasize">{{topic_info[selected_topic_idx].insist_day}}</text>

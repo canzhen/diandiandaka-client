@@ -82,28 +82,28 @@ function getCheckedDataOfEveryTopic(dataList, topicList) {
 
 
 // 把TopicInfo按照每size一组，分组
-function divideTopicInfoIntoGroups(dataMap, allTopic, size) {
-  var count = 0, dividedList = [], tmpList = [];
-  // 每size个，分成一组
-  for (var i in allTopic) {
-    if (count == size) {
-      dividedList.push(tmpList);
-      tmpList = [];
-      count = 0;
-    }
-    let info = allTopic[i];
-    tmpList.push({
-      'topic_name': info.topic_name,
-      'topic_url': info.topic_url,
-      'number': count, //第n组的第number个，用于计算在总数组中的位置
-      'insist_day': info.insist_day
-    });
-    count++;
-  }
+// function divideTopicInfoIntoGroups(dataMap, allTopic, size) {
+//   var count = 0, dividedList = [], tmpList = [];
+//   // 每size个，分成一组
+//   for (var i in allTopic) {
+//     if (count == size) {
+//       dividedList.push(tmpList);
+//       tmpList = [];
+//       count = 0;
+//     }
+//     let info = allTopic[i];
+//     tmpList.push({
+//       'topic_name': info.topic_name,
+//       'topic_url': info.topic_url,
+//       'number': count, //第n组的第number个，用于计算在总数组中的位置
+//       'insist_day': info.insist_day
+//     });
+//     count++;
+//   }
 
-  dividedList.push(tmpList);
-  return dividedList;
-}
+//   dividedList.push(tmpList);
+//   return dividedList;
+// }
 
 
 
@@ -502,7 +502,7 @@ module.exports = {
   getCheckDataList,
   getTopicInfoList,
   getCheckedDataOfEveryTopic,
-  divideTopicInfoIntoGroups,
+  // divideTopicInfoIntoGroups,
   getCheckDetailOnGivenDay,
   getCanvasData,
   getTopicListPerDay,
