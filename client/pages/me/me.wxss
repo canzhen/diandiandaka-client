@@ -121,3 +121,11 @@ Page{
   margin-left: 20rpx;
   margin-top: 5rpx;
 }
+
+
+
+::-webkit-scrollbar{
+  width: 0;
+  height: 0;
+  color: transparent;
+}

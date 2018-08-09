@@ -56,7 +56,7 @@ image{
   flex-direction: column;
   width: 15%;
   height: 100%;
-  margin: 80rpx -10rpx 0rpx 10rpx;
+  margin: 10rpx 0rpx 0rpx 10rpx;
   color: #888888;
 }
 
@@ -107,6 +107,8 @@ image{
   width: 85%;
   height: 100%;
   margin-top: 10rpx;
+  margin-left: 10rpx;
+  margin-right:10rpx;
 }
 
 
@@ -121,8 +123,8 @@ image{
   flex-direction: row;
   justify-content:center;
   align-items:center;
-  margin: 0rpx 10rpx 10rpx -10rpx;
-  font-size: 30rpx;
+  margin: 0rpx 10rpx 20rpx 0rpx;
+  font-size: 28rpx;
   color: #888888;
 }
 
@@ -133,25 +135,29 @@ image{
 .calendar-panel{
   display: flex; 
   flex-direction: row;
-  height: 380rpx;
-  margin: 10rpx 20rpx 10rpx 20rpx;
+  height: auto;
+  /* height: 800rpx; */
+  margin: 10rpx 20rpx 40rpx 20rpx;
   background-color: #f6f6f6;
-  padding-bottom: 20rpx;
+  padding-bottom: 5rpx;
+  align-items: center;
 
-  border-radius: 20rpx;
-  box-shadow: 1px 1px 2px 2rpx #f4f3f3;
+  border-radius: 40rpx;
+  box-shadow: 1px 1px 3px 2px #f4f3f3;
 }
 
 .year-month-circle{
   /* 形状、位置 */
   width: 150rpx;
   height: 150rpx;
-  margin: 130rpx 10rpx 130rpx 20rpx;
+  margin: auto 10rpx auto 20rpx;
 
   /* 圆形相关 */
   border: 0 solid #fff;
   border-radius: 500px;
-  background-size:100% 100%;
+  box-shadow: 10px 10px #f4f3f3;
+  background-size: 100% 100%;
+  /* font-size: 25rpx; */
   display: flex;
   align-items: center;
   text-align:center;
@@ -166,10 +172,12 @@ image{
 
 .calendar-right-part{
   width: 410rpx;
-  height:440rpx;
+  height: auto;
   display:flex;
   flex-direction: column; 
   margin: 20rpx 0rpx 30rpx 0rpx;
+  font-size: 30rpx;
+  /* font-weight: 0; */
 }
 
 .calendar-days-row{
@@ -204,10 +212,6 @@ image{
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-}
-
-.all-history-first-row-right{
-  margin-left: 15rpx;
 }
 
 .checked{
@@ -500,4 +504,11 @@ button::after{
   height: 25rpx;
   margin-top: 10rpx;
   margin-left: 40rpx;
+}
+
+
+::-webkit-scrollbar{
+  width: 0;
+  height: 0;
+  color: transparent;
 }

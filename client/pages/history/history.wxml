@@ -9,7 +9,7 @@
   <view class="check-calendar-panel">
     <view class="all-history-left">
       <!-- 显示出所有正在打卡的topic|左侧 -->
-      <scroll-view style="height:{{scrollHeight-80}}px;" scroll-y scroll-with-animation enable-back-to-top>
+      <scroll-view style="height:{{scrollHeight}}px;" scroll-y scroll-with-animation enable-back-to-top>
         <view class="all-history-left-item" bindtap="tapTopic"
               wx:for="{{topic_info}}" wx:for-item="data" wx:key="key"
               wx:for-index="index" data-topic-idx="{{index}}">
@@ -21,48 +21,37 @@
 
 
 
-
-
     <view class="all-history-right">
       <view class="all-history-first-row">
-        <!-- 卡片选择 -->
-        <!-- <picker value="{{selected_topic_idx}}"
-                bindchange="bindTopicChange"
-                mode="selector"
-                range="{{topic_name_list}}"> -->
-          <!-- <view class="select-topic-picker">
-            {{topic_info[selected_topic_idx].topic_name}}
-          </view> -->
-        <!-- </picker> -->
-        <view class="all-history-first-row-right">
-          <text>「{{topic_info[selected_topic_idx].topic_name}}」已坚持</text>
-          <text class="all-history-emphasize">{{topic_info[selected_topic_idx].total_day}}</text>
-          <text>天，已连续</text>
-          <text class="all-history-emphasize">{{topic_info[selected_topic_idx].insist_day}}</text>
-          <text>天</text>
-        </view>
+        <text>「{{topic_info[selected_topic_idx].topic_name}}」已坚持</text>
+        <text class="all-history-emphasize">{{topic_info[selected_topic_idx].total_day}}</text>
+        <text>天，已连续</text>
+        <text class="all-history-emphasize">{{topic_info[selected_topic_idx].insist_day}}</text>
+        <text>天</text>
       </view>
 
       <!-- 日历板块 -->
-      <view class="calendar-panel" wx:for="{{year_month_list}}" wx:key="idx" wx:for-item="date">
-        <!-- 圆形块，显示当前月份 -->
-        <view class="year-month-circle" style="background-color:{{date.background}};">
-          <text class="year-month-text">{{date.year}}年\n{{date.month}}月</text>
-        </view>
-        <view class="calendar-right-part">
-          <view class="calendar-days-row" wx:for="{{date.days}}" wx:key="idx" wx:for-item="sevenDays">
-              <view space="emsp" class="calendar-days-each-item" wx:for="{{sevenDays}}" wx:key="idx" wx:for-item="day"
-                    bindtap="bindTapOnDate" data-current-date="{{date.year}}-{{date.month}}-{{day._day}}">
-                <text>{{day._day}}</text>
-                <icon wx:if="{{day._checked}}" class="checked" type="success_no_circle" size="20" color="red"></icon>
-              </view> 
+      <scroll-view style="height:{{scrollHeight - 30}}px;" bindscroll="calendarScroll" scroll-into-view="{{scroll_into_view_id}}" scroll-y scroll-with-animation enable-back-to-top>
+        <view class="calendar-panel" id="id{{date.year}}-{{date.month}}" wx:for="{{year_month_list}}" wx:key="idx" wx:for-item="date">
+          <!-- 圆形块，显示当前月份 -->
+          <view class="year-month-circle" style="background-color:{{date.background}};">
+            <text class="year-month-text">{{date.year}}年\n{{date.month}}月</text>
           </view>
+          <view class="calendar-right-part">
+            <view class="calendar-days-row" wx:for="{{date.days}}" wx:key="idx" wx:for-item="sevenDays">
+                <view space="emsp" class="calendar-days-each-item" wx:for="{{sevenDays}}" wx:key="idx" wx:for-item="day"
+                      bindtap="bindTapOnDate" data-current-date="{{date.year}}-{{date.month}}-{{day._day}}">
+                  <text>{{day._day}}</text>
+                  <icon wx:if="{{day._checked}}" class="checked" type="success_no_circle" size="20" color="red"></icon>
+                </view> 
+            </view>
+          </view> 
         </view> 
-      </view> 
+      </scroll-view>
 
 
-      <view class="all-history-last-row">
-        <!-- 日期选择和左右选择 -->
+      <!-- 日期选择和左右选择 -->
+      <!-- <view class="all-history-last-row">
         <image src="/images/date-right.png" bindtap="getNextMonth"/>
         <picker value="{{date}}"
                 bindchange="bindPickerChange"
@@ -73,7 +62,7 @@
           <view class="picker">{{dateCN}}</view>
         </picker>
         <image src="/images/date-left.png" bindtap="getLastMonth"/>
-      </view>
+      </view> -->
     </view>
   </view>
 </view>

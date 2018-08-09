@@ -7,6 +7,7 @@ const data = require('data.js');
 const echarts = require('../../vendor/ec-canvas/echarts');
 // import * as echarts from '../../vendor/ec-canvas/echarts';
 let chart = null;
+let colorList = ['#f8d3ad', '#f3c6ca'];
 
 
 Page({
@@ -104,27 +105,23 @@ Page({
 
         let [allTopic, topicUrlMap] = getTopicNameAndUrlList(topic_info_list);
         let [checkTimeListPerTopic, checkInfoListPerTopic] = data.getCheckedDataOfEveryTopic(checked_data_list, allTopic); //按照每个topic分类的打卡时间集合
+        let [startDateList, endDateList] = data.getStartEndDateList(topic_info_list);
 
-        // let allTopicInfoDivided = data.divideTopicInfoIntoGroups(
-        //   checkInfoListPerTopic,
-        //   topic_info_list,
-        //   that.data.topic_info_divided_size);
         that.setData({
           checked_data_list: checked_data_list, //用于展示每日具体打卡信息
           check_first_date: checked_data_list[checked_data_list.length-1].check_time, //所有卡片最早开始打卡的时间
           check_last_date: checked_data_list[0].check_time, //所有卡片中最晚打卡的时间
           current_date: moment().format('YYYY-MM-DD'),
+          start_date_list: startDateList,  //一个都是moment的list
+          end_date_list: endDateList,
           topic_info: topic_info_list,
           topic_name_list: allTopic,
           topic_url_map: topicUrlMap,
-          //被N个N个分成一组的topics
-          // topic_info_divided: allTopicInfoDivided,
           //根据topic分类的check信息
           check_time_per_topic: checkTimeListPerTopic,
           check_info_per_topic: checkInfoListPerTopic,
         });
 
-        console.log(that.data.topic_info)
         that.fillCalendar(moment().format('YYYY-MM'));
       });
     }
@@ -141,14 +138,9 @@ Page({
   // 初始化每日完成度
   initCompleteness: function () {
     let [checkTimeList, checkedTopicListPerDay] = data.getTopicListPerDay(this.data.checked_data_list);
-    // let totalTopicNumPerDay = data.getTotalTopicNumPerDay(this.data.check_last_date, this.data.topic_info);
-    let [startDateList, endDateList] = data.getStartEndDateList(this.data.topic_info);
     this.setData({
       check_time_list: checkTimeList,
       checked_topic_list_per_day: checkedTopicListPerDay,
-      start_date_list: startDateList,  //一个都是moment的list
-      end_date_list: endDateList,
-      // total_topic_num_per_day: totalTopicNumPerDay,
     });
 
     // 生成当前周的数据
@@ -219,13 +211,15 @@ Page({
     let topic = allTopic[this.data.selected_topic_idx]; //当前选中的topic名
     let checkedTime = this.data.check_time_per_topic[topic]; //当前选中的topic的所有check信息
     var currentMoment = moment(date);
-    var preMonthMoment = moment(date).subtract(1, 'month');
+    var preMoment = moment(date).subtract(1, 'month');
+    var prepreMoment = moment(date).subtract(2, 'month');
 
     this.setData({
-      // 获取当前月份的天数组，以及相应的每天的是否打卡的数据
-      'year_month_list[1]': data.getCalendar(checkedTime, currentMoment,'#f8d3ad'),
-      'year_month_list[0]': data.getCalendar(checkedTime, preMonthMoment,'#f3c6ca'),
-      date: moment(date).format('YYYY-MM'),
+      scroll_into_view_id: 'id'+currentMoment.format('YYYY-MM'),
+      'year_month_list[2]': data.getCalendar(checkedTime, currentMoment, colorList[currentMoment.month()%2]),
+      'year_month_list[1]': data.getCalendar(checkedTime, preMoment, colorList[preMoment.month() % 2]),
+      'year_month_list[0]': data.getCalendar(checkedTime, prepreMoment, colorList[prepreMoment.month() % 2]),
+      date: currentMoment,
       dateCN: moment(date).format('YYYY年MM月'),
       selected_topic: allTopic[0]
     });
@@ -251,19 +245,51 @@ Page({
     }
   },
 
-  // 日期选择框改变时触发的事件
-  bindPickerChange: function (e) {
-    this.fillCalendar(e.detail.value);
+  /**
+   * 日历scroll-view滑动事件
+   */
+  calendarScroll: function (e) {
+    // let deltaY = e.detail.deltaY; //大于0上滑小于0下滑
+    console.log('scrollTop:' + e.detail.scrollTop)
+
+
+    if (e.detail.scrollTop == 0 ) {//上滑到顶了
+      wx.showLoading({
+        title: '正在加载数据',
+      })
+      // let idx = this.data.year_month_list_max_idx;
+      let currentSelectedDate = moment(this.data.date);
+      let allTopic = this.data.topic_name_list; //所有topic名字的集合
+      let topic = allTopic[this.data.selected_topic_idx]; //当前选中的topic名
+      let checkedTime = this.data.check_time_per_topic[topic]; //当前选中的topic的所有check信息
+
+      let newDate = moment(currentSelectedDate).subtract(3, 'month');
+
+      let new_year_month_list = this.data.year_month_list;
+      new_year_month_list.unshift(data.getCalendar(checkedTime, newDate, colorList[newDate.month() % 2]));
+
+
+      this.setData({
+        year_month_list: new_year_month_list,
+        date: moment(currentSelectedDate).subtract(1, 'month'),
+      });
+      wx.hideLoading();
+    }
   },
+
+  // // 日期选择框改变时触发的事件
+  // bindPickerChange: function (e) {
+  //   this.fillCalendar(e.detail.value);
+  // },
 
   // 获取上个月的数据
   getLastMonth: function (e) {
-    this.fillCalendar(moment(this.data.date, 'YYYY-MM').subtract(1, 'month').format('YYYY-MM'));
+    this.fillCalendar(moment(this.data.date).subtract(1, 'month').format('YYYY-MM'));
   },
 
   // 获取下个月的数据
   getNextMonth: function (e) {
-    this.fillCalendar(moment(this.data.date, 'YYYY-MM').add(1, 'month').format('YYYY-MM'));
+    this.fillCalendar(moment(this.data.date).add(1, 'month').format('YYYY-MM'));
   },
 
   // 文字卡片选择框改变时触发的事件
@@ -273,7 +299,7 @@ Page({
       selected_topic_idx: topicIndx,
       topic_info_divided_idx: parseInt(topicIndx / this.data.topic_info_divided_size),
     });
-    this.fillCalendar(this.data.date);
+    this.fillCalendar(this.data.date.format('YYYY-MM'));
   },
 
   // 单击左侧topic触发的事件
@@ -282,7 +308,7 @@ Page({
     this.setData({
       selected_topic_idx: topicIdx,
     });
-    this.fillCalendar(this.data.date);
+    this.fillCalendar(this.data.date.format('YYYY-MM'));
   },
 
   // 单击获取下一组的topic
@@ -308,13 +334,13 @@ Page({
       content = '未来的事情宝宝无法预测嗷~';
     }else{
       let checkedDetail = data.getCheckDetailOnGivenDay(
-        this.data.checked_data_list, chosenDate);
-      let completeness = checkedDetail.length / this.data.topic_info.length;
-      console.log(completeness)
+                  this.data.checked_data_list, chosenDate);
+
+      let completeness = data.getCompletePercentageOfDay(chosenDate, checkedDetail.length, this.data.topic_info.length, this.data.start_date_list, this.data.end_date_list);
       var content = '您在' + chosenDate;
       checkedDetail.length == 0 ? content += '没打卡,继续努力哟~'
         : content += '打了' + checkedDetail.length + "张卡：[" + checkedDetail.toString() +
-        ']，当日打卡完成度为' + parseFloat((completeness * 100).toFixed(2)) + '%';
+        ']，当日打卡完成度为' + completeness + '%';
 
     }
     wx.showModal({

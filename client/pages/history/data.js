@@ -130,6 +130,7 @@ function getCompletePercentageOfDay(currentdate, checked_topic_num, total_topic_
   let l = start_date_list.length;
   let total_num = 0;
 
+
   if (currentdate < end_date_list[0] && currentdate >= start_date_list[l-1]){
     total_num = l;
   }else if (currentdate < start_date_list[0] || 
@@ -202,8 +203,8 @@ function _getCanvasData(percentageList, startdate, enddate,
         curMonth += 1; //把当前月份加一
       }
 
-      let formattedDate = date.format('YYYY-MM-DD');
-      if (check_time_list.indexOf(formattedDate) != -1){
+      let formatDate = date.format('YYYY-MM-DD');
+      if (check_time_list.indexOf(formatDate) != -1){
         validDaysPerMonth+=1;
         percentage = getCompletePercentageOfDay(date, topic_list_per_day[formatDate].length, total_topic_num, start_date_list, end_date_list);
       }

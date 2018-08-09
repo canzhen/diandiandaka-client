@@ -94,3 +94,10 @@ image{
 .hot-topic-content{
   margin: 5rpx 0rpx 0rpx 80rpx;
 }
+
+
+::-webkit-scrollbar{
+  width: 0;
+  height: 0;
+  color: transparent;
+}

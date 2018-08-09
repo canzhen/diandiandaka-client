@@ -184,3 +184,11 @@ Page{
   color: #fd9731;
   text-align: center;
 }
+
+
+
+::-webkit-scrollbar{
+  width: 0;
+  height: 0;
+  color: transparent;
+}
