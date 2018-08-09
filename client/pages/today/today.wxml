@@ -43,7 +43,7 @@
   <view class="modal-subtitle">还能输入{{word_left_num}}字</view>
   <view class="modal-content">
     <view class="modal-input">
-      <textarea class="textarea" fixed="true" auto-height value="{{textarea_value}}" bindinput="inputChange" placeholder="{{modal_placeholder}}"></textarea>
+      <textarea class="textarea" fixed="true" cursor-spacing="20" auto-height value="{{textarea_value}}" bindinput="inputChange" placeholder="{{modal_placeholder}}"></textarea>
     </view>
   </view>
   <view class="modal-footer">

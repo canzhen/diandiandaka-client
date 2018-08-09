@@ -420,8 +420,9 @@ button::after{
   padding-top: 20rpx;
   padding-bottom: 20rpx;
   margin-bottom: 30rpx;
-  background-color:  #faf3f47c;
-  box-shadow: 5px 5px 10px 2px #f4f3f3;
+  /* background-color:  #faf3f47c; */
+  /* background-color:  #f3f7faa4; */
+  box-shadow: 10px 5px 10px 2px #f4f3f3;
   /* width: 400rpx;
   height: 400rpx; */
   /* border: 1 solid #888888; */
@@ -542,7 +543,7 @@ button::after{
 .modal-dialog {
   width: 540rpx;
   overflow: hidden;
-  /* position: fixed; */
+  position: fixed;
   top: 32%;
   left: 0;
   z-index: 9999;

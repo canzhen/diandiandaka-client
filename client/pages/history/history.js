@@ -14,6 +14,8 @@ Page({
   data: {
     navbar: ['打卡日历', '每日完成度', '历史日志'],
     currentTab: 2,
+    colorList: [ '#f3faf998', '#f6f3fa98', '#f6faf398', '#f9faf398',
+               '#faf3f898', '#faf3f498', '#f3faf9a4', '#f3f7faa4'],
 
     /* --------------以下的data属于【打卡日历】-------------- */
     date: '', // 用户选择的date，随时都会变化

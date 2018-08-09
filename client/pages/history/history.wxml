@@ -141,7 +141,7 @@
 <view hidden="{{currentTab!==2}}">
   <view class="check-log-panel">
     <scroll-view class="check-log-scroll-view" style="height:{{scrollHeight-20}}px;" scroll-y scroll-with-animation enable-back-to-top>
-      <view class="{{selected_topic_log != index ? 'block' : 'block-selected'}}" wx:for="{{check_info_per_topic}}" 
+      <view class="block" style="background-color:{{colorList[check_info_per_topic[topic_name].length%8]}};" wx:for="{{check_info_per_topic}}" 
       wx:key="key" wx:for-index="topic_name" wx:for-item="check_info" >
         <view class="check-log-topic-image-text" bindtap="selectTopicLog" data-idx="{{topic_name}}" >
           <image class="check-log-topic-image" src="{{topic_url_map[topic_name]}}"></image>
@@ -179,12 +179,12 @@
 
 <!-- 弹窗部分开始 -->
 <view class="modal-mask" bindtap="hideModal" catchtouchmove="preventTouchMove" wx:if="{{show_modal}}"></view>
-<view class="modal-dialog" style="position:{{textarea_focus?'static':'fixed'}};" wx:if="{{show_modal}}">
+<view class="modal-dialog" wx:if="{{show_modal}}">
   <view class="modal-title">修改日志</view>
   <view class="modal-subtitle">{{check_time}} {{check_timestamp}}丨还能输入{{word_left_num}}字</view>
   <view class="modal-content">
     <view class="modal-input">
-      <textarea class="textarea"  bindfocus="focusTextarea" bindblur="blurTextarea"  fixed="true" auto-height value="{{log}}" bindinput="inputChange" placeholder="{{modal_placeholder}}"></textarea>
+      <textarea class="textarea" cursor-spacing="20" fixed="true" auto-height value="{{log}}" bindinput="inputChange" placeholder="{{modal_placeholder}}"></textarea>
     </view>
   </view>
   <view class="modal-footer">
