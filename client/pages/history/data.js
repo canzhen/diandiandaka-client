@@ -121,23 +121,61 @@ function getCheckDetailOnGivenDay(checkedList, givenDate) {
 }
 
 
+/**
+ * 获取某一天的完成度百分比
+ * 起始日期是左开右闭
+ */
+function getCompletePercentageOfDay(currentdate, checked_topic_num, total_topic_num, start_date_list, end_date_list){
+  currentdate = moment(currentdate);
+  let l = start_date_list.length;
+  let total_num = 0;
+
+  if (currentdate < end_date_list[0] && currentdate >= start_date_list[l-1]){
+    total_num = l;
+  }else if (currentdate < start_date_list[0] || 
+            currentdate >= end_date_list[l-1]){
+    total_num = 0;
+  }else if (currentdate < start_date_list[l-1]){
+    for (let i = 1; i < l; i++){
+      if (currentdate >= start_date_list[l-1-i]){
+        total_num = l - i;
+        break;
+      }
+    }
+  }else if(currentdate >= end_date_list[0]){
+    for (let i = 1; i < l; i++){
+      if (currentdate < end_date_list[i]){
+        total_num = l - i; 
+        break;
+      }
+    }
+  }
+
+  if (!total_num) return null;
+
+  let percentage = (checked_topic_num / total_num * 100 ).toFixed(2);
+  percentage = percentage ? parseFloat(percentage) : null;
+  return percentage;
+}
+
+
 
 function _getCanvasData(percentageList, startdate, enddate, 
-              check_time_list, topic_list_per_day, total_topic_num,     
-              ifAverage, ifAddXTestList = false, xTextList=null, ) {
+  start_date_list, end_date_list, check_time_list, topic_list_per_day,
+  total_topic_num, ifAverage, ifAddXTestList = false, xTextList=null, ) {
 
   let allZero = true;
   let diff = parseInt(enddate.diff(startdate, 'days'));
   if (!ifAverage){
     for (let i = diff; i >= 0; i--) {
-      let percentage = 0.0;
+      let percentage = null;
       let date = moment(enddate).subtract(i, 'days');
       let formatDate = date.format('YYYY-MM-DD');
       if (ifAddXTestList)
         xTextList.push(date.format('MM月DD日'));
       if (check_time_list.indexOf(formatDate) != -1)
-        percentage = topic_list_per_day[formatDate].length / total_topic_num * 100;
-      percentage = percentage ? parseFloat(percentage.toFixed(1)) : null;
+        percentage = getCompletePercentageOfDay(date, topic_list_per_day[formatDate].length, total_topic_num, start_date_list, end_date_list);
+      
       if (!percentage) allZero = false;
       percentageList.push(percentage);
     }
@@ -146,7 +184,7 @@ function _getCanvasData(percentageList, startdate, enddate,
     let validDaysPerMonth = 0;
     let tmpList = [];
     for (let i = diff; i >= 0; i--) {
-      let percentage = 0.0;
+      let percentage = null;
       let date = moment(enddate).subtract(i, 'days');
 
       if (date.month() > curMonth) { //进入到下一个月了
@@ -167,7 +205,7 @@ function _getCanvasData(percentageList, startdate, enddate,
       let formattedDate = date.format('YYYY-MM-DD');
       if (check_time_list.indexOf(formattedDate) != -1){
         validDaysPerMonth+=1;
-        percentage = topic_list_per_day[formattedDate].length / total_topic_num * 100;
+        percentage = getCompletePercentageOfDay(date, topic_list_per_day[formatDate].length, total_topic_num, start_date_list, end_date_list);
       }
       if (!percentage) allZero = false;
       tmpList.push(percentage);
@@ -206,6 +244,8 @@ function getCanvasData(
             check_time_list, 
             topic_list_per_day, 
             current_date, 
+            start_date_list, 
+            end_date_list, 
             total_topic_num,
             time_lapse,
             n){
@@ -251,10 +291,11 @@ function getCanvasData(
     default:
       break;
   }
-  _getCanvasData(percentageList, startdate, enddate, check_time_list,
-                 topic_list_per_day, total_topic_num, ifAverage,
-                 ifAddXTextList, xTextList);
 
+  if (startdate <= moment()) {
+    // 计算数据
+    _getCanvasData(percentageList, startdate, enddate, start_date_list, end_date_list, check_time_list, topic_list_per_day, total_topic_num, ifAverage, ifAddXTextList, xTextList);
+  }
   let subtitle = startdate.format('YYYY-MM-DD') + ' 到 ' + enddate.format('YYYY-MM-DD');
 
   return {'ydata': percentageList, 
@@ -391,6 +432,71 @@ function getTopicListPerDay(checked_data_list){
 
 
 
+function getStartEndDateList(topic_info_list) {
+  let start_date_list = [];
+  let end_date_list = [];
+  for (let i in topic_info_list) {
+    start_date_list.push(moment(topic_info_list[i]['start_date'], 'YYYY-MM-DD'));
+    end_date_list.push(moment(topic_info_list[i]['end_date'] != '永不结束' ? topic_info_list[i]['end_date'] : '9999-99-99', 'YYYY-MM-DD'));
+  }
+
+  function cmp(a, b){
+    return a>b;
+  }
+  start_date_list.sort(cmp);
+  end_date_list.sort(cmp);
+
+  return [start_date_list, end_date_list];
+}
+
+/**
+ * 2018.08.08 22:37
+ * 自己想了个高级算法，哈哈哈哈哈！！！
+ * @author: Canzhen Zhou
+ */
+function getTotalTopicNumPerDay(check_last_date, topic_info_list){
+  let totalNumPerDay = {};
+  let start_date_list = [];
+  let end_date_list = [];
+  for (let i in topic_info_list){
+    start_date_list.push(topic_info_list[i]['start_date'])
+    end_date_list.push(topic_info_list[i]['end_date'] != '永不结束' ? topic_info_list[i]['end_date']: '9999-99-99')
+  }
+  start_date_list.sort();
+  end_date_list.sort();
+  let prestartdate = '';
+  let preenddate = '';
+
+  let l = topic_info_list.length;
+  for (let i = 0; i < l; i++) {
+    let startdate = moment(start_date_list[l-1-i], 'YYYY-MM-DD');
+    let enddate = moment(end_date_list[i], 'YYYY-MM-DD');
+    enddate = enddate == '9999-99-99' ? moment(this.check_last_date, 'YYYY-MM-DD') : enddate;
+    if (!prestartdate){
+      let diff = parseInt(enddate.diff(startdate, 'days'));
+      for (let j = diff; j > 0; j--) {
+        let date = moment(enddate).subtract(j, 'days').format('YYYY-MM-DD');
+        totalNumPerDay[date] = l - i;
+      }
+    } else {
+      let diff = parseInt(enddate.diff(preenddate, 'days'));
+      for (let j = diff; j > 0; j--) {
+        let date = moment(enddate).subtract(j, 'days').format('YYYY-MM-DD');
+        totalNumPerDay[date] = l - i;
+      }
+      let diff2 = parseInt(prestartdate.diff(startdate, 'days'));
+      for (let j = diff2; j > 0; j--) {
+        let date = moment(prestartdate).subtract(j, 'days').format('YYYY-MM-DD');
+        totalNumPerDay[date] = l - i;
+      }
+    }
+    prestartdate = startdate;
+    preenddate = enddate;
+  }
+
+  console.log(totalNumPerDay);
+  return totalNumPerDay;
+}
 
 module.exports = {
   getCheckDataList,
@@ -400,5 +506,8 @@ module.exports = {
   getCheckDetailOnGivenDay,
   getCanvasData,
   getTopicListPerDay,
+  getTotalTopicNumPerDay,
+  getStartEndDateList,
   getCalendar,
+  getCompletePercentageOfDay,
 }

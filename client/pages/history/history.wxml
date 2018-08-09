@@ -73,7 +73,7 @@
                 bindchange="bindPickerChange"
                 fields="month"
                 mode="date"
-                start="1990-01-01"
+                start="{{check_first_date}}"
                 end="{{current_date}}">
           <view class="picker">{{dateCN}}</view>
         </picker>

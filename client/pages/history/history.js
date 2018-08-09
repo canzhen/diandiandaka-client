@@ -4,15 +4,15 @@ const utils = require('../../vendor/utils.js');
 const api = require('../../ajax/api.js');
 const helper = require('helper.js');
 const data = require('data.js');
-// const echarts = require('../../vendor/ec-canvas/echarts');
-import * as echarts from '../../vendor/ec-canvas/echarts';
+const echarts = require('../../vendor/ec-canvas/echarts');
+// import * as echarts from '../../vendor/ec-canvas/echarts';
 let chart = null;
 
 
 Page({
   data: {
     navbar: ['打卡日历', '每日完成度', '历史日志'],
-    currentTab: 2,
+    currentTab: 0,
 
     /* --------------以下的data属于【打卡日历】-------------- */
     date: '', // 用户选择的date，随时都会变化
@@ -24,6 +24,8 @@ Page({
     topic_info_divided_size: 5, // N = 5
     topic_info_divided_idx: 0, //当前显示哪一组data（每一组有N个）
     checked_data_list: [], // 用于展示每日具体打卡信息
+    check_first_date: '', //所有卡片中最早开始打卡的时间
+    check_last_date: '', //所有卡片中最晚打卡的时间
 
 
     /* --------------以下的data属于【每日完成度】--------------*/
@@ -36,7 +38,8 @@ Page({
     check_info_per_topic: [], //每个topic的具体信息：[{'跑步': {check_time': '2018-06-13', 'log': '很好'}, {check_time': '2018-06-24', 'log': '还是很好'}}, {'起床': {{}, {}, ..}}, {},...]
     check_time_list: [], // 所有打卡的日期的集合['2018-07-04', '', ..]
     topic_name_list: [], // 所有topic名字的集合：['减肥','跑步','早睡']
-    topic_list_per_day: {}, // 每天打卡的卡片列表：{'2018-05-23': ['跑步'], ...}
+    checked_topic_list_per_day: {}, // 每天打卡的卡片列表：{'2018-05-23': ['跑步'], ...}
+    // total_topic_num_per_day: {}, // 每天需要打的卡的数量：{'2018-05-23': 3, ...}
     timelapses: [ //所有的时间区间的选项
                   { 'name': '1周', 'checked': true },
                   { 'name': '1个月', 'checked': false },
@@ -106,6 +109,8 @@ Page({
           that.data.topic_info_divided_size);
         that.setData({
           checked_data_list: checked_data_list, //用于展示每日具体打卡信息
+          check_first_date: checked_data_list[checked_data_list.length-1].check_time, //所有卡片最早开始打卡的时间
+          check_last_date: checked_data_list[0].check_time, //所有卡片中最晚打卡的时间
           current_date: moment().format('YYYY-MM-DD'),
           topic_info: topic_info_list,
           topic_name_list: allTopic,
@@ -131,10 +136,15 @@ Page({
 
   // 初始化每日完成度
   initCompleteness: function () {
-    let [checkTimeList, topicListPerDay] = data.getTopicListPerDay(this.data.checked_data_list);
+    let [checkTimeList, checkedTopicListPerDay] = data.getTopicListPerDay(this.data.checked_data_list);
+    // let totalTopicNumPerDay = data.getTotalTopicNumPerDay(this.data.check_last_date, this.data.topic_info);
+    let [startDateList, endDateList] = data.getStartEndDateList(this.data.topic_info);
     this.setData({
       check_time_list: checkTimeList,
-      topic_list_per_day: topicListPerDay,
+      checked_topic_list_per_day: checkedTopicListPerDay,
+      start_date_list: startDateList,  //一个都是moment的list
+      end_date_list: endDateList,
+      // total_topic_num_per_day: totalTopicNumPerDay,
     });
 
     // 生成当前周的数据
@@ -154,8 +164,6 @@ Page({
     //设置scroll-view高度，自适应屏幕
     wx.getSystemInfo({
       success: function (res) {
-        console.info(res.windowHeight);
-        // let height = res.windowHeight;
         wx.createSelectorQuery().selectAll('.navbar').boundingClientRect((rects) => {
           rects.forEach((rect) => {
             that.setData({
@@ -381,15 +389,16 @@ Page({
   newCanvas: function (timelapse, n) {
     let ans = data.getCanvasData(
                 this.data.check_time_list,
-                this.data.topic_list_per_day,
+                this.data.checked_topic_list_per_day,
                 this.data.completeness_current_date,
+                this.data.start_date_list, 
+                this.data.end_date_list, 
                 this.data.topic_name_list.length,
                 timelapse, n); //生成新的每周数据
     
     let canvasXText = ans['xtext'];
     let canvasYData = ans['ydata'];
     let avg = 0;
-
 
     if (ans['startdate'] > moment()){
       this.setData({
@@ -402,8 +411,6 @@ Page({
         user_click_on_future: false
       });
     }else{
-      // canvasXText = helper.getCanvasXText(
-      //   timelapse, this.data.completeness_current_date);
       let sum = 0;
       let validNum = 0;
       for (let i in canvasYData){
