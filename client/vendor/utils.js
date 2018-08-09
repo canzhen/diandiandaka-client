@@ -144,7 +144,6 @@ function filterUnchangeData(user_topic_list){
     var item = user_topic_list[i];
     if (!item['data_changed']) continue;
     if (item['log'] == undefined) item['log'] = '';
-    console.log(item);
     filtered_list.push(item);
   }
   return filtered_list;

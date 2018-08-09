@@ -4,7 +4,88 @@ const weekList = ['一', '二', '三', '四', '五', '六', '七'];
 const yearList = ['1月', '2月', '3月', '4月', '5月', '6月', '7月',
   '8月', '9月', '10月', '11月', '12月'];
 
-
+var option = {
+  color: ['#37a2da', '#32c5e9', '#67e0e3'],
+  grid: {
+    left: 10,
+    top: 0,
+    right: 10,
+    bottom: 10,
+    width: 340,
+    height: 370,
+    containLabel: true
+  },
+  xAxis: [
+    {
+      type: 'category',
+      data: [],
+      silent: true,
+      axisLine: {
+        show: false
+      },
+      axisTick: {
+        show: false
+      },
+      axisLabel: {
+        margin: 10,
+        textStyle: {
+          color: '#888888'
+        }
+      },
+    }
+  ],
+  yAxis: {
+    show: false,
+    min: 0,
+  },
+  series: [{
+    type: 'bar',
+    data: [],
+    markLine: {
+      data: [{ type: 'average' }],
+      label: {
+        show: true,
+        position: 'middle',
+        formatter: '平均{c}%',
+      },
+      lineStyle: {
+        color: 'rgba(0, 0, 0, 0.5)',
+        shadowBlur: 10,
+        opacity: 1
+      },
+    },
+    silent: true,
+    clickable: false,
+    barCategoryGap: '25%',
+    label: {
+      show: true,
+      // position: 'top',
+      color: 'rgba(136, 136, 136, 1)',
+      rotate: 90,
+      fontSize: 10,
+      formatter: '{c}%'
+    },
+    itemStyle: {
+      normal: {
+        barBorderRadius: 5,
+        color: '#feddbb',
+        shadowColor: 'rgba(0, 0, 0, 0.2)',
+        shadowBlur: 5,
+      }
+    }
+  }, { // 连接柱状图的曲线
+    type: 'line',
+    data: [],
+    silent: true,
+    smooth: true,
+    clickable: false,
+    itemStyle: {
+      normal: {
+        color: 'rgba(136, 136, 136, 0.5)'
+      }
+    }
+  }]
+};
 
 /* 获取当前用户具体打卡信息 */
 function getCheckDataList(cb){
@@ -511,4 +592,6 @@ module.exports = {
   getStartEndDateList,
   getCalendar,
   getCompletePercentageOfDay,
+
+  option,
 }

@@ -13,7 +13,7 @@ let colorList = ['#f8d3ad', '#f3c6ca'];
 Page({
   data: {
     navbar: ['打卡日历', '每日完成度', '历史日志'],
-    currentTab: 0,
+    currentTab: 2,
 
     /* --------------以下的data属于【打卡日历】-------------- */
     date: '', // 用户选择的date，随时都会变化
@@ -539,94 +539,11 @@ Page({
  * 图表配置部分
  */
 
-var option = {
-  color: ['#37a2da', '#32c5e9', '#67e0e3'],
-  grid: {
-    left: 10,
-    top: 0,
-    right: 10,
-    bottom: 10,
-    width: 340,
-    height: 370,
-    containLabel: true
-  },
-  xAxis: [
-    {
-      type: 'category',
-      data: [],
-      silent: true,
-      axisLine: {
-        show: false
-      },
-      axisTick: {
-        show: false
-      },
-      axisLabel: {
-        margin: 10,
-        textStyle: {
-          color: '#888888'
-        }
-      },
-    }
-  ],
-  yAxis: {
-    show: false,
-    min: 0,
-  },
-  series: [{
-      type: 'bar',
-      data: [],
-      markLine:{
-        data: [{ type: 'average' }],
-        label:{
-          show: true,
-          position: 'middle',
-          formatter:  '平均{c}%',
-        },
-        lineStyle: {
-          color: 'rgba(0, 0, 0, 0.5)',
-          shadowBlur: 10,
-          opacity: 1
-        },
-      },
-      silent: true,
-      clickable: false,
-      barCategoryGap: '25%',
-      label: {
-        show: true,
-        // position: 'top',
-        color: 'rgba(136, 136, 136, 1)',
-        rotate: 90,
-        fontSize: 10,
-        formatter: '{c}%'
-      },
-      itemStyle: {
-        normal: {
-          barBorderRadius: 5,
-          color: '#feddbb',
-          shadowColor: 'rgba(0, 0, 0, 0.2)',
-          shadowBlur: 5,
-        }
-      }
-    },{ // 连接柱状图的曲线
-      type: 'line',
-      data: [],
-      silent: true,
-      smooth: true,
-      clickable: false,
-      itemStyle: {
-        normal: {
-          color: 'rgba(136, 136, 136, 0.5)'
-        }
-      }
-    }]
-};
-
 function setChart(xdata, ydata){
-  option.xAxis[0].data = xdata;
-  option.series[0].data = ydata;
+  data.option.xAxis[0].data = xdata;
+  data.option.series[0].data = ydata;
   // option.series[1].data = ydata;
-  chart.setOption(option);
+  chart.setOption(data.option);
 };
 
 function initChart(canvas, width = 375, height = 400) { //初始化图表
@@ -635,7 +552,5 @@ function initChart(canvas, width = 375, height = 400) { //初始化图表
     height: height
   });
   canvas.setChart(chart);
-
-  // chart.setOption(data.option);
   return chart;
 }

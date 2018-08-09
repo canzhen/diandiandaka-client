@@ -1,7 +1,7 @@
 {
   "pages": [
-    "pages/mytopic/mytopic",
     "pages/history/history",
+    "pages/mytopic/mytopic",
     "pages/me/me",
     "pages/newtopic/newtopic",
     "pages/index/index"

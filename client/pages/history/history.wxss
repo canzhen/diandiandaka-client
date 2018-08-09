@@ -403,7 +403,7 @@ button::after{
  .check-log-panel{
    display: flex;
    flex-direction: column;
-   margin: 80rpx 40rpx 20rpx 40rpx;
+   margin: 50rpx 40rpx 20rpx 40rpx;
  }
 
  
@@ -417,7 +417,11 @@ button::after{
   display: flex;
   flex-direction: column;
   padding-left: 20rpx;
-  margin-bottom:50rpx;
+  padding-top: 20rpx;
+  padding-bottom: 20rpx;
+  margin-bottom: 40rpx;
+  background-color:  #faf3f47c;
+  box-shadow: 5px 5px 10px 2px #f4f3f3;
   /* width: 400rpx;
   height: 400rpx; */
   /* border: 1 solid #888888; */
@@ -428,8 +432,9 @@ button::after{
   display: flex;
   flex-direction: column;
   padding-left: 20rpx;
+  padding-top: 20rpx;
+  margin-bottom: 50rpx;
   background-color: #fffbf7;
-  margin-bottom:50rpx;
 }
 
 .detail{
