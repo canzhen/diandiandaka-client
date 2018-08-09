@@ -177,18 +177,14 @@
 
 
 
-
-
-
-
 <!-- 弹窗部分开始 -->
 <view class="modal-mask" bindtap="hideModal" catchtouchmove="preventTouchMove" wx:if="{{show_modal}}"></view>
-<view class="modal-dialog" wx:if="{{show_modal}}">
+<view class="modal-dialog" style="position:{{textarea_focus?'static':'fixed'}};" wx:if="{{show_modal}}">
   <view class="modal-title">修改日志</view>
   <view class="modal-subtitle">{{check_time}} {{check_timestamp}}丨还能输入{{word_left_num}}字</view>
   <view class="modal-content">
     <view class="modal-input">
-      <textarea class="textarea" fixed="true" auto-height value="{{log}}" bindinput="inputChange" placeholder="{{modal_placeholder}}"></textarea>
+      <textarea class="textarea"  bindfocus="focusTextarea" bindblur="blurTextarea"  fixed="true" auto-height value="{{log}}" bindinput="inputChange" placeholder="{{modal_placeholder}}"></textarea>
     </view>
   </view>
   <view class="modal-footer">

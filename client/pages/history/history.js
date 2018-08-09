@@ -558,6 +558,26 @@ Page({
    */
   preventTouchMove: function () { },
 
+
+  /**
+   * 弹出框获取焦点时的事件
+   */
+  focusTextarea: function(){
+    this.setData({
+      textarea_focus: true
+    });
+  },
+
+  /**
+   * 弹出框失去焦点时的事件
+   */
+  blurTextarea: function(){
+    this.setData({
+      textarea_focus: false
+    });
+  },
+
+
   /**
    * 不再显示，隐藏模态对话框
    */
