@@ -95,14 +95,16 @@ function getSubscriptByLength(l, numEachRow){
   var temp_topic_data_num = new Array();
   for (var r1 = 0; r1 <= r; r1++) {
     temp_topic_data_num[r1] = new Array();
-    if (r1 == r) {
-      for (var c1 = 0; c1 < c; c1++)
-        temp_topic_data_num[r1][c1] = r1 * numEachRow + c1;
-    } else {
+    // if (r1 == r) {
+    //   for (var c1 = 0; c1 < c; c1++)
+    //     temp_topic_data_num[r1][c1] = r1 * numEachRow + c1;
+    // } else {
       for (var c1 = 0; c1 < numEachRow; c1++)
         temp_topic_data_num[r1][c1] = r1 * numEachRow + c1;
-    }
+    // }
   }
+
+  console.log(temp_topic_data_num)
   return temp_topic_data_num;
 }
 
@@ -146,6 +148,7 @@ function filterUnchangeData(user_topic_list){
     if (item['log'] == undefined) item['log'] = '';
     filtered_list.push(item);
   }
+  console.log(filtered_list)
   return filtered_list;
 }
 

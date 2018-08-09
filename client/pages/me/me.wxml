@@ -14,37 +14,47 @@
     <text class="edit-data" bindtap="editPersonalData">编辑个人资料 ></text>
   </view>
 
-  <scroll-view class="me-lower-part" style="height:{{scrollHeight}}px;" scroll-y scroll-with-animation enable-back-to-top >
+    
+
+  <view class="me-lower-part" >
     <!-- 设置 -->
-    <!-- <view class="me-lower-part-each-item">
+    <view class="me-lower-part-each-item">
       <image class="image" src="/images/kapian.png"></image>
       <text> 我的卡片 </text>
-    </view> -->
-
+    </view>
     <!-- 意见反馈 -->
-    <!-- <view class="me-lower-part-each-item">
+    <view class="me-lower-part-each-item">
       <image class="image" src="/images/fankui.png"></image>
       <text> 意见反馈 </text>
-    </view> -->
-
-    <!-- 每一行 -->
-    <view class="me-lower-part-row" wx:for="{{topic_num_list}}" wx:for-item="row" wx:key="key">
-      <!-- 每一行里的每个item -->
-      <view class="me-lower-part-item" wx:for="{{row}}" wx:for-item="idx" wx:key="key">
-        <!-- 每个item里的第一行文字和图片 -->
-        <view class="me-lower-part-item-first-row">
-          <image class="me-lower-part-item-image" src="{{topic_list[idx].topic_url}}"/>
-          <text class="me-lower-part-item-text">{{topic_list[idx].topic_name}}</text>
-        </view>
-
-          <text style="font-size:23rpx;margin-left:100rpx; margin-top: -33rpx;"> 已坚持{{topic_list[idx].insist_day}}天，连续{{topic_list[idx].total_day}}天</text>
-        <!-- 每个item里的第一行文字和图片结束 -->
-      </view>
-      <!-- 每一行里的每个item结束 -->
     </view>
-    <!-- 每一行结束 -->
 
-  
-  </scroll-view>
-  
+
+
+
+
+
+
+
+
+
+
+    <scroll-view hidden="selected_function==设置" style="height:{{scrollHeight}}px;" scroll-y scroll-with-animation enable-back-to-top >
+      <!-- 每一行 -->
+      <view class="me-lower-part-row" wx:for="{{topic_num_list}}" wx:for-item="row" wx:key="key">
+        <!-- 每一行里的每个item -->
+        <view class="me-lower-part-item" wx:for="{{row}}" wx:for-item="idx" wx:key="key">
+          <!-- 每个item里的第一行文字和图片 -->
+          <view class="me-lower-part-item-first-row">
+            <image class="me-lower-part-item-image" src="{{topic_list[idx].topic_url}}"/>
+            <text class="me-lower-part-item-text">{{topic_list[idx].topic_name}}</text>
+          </view>
+
+            <text style="font-size:23rpx;margin-left:100rpx; margin-top: -33rpx;"> 已坚持{{topic_list[idx].insist_day}}天，连续{{topic_list[idx].total_day}}天</text>
+          <!-- 每个item里的第一行文字和图片结束 -->
+        </view>
+        <!-- 每一行里的每个item结束 -->
+      </view>
+      <!-- 每一行结束 -->
+    </scroll-view>
+  </view>
 </view>

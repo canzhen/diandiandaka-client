@@ -11,13 +11,17 @@ button::after{
 }
 
 .topic-name{
-   margin-top: 5rpx; 
+   /* margin-top: 5rpx;  */
+   width: 21%;
 }
 
-.input-topic-name{
+.topic-name-right{
   /* margin-top: 5rpx; */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   margin-left: 30rpx;
-  width: 280rpx;
+  width: 79%;
 }
 
 /* 单选钮样式 */

@@ -12,7 +12,7 @@ Page({
     topic_name: '',
     topic_url: '', //topic图片的url
     start_date: moment().format('YYYY-MM-DD'),
-    end_date: moment().format('YYYY-MM-DD'),
+    end_date: '永不结束',
     pre_end_date: '', //在取消永不结束checkbox时，就把之前选好的end_date再放上去
     never_end: false, //永不结束的checkbox是否选中
     has_special_character: false, //计划名称中是否包含特殊字符
@@ -50,27 +50,28 @@ Page({
     });
   },
 
-
-  
-  onLoad: function (options) {
+  setScrollHeight: function(){
     let that = this;
-
     //设置scroll-view高度，自适应屏幕
     wx.getSystemInfo({
       success: function (res) {
-        console.info(res.windowHeight);
         // let height = res.windowHeight;
         wx.createSelectorQuery().selectAll('.pick-icon-text').boundingClientRect((rects) => {
           rects.forEach((rect) => {
             that.setData({
-              scrollHeight: res.windowHeight - rect.bottom - 
-                    res.windowHeight*0.1 - 20
+              scrollHeight: res.windowHeight - rect.bottom -
+                res.windowHeight * 0.1 - 20
             });
           })
         }).exec();
       }
     });
-
+  },
+  
+  onLoad: function (options) {
+    options = (options==undefined || !options) ? {} : options;
+    let that = this;
+    this.setScrollHeight();
     this.init(options);
   },
 
@@ -138,16 +139,19 @@ Page({
   /**
    * 永不结束checkbox单击所触发的函数
    */
-  bindNeverRepeat: function(e) {
-    if (e.detail.value.length != 0){
+  bindSetEndDate: function(e) {
+    if (e.detail.value.length != 0){ //选中
       this.setData({
-        pre_end_date: this.data.end_date, //把当前end_date保存到pre
-        end_date: '永不结束' //之后设置当前end_date为永不结束
+        if_set_end_date: true,
+        end_date: moment().format('YYYY-MM-DD')
       });
-    } else {
-      this.setData({ //如果用户取消选择'永不结束'，则重置为之前所选择的时间
-        end_date: this.data.pre_end_date
+      this.setScrollHeight();
+    } else { //没选中
+      this.setData({
+        if_set_end_date: false,
+        end_date: '永不结束'
       });
+      this.setScrollHeight();
     }
   },
 
@@ -168,11 +172,7 @@ Page({
       this.showReminderAlert('计划名称中包含特殊字符，请删掉再提交，谢谢~');
       return;
     }
-
-    if (value.end_date == moment().format('YYYY-MM-DD')) {
-      this.showReminderAlert('好像忘记选结束日期啦？');
-      return;
-    }
+    if (!value.end_date) value.end_date = '永不结束';
 
     //检查日期是否漏选（开始和结束日期一样的话）
     if (value.start_date === value.end_date){

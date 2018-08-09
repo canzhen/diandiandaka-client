@@ -54,7 +54,9 @@ Page{
 /* 每一个卡片 */
 .topic-image-each-item{
   display: flex; 
-  flex-direction: column; 
+  flex-direction: column;
+  width: 220rpx;
+  height: auto;
   margin-left: 15rpx;
   margin-right: 15rpx; 
   align-items: center;
@@ -62,10 +64,13 @@ Page{
   justify-content: space-between;
 }
 
+.topic-image-row:after{
+  content: "";
+  flex: auto;
+}
+
 /* 每一个图片 */
 .topic-image-each-image{
-  width: 130rpx;
-  height: 130rpx;
   display: flex;
   flex-direction: row;
   justify-content:center;

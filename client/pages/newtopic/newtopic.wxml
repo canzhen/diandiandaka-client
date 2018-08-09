@@ -2,32 +2,35 @@
   <form bindsubmit="submitForm">
     <view style="display:flex; flex-direction:row;">
       <text class="topic-name"> 计划名称 </text>
-      <input class="input-topic-name" placeholder="输入计划名称" value="{{topic_name}}" name="input_topic_name" bindchange="bindTopicChange"/>
+      <input class="topic-name-right" placeholder="输入计划名称" value="{{topic_name}}" name="input_topic_name" bindchange="bindTopicChange"/>
     </view>
     <view class="line"></view>
     <view style="display:flex; flex-direction:row;">
       <text class="topic-name"> 开始日期 </text>
-      <picker class="input-topic-name" mode="date" value="{{start_date}}"  name="start_date" start="{{start_date}}" end="3000-12-31" bindchange="bindStartDateChange">
-        <view class="picker">
+      <view class="topic-name-right">
+        <picker mode="date" value="{{start_date}}"  name="start_date" start="{{start_date}}" end="3000-12-31" bindchange="bindStartDateChange">
           {{start_date}}
-        </view>
-      </picker>
+        </picker>
+        <view style="display:flex; flex-direction:row;">
+          设置结束日期 
+          <checkbox-group bindchange="bindSetEndDate" style="margin-top: -4rpx;">
+            <checkbox checked="{{never_end}}"/>
+          </checkbox-group></view>
+      </view>
     </view>
     <view class="line"></view>
 
-    <view style="display:flex; flex-direction:row;">
-      <text class="topic-name"> 结束日期 </text>
-      <picker class="input-topic-name" style="padding-bottom: 5rpx;" mode="date" value="{{end_date}}" name="end_date" start="{{end_date}}" end="3000-12-31" bindchange="bindEndDateChange">
-        <view class="picker">
-          {{end_date}}
+    <view wx:if="{{if_set_end_date}}">
+      <view style="display:flex; flex-direction:row;">
+        <text class="topic-name"> 结束日期 </text>
+        <view class="topic-name-right">
+          <picker style="padding-bottom: 5rpx;" mode="date" value="{{end_date}}" name="end_date" start="{{end_date}}" end="3000-12-31" bindchange="bindEndDateChange">
+            {{end_date}}
+          </picker>
         </view>
-      </picker>
-      <text class="topic-name"> 永不结束 </text>
-      <checkbox-group bindchange="bindNeverRepeat">
-        <checkbox checked="{{never_end}}"/>
-      </checkbox-group>
+      </view>
+      <view class="line"></view>
     </view>
-    <view class="line"></view>
 
     <view class="pick-icon-text"> 
       选择图标

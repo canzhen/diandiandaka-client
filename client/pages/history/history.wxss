@@ -435,6 +435,7 @@ button::after{
   padding-top: 20rpx;
   margin-bottom: 50rpx;
   background-color: #fffbf7;
+  box-shadow: 5px 5px 10px 2px #f4f3f3;
 }
 
 .detail{
