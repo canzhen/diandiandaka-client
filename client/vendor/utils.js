@@ -103,8 +103,7 @@ function getSubscriptByLength(l, numEachRow){
         temp_topic_data_num[r1][c1] = r1 * numEachRow + c1;
     // }
   }
-
-  console.log(temp_topic_data_num)
+  
   return temp_topic_data_num;
 }
 

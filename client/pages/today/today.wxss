@@ -45,8 +45,8 @@ Page{
   display:flex; 
   flex-direction:row; 
   margin-bottom: 30rpx; 
-  margin-left: 25rpx; 
-  margin-right: 25rpx;
+  margin-left: 20rpx; 
+  margin-right: 20rpx;
   align-items: space-between;
   justify-content: space-between;
 }
@@ -56,9 +56,9 @@ Page{
   display: flex; 
   flex-direction: column;
   width: 220rpx;
-  height: auto;
-  margin-left: 15rpx;
-  margin-right: 15rpx; 
+  /* height: 200rpx; */
+  margin-left: 5rpx;
+  margin-right: 5rpx; 
   align-items: center;
   justify-items: space-between;
   justify-content: space-between;

@@ -1,9 +1,10 @@
 {
   "pages": [
-    "pages/mytopic/mytopic",
-    "pages/newtopic/newtopic",
     "pages/me/me",
+    "pages/me/mytopic",
     "pages/history/history",
+    "pages/today/today",
+    "pages/newtopic/newtopic",
     "pages/index/index"
   ],
 
@@ -27,7 +28,7 @@
       }, {
         "selectedIconPath": "/images/toolbar/2selected.png",
         "iconPath": "/images/toolbar/2.png",
-        "pagePath": "pages/mytopic/mytopic",
+        "pagePath": "pages/today/today",
         "text": "今天"
       },{
         "selectedIconPath": "/images/toolbar/3selected.png",

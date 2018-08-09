@@ -216,9 +216,9 @@ image{
 }
 
 .checked{
-  /* width: 60rpx;
-  height: 60rpx; */
-  margin-left: -40rpx;
+  width: 35rpx;
+  height: 35rpx;
+  margin-left: -35rpx;
 }
 
 .all-history-last-row{

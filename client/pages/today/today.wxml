@@ -22,7 +22,7 @@
           <!-- <view  wx:if="{{my_topic_data[num].animation}}" style="background:white;height:150rpx;width:150rpx"></view> -->
         </view>
         <text style="text-align:center; margin-top: -5rpx;">{{my_topic_data[num].topic_name}}</text>
-        <text wx:if="{{my_topic_data[num].is_checked}}" 
+        <text wx:if="{{my_topic_data[num]&&my_topic_data[num].insist_day != -1}}" 
               style="text-align:center;font-size:23rpx; margin-top: -30rpx;" >
               连续{{my_topic_data[num].insist_day}}天
         </text>

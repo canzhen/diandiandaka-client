@@ -1,7 +1,7 @@
 const qiniuhelper = require('../../vendor/qiniuhelper.js');
 const api = require('../../ajax/api.js');
 const utils = require('../../vendor/utils.js');
-const numEachRow = 2; //每行3个
+
 
 Page({
 
@@ -16,11 +16,12 @@ Page({
     avatar_url: '', //从数据库（本地缓存）中获取
     is_reset_avatar: false, //默认用户没有修改头像
     is_reset_name: false, //默认用户没修改过名字
+
+    selected_function:'', 
   },
 
 
   init: function(){
-
     let that = this;
     if (wx.getStorageSync('avatarUrl')){
       this.setData({
@@ -55,55 +56,12 @@ Page({
         }
       });
     }
-
-    // 根据当前卡片数来生成每一行图片的的下标
-    let createRowNum = function () {
-      that.setData({
-        topic_num_list: utils.getSubscriptByLength(that.data.topic_list.length, numEachRow)
-      });
-    }
-
-    api.postRequest({
-      'url': '/userTopic/getTopicListByUserId',
-      'data': [],
-      'showLoading': true,
-      'success': (res) => { //成功
-        console.log(res)
-        if (res.error_code != 200) {
-          console.log('从数据库中获取用户卡片信息失败');
-          return;
-        }
-        console.log('从数据库中获取用户卡片信息成功');
-        this.setData({
-          topic_list: res.result_list
-        });
-        createRowNum();
-        console.log(res.result_list);
-      },
-      'fail': (res) => { //失败
-        console.log('从数据库中获取用户卡片信息失败');
-      }
-    });
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    let that = this;
-    
-    //设置scroll-view高度，自适应屏幕
-    wx.getSystemInfo({
-      success: function (res) {
-        wx.createSelectorQuery().selectAll('.me-upper-part').boundingClientRect((rects) => {
-          rects.forEach((rect) => {
-            that.setData({
-              scrollHeight: res.windowHeight - rect.bottom - 80
-            });
-          })
-        }).exec();
-      }
-    });
   },
 
   /**
@@ -128,6 +86,7 @@ Page({
       this.init();
     }
   },
+  
 
   /**
    * 生命周期函数--监听页面隐藏
@@ -261,5 +220,13 @@ Page({
         });
       }
     });
+  },
+
+
+
+  redirectToMyTopic: function(){
+    wx.redirectTo({
+      url: '/pages/me/mytopic',
+    })
   },
 })
