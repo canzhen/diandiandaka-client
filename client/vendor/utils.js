@@ -152,16 +152,29 @@ function filterUnchangeData(user_topic_list){
 }
 
 
+/**
+ * 参数为随机数的最小值和最大值
+ */
+function getRandom(min, max){
+  // var seed = today.getTime();
+  // seed = (seed * 9301 + 49297) % 233280;
+  var Range = max - min;
+  var Rand = Math.random();
+  return (min + Math.round(Rand * Range));
+}
+
 
 module.exports = {
   /* 功能方面 */
   login, 
   setStorageSync, 
   getStorageSync,
+  getRandom, //产生随机数
 
 
   /* 我的打卡mytopic 部分 */
   getSubscriptByLength, //计算下标
   filterDatedData, //过滤掉过期的数据，主要是看insist_day连续坚持天数是否正确
   filterUnchangeData, //过滤掉没变化的数据，只剩下有变化的数据
+  
 }

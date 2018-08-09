@@ -57,12 +57,10 @@ Page({
       success: function (res) {
         // let height = res.windowHeight;
         wx.createSelectorQuery().selectAll('.pick-icon-text').boundingClientRect((rects) => {
-          rects.forEach((rect) => {
-            that.setData({
-              scrollHeight: res.windowHeight - rect.bottom -
-                res.windowHeight * 0.1 - 20
-            });
-          })
+          that.setData({
+            scrollHeight: res.windowHeight - rects[0].bottom -
+              res.windowHeight * 0.1 - 20
+          });
         }).exec();
       }
     });

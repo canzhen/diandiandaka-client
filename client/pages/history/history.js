@@ -163,11 +163,9 @@ Page({
     wx.getSystemInfo({
       success: function (res) {
         wx.createSelectorQuery().selectAll('.navbar').boundingClientRect((rects) => {
-          rects.forEach((rect) => {
-            that.setData({
-              scrollHeight: res.windowHeight - rect.bottom - 30
-            });
-          })
+          that.setData({
+            scrollHeight: res.windowHeight - rects[0].bottom - 30
+          });
         }).exec();
       }
     });

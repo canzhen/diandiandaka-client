@@ -33,11 +33,9 @@ Page({
     wx.getSystemInfo({
       success: function (res) {
         wx.createSelectorQuery().selectAll('.me-upper-part').boundingClientRect((rects) => {
-          rects.forEach((rect) => {
-            that.setData({
-              scrollHeight: res.windowHeight - rect.bottom - 80
-            });
-          })
+          that.setData({
+            scrollHeight: res.windowHeight - rects[0].bottom - 80
+          });
         }).exec();
       }
     });

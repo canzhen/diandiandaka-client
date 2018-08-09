@@ -8,17 +8,44 @@ Page({
    * 页面的初始数据
    */
   data: {
-  
+    topic_list: [], //当前用户的所有卡片集合
+    random_position_list:[], //卡片随机的位置
   },
 
 
   init: function(){
     let that = this;
-    // 根据当前卡片数来生成每一行图片的的下标
-    let createRowNum = function () {
-      that.setData({
-        topic_num_list: utils.getSubscriptByLength(that.data.topic_list.length, numEachRow)
-      });
+    // // 根据当前卡片数来生成每一行图片的的下标
+    // let createRowNum = function () {
+    //   that.setData({
+    //     topic_num_list: utils.getSubscriptByLength(that.data.topic_list.length, numEachRow)
+    //   });
+    // }
+
+    let list = [];
+    let generateRandomPos = function(l){
+      wx.getSystemInfo({
+        success: function(res) {
+          let width = res.windowWidth;
+          let height = res.windowHeight;
+
+          wx.createSelectorQuery().selectAll('.me-lower-part-item').boundingClientRect((rects) => {
+            console.log(rects)
+            let item_height = rects[0].height;
+            let item_width = rects[0].width;
+
+            for (let i = 0; i < l; i++) {
+              list.push({ 'x': utils.getRandom(0, width - item_width), 'y': utils.getRandom(0, height - item_height) });
+            }
+            that.setData({
+              random_position_list: list
+            });
+            console.log(that.data.random_position_list)
+          }).exec();
+
+        },
+      })
+
     }
 
     api.postRequest({
@@ -35,7 +62,8 @@ Page({
         this.setData({
           topic_list: res.result_list
         });
-        createRowNum();
+        generateRandomPos(res.result_list.length);
+        // createRowNum();
         // console.log(res.result_list);
       },
       'fail': (res) => { //失败
@@ -43,31 +71,11 @@ Page({
       }
     });
   },
+
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    let that = this;
-
-    //设置scroll-view高度，自适应屏幕
-    wx.getSystemInfo({
-      success: function (res) {
-        wx.createSelectorQuery().selectAll('.me-upper-part').boundingClientRect((rects) => {
-          rects.forEach((rect) => {
-            that.setData({
-              scrollHeight: res.windowHeight - rect.bottom - 80
-            });
-          })
-        }).exec();
-      }
-    });
-  },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-  
   },
 
   /**
@@ -110,5 +118,26 @@ Page({
    */
   onShareAppMessage: function () {
   
-  }
+  },
+
+
+  longTapTopic: function() {
+    console.log('长按……')
+    this.setData({
+      long_tap: true
+    });
+  },
+
+
+  tapTopic: function() {
+    if (!this.data.long_tap)
+      console.log('单击……')
+  },
+
+
+  tapTopicEnd: function() {
+    this.setData({
+      long_tap: false
+    });
+  },
 })
