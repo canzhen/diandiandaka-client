@@ -104,6 +104,7 @@ Page{
 }
 
 
+
 /* 弹窗部分 */
 
 .modal-mask {
@@ -118,7 +119,6 @@ Page{
   z-index: 9000;
   color: #fff;
 }
-
 
 .modal-dialog {
   width: 540rpx;
@@ -191,6 +191,7 @@ Page{
   text-align: center;
 }
 
+/* 弹窗结束 */
 
 
 ::-webkit-scrollbar{

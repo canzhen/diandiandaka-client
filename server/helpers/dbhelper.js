@@ -143,14 +143,11 @@ function insertMulti(table_name, column_string, value_list, other_operation_stri
  * @param condition_string: 跟在where后面的string，例如id=? AND name=?
  * @cb: 回调函数 (bool是否成功，errmsg错误信息)
  */
-function update(table_name, column_string, value_list, condition_string, cb){
-  console.log(column_string);
+function update(table_name, column_string, condition_string, value_list, cb){
   let client = connectServer();
   let sql = 'UPDATE ' + table_name + ' SET ' + column_string;
   if (condition_string != '')
     sql += ' WHERE ' + condition_string;
-
-  console.log(sql);
 
   client.query(sql, value_list, 
     function (err, result) {

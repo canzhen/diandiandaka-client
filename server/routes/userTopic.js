@@ -61,8 +61,8 @@ router.post('/udpateColumnByUserIdTopicName', function (req, res) {
     }
 
     dbhelper.update('user_topic', column_name + '=?', 
+      "user_id = ? AND topic_name = ?",
       [column_value, openid, topic_name],
-      "user_id = ? AND topic_name = ?" ,
       (status, errmsg) => {
         if (status)
           res.send({ 'error_code': 200, 'msg': '' });

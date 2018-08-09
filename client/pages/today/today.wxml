@@ -40,7 +40,7 @@
 <view class="modal-mask" bindtap="hideModal" catchtouchmove="preventTouchMove" wx:if="{{show_modal}}"></view>
 <view class="modal-dialog" wx:if="{{show_modal}}">
   <view class="modal-title">打卡日志</view>
-  <view class="modal-subtitle">{{modal_todate_time}}丨还能输入{{word_left_num}}字</view>
+  <view class="modal-subtitle">还能输入{{word_left_num}}字</view>
   <view class="modal-content">
     <view class="modal-input">
       <textarea class="textarea" fixed="true" auto-height value="{{textarea_value}}" bindinput="inputChange" placeholder="{{modal_placeholder}}"></textarea>

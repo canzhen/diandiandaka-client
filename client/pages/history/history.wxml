@@ -142,20 +142,17 @@
   <view class="check-log-panel">
     <scroll-view class="check-log-scroll-view" style="height:{{scrollHeight-20}}px;" scroll-y scroll-with-animation enable-back-to-top>
       <view class="{{selected_topic_log != index ? 'block' : 'block-selected'}}" wx:for="{{check_info_per_topic}}" 
-      wx:key="key" wx:for-index="index" wx:for-item="check_info" 
-      data-idx="{{index}}" bindtap="selectTopicLog">
-        <view class="check-log-topic-image-text">
-          <image class="check-log-topic-image" src="{{topic_url_map[index]}}"></image>
-          <text class="check-log-topic-text">{{index}}</text>
-          <!-- <image class="check-log-topic-more" src="/images/log-down.png" hidden="{{selected_topic_log == index}}"></image> -->
-          <!-- <image class="check-log-topic-more" src="/images/log-up.png" hidden="{{selected_topic_log != index}}"></image> -->
+      wx:key="key" wx:for-index="topic_name" wx:for-item="check_info" >
+        <view class="check-log-topic-image-text" bindtap="selectTopicLog" data-idx="{{topic_name}}" >
+          <image class="check-log-topic-image" src="{{topic_url_map[topic_name]}}"></image>
+          <text class="check-log-topic-text">{{topic_name}}</text>
         </view>
         
-        <view class="detail" hidden="{{selected_topic_log != index}}">
-        <!-- <view class="detail"> -->
+        <!-- 日志部分开始 -->
+        <view class="detail" hidden="{{selected_topic_log!=topic_name}}">
           <view class="timeline"></view>
           <view class="detail-text">
-            <view class="detail-loop-panel" wx:for="{{check_info}}" wx:key="key" wx:for-item="info">
+            <view class="detail-loop-panel" bindtap="tapOnLog" wx:for="{{check_info}}" wx:key="key" wx:for-index="idx" wx:for-item="info" data-topic-name="{{topic_name}}" data-idx="{{idx}}" data-date="{{info.check_time}}" data-time="{{info.check_timestamp}}" data-log="{{info.log}}">
               <image class="detail-loop-panel-left" src="/images/log-dot.png"></image>
               <view class="detail-loop-panel-right">
                 <text class="detail-date">
@@ -168,6 +165,7 @@
             </view>
           </view>
         </view>
+        <!-- 日志部分结束 -->
       </view>
     </scroll-view>
   </view>
@@ -178,3 +176,24 @@
 
 
 
+
+
+
+
+
+<!-- 弹窗部分开始 -->
+<view class="modal-mask" bindtap="hideModal" catchtouchmove="preventTouchMove" wx:if="{{show_modal}}"></view>
+<view class="modal-dialog" wx:if="{{show_modal}}">
+  <view class="modal-title">修改日志</view>
+  <view class="modal-subtitle">{{check_time}} {{check_timestamp}}丨还能输入{{word_left_num}}字</view>
+  <view class="modal-content">
+    <view class="modal-input">
+      <textarea class="textarea" fixed="true" auto-height value="{{log}}" bindinput="inputChange" placeholder="{{modal_placeholder}}"></textarea>
+    </view>
+  </view>
+  <view class="modal-footer">
+    <view class="btn-cancel" bindtap="onCancel" data-status="cancel">不再显示</view>
+    <view class="btn-confirm" bindtap="onConfirm" data-status="confirm">确定</view>
+  </view>
+</view>
+<!-- 弹窗部分结束 -->

@@ -96,4 +96,35 @@ router.post('/getAll', function (req, res) {
 
 
 
+
+
+/**
+ * 更新某个打卡日志
+ */
+router.post('/updateLog', function (req, res) {
+  let id = req.header('session-id');
+  let topic_name = req.body.topic_name;
+  let check_time = req.body.check_time;
+  let check_timestamp = req.body.check_timestamp;
+  let log = req.body.log;
+
+  redishelper.getValue(id, (openid) => {
+    if (!openid) {
+      res.send({ 'error_code': 102, 'msg': '' });
+      return;
+    }
+    dbhelper.update('topic_check', 'log=?', 
+    'user_id=? AND topic_name=? AND check_time=? AND check_timestamp=?', 
+    [log, openid, topic_name, check_time, check_timestamp], 
+    (status, result_list) => {
+        let statusCode = status ? 200 : 100;
+        let resList = status ? result_list : false;
+        res.send({ 'error_code': statusCode, 'msg': '', 'result_list': resList });
+      });
+  });
+
+});
+
+
+
 module.exports = router;

@@ -135,8 +135,7 @@ router.post('/updateAvatarUrl', function (req, res) {
     }
     // console.log('openid:' + openid);
     let url = req.body.url;
-    dbhelper.update('user', 'avatar_url=?', [url], 
-      "user_id='" + openid + "'", 
+    dbhelper.update('user', 'avatar_url=?', 'user_id=?', [url, openid],
       (status, result) => {
         if (status) res.send({ 'error_code': 200, 'msg': '' });
         else res.send({ 'error_code': 100, 'msg': result });

@@ -266,7 +266,7 @@ Page({
       this.setData({
         selected_id: id,
         show_modal: true,
-        modal_todate_time: moment().format('YYYY-MM-DD'),
+        // modal_todate_time: moment().format('YYYY-MM-DD HH:mm'),
         modal_placeholder: '今天' + data.topic_name + '有什么感想咩~',
       });
     }

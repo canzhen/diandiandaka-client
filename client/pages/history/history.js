@@ -13,7 +13,7 @@ let colorList = ['#f8d3ad', '#f3c6ca'];
 Page({
   data: {
     navbar: ['打卡日历', '每日完成度', '历史日志'],
-    currentTab: 0,
+    currentTab: 2,
 
     /* --------------以下的data属于【打卡日历】-------------- */
     date: '', // 用户选择的date，随时都会变化
@@ -36,7 +36,7 @@ Page({
     },
     average_completeness: 0,
     check_time_per_topic: [], //每个topic的打卡天数：[{'跑步':['2018-06-13', '2018-06-24', '2018-06-21']}, {..}, {..}]
-    check_info_per_topic: [], //每个topic的具体信息：[{'跑步': {check_time': '2018-06-13', 'log': '很好'}, {check_time': '2018-06-24', 'log': '还是很好'}}, {'起床': {{}, {}, ..}}, {},...]
+    check_info_per_topic: [], //每个topic的具体信息：{'跑步': [{check_time': '2018-06-13', 'log': '很好'}, {check_time': '2018-06-24', 'log': '还是很好'}], {'起床': [{}, {}, ..}], '':[], '': [],...}
     check_time_list: [], // 所有打卡的日期的集合['2018-07-04', '', ..]
     topic_name_list: [], // 所有topic名字的集合：['减肥','跑步','早睡']
     checked_topic_list_per_day: {}, // 每天打卡的卡片列表：{'2018-05-23': ['跑步'], ...}
@@ -58,6 +58,7 @@ Page({
     /* --------------以下的data属于【历史日志】--------------*/
     topic_url_map:[], //用于存每个topic对应的图标url
     selected_topic_log: '', //被选中要查看日志的topic名字
+    word_left_num: 140, //微信默认textarea最多输入140字
   },
 
 
@@ -518,7 +519,7 @@ Page({
 
 
 
-  /*--------------------------以下是打卡日志部分---------------------------*/
+  /*------------------------以下是打卡日志部分---------------------------*/
   selectTopicLog: function(e){
     let indexKey = e.currentTarget.dataset.idx;
     // console.log(indexKey)
@@ -527,7 +528,102 @@ Page({
     this.setData({
       selected_topic_log: indexKey,
     });
-  }
+  },
+
+
+
+  tapOnLog: function (e) {
+    let topic_name = e.currentTarget.dataset.topicName;
+    //当前topic的第idx个日志
+    let topic_log_idx = e.currentTarget.dataset.idx; 
+    let check_time = e.currentTarget.dataset.date;
+    let check_timestamp = e.currentTarget.dataset.time;
+    let log = e.currentTarget.dataset.log;
+    let cur_word_left = this.data.word_left_num;
+
+    this.setData({
+      topic_name: topic_name,
+      topic_log_idx: topic_log_idx,
+      check_time: check_time, 
+      check_timestamp: check_timestamp,
+      log: log,
+      show_modal: true,
+      word_left_num: cur_word_left - log.length,
+    });
+  },
+
+
+  /**
+   * 弹出框蒙层截断touchmove事件
+   */
+  preventTouchMove: function () { },
+
+  /**
+   * 不再显示，隐藏模态对话框
+   */
+  hideModal: function () {
+    this.setData({
+      show_modal: false,
+      topic_name: '',
+      check_time: '',
+      check_timestamp: '',
+      log: ''
+    });
+  },
+
+
+  /**
+   * 对话框确认按钮点击事件
+   */
+  onConfirm: function () {
+    console.log(this.data.check_timestamp)
+    api.postRequest({
+      'url': '/topicCheck/updateLog',
+      'data': {
+        topic_name: this.data.topic_name,
+        check_time: this.data.check_time,
+        check_timestamp: this.data.check_timestamp,
+        log: this.data.new_log,
+      },
+      'success': (res) => {
+        if (res.error_code == 200)
+          console.log('更新日志成功');
+        else
+          console.log('更新日志失败');
+      },
+      'fail': (res) => {
+        console.log('更新日志失败');
+      }
+    });
+
+    let check_info_per_topic = this.data.check_info_per_topic;
+    check_info_per_topic[this.data.topic_name][this.data.topic_log_idx]['log'] = this.data.new_log;
+
+    this.setData({
+      check_info_per_topic: check_info_per_topic
+    });
+    this.hideModal();
+  },
+
+
+
+  /**
+   * 对话框取消按钮点击事件
+   */
+  onCancel: function () {
+  },
+
+  /**
+   * 输入框字数变化时触发的函数
+   */
+  inputChange: function (e) {
+    this.setData({
+      word_left_num: 140 - e.detail.value.length, //默认最多输入140
+      new_log: e.detail.value
+    });
+  },
+
+
 
 })
 
