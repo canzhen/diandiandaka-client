@@ -87,6 +87,7 @@ Page{
   width: 80rpx;
   height: 80rpx;
   margin-left: -80rpx;
+  z-index: 100;
 }
 
 .add-new-card-view{

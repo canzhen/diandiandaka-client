@@ -211,6 +211,19 @@ Page({
       [lastCheckTimeData]: moment().format('YYYY-MM-DD'),
       [lastCheckTimestampData]: moment().format('HH:MM:ss'),
     });
+
+    // 制作动画效果
+    var animation = wx.createAnimation({
+      duration: 1000,
+      timingFunction: 'ease',
+    });
+
+    animation.rotate3d(0, 1, 0.5, 360).step()
+
+    let setAnimationData = 'my_topic_data[' + id + '].animation';
+    this.setData({
+      [setAnimationData]: animation.export(),
+    });
   },
 
 
@@ -438,6 +451,11 @@ Page({
         let id = that.data.selected_id;
         let data = that.data.my_topic_data[id];
         let topic_name = data.topic_name;
+        let notShowData = 'my_topic_data[' + id + '].if_show_log';
+
+        that.setData({
+          [notShowData]: 0
+        });
         that._check(id, data);
         
         updateDBNotShowLog(topic_name);

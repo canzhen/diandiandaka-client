@@ -17,8 +17,9 @@
       <!-- 每一行 -->
       <view class="topic-image-each-item" wx:for="{{row_data}}" wx:key="col" wx:for-item="num">
         <view class="topic-image-each-image" bindtap="check" data-src="{{my_topic_data[num].topic_url}}" data-idx="{{num}}">
-          <image class="image" src="{{my_topic_data[num].topic_url}}"></image>
-          <icon class="image-punched-in" wx:if="{{my_topic_data[num].is_checked && my_topic_data[num].insist_day}}" type="success_no_circle" size="40"></icon>
+          <image animation="{{my_topic_data[num].animation}}" class="image" src="{{my_topic_data[num].topic_url}}"></image>
+          <icon class="image-punched-in" wx:if="{{my_topic_data[num].is_checked && my_topic_data[num].insist_day}}" type="success_no_circle" size="40" color="#ff9123"></icon>
+          <!-- <view  wx:if="{{my_topic_data[num].animation}}" style="background:white;height:150rpx;width:150rpx"></view> -->
         </view>
         <text style="text-align:center; margin-top: -5rpx;">{{my_topic_data[num].topic_name}}</text>
         <text wx:if="{{my_topic_data[num].is_checked}}" 
