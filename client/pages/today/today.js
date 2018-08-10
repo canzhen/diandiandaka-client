@@ -32,7 +32,7 @@ Page({
     //设置scroll-view高度，自适应屏幕
     wx.getSystemInfo({
       success: function (res) {
-        wx.createSelectorQuery().selectAll('.me-upper-part').boundingClientRect((rects) => {
+        wx.createSelectorQuery().selectAll('.first-line-view').boundingClientRect((rects) => {
           that.setData({
             scrollHeight: res.windowHeight - rects[0].bottom - 80
           });
@@ -141,13 +141,25 @@ Page({
    * 保存到当前打卡数据到数据库
    */
   saveCheckData: function(){
-    //过滤掉没有打卡的卡片，只剩下打过卡的卡片
+    // 过滤掉没有变动的卡片，剩下变动的卡片
     let changed_topic_list = utils.filterUnchangeData(this.data.my_topic_data);
+    
+    // 整理出打卡的卡片，和取消打卡的卡片
+    let [topic_check_delete_str, topic_check_delete_list,    
+         user_topic_update_reduce_list,user_topic_update_list,
+         user_topic_insert_list] = 
+         utils.formatCheckData(changed_topic_list);
+
+    
     if (changed_topic_list.length == 0) return;
     api.postRequest({
       'url': '/topicCheck/check',
       'data': { 
-        'changedTopicList': JSON.stringify(changed_topic_list)
+        'topic_check_delete_str': topic_check_delete_str, 
+        'topic_check_delete_list': topic_check_delete_list,
+        'user_topic_update_list': user_topic_update_list,
+        'user_topic_update_reduce_list': user_topic_update_reduce_list,
+        'user_topic_insert_list': user_topic_insert_list,
       },
       'showLoading': false, 
       'success': (res) => {},
@@ -216,7 +228,7 @@ Page({
       timingFunction: 'ease',
     });
 
-    animation.rotate3d(0, 1, 0.5, 360).step()
+    animation.rotate3d(0, 1, -0.5, 360).step()
 
     let setAnimationData = 'my_topic_data[' + id + '].animation';
     this.setData({
@@ -237,26 +249,39 @@ Page({
     if (data.insist_day == -1) return this.newtopic(event);
 
 
-    // 查看是否之前单击过，如果单击过，则此次单击取消之前单击
     // 新增data_changed 是因为：同一天打过卡的，is_checked本身就为true，
     // 这样在save的时候，就又会被save一次
+    let dataChangedData = 'my_topic_data[' + id + '].data_changed'; 
     let boolData = 'my_topic_data[' + id + '].is_checked';
-    let dataChangedData = 'my_topic_data[' + id + '].data_changed';
     let insistData = 'my_topic_data[' + id + '].insist_day';
     let totalData = 'my_topic_data[' + id + '].total_day';
-    let origin_is_checked = data.is_checked;
     let origin_insist_day = data.insist_day;
     let origin_total_day = data.total_day;
 
-    if (origin_is_checked) {
-      this.setData({
-        [dataChangedData]: false,
-        [boolData]: false,
-        [insistData]: origin_insist_day - 1,
-        [totalData]: origin_total_day - 1
-      });
+    // 查看是否之前单击过，如果单击过，则此次单击取消之前单击
+    if (data.is_checked) {
+      wx.showModal({
+        title: '确定删除',
+        content: '你确定要取消今日的所有打卡吗？将连同您今日的打卡日志一并删除哟',
+        showCancel: true,
+        success: (res) => {
+          if (res.confirm){
+            this.setData({
+              [dataChangedData]: true,
+              [boolData]: false,
+              [insistData]: origin_insist_day - 1,
+              [totalData]: origin_total_day - 1
+            });
+            wx.showToast({
+              title: '已删除今日打卡',
+            })
+          }
+        },
+      })
       return;
     }
+
+
 
     if (data.if_show_log == 0) {
       this._check(id, data);
@@ -395,10 +420,8 @@ Page({
    * 对话框确认按钮点击事件
    */
   onConfirm: function () {
-    
     let id = this.data.selected_id;
     let data = this.data.my_topic_data[id];
-    this._check(id, data);
 
     let logData = 'my_topic_data[' + id + '].log';
     this.setData({

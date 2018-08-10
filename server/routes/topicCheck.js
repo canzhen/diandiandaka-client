@@ -10,64 +10,66 @@ const router = express.Router();
  */
 router.post('/check', function (req, res) {
   let id = req.header('session-id');
-  var changed_topic_list = JSON.parse(req.body.changedTopicList);
+  let topic_check_delete_str = req.body.topic_check_delete_str,
+    topic_check_delete_list = req.body.topic_check_delete_list,
+    user_topic_update_list = req.body.user_topic_update_list,
+    user_topic_insert_list = req.body.user_topic_insert_list,
+    user_topic_update_reduce_list = req.body.user_topic_update_reduce_list;
 
-  //整理数据成[['topic_name1','insist_day1',...., 'topic_name1', 'total_day1',...,'topic_name1', 'if_show_log1',..]
-  var reformat_user_topic_list = [];
-  // push insist_day
-  for (let i in changed_topic_list) {
-    reformat_user_topic_list.push(changed_topic_list[i]['topic_name']);
-    reformat_user_topic_list.push(changed_topic_list[i]['insist_day']);
-  }
-  // push total_day
-  for (let i in changed_topic_list) {
-    reformat_user_topic_list.push(changed_topic_list[i]['topic_name']);
-    reformat_user_topic_list.push(changed_topic_list[i]['total_day']);
-  }
-  // push if_show_log
-  for (let i in changed_topic_list) {
-    reformat_user_topic_list.push(changed_topic_list[i]['topic_name']);
-    reformat_user_topic_list.push(changed_topic_list[i]['if_show_log']);
-  }
-
-  // push last_check_time
-  for (let i in changed_topic_list) {
-    reformat_user_topic_list.push(changed_topic_list[i]['topic_name']);
-    reformat_user_topic_list.push(changed_topic_list[i]['last_check_time']);
-  }
 
   redishelper.getValue(id, (openid) => {
     if (!openid) {
       res.send({ 'error_code': 102, 'msg': '' });
       return;
     }
-    var reformat_check_list = [];
-    for (let i in changed_topic_list){
-      var tmp_list = [];
-      tmp_list.push("'" + openid + "'");
-      tmp_list.push("'" + changed_topic_list[i]['topic_name'] + "'");
-      tmp_list.push("'" + changed_topic_list[i]['last_check_time'] + "'");
-      tmp_list.push("'" + changed_topic_list[i]['last_check_timestamp'] + "'");
-      tmp_list.push("'" + changed_topic_list[i]['log'] + "'");
-      reformat_check_list.push(tmp_list);
+
+    /* 先删除之前的数据，再把新的打卡数据加进去，避免加完又被删除 */
+    if (topic_check_delete_list.length != 0){
+      topic_check_delete_list.unshift(openid);
+      // 删除uncheck数据
+      dbhelper.deleteRow('topic_check',
+        topic_check_delete_str,
+        topic_check_delete_list,
+        (status, errmsg) => {
+          if (status) console.log('删除topic_check里数据成功');
+          else console.log('删除topic_check里数据失败');
+        });
+
+      //update uncheck数据的user_topic表
+      dbhelper.updateReduceUserTopicNumberByUserId(openid, 
+          user_topic_update_reduce_list,
+          (status) => {
+            if (status) console.log('update uncheck数据的user_topic表成功');
+            else console.log('update uncheck数据的user_topic表失败');
+          });
     }
 
 
-    //update user_topic，记录用户卡片的总数据
-    dbhelper.updateUserTopicNumberByUserId( 
-      openid, reformat_user_topic_list,
-      (status) => {
-        if (!status){
-          res.send({ 'error_code': 100, 'msg': '' });
-          return;
-        }
-        dbhelper.insertMulti( //update topic_check，记录具体打卡详情
-          'topic_check', 'user_id, topic_name, check_time, check_timestamp, log', reformat_check_list, '',
-          (status, errmsg) => {
-            if (!status) res.send({ 'error_code': 100, 'msg': errmsg });
-            else res.send({ 'error_code': 200, 'msg': '' });
-          });
-      });
+    if (user_topic_update_list.length != 0){
+      //update user_topic，记录用户卡片的总数据
+      dbhelper.updateUserTopicNumberByUserId(
+        openid, user_topic_update_list,
+        (status) => {
+          if (!status) {
+            res.send({ 'error_code': 100, 'msg': '' });
+            return;
+          }
+        });
+
+      //insert into topic_check 打卡数据
+      for (let i in user_topic_insert_list)
+        user_topic_insert_list[i].push("'" + openid + "'");
+
+      dbhelper.insertMulti( //update topic_check，记录具体打卡详情
+        'topic_check', 
+        'topic_name, check_time, check_timestamp, log, user_id', 
+        user_topic_insert_list, '',
+        (status, errmsg) => {
+          if (!status) res.send({ 'error_code': 100, 'msg': errmsg });
+          // else res.send({ 'error_code': 200, 'msg': '' });
+        });
+    }
+
   });
 });
 

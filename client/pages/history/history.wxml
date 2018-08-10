@@ -188,8 +188,8 @@
     </view>
   </view>
   <view class="modal-footer">
-    <view class="btn-cancel" bindtap="onCancel" data-status="cancel">不再显示</view>
-    <view class="btn-confirm" bindtap="onConfirm" data-status="confirm">确定</view>
+    <view class="btn-cancel" bindtap="onCancel" data-status="cancel">取消</view>
+    <view class="btn-confirm" bindtap="onConfirm" data-status="confirm">确定修改</view>
   </view>
 </view>
 <!-- 弹窗部分结束 -->

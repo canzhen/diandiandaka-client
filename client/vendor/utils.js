@@ -147,10 +147,99 @@ function filterUnchangeData(user_topic_list){
     if (item['log'] == undefined) item['log'] = '';
     filtered_list.push(item);
   }
-  console.log(filtered_list)
   return filtered_list;
 }
 
+
+/**
+ * 把checklist整理成后端update数据库时需要的格式并返回
+ * 
+ */
+function formatCheckData(topic_list){
+  let checked_topic_list = [],
+      uncheck_topic_list = [];
+  for (let i in topic_list){
+    if (topic_list[i].is_checked)
+      checked_topic_list.push(topic_list[i]);
+    else
+      uncheck_topic_list.push(topic_list[i]);
+  }
+
+  /* 第一步，处理checked topic，需要更新user_topic，并往topic_list里新增数据*/
+  //整理数据成[['topic_name1','insist_day1',...., 'topic_name1', 'total_day1',...,'topic_name1', 'if_show_log1',..]
+
+  // 生成user_topic表update list
+  let user_topic_update_list = [];
+  // push insist_day
+  for (let i in checked_topic_list) {
+    user_topic_update_list.push(checked_topic_list[i]['topic_name']);
+    user_topic_update_list.push(checked_topic_list[i]['insist_day']);
+  }
+  // push total_day
+  for (let i in checked_topic_list) {
+    user_topic_update_list.push(checked_topic_list[i]['topic_name']);
+    user_topic_update_list.push(checked_topic_list[i]['total_day']);
+  }
+  // push if_show_log
+  for (let i in checked_topic_list) {
+    user_topic_update_list.push(checked_topic_list[i]['topic_name']);
+    user_topic_update_list.push(checked_topic_list[i]['if_show_log']);
+  }
+  // push last_check_time
+  for (let i in checked_topic_list) {
+    user_topic_update_list.push(checked_topic_list[i]['topic_name']);
+    user_topic_update_list.push(checked_topic_list[i]['last_check_time']);
+  }
+
+
+  // 生成topic_check表update list
+  let user_topic_insert_list = [];
+  for (let i in checked_topic_list) {
+    var tmp_list = [];
+    tmp_list.push("'" + checked_topic_list[i]['topic_name'] + "'");
+    tmp_list.push("'" + checked_topic_list[i]['last_check_time'] + "'");
+    tmp_list.push("'" + checked_topic_list[i]['last_check_timestamp'] + "'");
+    tmp_list.push("'" + checked_topic_list[i]['log'] + "'");
+    user_topic_insert_list.push(tmp_list);
+  }
+
+  console.log(user_topic_insert_list)
+
+
+
+  /* 第二步，处理uncheck topic：需要在topic_check里删除数据 */
+  // 默认把[当天]的所有打卡数据都删掉
+  let user_topic_update_reduce_list = [];
+  for (let i in uncheck_topic_list) {
+    user_topic_update_reduce_list.push(uncheck_topic_list[i]['topic_name']);
+    user_topic_update_reduce_list.push(uncheck_topic_list[i]['insist_day']);
+  }
+  for (let i in uncheck_topic_list) {
+    user_topic_update_reduce_list.push(uncheck_topic_list[i]['topic_name']);
+    user_topic_update_reduce_list.push(uncheck_topic_list[i]['total_day']);
+  }
+
+  for (let i in uncheck_topic_list) {
+    user_topic_update_reduce_list.push(uncheck_topic_list[i]['topic_name']);
+    user_topic_update_reduce_list.push(uncheck_topic_list[i]['topic_name']);
+  }
+
+
+  let topic_check_delete_str = 'user_id=? AND ((topic_name=? AND check_time=?)';
+  for (let i = 1; i < uncheck_topic_list.length; i++)
+    topic_check_delete_str += 'OR (topic_name=? AND check_time=?)';
+  topic_check_delete_str += ')'
+  let topic_check_delete_list = [];
+  for (let i in uncheck_topic_list) {
+    topic_check_delete_list.push(uncheck_topic_list[i]['topic_name']);
+    topic_check_delete_list.push(uncheck_topic_list[i]['last_check_time']);
+  }
+
+
+  return [topic_check_delete_str, topic_check_delete_list, 
+          user_topic_update_reduce_list, user_topic_update_list,
+          user_topic_insert_list];
+}
 
 /**
  * 参数为随机数的最小值和最大值
@@ -176,5 +265,5 @@ module.exports = {
   getSubscriptByLength, //计算下标
   filterDatedData, //过滤掉过期的数据，主要是看insist_day连续坚持天数是否正确
   filterUnchangeData, //过滤掉没变化的数据，只剩下有变化的数据
-  
+  formatCheckData,
 }

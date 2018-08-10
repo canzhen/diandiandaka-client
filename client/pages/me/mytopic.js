@@ -15,47 +15,66 @@ Page({
 
   init: function(){
     let that = this;
-    let list = [];
+    // 制作动画效果
+    let animation = wx.createAnimation({
+      duration: 6000,
+      timingFunction: 'ease-in-out',
+    });
+
+    let createRandomPos = function (l, xLimit, yLimit) {
+      let randompos_list = [];
+      for (let i = 0; i < l; i++) {
+        randompos_list.push({
+          'x': utils.getRandom(0,xLimit),
+          'y': utils.getRandom(0,yLimit)
+        });
+      }
+      that.setData({
+        random_position_list: randompos_list,
+        // scrollHeight: height
+      });
+    };
+
+    let createAnimation = function (l, limit) {
+      let animation_list = [];
+      for (let i = 0; i < l; i++) {
+        animation_list.push(getAnimationData(
+          utils.getRandom(0, limit),
+          utils.getRandom(0, limit),
+          utils.getRandom(0, limit),
+          utils.getRandom(0, limit),
+          utils.getRandom(0, limit),
+          utils.getRandom(0, limit),
+        ));
+      }
+      that.setData({
+        animation_list: animation_list,
+      });
+    };
+
+    let getAnimationData = function (x1, y1, z1, x2, y2, z2) {
+      animation.translate3d(x1, y1, z1).step().translate3d(x2, y2, z2).step();
+      return animation.export();
+    }
+
+
     let generateRandomPos = function(l){
       wx.getSystemInfo({
         success: function(res) {
           let width = res.windowWidth;
           let height = res.windowHeight;
-
-          wx.createSelectorQuery().selectAll('.me-lower-part-item').boundingClientRect((rects) => {
-            console.log(rects)
+          // 设置scrollheight以及卡片随机位置
+          wx.createSelectorQuery().selectAll('.movable-item').boundingClientRect((rects) => {
             let item_height = rects[0].height;
             let item_width = rects[0].width;
-
-            for (let i = 0; i < l; i++) {
-              list.push({ 'x': utils.getRandom(0, width - item_width), 'y': utils.getRandom(0, height - item_height) });
-            }
-            that.setData({
-              random_position_list: list
-            });
-
-            createAnimation();
-            console.log(that.data.random_position_list)
+            createRandomPos(l, width-item_width, height-item_height);
+            createAnimation(l, 50);
+            console.log(that.data.animation_list)
           }).exec();
-
         },
       })
     }
 
-    let createAnimation = function () {
-      // 制作动画效果
-      let animation = wx.createAnimation({
-        duration: 6000,
-        timingFunction: 'ease',
-      });
-
-      animation.translate3d(-3, -3, 10).step();
-
-      // let setAnimationData = 'my_topic_data[' + id + '].animation';
-      that.setData({
-        animationData: animation.export(),
-      });
-    }
 
 
     api.postRequest({
@@ -63,7 +82,7 @@ Page({
       'data': [],
       'showLoading': true,
       'success': (res) => { //成功
-        // console.log(res)
+        console.log(res)
         if (res.error_code != 200) {
           console.log('从数据库中获取用户卡片信息失败');
           return;

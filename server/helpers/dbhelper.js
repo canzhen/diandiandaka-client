@@ -162,7 +162,47 @@ function update(table_name, column_string, condition_string, value_list, cb){
   client.end();
 }
 
+/**
+ * 通过id和外键，uncheck当天打卡，并从topic_check表中找到最新打卡时间
+ * 赋值给last_check_time 和 last_check_timestamp
+ */
+function updateReduceUserTopicNumberByUserId(id, list, cb){
+  console.log('updateReduceUserTopicNumberByUserId')
 
+  let client = connectServer();
+  let l = list.length / 3;
+  let sql = "UPDATE user_topic SET insist_day = CASE topic_name ";
+  for (let i = 0; i < l / 2; i++) sql += "WHEN ? THEN ? ";//insist_day
+
+  sql += "ELSE insist_day END, total_day = CASE topic_name ";//total_day
+  for (let i = 0; i < l / 2; i++) sql += "WHEN ? THEN ? ";
+
+  sql += "ELSE total_day END, last_check_time = CASE topic_name ";//time
+  for (let i = 0; i < l / 2; i++) {
+    sql += "WHEN ? THEN ";
+    sql += "(SELECT check_time from topic_check where user_id='"+id+"' and topic_name=? ORDER BY check_time DESC limit 1) ";
+  }
+
+  sql += "ELSE last_check_time END WHERE user_id = ?;";
+
+  list.push(id);
+
+  console.log(sql)
+  console.log(list)
+
+  client.query(
+    sql, list,
+    function (err, result) {
+      if (err) {
+        console.log("update reduce user_topic by id失败，失败信息:" + err.message);
+      } else {
+        console.log('update reduce user_topic by id成功');
+      }
+      cb(!err);
+    });
+
+  client.end();
+}
 
 /**
  * 通过用户id更新usertopic信息
@@ -173,9 +213,8 @@ function update(table_name, column_string, condition_string, value_list, cb){
 function updateUserTopicNumberByUserId(id, list, cb) {
   let client = connectServer();
   let l = list.length / 4;
-  let sql = "UPDATE user_topic " +  
-            "SET insist_day = CASE topic_name ";
-  for (let i=0; i < l/2; i++) sql += "WHEN ? THEN ? "; //insist_day
+  let sql = "UPDATE user_topic SET insist_day = CASE topic_name ";
+  for (let i = 0; i <  l / 2; i++) sql += "WHEN ? THEN ? "; //insist_day
 
   sql += "ELSE insist_day END, total_day = CASE topic_name "; //total_day
   for (let i = 0; i < l / 2; i++) sql += "WHEN ? THEN ? ";
@@ -187,7 +226,11 @@ function updateUserTopicNumberByUserId(id, list, cb) {
   for (let i = 0; i < l / 2; i++) sql += "WHEN ? THEN ? ";
 
   sql += "ELSE last_check_time END WHERE user_id = ?;"
-  list.push(id);
+
+
+  console.log(sql)
+  console.log(list)
+  list.push(id)
 
   client.query(
     sql, list,
@@ -203,14 +246,51 @@ function updateUserTopicNumberByUserId(id, list, cb) {
   client.end();
 }
 
+
+/**
+ * 从数据库中删除数据
+ * @param table_name: 表名
+ * @param column_string: 栏名： topic_name=? AND check_time=? AND ...
+ * @param value_list: [] 和?相对应的数据列表
+ */
+function deleteRow(table_name, column_string, value_list, cb){
+  let client = connectServer();
+  sql = 'DELETE FROM ' + table_name + ' WHERE ' + column_string;
+
+  console.log('deleteRow');
+  console.log(sql)
+  console.log(value_list)
+  client.query(
+    sql, value_list,
+    function (err, result) {
+      let errmsg = '';
+      if (err) {
+        errmsg = err.message;
+        console.log('delete from ' + table_name + '表失败，失败信息:' + err.message);
+      } else {
+        if (result['changedRows'] == 0) { //为0代表duplicate key
+          console.log('delete nothing');
+          cb(true, 'delete nothing');
+          return;
+        }
+        console.log('delete from ' + table_name + '表成功，删除了' + result['changedRows']+ '行');
+      }
+      cb(!err, errmsg); //回调函数
+    });
+
+  client.end();
+}
+
 module.exports = {
   connectServer,
   insert,
   insertMulti,
   select, 
   update,
+  deleteRow,
 
 
   //user_topic部分
   updateUserTopicNumberByUserId,
+  updateReduceUserTopicNumberByUserId
 };

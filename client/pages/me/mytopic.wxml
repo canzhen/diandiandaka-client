@@ -1,23 +1,16 @@
-<scroll-view class="my-topic" style="height:{{scrollHeight}}px;" scroll-y scroll-with-animation enable-back-to-top>
-  <movable-area style="width:100%; height:100%;">
-    <!-- 每一行 -->
-    <view class="me-lower-part-row" wx:for="{{topic_list}}" wx:for-item="item" wx:for-index="idx" wx:key="key">
-      <!-- 每一行里的每个item -->
-      <view class="me-lower-part-item" bindtap="tapTopic" bindlongtap="longTapTopic" bindtouchend="tapTopicEnd">
-        <movable-view direction="all" class="me-lower-part-item-movable-view" style="left:{{random_position_list[idx].x}}rpx;top:{{random_position_list[idx].y}}rpx;">
-            <!-- 每个item里的第一行文字和图片 -->
-            <view class="me-lower-part-item-first-row" animation="{{animationData}}">
-              <image class="me-lower-part-item-image" src="{{item.topic_url}}"/>
-              <text class="me-lower-part-item-text">{{item.topic_name}}</text>
-            </view>
-
-              <text animation="{{animationData}}" style="font-size:23rpx;margin-left:100rpx; margin-top: -33rpx;"> 已坚持{{item.insist_day}}天，连续{{item.total_day}}天</text>
-            <!-- 每个item里的第一行文字和图片结束 -->
-
-        </movable-view>
-      </view>
-      <!-- 每一行里的每个item结束 -->
-    </view>
-    <!-- 每一行结束 -->
+<!-- <scroll-view scroll-y scroll-with-animation enable-back-to-top> -->
+  <movable-area  class="my-topic" style="width:100%; height:{{scrollHeight}}px;">
+    <!-- 每个item -->
+    <movable-view direction="all" wx:for="{{topic_list}}"  wx:for-item="item" wx:for-index="idx" wx:key="key" class="movable-item" animation="{{animation_list[idx]}}" style="left:{{random_position_list[idx].x}}px;top:{{random_position_list[idx].y}}px;">
+        <!-- 每个item里的第一行文字和图片 -->
+        <view class="me-lower-part-item-first-row">
+          <image class="me-lower-part-item-image" src="{{item.topic_url}}"/>
+          <text class="me-lower-part-item-text">{{item.topic_name}}</text>
+        </view>
+        <!-- 每个item里的第一行文字和图片结束 -->
+        <text style="font-size:23rpx;margin-left:100rpx; margin-top: -33rpx;"> 已坚持{{item.insist_day}}天，连续{{item.total_day}}天</text>
+        
+    </movable-view>
+    <!-- 每个item结束 -->
   </movable-area>
-</scroll-view>
+<!-- </scroll-view> -->
