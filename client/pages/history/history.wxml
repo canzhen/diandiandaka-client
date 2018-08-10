@@ -141,8 +141,7 @@
 <view hidden="{{currentTab!==2}}">
   <view class="check-log-panel">
     <scroll-view class="check-log-scroll-view" style="height:{{scrollHeight-20}}px;" scroll-y scroll-with-animation enable-back-to-top>
-      <view class="block" style="background-color:{{colorList[check_info_per_topic[topic_name].length%8]}};" wx:for="{{check_info_per_topic}}" 
-      wx:key="key" wx:for-index="topic_name" wx:for-item="check_info" >
+      <view class="block" style="background-color:{{colorList[check_info_per_topic[topic_name].length%8]}};" wx:for="{{check_info_per_topic}}"  wx:key="key" wx:for-index="topic_name" wx:for-item="check_info" >
         <view class="check-log-topic-image-text" bindtap="selectTopicLog" data-idx="{{topic_name}}" >
           <image class="check-log-topic-image" src="{{topic_url_map[topic_name]}}"></image>
           <text class="check-log-topic-text">{{topic_name}}</text>

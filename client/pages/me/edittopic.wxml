@@ -11,16 +11,11 @@
         <picker mode="date" value="{{start_date}}"  name="start_date" start="{{start_date}}" end="3000-12-31" bindchange="bindStartDateChange">
           {{start_date}}
         </picker>
-        <view style="display:flex; flex-direction:row;">
-          设置结束日期 
-          <checkbox-group bindchange="bindSetEndDate" style="margin-top: -4rpx;">
-            <checkbox checked="{{never_end}}"/>
-          </checkbox-group></view>
       </view>
     </view>
     <view class="line"></view>
 
-    <view wx:if="{{if_set_end_date}}">
+    <!-- <view wx:if="{{if_set_end_date}}"> -->
       <view style="display:flex; flex-direction:row;">
         <text class="topic-name"> 结束日期 </text>
         <view class="topic-name-right">
@@ -30,7 +25,7 @@
         </view>
       </view>
       <view class="line"></view>
-    </view>
+    <!-- </view> -->
 
     <view class="pick-icon-text"> 
       选择图标

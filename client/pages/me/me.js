@@ -222,10 +222,10 @@ Page({
     });
   },
 
-
+  
 
   redirectToMyTopic: function(){
-    wx.redirectTo({
+    wx.navigateTo({
       url: '/pages/me/mytopic',
     })
   },

@@ -257,9 +257,9 @@ function deleteRow(table_name, column_string, value_list, cb){
   let client = connectServer();
   sql = 'DELETE FROM ' + table_name + ' WHERE ' + column_string;
 
-  console.log('deleteRow');
-  console.log(sql)
-  console.log(value_list)
+  // console.log('deleteRow');
+  // console.log(sql)
+  // console.log(value_lis t)
   client.query(
     sql, value_list,
     function (err, result) {

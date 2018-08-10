@@ -13,7 +13,7 @@ let colorList = ['#f8d3ad', '#f3c6ca'];
 Page({
   data: {
     navbar: ['打卡日历', '每日完成度', '历史日志'],
-    currentTab: 0,
+    currentTab: 2,
     colorList: [ '#f3faf998', '#f6f3fa98', '#f6faf398', '#f9faf398',
                '#faf3f898', '#faf3f498', '#f3faf9a4', '#f3f7faa4'],
 
@@ -141,6 +141,7 @@ Page({
   // 初始化每日完成度
   initCompleteness: function () {
     let [checkTimeList, checkedTopicListPerDay] = data.getTopicListPerDay(this.data.checked_data_list);
+
     this.setData({
       check_time_list: checkTimeList,
       checked_topic_list_per_day: checkedTopicListPerDay,
@@ -532,6 +533,9 @@ Page({
 
 
 
+  /**
+   * 单击日志
+   */
   tapOnLog: function (e) {
     let topic_name = e.currentTarget.dataset.topicName;
     //当前topic的第idx个日志
@@ -552,6 +556,49 @@ Page({
     });
   },
 
+
+  /**
+   * 长按日志，弹出删除窗口
+   */
+  // longTapLog: function(e){
+  //   let that = this;
+  //   wx.showModal({
+  //     title: '删除',
+  //     content: '确定要删除这次打卡吗？',
+  //     showCancel: true,
+  //     success: (res)=>{
+  //       if (!res.confirm) return;
+  //       let topic_name = e.currentTarget.dataset.topicName,
+  //         check_time = e.currentTarget.dataset.date,
+  //         check_timestamp = e.currentTarget.dataset.time,
+  //         idx = e.currentTarget.dataset.idx;
+  //       api.postRequest({
+  //         'url': '/topicCheck/deleteCheck',
+  //         'data':{
+  //           topic_name: topic_name, 
+  //           check_time: check_time,
+  //           check_timestamp: check_timestamp
+  //         },
+  //         'success': (res) => {
+  //           if (res.error_code != 200){
+  //             console.log('删除打卡失败');
+  //             return;
+  //           }
+  //           console.log('删除打卡成功');
+  //           let new_check_info_per_topic = that.data.check_info_per_topic;
+  //           let new_check_info = new_check_info_per_topic[topic_name];
+  //           delete new_check_info[idx];
+  //           console.log(new_check_info)
+  //           new_check_info_per_topic[topic_name] = new_check_info
+  //           that.setData({
+  //             check_info_per_topic: new_check_info_per_topic
+  //           });
+  //         },
+  //         'fail': (res) => { console.log('删除打卡失败');},
+  //       });
+  //     }
+  //   })
+  // },
 
   /**
    * 弹出框蒙层截断touchmove事件
