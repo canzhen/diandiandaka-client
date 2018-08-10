@@ -17,43 +17,48 @@ Page({
     let that = this;
     // 制作动画效果
     let animation = wx.createAnimation({
-      duration: 6000,
+      duration: 4000,
       timingFunction: 'ease-in-out',
     });
 
     let createRandomPos = function (l, xLimit, yLimit) {
       let randompos_list = [];
-      for (let i = 0; i < l; i++) {
+      for (let i = 0; i < l/2; i++) {
         randompos_list.push({
-          'x': utils.getRandom(0,xLimit),
-          'y': utils.getRandom(0,yLimit)
+          'x': utils.getRandom(0, xLimit / 2),
+          'y': utils.getRandom(0, yLimit / 2)
+        });
+      }
+      for (let i = l / 2; i <= l; i++) {
+        randompos_list.push({
+          'x': utils.getRandom(xLimit / 2, xLimit),
+          'y': utils.getRandom(yLimit / 2, yLimit)
         });
       }
       that.setData({
         random_position_list: randompos_list,
-        // scrollHeight: height
       });
+
+      console.log(that.data.random_position_list)
     };
 
-    let createAnimation = function (l, limit) {
+    let createAnimation = function (l, xlimit, ylimit, zlimit) {
       let animation_list = [];
       for (let i = 0; i < l; i++) {
         animation_list.push(getAnimationData(
-          utils.getRandom(0, limit),
-          utils.getRandom(0, limit),
-          utils.getRandom(0, limit),
-          utils.getRandom(0, limit),
-          utils.getRandom(0, limit),
-          utils.getRandom(0, limit),
+          utils.getRandom(-xlimit, xlimit),
+          utils.getRandom(-ylimit, ylimit),
+          utils.getRandom(-zlimit, zlimit),
         ));
       }
       that.setData({
         animation_list: animation_list,
       });
+      // console.log(animation_list)
     };
 
-    let getAnimationData = function (x1, y1, z1, x2, y2, z2) {
-      animation.translate3d(x1, y1, z1).step().translate3d(x2, y2, z2).step();
+    let getAnimationData = function (x1, y1, z1) {
+      animation.translate3d(x1, y1, z1).step();
       return animation.export();
     }
 
@@ -63,13 +68,19 @@ Page({
         success: function(res) {
           let width = res.windowWidth;
           let height = res.windowHeight;
+          that.setData({
+            scrollWidth: width,
+            scrollHeight: height
+          });
           // 设置scrollheight以及卡片随机位置
           wx.createSelectorQuery().selectAll('.movable-item').boundingClientRect((rects) => {
             let item_height = rects[0].height;
             let item_width = rects[0].width;
-            createRandomPos(l, width-item_width, height-item_height);
-            createAnimation(l, 50);
-            console.log(that.data.animation_list)
+            createRandomPos(l, width - item_width, height - item_height); 
+            createAnimation(l, 20, 40, 50);
+            setInterval(function () {
+              createAnimation(l, 10, 10, 50);
+            }, 4000);
           }).exec();
         },
       })
@@ -82,7 +93,7 @@ Page({
       'data': [],
       'showLoading': true,
       'success': (res) => { //成功
-        console.log(res)
+        // console.log(res)
         if (res.error_code != 200) {
           console.log('从数据库中获取用户卡片信息失败');
           return;

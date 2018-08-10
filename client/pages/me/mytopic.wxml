@@ -1,7 +1,8 @@
 <!-- <scroll-view scroll-y scroll-with-animation enable-back-to-top> -->
-  <movable-area  class="my-topic" style="width:100%; height:{{scrollHeight}}px;">
+  <movable-area  class="my-topic" style="width:{{scrollWidth}}px; height:{{scrollHeight}}px;">
     <!-- 每个item -->
-    <movable-view direction="all" wx:for="{{topic_list}}"  wx:for-item="item" wx:for-index="idx" wx:key="key" class="movable-item" animation="{{animation_list[idx]}}" style="left:{{random_position_list[idx].x}}px;top:{{random_position_list[idx].y}}px;">
+    <movable-view direction="all" x="{{random_position_list[idx].x}}" y="{{random_position_list[idx].y}}" wx:for="{{topic_list}}"  wx:for-item="item" wx:for-index="idx" wx:key="key" class="movable-item">
+      <view class="item-background" animation="{{animation_list[idx]}}">
         <!-- 每个item里的第一行文字和图片 -->
         <view class="me-lower-part-item-first-row">
           <image class="me-lower-part-item-image" src="{{item.topic_url}}"/>
@@ -9,7 +10,7 @@
         </view>
         <!-- 每个item里的第一行文字和图片结束 -->
         <text style="font-size:23rpx;margin-left:100rpx; margin-top: -33rpx;"> 已坚持{{item.insist_day}}天，连续{{item.total_day}}天</text>
-        
+      </view>
     </movable-view>
     <!-- 每个item结束 -->
   </movable-area>

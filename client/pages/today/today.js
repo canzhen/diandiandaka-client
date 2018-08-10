@@ -224,7 +224,7 @@ Page({
 
     // 制作动画效果
     var animation = wx.createAnimation({
-      duration: 1000,
+      duration: 2000,
       timingFunction: 'ease',
     });
 

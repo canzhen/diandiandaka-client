@@ -503,12 +503,17 @@ function getTopicListPerDay(checked_data_list){
   var map = new Map(); //{time: topic_list}
   var checkedTimeList = new Set();
   for (let i in checked_data_list){
-    let time = checked_data_list[i]['check_time'];
+    let data = checked_data_list[i];
+    let time = data['check_time'];
+    // console.log('time:'  + time)
+    // console.log('topic_name:' + data['topic_name'])
     checkedTimeList.add(time);
     if (map[time] == undefined) 
-      map[time] = [];
-    map[time].push(checked_data_list[i]['topic_name']);
+      map[time] = new Set();
+    map[time].add(data['topic_name']);
   }
+  for (let key in map)
+    map[key] = Array.from(map[key]);
   return [Array.from(checkedTimeList), map];
 }
 
