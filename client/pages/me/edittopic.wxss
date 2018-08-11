@@ -98,8 +98,8 @@ checkbox {
 .new-topic-button{
   position: fixed;
   top: 90%;
-  left: 38%;
-  width: 170rpx;
+  left: 37%;
+  width: 180rpx;
   height: 85rpx;
   /* margin: auto 70rpx 90rpx 220rpx; */
 

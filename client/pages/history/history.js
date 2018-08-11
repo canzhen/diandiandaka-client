@@ -13,7 +13,7 @@ let colorList = ['#f8d3ad', '#f3c6ca'];
 Page({
   data: {
     navbar: ['打卡日历', '每日完成度', '历史日志'],
-    currentTab: 2,
+    currentTab: 0,
     colorList: [ '#f3faf998', '#f6f3fa98', '#f6faf398', '#f9faf398',
                '#faf3f898', '#faf3f498', '#f3faf9a4', '#f3f7faa4'],
 
@@ -29,6 +29,7 @@ Page({
     checked_data_list: [], // 用于展示每日具体打卡信息
     check_first_date: '', //所有卡片中最早开始打卡的时间
     check_last_date: '', //所有卡片中最晚打卡的时间
+    scroll_into_view_id: 'id' + moment().format('YYYY-MM'),
 
 
     /* --------------以下的data属于【每日完成度】--------------*/
@@ -236,7 +237,6 @@ Page({
     }
 
     this.setData({
-      scroll_into_view_id: 'id'+currentMoment.format('YYYY-MM'),
       date: currentMoment,
       selected_topic: allTopic[0]
     });

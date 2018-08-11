@@ -45,22 +45,16 @@ Page({
             topic_url: options.topic_url ? options.topic_url : '',
             start_date: options.start_date ? options.start_date : '',
             end_date: options.end_date ? options.end_date : '',
-            scroll_into_id: options.topic_url ? 'imageid' + options.topic_url : '',
           });
-          let id_list = [];
-          for (let i in icon_data_list){
-            let data = icon_data_list[i];
-            id_list.push(data.substring(data.lastIndexOf('/')+1, data.lastIndexOf('.')));
-          }
           this.setData({
-            id_list: id_list
+            scroll_into_id: 'chosen'
           });
-          console.log(this.data.icon_data_list)
-          console.log(this.data.id_list)
         } else showFailToast();
       },
       'fail': (res) => { showFailToast(); }
     });
+
+
   },
 
   setScrollHeight: function () {
