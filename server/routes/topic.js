@@ -51,8 +51,8 @@ router.post('/createtopic', function (req, res) {
       req.body.enddate,], '',
       (status, errmsg) => {
         if (!status){
-          let errReason = errmsg.substr(0, errmsg.indexOf(':'));
-          if (errReason == 'ER_DUP_ENTRY')
+          // let errReason = errmsg.substr(0, errmsg.indexOf(':'));
+          if (errmsg == 'ER_DUP_ENTRY')
             res.send({ 'error_code': 101, 'msg': errmsg });
           else res.send({ 'error_code': 100, 'msg': errmsg });
           return;
@@ -73,6 +73,39 @@ router.post('/createtopic', function (req, res) {
     });
   });
 });
+
+
+
+/**
+ * 更新用户的头像
+ */
+router.post('/update', function (req, res) {
+  let id = req.header('session-id');
+  let original_topic_name = req.body.original_topic_name,
+      topic_name = req.body.topic_name,
+      topic_url = req.body.topic_url,
+      start_date = req.body.start_date,
+      end_date = req.body.end_date;
+  redishelper.getValue(id, (openid) => {
+    if (!openid) {
+      res.send({ 'error_code': 102, 'msg': '' });
+      return;
+    }
+    let url = req.body.url;
+    dbhelper.update('user_topic', 'topic_name=?,topic_url=?, start_date=?,end_date=?', 'user_id=? AND topic_name=?', [topic_name, topic_url, start_date, end_date, openid, original_topic_name],
+      (status, errmsg) => {
+        if (status) res.send({ 'error_code': 200, 'msg': '' });
+        else{
+          if (errmsg == 'ER_DUP_ENTRY'){
+            res.send({ 'error_code': 101, 'msg': errmsg });
+          }
+          res.send({ 'error_code': 100, 'msg': errmsg });
+        }
+      });
+  });
+});
+
+
 
 
 module.exports = router;

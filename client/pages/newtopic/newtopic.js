@@ -8,7 +8,6 @@ Page({
   data: {
     icon_data: [], //可供选择的topic图标
     icon_name_num: [],
-    // selected_icon_num: -1,
     topic_name: '',
     topic_url: '', //topic图片的url
     start_date: moment().format('YYYY-MM-DD'),
@@ -87,7 +86,6 @@ Page({
     if (typeof data == 'undefined') return;
 
     this.setData({
-      selected_icon_num: id,
       topic_url: event.currentTarget.dataset.url
     });
   },
@@ -183,7 +181,6 @@ Page({
     }
 
     console.log("topic name是：" + value.input_topic_name + 
-      "\n selected id 是：" + this.data.selected_icon_num + 
       "\n所选择的图像url是：" + this.data.topic_url + 
       "\n开始日期是：" + value.start_date + 
       "\n结束日期是：" + value.end_date);
@@ -192,7 +189,6 @@ Page({
     //将卡片姓名和卡片图像url添加到卡片表中
     api.postRequest({
       'url': '/topic/createtopic',
-      'showLoading': true, 
       'data': {
         'topicname': value.input_topic_name,
         'topicurl': this.data.topic_url,

@@ -166,4 +166,30 @@ router.post('/updateLog', function (req, res) {
 
 
 
+/**
+ * 更新卡片名称
+ */
+router.post('/updateName', function (req, res) {
+  let id = req.header('session-id');
+  let original_topic_name = req.body.original_topic_name,
+      topic_name = req.body.topic_name;
+
+  redishelper.getValue(id, (openid) => {
+    if (!openid) {
+      res.send({ 'error_code': 102, 'msg': '' });
+      return;
+    }
+    dbhelper.update('topic_check', 'topic_name=?',
+      'user_id=? AND topic_name=?',
+      [topic_name, openid, original_topic_name],
+      (status, result_list) => {
+        let statusCode = status ? 200 : 100;
+        let resList = status ? result_list : false;
+        res.send({ 'error_code': statusCode, 'msg': '', 'result_list': resList });
+      });
+  });
+});
+
+
+
 module.exports = router;

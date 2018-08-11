@@ -8,7 +8,6 @@ Page({
   data: {
     icon_data_list: [], //可供选择的topic图标
     icon_name_num: [],
-    // selected_icon_num: -1,
     topic_name: '',
     topic_url: '', //topic图片的url
     start_date: moment().format('YYYY-MM-DD'),
@@ -169,38 +168,61 @@ Page({
       return;
     }
 
-    console.log("topic name是：" + value.input_topic_name +
-      "\n selected id 是：" + this.data.selected_icon_num +
+    console.log("topic name是：" + value.input_topic_name + 
       "\n所选择的图像url是：" + this.data.topic_url +
       "\n开始日期是：" + value.start_date +
       "\n结束日期是：" + value.end_date);
+
+
+
     let that = this;
 
-    //将卡片姓名和卡片图像url添加到卡片表中
+    let updateTopicCheck = function(){
+      api.postRequest({
+        'url': '/topicCheck/updateName',
+        'data': {
+          original_topic_name: that.data.topic_name,
+          topic_name: value.input_topic_name
+        },
+        'success': (res) => { 
+          if (res.error_code == 200){
+            console.log('update topic_check 信息成功');
+            that.showSucceedToast();
+          }
+        },
+        'fail': (res) => { 
+          console.log('update topic_check 信息失败');
+        },
+      });
+    };
+
+    // 更新卡片信息
     api.postRequest({
-      'url': '/topic/createtopic',
-      'showLoading': true,
+      'url': '/topic/update',
       'data': {
-        'topicname': value.input_topic_name,
-        'topicurl': this.data.topic_url,
-        'startdate': value.start_date,
-        'enddate': value.end_date
+        original_topic_name: this.data.topic_name,
+        topic_name: value.input_topic_name,
+        topic_url: this.data.topic_url,
+        start_date: value.start_date,
+        end_date: value.end_date
       },
-      'success': function (res) {
-        console.log('into success');
+      'success': (res) => {
         console.log(res.error_code);
         if (res.error_code == 101)
-          that.showFailToast('这个卡片好像你以前添加过喔！换个卡片吧~');
+          that.showFailToast('这个卡片名字好像你用过喔！换个名字吧~');
         else if (res.error_code == 103) {
           utils.login((res) => { });
           that.showFailToast('好像出了点问题，可以再提交一次咩~');
         } else if (res.error_code == 100)
           that.showFailToast('提交失败..大爷饶命，小的这就去查看原因..');
-        else if (res.error_code == 200)
-          that.showSucceedToast();
+        else if (res.error_code == 200){
+          if (value.input_topic_name != that.data.topic_name)
+            updateTopicCheck();
+          else that.showSucceedToast();
+        }
       },
-      'fail': function (res) {
-        console.log('发送/topic/createtopic请求失败');
+      'fail': (res) => {
+        console.log('update topic 信息失败');
       }
     });
 
@@ -222,20 +244,13 @@ Page({
   // 显示提交成功的toast
   showSucceedToast: function () {
     wx.showToast({
-      title: '提交成功',
+      title: '修改卡片成功！',
       icon: 'success',
       duration: 2000,
       success: function () {
         setTimeout(function () {
-          wx.switchTab({
-            url: '/pages/mytopic/mytopic',
-            success: function (e) {
-              var page = getCurrentPages().pop();
-              if (page == undefined || page == null) return;
-              page.onLoad();
-            }
-          })
-        }, 1000);
+          wx.navigateBack({})
+        }, 2000);
       }
     })
   },

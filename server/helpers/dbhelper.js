@@ -71,10 +71,9 @@ function insert(table_name, column_string, value_list, other_operation_string, c
   client.query(
     sql, value_list,
     function (err, result) {
-      let errmsg = '';
       if (err) {
-        errmsg = err.message;
         console.log('insert ' + table_name + '表失败，失败信息:' + err.message);
+        cb(false, err.code);
       } else {
         if (result['changedRows'] == 0) { //为0代表duplicate key
           cb(true, 'duplicate');
@@ -82,7 +81,6 @@ function insert(table_name, column_string, value_list, other_operation_string, c
         }
         console.log('insert ' + table_name + '表成功');
       }
-      cb(!err, errmsg); //回调函数
     });
 
   client.end();
@@ -109,8 +107,6 @@ function insertMulti(table_name, column_string, value_list, other_operation_stri
   }
   sql += ' ';
   sql += other_operation_string;
-
-  console.log(sql);
 
   client.query(
     sql, value_list,
@@ -152,8 +148,9 @@ function update(table_name, column_string, condition_string, value_list, cb){
   client.query(sql, value_list, 
     function (err, result) {
       if (err) {
-        console.log('update ' + table_name + ' 失败，失败信息:' + err.message);
-        cb(false, err.message);
+        console.log('update ' + table_name + ' 失败，失败信息:');
+        console.log(err);
+        cb(false, err.code);
       } else {
         console.log('update ' + table_name + ' 成功');
         cb(true, '');
@@ -167,8 +164,6 @@ function update(table_name, column_string, condition_string, value_list, cb){
  * 赋值给last_check_time 和 last_check_timestamp
  */
 function updateReduceUserTopicNumberByUserId(id, list, cb){
-  console.log('updateReduceUserTopicNumberByUserId')
-
   let client = connectServer();
   let l = list.length / 3;
   let sql = "UPDATE user_topic SET insist_day = CASE topic_name ";
@@ -184,11 +179,7 @@ function updateReduceUserTopicNumberByUserId(id, list, cb){
   }
 
   sql += "ELSE last_check_time END WHERE user_id = ?;";
-
   list.push(id);
-
-  console.log(sql)
-  console.log(list)
 
   client.query(
     sql, list,
@@ -227,9 +218,6 @@ function updateUserTopicNumberByUserId(id, list, cb) {
 
   sql += "ELSE last_check_time END WHERE user_id = ?;"
 
-
-  console.log(sql)
-  console.log(list)
   list.push(id)
 
   client.query(
@@ -256,10 +244,7 @@ function updateUserTopicNumberByUserId(id, list, cb) {
 function deleteRow(table_name, column_string, value_list, cb){
   let client = connectServer();
   sql = 'DELETE FROM ' + table_name + ' WHERE ' + column_string;
-
-  // console.log('deleteRow');
-  // console.log(sql)
-  // console.log(value_lis t)
+  
   client.query(
     sql, value_list,
     function (err, result) {

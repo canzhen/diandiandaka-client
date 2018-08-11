@@ -169,7 +169,6 @@ Page({
    */
   tapOnTopic: function (e) {
     let data = this.data.topic_list[e.currentTarget.dataset.index];
-    console.log(data)
     wx.navigateTo({
       url: '/pages/me/edittopic?topic_name='+data.topic_name+
         '&start_date=' + data.start_date + 

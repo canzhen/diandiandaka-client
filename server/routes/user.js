@@ -141,7 +141,6 @@ router.post('/updateAvatarUrl', function (req, res) {
         else res.send({ 'error_code': 100, 'msg': result });
       });
   });
-  
 });
 
 module.exports = router;
