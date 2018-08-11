@@ -44,9 +44,7 @@ function select(table_name, column_string, condition_string, condition_list, oth
       } else {
         console.log('从' + table_name + '表中获取信息成功');
       }
-
-      let result_list = JSON.parse(JSON.stringify(result));
-      cb(!err, result_list);
+      cb(!err, result);
     });
 
   client.end();

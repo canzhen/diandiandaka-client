@@ -236,7 +236,7 @@ Page({
       duration: 2000,
       success: function(){
         setTimeout(function(){
-          wx.switchTab({
+          wx.redirectTo({
             url: '/pages/mytopic/mytopic',
             success: function(e){
               var page = getCurrentPages().pop();

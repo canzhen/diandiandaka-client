@@ -61,7 +61,7 @@ Page{
   flex-direction: row;
 
   margin-top: 150rpx;
-  padding-left: 50rpx;
+  padding-left: 30rpx;
 }
 
 
@@ -71,6 +71,6 @@ Page{
   align-items: center;
   width: 150rpx;
   height: 200rpx;
-  margin-right: 10rpx; 
+  /* margin-right: 10rpx;  */
   font-size: 25rpx;
 }

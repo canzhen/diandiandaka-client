@@ -139,7 +139,7 @@ function filterDatedData(user_topic_list){
  * 过滤掉没变化的数据，只剩下用户修改过的数据
  */
 function filterUnchangeData(user_topic_list){
-  user_topic_list.pop();
+  user_topic_list.pop(); //pop掉"添加卡片"
   var filtered_list = [];
   for (var i in user_topic_list){
     var item = user_topic_list[i];
@@ -202,9 +202,6 @@ function formatCheckData(topic_list){
     tmp_list.push("'" + checked_topic_list[i]['log'] + "'");
     user_topic_insert_list.push(tmp_list);
   }
-
-  console.log(user_topic_insert_list)
-
 
 
   /* 第二步，处理uncheck topic：需要在topic_check里删除数据 */

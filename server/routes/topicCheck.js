@@ -16,9 +16,28 @@ router.post('/check', function (req, res) {
     user_topic_insert_list = req.body.user_topic_insert_list,
     user_topic_update_reduce_list = req.body.user_topic_update_reduce_list;
 
+  redishelper.getValue(id, (openid) => {
+    if (!openid) {
+      res.send({ 'error_code': 102, 'msg': '' });
+      return;
+    }
 
-  let deleteUncheck = function(){
-    // 删除uncheck数据
+    /* 如果有要删除的，则先删除之前的数据，
+    再把新的打卡数据加进去，避免加完又被删除 */
+    if (topic_check_delete_list.length != 0){
+      topic_check_delete_list.unshift(openid);
+      // console.log('have something to delete')
+      deleteUncheck(openid);
+    }else {
+      // console.log('nothing to delete')
+      updateCheck(openid);
+    }
+  });
+
+
+  // 删除uncheck数据
+  let deleteUncheck = function (openid) {
+    // console.log('start deleting')
     dbhelper.deleteRow('topic_check',
       topic_check_delete_str,
       topic_check_delete_list,
@@ -29,12 +48,13 @@ router.post('/check', function (req, res) {
           return;
         }
         console.log('删除topic_check里数据成功');
-        updateUncheck();
+        updateUncheck(openid);
       });
   };
 
-  let updateUncheck = function(){
-    //update uncheck数据的user_topic表
+  //update uncheck数据的user_topic表
+  let updateUncheck = function (openid) {
+    // console.log('start updating 【uncheck】 user_topic')
     dbhelper.updateReduceUserTopicNumberByUserId(openid,
       user_topic_update_reduce_list,
       (status) => {
@@ -45,16 +65,34 @@ router.post('/check', function (req, res) {
         }
         console.log('update uncheck数据的user_topic表成功');
         if (user_topic_update_list.length != 0) {
-          updateCheck();
-        }else{
+          updateCheck(openid);
+          insertCheck(openid);
+        } else {
           res.send({ 'error_code': 200, 'msg': '' });
         }
       });
   };
 
+  //update check 数据的 user_topic表
+  let updateCheck = function (openid) {
+    // console.log('start updating 【check】 user_topic')
+    dbhelper.updateUserTopicNumberByUserId(openid,
+      user_topic_update_list,
+      (status) => {
+        if (!status) {
+          res.send({ 'error_code': 100, 'msg': '' });
+          console.log('update check数据的user_topic表失败');
+          return;
+        }
+        console.log('update check数据的user_topic表成功');
+        insertCheck(openid);
+      } );
+  };
 
-  let updateCheck = function () {
-    //insert into topic_check 打卡数据
+
+  //insert into topic_check 打卡数据
+  let insertCheck = function (openid) {
+    // console.log('start updating check topic_check')
     for (let i in user_topic_insert_list)
       user_topic_insert_list[i].push("'" + openid + "'");
 
@@ -63,25 +101,12 @@ router.post('/check', function (req, res) {
       'topic_name, check_time, check_timestamp, log, user_id',
       user_topic_insert_list, '',
       (status, errmsg) => {
+        console.log(errmsg)
         if (!status) res.send({ 'error_code': 100, 'msg': errmsg });
         else res.send({ 'error_code': 200, 'msg': '' });
       });
   };
 
-
-  redishelper.getValue(id, (openid) => {
-    if (!openid) {
-      res.send({ 'error_code': 102, 'msg': '' });
-      return;
-    }
-
-    /* 先删除之前的数据，再把新的打卡数据加进去，避免加完又被删除 */
-    if (topic_check_delete_list.length != 0){
-      topic_check_delete_list.unshift(openid);
-      deleteUncheck();
-    }
-
-  });
 });
 
 

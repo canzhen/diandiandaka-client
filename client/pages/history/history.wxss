@@ -67,7 +67,7 @@ image{
   text-align:center;
   justify-content:center;
   margin-bottom: 10rpx;
-  margin-top: 10rpx;
+  margin-top: 20rpx;
 }
 
 .all-history-left-image{

@@ -143,15 +143,14 @@ Page({
   saveCheckData: function(){
     // 过滤掉没有变动的卡片，剩下变动的卡片
     let changed_topic_list = utils.filterUnchangeData(this.data.my_topic_data);
+    if (changed_topic_list.length == 0) return;
     
     // 整理出打卡的卡片，和取消打卡的卡片
     let [topic_check_delete_str, topic_check_delete_list,    
          user_topic_update_reduce_list,user_topic_update_list,
          user_topic_insert_list] = 
          utils.formatCheckData(changed_topic_list);
-
     
-    if (changed_topic_list.length == 0) return;
     api.postRequest({
       'url': '/topicCheck/check',
       'data': { 
@@ -162,8 +161,13 @@ Page({
         'user_topic_insert_list': user_topic_insert_list,
       },
       'showLoading': false, 
-      'success': (res) => {},
-      'fail': (res) => {}
+      'success': (res) => {
+        console.log('success')
+        console.log(res)
+      },
+      'fail': (res) => {
+        console.log('fail')
+        console.log(res)}
     });
   },
 
