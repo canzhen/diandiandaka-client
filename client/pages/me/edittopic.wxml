@@ -19,7 +19,7 @@
       <view style="display:flex; flex-direction:row;">
         <text class="topic-name"> 结束日期 </text>
         <view class="topic-name-right">
-          <picker style="padding-bottom: 5rpx;" mode="date" value="{{end_date}}" name="end_date" start="{{end_date}}" end="3000-12-31" bindchange="bindEndDateChange">
+          <picker style="padding-bottom: 5rpx;" mode="date" value="{{end_date}}" name="end_date" start="{{start_date}}" end="3000-12-31" bindchange="bindEndDateChange">
             {{end_date}}
           </picker>
         </view>
@@ -36,15 +36,14 @@
       </view>
     </view>
 
-    <scroll-view class="icon-image-scroll-view"  style="height:{{scrollHeight}}px;" scroll-y scroll-with-animation enable-back-to-top>
+    <scroll-view class="icon-image-scroll-view"  style="height:{{scrollHeight}}px;" scroll-into-view="{{scroll_into_id}}" scroll-y scroll-with-animation enable-back-to-top>
       <!-- 展示图标（每行六个图标） -->
       <view class="icon-image-view" wx:for="{{icon_name_num}}" wx:key="idx" wx:for-item="row_data">
         <!-- 每一行 -->
         <view class="icon-image-row" wx:for="{{row_data}}" wx:key="col" wx:for-item="num">
-          <view class="icon-image-each-item" bindtap="checkIcon" data-src="/images/{{icon_data[num]}}" data-idx="{{num}}" data-url="{{icon_data[num]}}">
-            <image class="image" src="{{icon_data[num]}}"></image>
-            <icon class="image-punched-in" wx:if="{{icon_data[num] == topic_url}}"
-                    type="success_no_circle" size="30"></icon>
+          <view class="icon-image-each-item" bindtap="checkIcon" data-src="/images/{{icon_data_list[num]}}" data-idx="{{num}}" data-url="{{icon_data_list[num]}}">
+            <image class="image" id="{{id_list[num]}}" src="{{icon_data_list[num]}}"></image>
+            <icon class="image-punched-in" wx:if="{{icon_data_list[num] == topic_url}}" type="success_no_circle" size="30"></icon>
           </view>
         </view>
         <!-- 每行结束 -->
