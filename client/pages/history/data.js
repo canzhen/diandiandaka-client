@@ -364,10 +364,14 @@ function getCanvasData(
       xTextList = yearList;
       break;
     case "全部":
-      // check_time_list是按照时间降序排列的
-      // 所以直接第一个是enddate和最后一个就是startdate
-      enddate = moment(check_time_list[0], 'YYYY-MM-DD');
-      startdate = moment(check_time_list[check_time_list.length - 1], 'YYYY-MM-DD');
+      if (check_time_list.length != 0){
+        // check_time_list是按照时间降序排列的
+        // 所以直接第一个是enddate和最后一个就是startdate
+        enddate = moment(check_time_list[0], 'YYYY-MM-DD');
+        startdate = moment(check_time_list[check_time_list.length - 1], 'YYYY-MM-DD');
+      }else{
+        enddate = startdate = moment();
+      }
       ifAddXTextList = true;
       break;
     default:

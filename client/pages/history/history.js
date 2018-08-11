@@ -18,6 +18,9 @@ Page({
                '#faf3f898', '#faf3f498', '#f3faf9a4', '#f3f7faa4'],
 
     /* --------------以下的data属于【打卡日历】-------------- */
+    ec: {
+      onInit: initChart,
+    },
     date: '', // 用户选择的date，随时都会变化
     current_date: '', // 当前的时间，用于打卡日历底部日期选择的enddate
     year_month_list: [], // 包含两个元素，初始化时，第一个是当前月的上个月，第二个是当前月
@@ -29,14 +32,11 @@ Page({
     checked_data_list: [], // 用于展示每日具体打卡信息
     check_first_date: '', //所有卡片中最早开始打卡的时间
     check_last_date: '', //所有卡片中最晚打卡的时间
-    scroll_into_view_id: 'id' + moment().format('YYYY-MM'),
+    scroll_into_view_id: '',
 
 
     /* --------------以下的data属于【每日完成度】--------------*/
     //用于展示的图表对象
-    ec:{
-      onInit: initChart,
-    },
     average_completeness: 0,
     check_time_per_topic: [], //每个topic的打卡天数：[{'跑步':['2018-06-13', '2018-06-24', '2018-06-21']}, {..}, {..}]
     check_info_per_topic: [], //每个topic的具体信息：{'跑步': [{check_time': '2018-06-13', 'log': '很好'}, {check_time': '2018-06-24', 'log': '还是很好'}], {'起床': [{}, {}, ..}], '':[], '': [],...}
@@ -109,12 +109,17 @@ Page({
 
         let [allTopic, topicUrlMap] = getTopicNameAndUrlList(topic_info_list);
         let [checkTimeListPerTopic, checkInfoListPerTopic] = data.getCheckedDataOfEveryTopic(checked_data_list, allTopic); //按照每个topic分类的打卡时间集合
-        let [startDateList, endDateList] = data.getStartEndDateList(topic_info_list);
+        let [startDateList, endDateList] = data.getStartEndDateList(topic_info_list); 
+
+        if (checked_data_list.length != 0){
+          that.setData({
+            checked_data_list: checked_data_list, //用于展示每日具体打卡信息
+            check_first_date: moment(checked_data_list[checked_data_list.length - 1].check_time, 'YYYY-MM-DD'), //所有卡片最早开始打卡的时间
+            check_last_date: moment(checked_data_list[0].check_time, 'YYYY-MM-DD'), //所有卡片中最晚打卡的时间
+          });
+        }
 
         that.setData({
-          checked_data_list: checked_data_list, //用于展示每日具体打卡信息
-          check_first_date: moment(checked_data_list[checked_data_list.length-1].check_time, 'YYYY-MM-DD'), //所有卡片最早开始打卡的时间
-          check_last_date: moment(checked_data_list[0].check_time, 'YYYY-MM-DD'), //所有卡片中最晚打卡的时间
           current_date: moment().format('YYYY-MM-DD'),
           start_date_list: startDateList,  //一个都是moment的list
           end_date_list: endDateList,
@@ -141,21 +146,40 @@ Page({
 
   // 初始化每日完成度
   initCompleteness: function () {
-    let [checkTimeList, checkedTopicListPerDay] = data.getTopicListPerDay(this.data.checked_data_list);
+    if (this.data.checked_data_list.length == 0){
+      this.setData({
+        user_click_no_data: true
+      });
+    }
 
+    let [checkTimeList, checkedTopicListPerDay] = data.getTopicListPerDay(this.data.checked_data_list);
+    let that = this;
     this.setData({
       check_time_list: checkTimeList,
       checked_topic_list_per_day: checkedTopicListPerDay,
     });
 
-    // 生成当前周的数据
-    this.newCanvas('1周', 0);
+    wx.getSystemInfo({
+      success: function (res) {
+        wx.createSelectorQuery().selectAll('.completeness-panel').boundingClientRect((rects) => {
+          let scrollHeight = that.data.scrollHeight;
+          that.setData({
+            canvasHeight: res.windowHeight - rects[0].top - 130,
+          });
+          data.option.grid.height = that.data.canvasHeight;
+          data.option.grid.width = that.data.scrollWidth - 50;
+          chart.setOption(data.option);
+          // 生成当前周的数据
+          that.newCanvas('1周', 0);
+        }).exec();
+      }
+    });
   },
 
 
   // 初始化历史日志tab
   initCheckLog: function(){
-
+    
   },
 
 
@@ -166,7 +190,8 @@ Page({
       success: function (res) {
         wx.createSelectorQuery().selectAll('.navbar').boundingClientRect((rects) => {
           that.setData({
-            scrollHeight: res.windowHeight - rects[0].bottom - 30
+            scrollHeight: res.windowHeight - rects[0].bottom - 30,
+            scrollWidth: res.windowWidth
           });
         }).exec();
       }
@@ -214,31 +239,19 @@ Page({
     let checkedTime = this.data.check_time_per_topic[topic]; //当前选中的topic的所有check信息
     var currentMoment = moment(date);
     var preMoment = moment(date).subtract(1, 'month');
+    var prepreMoment = moment(date).subtract(2, 'month');
 
 
-    if (preMoment.endOf('month') < this.data.check_first_date){
-      this.setData({
-        'year_month_list[0]': data.getCalendar(checkedTime, currentMoment, colorList[currentMoment.month() % 2]),
-      });
-    } else {
-      var prepreMoment = moment(date).subtract(2, 'month');
-      if (prepreMoment.endOf('month') < this.data.check_first_date) {
-        this.setData({
-          'year_month_list[1]': data.getCalendar(checkedTime, currentMoment, colorList[preMoment.month() % 2]),
-          'year_month_list[0]': data.getCalendar(checkedTime, preMoment, colorList[currentMoment.month() % 2]),
-        });
-      }else{
-        this.setData({
-          'year_month_list[2]': data.getCalendar(checkedTime, currentMoment, colorList[currentMoment.month() % 2]),
-          'year_month_list[1]': data.getCalendar(checkedTime, preMoment, colorList[preMoment.month() % 2]),
-          'year_month_list[0]': data.getCalendar(checkedTime, prepreMoment, colorList[prepreMoment.month() % 2]),
-        });
-      }
-    }
+    this.setData({
+      'year_month_list[2]': data.getCalendar(checkedTime, currentMoment, colorList[currentMoment.month() % 2]),
+      'year_month_list[1]': data.getCalendar(checkedTime, preMoment, colorList[preMoment.month() % 2]),
+      'year_month_list[0]': data.getCalendar(checkedTime, prepreMoment, colorList[prepreMoment.month() % 2]),
+    });
 
     this.setData({
       date: currentMoment,
-      selected_topic: allTopic[0]
+      selected_topic: allTopic[0],
+      scroll_into_view_id: 'id' + moment().format('YYYY-MM')
     });
   },
 
@@ -306,16 +319,6 @@ Page({
   // 日期选择框改变时触发的事件
   bindPickerChange: function (e) {
     this.fillCalendar(e.detail.value);
-  },
-
-  // 获取上个月的数据
-  getLastMonth: function (e) {
-    this.fillCalendar(moment(this.data.date).subtract(1, 'month').format('YYYY-MM'));
-  },
-
-  // 获取下个月的数据
-  getNextMonth: function (e) {
-    this.fillCalendar(moment(this.data.date).add(1, 'month').format('YYYY-MM'));
   },
 
   // 文字卡片选择框改变时触发的事件
@@ -397,8 +400,6 @@ Page({
       [preCheckedStr]: false,
       [newCheckedStr]: true
     });
-
-    let selectedCanvasName = this.data.timelapses[this.data.selected_timelapse].name;
 
     this.newCanvas(time, 0);
   },
@@ -493,6 +494,11 @@ Page({
       canvasXText = [];
 
     setChart(canvasXText, canvasYData);
+
+    wx.createSelectorQuery().selectAll('.completeness-canvas').boundingClientRect((rects) => {
+      console.log(rects[0].top)
+      console.log(rects[0].left)
+    }).exec();    
   },
 
 
@@ -643,7 +649,6 @@ Page({
    * 对话框确认按钮点击事件
    */
   onConfirm: function () {
-    console.log(this.data.check_timestamp)
     api.postRequest({
       'url': '/topicCheck/updateLog',
       'data': {
@@ -701,7 +706,6 @@ Page({
 /**
  * 图表配置部分
  */
-
 function setChart(xdata, ydata){
   data.option.xAxis[0].data = xdata;
   data.option.series[0].data = ydata;
@@ -709,7 +713,7 @@ function setChart(xdata, ydata){
   chart.setOption(data.option);
 };
 
-function initChart(canvas, width = 375, height = 400) { //初始化图表
+function initChart(canvas, width, height) { //初始化图表
   chart = echarts.init(canvas, null, {
     width: width,
     height: height

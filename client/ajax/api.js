@@ -37,7 +37,6 @@ function postRequest(params) {
       if (!params.header) params.header = {};
       params.header['content-type'] = 'application/json';
       params.header['session-id'] = utils.getStorageSync('sessionId');
-      console.log(params.url)
       wx.request({
         url: root + params.url,
         method: 'POST',
