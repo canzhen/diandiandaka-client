@@ -249,7 +249,6 @@ Page({
     });
 
     this.setData({
-      date: currentMoment,
       selected_topic: allTopic[0],
       scroll_into_view_id: 'id' + moment().format('YYYY-MM')
     });

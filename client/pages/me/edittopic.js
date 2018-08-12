@@ -233,22 +233,32 @@ Page({
    * 删除卡片
    */
   deleteTopic: function(e){
+    wx.showModal({
+      title: '确认删除',
+      content: '您确认要删除该卡片吗？删除卡片将同时删除打卡记录',
+      showCancel: true,
+      success: (res) => {
+        if (res.cancel) return;
 
-    api.postRequest({
-      'url': '/topic/delete',
-      'data': {
-        topic_name: this.data.topic_name
-      },
-      'success': (res) => {
-        if (res.error_code != 200){
-          console.log('delete failed');
-          return;
-        }
-      },
-      'fail': (res) => {
-        console.log('delete failed');
+        api.postRequest({
+          'url': '/topic/delete',
+          'data': {
+            topic_name: this.data.topic_name
+          },
+          'success': (res) => {
+            if (res.error_code != 200) {
+              console.log('删除失败');
+              return;
+            }
+            console.log('删除成功');
+            wx.navigateBack();
+          },
+          'fail': (res) => {
+            console.log('删除失败');
+          }
+        });
       }
-    });
+    })
   },
 
 
