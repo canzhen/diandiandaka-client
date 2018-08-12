@@ -113,7 +113,6 @@ function getCheckDataList(cb){
     }
   });
 }
-
 /* 获取当前用户的卡片信息 */
 function getTopicInfoList(cb) {
   api.postRequest({
@@ -121,7 +120,7 @@ function getTopicInfoList(cb) {
     'data': [],
     'showLoading': true,
     'success': (res) => { //成功
-      if (res.error_code != 200){
+      if (res.error_code != 200) {
         console.log('从数据库中获取用户卡片信息失败');
         cb(100, '', []);
         return;
@@ -134,17 +133,16 @@ function getTopicInfoList(cb) {
       cb(100, '', []);
     }
   });
-
 }
 
 
 
-function getCheckedDataOfEveryTopic(dataList, topicList) {
+function getCheckedDataOfEveryTopic(dataList, topicInfoMap) {
   var checkTimePerTopic = new Map(); //check time只有时间 
   var checkInfoPerTopic = new Map(); //check info还包括log
-  for (var i = 0; i < topicList.length; i++){
-    checkTimePerTopic[topicList[i]] = new Set(); //去重，初始化
-    checkInfoPerTopic[topicList[i]] = []; //去重，初始化
+  for (let key in topicInfoMap){
+    checkTimePerTopic[key] = new Set(); //去重，初始化
+    checkInfoPerTopic[key] = []; //去重，初始化
   }
 
   for (var i = 0; i < dataList.length; i++){
@@ -157,11 +155,10 @@ function getCheckedDataOfEveryTopic(dataList, topicList) {
     });
   }
 
-  for (var i = 0; i < topicList.length; i++){
-    checkTimePerTopic[topicList[i]] = Array.from(checkTimePerTopic[topicList[i]]); //重新变成Array
+  for (let key in topicInfoMap){
+    checkTimePerTopic[key] = Array.from(checkTimePerTopic[key]); //重新变成Array
   }
-    
-  console.log(checkTimePerTopic, checkInfoPerTopic)
+
   return [checkTimePerTopic, checkInfoPerTopic];
 }
 
@@ -595,9 +592,8 @@ function getTotalTopicNumPerDay(check_last_date, topic_info_list){
  * 计算每个topic的完成度
  * @param check_time_per_topic: ['topic_name': time_list,'':[],..]
  */
-function getCompletenessListPerTopic(check_time_per_topic){
-  // let diffDays = 
-  console.log(check_time_per_topic)
+function getCompletenessListPerTopic(topic_info, check_time_per_topic){
+  console.log(topic_info, check_time_per_topic)
 }
 
 module.exports = {
