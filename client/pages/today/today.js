@@ -266,7 +266,7 @@ Page({
     if (data.is_checked) {
       wx.showModal({
         title: '确定删除',
-        content: '你确定要取消今日的所有打卡吗？将连同您今日的打卡日志一并删除哟',
+        content: '你确定要取消今日的打卡吗？将连同您今日的打卡日志一并删除哟',
         showCancel: true,
         success: (res) => {
           if (res.confirm){

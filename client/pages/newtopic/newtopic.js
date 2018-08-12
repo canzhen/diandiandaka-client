@@ -206,7 +206,7 @@ Page({
         }else if (res.error_code == 100)
           that.showFailToast('提交失败..大爷饶命，小的这就去查看原因..');
         else if (res.error_code == 200)
-          that.showSucceedToast(); 
+          that.showSucceedToast();
       },
       'fail': function(res){
         console.log('发送/topic/createtopic请求失败');
@@ -236,8 +236,8 @@ Page({
       duration: 2000,
       success: function(){
         setTimeout(function(){
-          wx.redirectTo({
-            url: '/pages/mytopic/mytopic',
+          wx.switchTab({
+            url: '/pages/today/today',
             success: function(e){
               var page = getCurrentPages().pop();
               if (page == undefined || page == null) return;

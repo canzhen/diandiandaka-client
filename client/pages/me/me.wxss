@@ -32,7 +32,7 @@ Page{
 }
 
 .username{
-  margin-top: -100rpx;
+  margin-top: -92rpx;
   margin-left: 210rpx;
   font-family: bold;
 }
