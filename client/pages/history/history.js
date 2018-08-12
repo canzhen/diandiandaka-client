@@ -71,6 +71,7 @@ Page({
    * 初始化函数
    */
   init: function (tab) {
+    if (this.data.if_init) return;
     if (tab == undefined) tab = this.data.currentTab;
     let that = this;
 
@@ -97,6 +98,7 @@ Page({
           topic_info_map: topicInfoMap,
           start_date_list: startDateList,  //一个都是moment的list
           end_date_list: endDateList,
+          if_init: true
         });
 
         if (tab == 0) {
@@ -213,20 +215,21 @@ Page({
       }
     });
 
-  },
-
-  onShow: function () {
-    if (!utils.getStorageSync('sessionId')){ 
+    if (!utils.getStorageSync('sessionId')) {
       utils.login((res) => {
         if (res) {
           console.log('login success');
-          this.init(); 
+          this.init();
         } else
           console.log('login fail');
       });
-    }else{
+    } else {
       this.init();
     }
+  },
+
+  onShow: function () {
+    this.init();
   },
 
 

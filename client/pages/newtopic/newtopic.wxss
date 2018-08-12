@@ -16,7 +16,6 @@ button::after{
 }
 
 .topic-name-right{
-  /* margin-top: 5rpx; */
   display: flex;
   flex-direction: row;
   justify-content: space-between;

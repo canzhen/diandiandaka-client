@@ -11,30 +11,47 @@ Page{
   flex-direction:column;
 }
 
+.me-upper-panel{
+  display:flex; 
+  flex-direction:row;
+  margin-top: -180rpx;
+}
 
 
 .top-background{
   width: 100%;
   height: 200rpx;
   background: #fee0c1;
+  z-index: -100;
 }
 
 
 .avatar{
-  margin-top: -180rpx;
   margin-left: 30rpx;
   width: 150rpx;
   height: 150rpx;
-  overflow:hidden;
+  /* overflow:hidden; */
   border: 0 solid #ffffff;
   border-radius: 50%;
   background-size: 100% 100%;
 }
 
-.username{
-  margin-top: -92rpx;
-  margin-left: 210rpx;
-  font-family: bold;
+.avatar-right-part{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-left: 25rpx;
+  justify-content: space-between;
+  width: 70%;
+}
+
+.new-username-input{
+  width: 100rpx;
+}
+
+.username-edit-image{
+  width: 35rpx;
+  height: 35rpx;
 }
 
 .openid{
@@ -44,9 +61,8 @@ Page{
 }
 
 .edit-data{
-  margin-top: -40rpx;
-  margin-left: 75%;
   font-size: 25rpx;
+
 }
 
 .image {
@@ -59,8 +75,7 @@ Page{
 .me-lower-part{
   display: flex;
   flex-direction: row;
-
-  margin-top: 150rpx;
+  margin-top: 60rpx;
   padding-left: 30rpx;
 }
 
@@ -74,3 +89,93 @@ Page{
   /* margin-right: 10rpx;  */
   font-size: 25rpx;
 }
+
+
+
+/* 弹窗部分 */
+.modal-mask {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #000;
+  opacity: 0.5;
+  overflow: hidden;
+  z-index: 9000;
+  color: #fff;
+}
+
+.modal-dialog {
+  width: 540rpx;
+  overflow: hidden;
+  position: fixed;
+  top: 32%;
+  left: 0;
+  z-index: 9999;
+  background: #f9f9f9;
+  margin: -180rpx 105rpx;
+  border-radius: 36rpx;
+}
+
+.modal-title {
+  padding-top: 50rpx;
+  font-size: 40rpx;
+  color: #030303;
+  text-align: center;
+}
+
+.modal-subtitle{
+  padding-top: 15rpx;
+  font-size: 25rpx;
+  color: #030303;
+  text-align: center;
+}
+
+.modal-content {
+  padding: 50rpx 32rpx;
+}
+
+.modal-input {
+  display: flex;
+  background: #fff;
+  border: 2rpx solid #ddd;
+  border-radius: 4rpx;
+  font-size: 30rpx;
+}
+
+.textarea {
+  width: 100%;
+  height: 300rpx;
+  min-height:  300rpx;
+  font-size: 30rpx;
+  line-height: 28rpx;
+  padding: 0 10rpx;
+  box-sizing: border-box;
+  color: #333;
+}
+
+.modal-footer {
+  display: flex;
+  flex-direction: row;
+  height: 86rpx;
+  border-top: 1px solid #dedede;
+  font-size: 30rpx;
+  line-height: 86rpx;
+}
+
+.btn-cancel {
+  width: 50%;
+  color: #9d9fa2;
+  text-align: center;
+  border-right: 1px solid #dedede;
+}
+
+.btn-confirm {
+  width: 50%;
+  color: #fd9731;
+  text-align: center;
+}
+
+/* 弹窗结束 */
+

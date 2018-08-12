@@ -9,6 +9,7 @@ Page({
    * 页面的初始数据
    */
   data: {
+    if_init: false,
     topic_list: [], //用户的打卡数据
     topic_num_list: [], //用于存排列下标的数组
 
@@ -16,24 +17,31 @@ Page({
     avatar_url: '', //从数据库（本地缓存）中获取
     is_reset_avatar: false, //默认用户没有修改头像
     is_reset_name: false, //默认用户没修改过名字
-
-    selected_function:'', 
+    start_reset_user_name: false, //是否开始修改用户名（显示input）
   },
 
 
   init: function(){
+    if (this.data.if_init) return;
     let that = this;
+
     if (wx.getStorageSync('avatarUrl')){
       this.setData({
         avatar_url: wx.getStorageSync('avatarUrl'),
-        is_reset_avatar: true
+        is_reset_avatar: true,
+        if_init: true,
       });
-    } else if (wx.getStorageSync('userName')) {
+    }
+
+    if (wx.getStorageSync('userName')) {
       this.setData({
         user_name: wx.getStorageSync('userName'),
-        is_reset_name: true
+        is_reset_name: true,
+        if_init: true,
       });
-    }else{
+    }
+    
+    if (!this.data.if_init){
       /* 获取用户的个性化头像和姓名 */
       api.postRequest({
         'url': '/user/getNameAvatar',
@@ -47,7 +55,8 @@ Page({
                 is_reset_name: !(reslist['user_name'] == false),
                 is_reset_avatar: !(reslist['avatar_url'] == false),
                 user_name: reslist['user_name'] ? reslist['user_name'] : '',
-                avatar_url: reslist['avatar_url'] ? reslist['avatar_url'] : ''
+                avatar_url: reslist['avatar_url'] ? reslist['avatar_url'] : '',
+                if_init: true,
               });
               wx.setStorageSync('avatarUrl', this.data.avatar_url);
               wx.setStorageSync('userName', this.data.user_name);
@@ -62,6 +71,17 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    if (!utils.getStorageSync('sessionId')) {
+      utils.login((res) => {
+        if (res) {
+          console.log('login success');
+          this.init();
+        } else
+          console.log('login fail');
+      });
+    } else {
+      this.init();
+    }
   },
 
   /**
@@ -74,17 +94,7 @@ Page({
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-    if (!utils.getStorageSync('sessionId')) {
-      utils.login((res) => {
-        if (res) {
-          console.log('login success');
-          this.init();
-        } else
-          console.log('login fail');
-      });
-    } else {
-      this.init();
-    }
+    this.init();
   },
   
 
@@ -222,11 +232,105 @@ Page({
     });
   },
 
-  
+
+  /**
+   * 修改用户名
+   */
+  editUserName: function(){
+    this.setData({
+      show_modal: true
+    });
+  },
 
   redirectToMyTopic: function(){
     wx.navigateTo({
       url: '/pages/me/mytopic',
     })
   },
+
+  redirectToSettings: function(){
+    wx.navigateTo({
+      url: '/pages/me/settings'
+    })
+  },
+
+
+
+  /**
+   * 弹出框蒙层截断touchmove事件
+   */
+  preventTouchMove: function () { },
+
+
+  /**
+   * 不再显示，隐藏模态对话框
+   */
+  hideModal: function () {
+    this.setData({
+      show_modal: false
+    });
+  },
+
+  /**
+   * 用户在input框输入
+   * 新用户名时触发的函数
+   */
+  newUserNameInputChange: function(e){
+    this.setData({
+      new_username: e.detail.value
+    });
+  },
+
+
+  /**
+   * 对话框确认按钮点击事件
+   */
+  onConfirm: function () {
+    let that = this;
+    let new_username = this.data.new_username;
+
+
+    api.postRequest({
+      'url': '/user/updateUserName',
+      'data': {
+        user_name: new_username
+      },
+      'success': (res) => {
+        if (res.error_code != 200){
+          console.log('修改用户名失败');
+          return;
+        }
+        console.log('修改用户名成功');
+        showNewUserName();
+        wx.setStorageSync('userName', new_username);
+        wx.showToast({
+          title: '修改用户名成功',
+          icon: 'succeed'
+        })
+      },
+      'fail': (res) => {
+        console.log('修改用户名成功');
+      }
+    });
+
+    let showNewUserName = function () {
+      that.setData({
+        is_reset_name: true,
+        user_name: new_username
+      });
+    };
+
+
+    this.hideModal();
+  },
+
+
+
+  /**
+   * 对话框取消按钮点击事件
+   */
+  onCancel: function () {
+    this.hideModal();
+  },
+
 })

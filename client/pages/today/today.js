@@ -39,12 +39,8 @@ Page({
         }).exec();
       }
     });
-  },
 
 
-
-  /* 页面显示函数，tab切换回来也会调用 */
-  onShow() {
     if (!utils.getStorageSync('sessionId')) {
       utils.login((res) => {
         if (res) {
@@ -60,23 +56,39 @@ Page({
 
 
 
+  /* 页面显示函数，tab切换回来也会调用 */
+  onShow() {
+    this.init();
+  },
+
+
+
   /**
    * 页面初始化，获取数据
    */
   init: function (ifShowLoading = true) {
+    if (this.data.if_init) return;
     let that = this;
 
     if (wx.getStorageSync('avatarUrl')) {
       this.setData({
         avatar_url: wx.getStorageSync('avatarUrl'),
-        is_reset_avatar: true
+        is_reset_avatar: true,
+        if_init: true,
       });
-    } else if (wx.getStorageSync('userName')) {
+    }
+
+    if (wx.getStorageSync('userName')) {
       this.setData({
         user_name: wx.getStorageSync('userName'),
-        is_reset_name: true
+        is_reset_name: true,
+        if_init: true,
       });
-    } else {
+    }
+    
+    
+    
+    if (!this.data.if_init) {
 
       /* 获取用户的个性化头像和姓名 */
       api.postRequest({
@@ -92,7 +104,8 @@ Page({
                 is_reset_name: !(reslist['user_name'] == false),
                 is_reset_avatar: !(reslist['avatar_url'] == false),
                 user_name: reslist['user_name'] ? reslist['user_name'] : '',
-                avatar_url: reslist['avatar_url'] ? reslist['avatar_url'] : ''
+                avatar_url: reslist['avatar_url'] ? reslist['avatar_url'] : '',
+                if_init: true,
               });
               wx.setStorageSync('avatarUrl', this.data.avatar_url);
               wx.setStorageSync('userName', this.data.user_name);

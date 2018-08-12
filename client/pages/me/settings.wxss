@@ -1,0 +1,25 @@
+Page{
+  font-size: 30rpx;
+  display: flex;
+  flex-direction: column;
+  padding: 50rpx 50rpx 50rpx 50rpx;
+}
+
+.title{
+  width: 100%;
+}
+
+.line{
+  margin-top: 10rpx;
+  margin-bottom: 20rpx;
+  width: 90%;
+  height:2rpx;
+  background:#aaa;
+}
+
+
+.one-line{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}

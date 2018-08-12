@@ -1,0 +1,7 @@
+<view class="title"> 提醒设置 </view>
+<view class="line"/>
+
+<view class="one-line">
+  <text>用户名：</text>
+  <input placeholder="默认为微信名"></input>
+</view>

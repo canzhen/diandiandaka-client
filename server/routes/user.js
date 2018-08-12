@@ -88,6 +88,9 @@ router.post('/login', function(req, res) {
 
 });
 
+
+
+
 /**
  * 根据用户id获取用户的姓名和头像url
  */
@@ -123,6 +126,10 @@ router.post('/getNameAvatar', function (req, res) {
   });
 });
 
+
+
+
+
 /**
  * 更新用户的头像
  */
@@ -136,6 +143,30 @@ router.post('/updateAvatarUrl', function (req, res) {
     // console.log('openid:' + openid);
     let url = req.body.url;
     dbhelper.update('user', 'avatar_url=?', 'user_id=?', [url, openid],
+      (status, result) => {
+        if (status) res.send({ 'error_code': 200, 'msg': '' });
+        else res.send({ 'error_code': 100, 'msg': result });
+      });
+  });
+});
+
+
+
+
+
+/**
+ * 更新用户的头像
+ */
+router.post('/updateUserName', function (req, res) {
+  let id = req.header('session-id');
+  redishelper.getValue(id, (openid) => {
+    if (!openid) {
+      res.send({ 'error_code': 102, 'msg': '' });
+      return;
+    }
+    // console.log('openid:' + openid);
+    let user_name = req.body.user_name;
+    dbhelper.update('user', 'user_name=?', 'user_id=?', [user_name, openid],
       (status, result) => {
         if (status) res.send({ 'error_code': 200, 'msg': '' });
         else res.send({ 'error_code': 100, 'msg': result });
