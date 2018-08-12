@@ -4,6 +4,12 @@ const weekList = ['一', '二', '三', '四', '五', '六', '七'];
 const yearList = ['1月', '2月', '3月', '4月', '5月', '6月', '7月',
   '8月', '9月', '10月', '11月', '12月'];
 
+const timelapses = [ //所有的时间区间的选项
+  { 'name': '1周', 'checked': true },
+  { 'name': '1个月', 'checked': false },
+  { 'name': '1年', 'checked': false },
+  { 'name': '全部', 'checked': false }];
+
 var option = {
   color: ['#37a2da', '#32c5e9', '#67e0e3'],
   grid: {
@@ -153,9 +159,9 @@ function getCheckedDataOfEveryTopic(dataList, topicList) {
 
   for (var i = 0; i < topicList.length; i++){
     checkTimePerTopic[topicList[i]] = Array.from(checkTimePerTopic[topicList[i]]); //重新变成Array
-    // checkInfoPerTopic[topicList[i]] = Array.from(checkTimePerTopic[topicList[i]]); //重新变成Array
   }
     
+  console.log(checkTimePerTopic, checkInfoPerTopic)
   return [checkTimePerTopic, checkInfoPerTopic];
 }
 
@@ -211,7 +217,6 @@ function getCompletePercentageOfDay(currentdate, checked_topic_num, total_topic_
   let l = start_date_list.length;
   let total_num = 0;
 
-
   if (currentdate < end_date_list[0] && currentdate >= start_date_list[l-1]){
     total_num = l;
   }else if (currentdate < start_date_list[0] || 
@@ -245,7 +250,6 @@ function getCompletePercentageOfDay(currentdate, checked_topic_num, total_topic_
 function _getCanvasData(percentageList, startdate, enddate, 
   start_date_list, end_date_list, check_time_list, topic_list_per_day,
   total_topic_num, ifAverage, ifAddXTestList = false, xTextList=null, ) {
-
   let allZero = true;
   let diff = parseInt(enddate.diff(startdate, 'days'));
   if (!ifAverage){
@@ -257,7 +261,6 @@ function _getCanvasData(percentageList, startdate, enddate,
         xTextList.push(date.format('MM月DD日'));
       if (check_time_list.indexOf(formatDate) != -1)
         percentage = getCompletePercentageOfDay(date, topic_list_per_day[formatDate].length, total_topic_num, start_date_list, end_date_list);
-      
       if (!percentage) allZero = false;
       percentageList.push(percentage);
     }
@@ -509,8 +512,6 @@ function getTopicListPerDay(checked_data_list){
   for (let i in checked_data_list){
     let data = checked_data_list[i];
     let time = data['check_time'];
-    // console.log('time:'  + time)
-    // console.log('topic_name:' + data['topic_name'])
     checkedTimeList.add(time);
     if (map[time] == undefined) 
       map[time] = new Set();
@@ -589,6 +590,16 @@ function getTotalTopicNumPerDay(check_last_date, topic_info_list){
   return totalNumPerDay;
 }
 
+
+/**
+ * 计算每个topic的完成度
+ * @param check_time_per_topic: ['topic_name': time_list,'':[],..]
+ */
+function getCompletenessListPerTopic(check_time_per_topic){
+  // let diffDays = 
+  console.log(check_time_per_topic)
+}
+
 module.exports = {
   getCheckDataList,
   getTopicInfoList,
@@ -601,6 +612,8 @@ module.exports = {
   getStartEndDateList,
   getCalendar,
   getCompletePercentageOfDay,
+  getCompletenessListPerTopic,
 
   option,
+  timelapses
 }

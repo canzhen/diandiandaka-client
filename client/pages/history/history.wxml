@@ -30,6 +30,7 @@
         <text>天</text>
       </view>
 
+
       <!-- 日历板块 -->
       <scroll-view style="height:{{scrollHeight - 30}}px;" bindscroll="calendarScroll" scroll-into-view="{{scroll_into_view_id}}" scroll-y scroll-with-animation enable-back-to-top>
         <view class="calendar-panel" id="id{{date.year}}-{{date.month}}" wx:for="{{year_month_list}}" wx:key="idx" wx:for-item="date">
@@ -71,7 +72,7 @@
 <view hidden="{{currentTab!==1}}">
 
   <!-- 没有任何日志的时候显示 -->
-  <view class="completeness-panel" wx:if="{{!check_info_per_topic}}">
+  <view class="completeness-nodata" wx:if="{{!check_info_per_topic}}">
     您当前没有任何卡片喔~
   </view>
 
@@ -149,7 +150,10 @@
       <view class="block" style="background-color:{{colorList[check_info_per_topic[topic_name].length%8]}};" wx:for="{{check_info_per_topic}}"  wx:key="key" wx:for-index="topic_name" wx:for-item="check_info" >
         <view class="check-log-topic-image-text" bindtap="selectTopicLog" data-idx="{{topic_name}}" >
           <image class="check-log-topic-image" src="{{topic_url_map[topic_name]}}"></image>
-          <text class="check-log-topic-text">{{topic_name}}</text>
+          <view style="display:flex; flex-direction: column;">
+            <text class="check-log-topic-text">{{topic_name}}</text>
+            <progress class="check-log-progress" show-info="true" stroke-width="3" activeColor="red" backgroundColor="#fde28d" active percent="50">完成度</progress>
+          </view>
         </view>
         
         <!-- 日志部分开始 -->

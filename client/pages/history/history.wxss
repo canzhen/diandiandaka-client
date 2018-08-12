@@ -252,10 +252,14 @@ image{
     justify-content: center;
     align-items: center;
     height: 100%;
-    /* margin: 40rpx, 50rpx, 20rpx, 50rpx; */
  }
 
 
+.completeness-nodata{
+  display: flex;
+  justify-content: center;
+  margin-top:50rpx;
+}
 
 .completeness-first-row{
   position: fixed;
@@ -449,6 +453,7 @@ button::after{
   box-shadow: 5px 5px 10px 2px #f4f3f3;
 }
 
+
 .detail{
   display: flex;
   flex-direction: row;
@@ -521,6 +526,11 @@ button::after{
 
 .check-log-topic-text{
   margin-left: 30rpx;
+}
+
+.check-log-progress{
+  margin: 10rpx auto auto 30rpx;
+  width: 400rpx;
 }
 
 .check-log-topic-more{

@@ -21,7 +21,7 @@ Page({
     ec: {
       onInit: initChart,
     },
-    date: '', // 用户选择的date，随时都会变化
+    date: moment().format('YYYY-MM'), // 用户选择的date，随时都会变化，初始化为当前时间
     current_date: '', // 当前的时间，用于打卡日历底部日期选择的enddate
     year_month_list: [], // 包含两个元素，初始化时，第一个是当前月的上个月，第二个是当前月
     selected_topic_idx: 0, //选中的topic
@@ -44,11 +44,7 @@ Page({
     topic_name_list: [], // 所有topic名字的集合：['减肥','跑步','早睡']
     checked_topic_list_per_day: {}, // 每天打卡的卡片列表：{'2018-05-23': ['跑步'], ...}
     // total_topic_num_per_day: {}, // 每天需要打的卡的数量：{'2018-05-23': 3, ...}
-    timelapses: [ //所有的时间区间的选项
-                  { 'name': '1周', 'checked': true },
-                  { 'name': '1个月', 'checked': false },
-                  { 'name': '1年', 'checked': false },
-                  { 'name': '全部', 'checked': false }], 
+    timelapses: data.timelapses,
     selected_timelapse: 0, //当前选中的时间区间的下标
     selected_canvas: 'week', //当前选择展示的图表，默认显示的是本周的
     completeness_week_subtitle: '', //每日完成度第一行要显示的标语
@@ -70,25 +66,45 @@ Page({
    */
   init: function (tab) {
     if (tab == undefined) tab = this.data.currentTab;
-    if (tab == 0){
-      this.initCheckCalendar();
-    } else if (tab == 1) {
-      this.initCheckCalendar();
-      this.initCompleteness();
-    } else if (tab == 2) {
-      this.initCheckCalendar();
-      this.initCheckLog();
-    }
-  },
-
-  tapCanvas: function(params){
-    console.log(params)
-  },
-
-
-  // 初始化每日打卡
-  initCheckCalendar: function () {
     let that = this;
+
+    /* 获取当前用户具体打卡信息 */
+    data.getCheckDataList((error_code, msg, checked_data_list) => {
+      if (error_code != 200 || !checked_data_list) return;
+      getTopicInfoList(checked_data_list);
+    });
+
+    let getTopicInfoList = function (checked_data_list) {
+      data.getTopicInfoList((error_code, msg, topic_info_list) => {
+        if (error_code != 200) return;
+        console.log('获取用户打卡信息成功');
+        topic_info_list = utils.filterDatedData(topic_info_list);
+        let [allTopic, topicUrlMap] = getTopicNameAndUrlList(topic_info_list);
+        let [checkTimeListPerTopic, checkInfoListPerTopic] = data.getCheckedDataOfEveryTopic(checked_data_list, allTopic); //按照每个topic分类的打卡时间集合
+        let [startDateList, endDateList] = data.getStartEndDateList(topic_info_list);
+        that.setData({
+          check_time_per_topic: checkTimeListPerTopic,
+          check_info_per_topic: checkInfoListPerTopic,
+          checked_data_list: checked_data_list,
+          topic_info: topic_info_list,
+          topic_name_list: allTopic,
+          topic_url_map: topicUrlMap,
+          start_date_list: startDateList,  //一个都是moment的list
+          end_date_list: endDateList,
+        });
+
+        if (tab == 0) {
+          that.initCheckCalendar();
+        } else if (tab == 1) {
+          that.initCompleteness();
+        } else if (tab == 2) {
+          that.initCheckLog();
+        }
+      }
+    )};
+
+
+
     /* 返回所有topic名字的list和topic对应的图片url的map */
     let getTopicNameAndUrlList = function (list) {
       var nameList = [];
@@ -100,56 +116,44 @@ Page({
       return [nameList, topicUrlMap];
     }
 
-    /* 获取用户卡片信息 */
-    let getTopicInfoList = function (checked_data_list){
-      data.getTopicInfoList((error_code, msg, topic_info_list) => {
-        if (error_code != 200) return;
-        console.log('获取用户打卡信息成功');
-        topic_info_list = utils.filterDatedData(topic_info_list);
 
-        let [allTopic, topicUrlMap] = getTopicNameAndUrlList(topic_info_list);
-        let [checkTimeListPerTopic, checkInfoListPerTopic] = data.getCheckedDataOfEveryTopic(checked_data_list, allTopic); //按照每个topic分类的打卡时间集合
-        let [startDateList, endDateList] = data.getStartEndDateList(topic_info_list); 
 
-        if (checked_data_list.length != 0){
-          that.setData({
-            checked_data_list: checked_data_list, //用于展示每日具体打卡信息
-            check_first_date: moment(checked_data_list[checked_data_list.length - 1].check_time, 'YYYY-MM-DD'), //所有卡片最早开始打卡的时间
-            check_last_date: moment(checked_data_list[0].check_time, 'YYYY-MM-DD'), //所有卡片中最晚打卡的时间
-          });
-        }
+  },
 
-        that.setData({
-          current_date: moment().format('YYYY-MM-DD'),
-          start_date_list: startDateList,  //一个都是moment的list
-          end_date_list: endDateList,
-          topic_info: topic_info_list,
-          topic_name_list: allTopic,
-          topic_url_map: topicUrlMap,
-          //根据topic分类的check信息
-          check_time_per_topic: checkTimeListPerTopic,
-          check_info_per_topic: checkInfoListPerTopic,
-        });
+  tapCanvas: function(params){
+    console.log(params)
+  },
 
-        that.fillCalendar(moment().format('YYYY-MM'));
+
+  // 初始化每日打卡
+  initCheckCalendar: function () {
+    if (this.data.checked_data_list.length == 0 || 
+        this.data.topic_info_list == 0) return;
+    let checked_data_list = this.data.checked_data_list;
+
+    if (this.data.checked_data_list.length != 0) {
+      this.setData({
+        check_first_date: moment(checked_data_list[checked_data_list.length - 1].check_time, 'YYYY-MM-DD'), //所有卡片最早开始打卡的时间
+        check_last_date: moment(checked_data_list[0].check_time, 'YYYY-MM-DD'), //所有卡片中最晚打卡的时间
       });
     }
 
-    /* 获取当前用户具体打卡信息 */
-    data.getCheckDataList((error_code, msg, checked_data_list) => {
-      if (error_code != 200 || !checked_data_list) return;
-      getTopicInfoList(checked_data_list); /* 获取用户卡片信息 */
+    this.setData({
+      current_date: moment().format('YYYY-MM-DD'),
     });
+
+    this.fillCalendar(moment().format('YYYY-MM'));
   },
 
 
 
   // 初始化每日完成度
   initCompleteness: function () {
-    if (this.data.checked_data_list.length == 0){
+    if (this.data.checked_data_list.length == 0) {
       this.setData({
         user_click_no_data: true
       });
+      return;
     }
 
     let [checkTimeList, checkedTopicListPerDay] = data.getTopicListPerDay(this.data.checked_data_list);
@@ -179,7 +183,12 @@ Page({
 
   // 初始化历史日志tab
   initCheckLog: function(){
-    
+    if (this.data.topic_info_list == 0) return;
+
+    let completenessList = data.getCompletenessListPerTopic(this.data.check_time_per_topic);
+    this.setData({
+      completeness_list: completenessList
+    });
   },
 
 
@@ -284,7 +293,7 @@ Page({
 
     if (e.detail.scrollTop == 0 ) {//上滑到顶了
       // let idx = this.data.year_month_list_max_idx;
-      let currentSelectedDate = moment(this.data.date);
+      let currentSelectedDate = moment(this.data.date, 'YYYY-MM');
       let allTopic = this.data.topic_name_list; //所有topic名字的集合
       let topic = allTopic[this.data.selected_topic_idx]; //当前选中的topic名
       let checkedTime = this.data.check_time_per_topic[topic]; //当前选中的topic的所有check信息
@@ -521,7 +530,7 @@ Page({
 
 
 
-  /*------------------------以下是打卡日志部分---------------------------*/
+  /*---------------------以下是打卡日志部分---------------------------*/
   selectTopicLog: function(e){
     let indexKey = e.currentTarget.dataset.idx;
     // console.log(indexKey)
@@ -678,6 +687,7 @@ Page({
    * 对话框取消按钮点击事件
    */
   onCancel: function () {
+    this.hideModal();
   },
 
   /**
