@@ -160,7 +160,6 @@ image{
 
 .year-month-text{
   color:#fff;
-  /* color:#ffc48a; */
 }
 
 .calendar-right-part{
@@ -190,7 +189,6 @@ image{
   align-items:center;
   margin-bottom:10rpx;
   color: #8c8c8c;
-  /* color: #f76f6f; */
 }
 
 .select-topic-picker{

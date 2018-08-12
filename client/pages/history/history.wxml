@@ -151,7 +151,7 @@
           <image class="check-log-topic-image" src="{{topic_info_map[topic_name].topic_url}}"></image>
           <view style="display:flex; flex-direction: column;">
             <text class="check-log-topic-text">{{topic_name}}</text>
-            <progress class="check-log-progress" show-info="true" stroke-width="3" activeColor="red" backgroundColor="#fde28d" active percent="50">完成度</progress>
+            <progress class="check-log-progress" show-info="true" stroke-width="3" activeColor="#fcbc7d" backgroundColor="#fee0c1" active percent="{{completeness_list[topic_name]}}">完成度</progress>
           </view>
         </view>
         
