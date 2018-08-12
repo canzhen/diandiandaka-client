@@ -3,8 +3,7 @@ const utils = require('./vendor/utils.js');
 //app.js
 App({
   config: {
-    host: 'zhoucanzhendevelop.com',
-    index_hot_topic_num : 6,
+    host: 'zhoucanzhendevelop.com'
   },
   
   globalData:{

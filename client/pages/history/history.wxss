@@ -56,7 +56,7 @@ image{
   flex-direction: column;
   width: 20%;
   height: 100%;
-  margin: 30rpx 0rpx 0rpx 10rpx;
+  margin: 40rpx 0rpx 0rpx 10rpx;
   color: #888888;
 }
 

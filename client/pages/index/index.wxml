@@ -13,9 +13,11 @@
   </view>
 
   <!-- 第三行，热门卡片部分 -->
-  <view class="hot-topic-panel" wx:for="{{hot_topic_data}}" wx:key="key" wx:for-item="topic" bindtap="clickHotTopic" data-selected-topic-name="{{topic.topic_name}}" data-selected-topic-url="{{topic.topic_url}}">
+  <scroll-view style="height:{{scrollHeight}}px;" scroll-y scroll-with-animation enable-back-to-top>
+    <view class="hot-topic-panel" wx:for="{{hot_topic_data}}" wx:key="key" wx:for-item="topic" bindtap="clickHotTopic" data-selected-topic-name="{{topic.topic_name}}" data-selected-topic-url="{{topic.topic_url}}">
       <image class="image" src="{{topic.topic_url}}" mode="aspectFit"></image>
       <text class="text hot-topic-content">{{topic.topic_name}}\n已有{{topic.use_people_num}}人参与打卡</text>
-    <!-- </button> -->
+      <!-- </button> -->
     </view>
+  </scroll-view>
 </view>

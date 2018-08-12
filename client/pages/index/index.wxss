@@ -14,8 +14,8 @@ image{
 .first-line-view{
   display:flex; 
   flex-direction:row; 
-  margin-top:70rpx; 
-  margin-bottom:80rpx;
+  margin-top: 60rpx; 
+  margin-bottom: 80rpx;
 }
 
 

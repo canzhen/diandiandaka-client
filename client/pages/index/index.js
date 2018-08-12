@@ -1,6 +1,7 @@
 const helper = require('./helper.js');
 const api = require('../../ajax/api.js');
 const utils = require('../../vendor/utils.js');
+const MAX_HOT_TOPIC_NUM = 10;
 
 Page({
   data: {
@@ -11,22 +12,13 @@ Page({
   },
   
 
-  /**
-   * 单击"开始进步"触发的函数
-   */
-  createNewTopic: function (e) {
-    let topicname = this.data.topic_name;
-    let topicurl = this.data.topic_url;
-    helper.navigateToNewTopicPage(topicname, topicurl);
-  },
-
   init: function(ifShowLoading = true){
     // if (utils.getStorageSync('sessionId')) return;
     // 从数据库中获取topic
     api.postRequest({
       'url': '/topic/getAll',
       'data': { 
-        'limit_num': getApp().config.index_hot_topic_num 
+        'limit_num': MAX_HOT_TOPIC_NUM
       },
       'showLoading': ifShowLoading,
       'success': (res) => { //请求成功
@@ -34,6 +26,7 @@ Page({
           this.setData({
             hot_topic_data: res.data
           });
+          this.setScrollHeight();
         } else {
           setTimeout(function () {
             wx.navigateTo({
@@ -51,11 +44,24 @@ Page({
         console.log('[index] get hot topic data failed');
       }
     });
-
-      this.setData({
-        topic_name: ''
-      });
   },
+
+
+  setScrollHeight: function () {
+    let that = this;
+    //设置scroll-view高度，自适应屏幕
+    wx.getSystemInfo({
+      success: function (res) {
+        // let height = res.windowHeight;
+        wx.createSelectorQuery().selectAll('.second-line-view').boundingClientRect((rects) => {
+          that.setData({
+            scrollHeight: res.windowHeight - rects[0].bottom - 40
+          });
+        }).exec();
+      }
+    });
+  },
+
 
   /**
    * 生命周期函数--监听页面加载
@@ -89,6 +95,17 @@ Page({
       'topic_url': topicurl
     });
   },
+
+
+  /**
+   * 单击"开始进步"触发的函数
+   */
+  createNewTopic: function (e) {
+    let topicname = this.data.topic_name;
+    let topicurl = this.data.topic_url;
+    helper.navigateToNewTopicPage(topicname, topicurl);
+  },
+
 
 
   /**

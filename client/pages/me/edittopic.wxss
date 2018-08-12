@@ -144,7 +144,7 @@ checkbox {
   
   /* shape */
   border-radius: 4px;
-  background-color: #ffbbbb;
+  background-color: #feddbb;
   border: none;
 }
 
