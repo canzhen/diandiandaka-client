@@ -161,10 +161,10 @@ Page({
 
     wx.getSystemInfo({
       success: function (res) {
-        wx.createSelectorQuery().selectAll('.completeness-panel').boundingClientRect((rects) => {
+        wx.createSelectorQuery().selectAll('.completeness-first-row').boundingClientRect((rects) => {
           let scrollHeight = that.data.scrollHeight;
           that.setData({
-            canvasHeight: res.windowHeight - rects[0].top - 130,
+            canvasHeight: res.windowHeight - rects[0].top - 150,
           });
           data.option.grid.height = that.data.canvasHeight;
           data.option.grid.width = that.data.scrollWidth - 50;
@@ -494,15 +494,11 @@ Page({
       canvasXText = [];
 
     setChart(canvasXText, canvasYData);
-
-    wx.createSelectorQuery().selectAll('.completeness-canvas').boundingClientRect((rects) => {
-      console.log(rects[0].top)
-      console.log(rects[0].left)
-    }).exec();    
   },
 
 
   completenessChangeTimelapse: function (n) {
+    // if (this.data.selected_timelapse == 3) return;
     let selectedTimelapseName = this.data.timelapses[this.data.selected_timelapse].name;
     this.newCanvas(selectedTimelapseName, n);
   },

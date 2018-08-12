@@ -1,4 +1,4 @@
-<view style="display:flex; flex-direction:column; margin-left: 70rpx; margin-right: 70rpx; padding-top: 60rpx;">
+<view style="display:flex; flex-direction:column; margin-left: 70rpx; margin-right: 70rpx; padding-top: 40rpx;">
   <form bindsubmit="submitForm">
     <view style="display:flex; flex-direction:row;">
       <text class="topic-name"> 计划名称 </text>

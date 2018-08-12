@@ -15,7 +15,6 @@ router.post('/getAll', function (req, res) {
   }
   let sessionid = req.header('session-id')
   redishelper.getValue(sessionid, (openid) => {
-    console.log(openid)
     if (!openid) {
       res.send({ 'error_code': 102, 'msg': '' });
       return;
@@ -23,7 +22,6 @@ router.post('/getAll', function (req, res) {
     dbhelper.select(
       'topic_url', 'url', "user_id=? or user_id=''", [openid], '',
       (status, result_list) => {
-        console.log(result_list)
         if (!status) {
           res.send({ 'error_code': 100, 'msg': '', 'result_list': '' });
           return;

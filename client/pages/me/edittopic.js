@@ -65,7 +65,7 @@ Page({
         wx.createSelectorQuery().selectAll('.pick-icon-text').boundingClientRect((rects) => {
           that.setData({
             scrollHeight: res.windowHeight - rects[0].bottom -
-              res.windowHeight * 0.1 - 20
+              res.windowHeight * 0.1 - 30
           });
         }).exec();
       }
@@ -226,6 +226,29 @@ Page({
       }
     });
 
+  },
+
+
+  /**
+   * 删除卡片
+   */
+  deleteTopic: function(e){
+
+    api.postRequest({
+      'url': '/topic/delete',
+      'data': {
+        topic_name: this.data.topic_name
+      },
+      'success': (res) => {
+        if (res.error_code != 200){
+          console.log('delete failed');
+          return;
+        }
+      },
+      'fail': (res) => {
+        console.log('delete failed');
+      }
+    });
   },
 
 

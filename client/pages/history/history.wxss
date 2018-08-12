@@ -56,7 +56,7 @@ image{
   flex-direction: column;
   width: 20%;
   height: 100%;
-  margin: 10rpx 0rpx 0rpx 10rpx;
+  margin: 30rpx 0rpx 0rpx 10rpx;
   color: #888888;
 }
 
@@ -110,13 +110,6 @@ image{
   /* margin-left: 5rpx; */
   margin-right:10rpx;
   font-size: 28rpx;
-}
-
-
-image{
-  width: 40rpx;
-  height: 40rpx;
-  margin-bottom: 10rpx;
 }
 
 .all-history-first-row{
@@ -253,69 +246,82 @@ image{
 
 
  .completeness-panel{
-  display:flex;
-  flex-direction: column;
-  justify-content: space-around;
-  align-items: center;
-  height: 95%;
-  margin: 20rpx, 50rpx, 20rpx, 50rpx;
+    position:fixed;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    /* margin: 40rpx, 50rpx, 20rpx, 50rpx; */
  }
 
 
- .completeness-first-row{
-  display:flex;
-  flex-direction: row;
+
+.completeness-first-row{
+  position: fixed;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  margin-top: 25rpx;
+  top: 120rpx;
+  left: 120rpx;
+}
+
+
+
+ .completeness-first-row1{
+  /* 
+  justify-content: center;
+  align-items: center;
+  margin-top: 25rpx; */
+  display:flex;
+  flex-direction: row;
+  align-items: center;
  }
 
 
 .completeness-canvas{
-  /* position: fixed; */
-  /* display: flex; */
-  /* flex-direction: row; */
+  position: fixed;
+  overflow: hidden;
   justify-content: center;
-  margin: 10rpx 100rpx 0rpx 0rpx;
+  top: 240rpx;
+  left: 25rpx;
+  /* margin: 10rpx 100rpx 0rpx 0rpx; */
   width: 100%;
-  /* height: 790rpx; */
-  /* z-index: 0; */
 }
-
 
 .completeness-canvas-error{
   position: fixed;
-  top: 37%;
-  left: 37%;
-  width: 100%;
-  height: 600rpx;
   opacity: 0.65;
-  z-index: -1;
+  top: 500rpx;
+  left: 170rpx;
+  /* z-index: -1; */
 }
 
-.completeness-canvas-error2{
-  position: fixed;
-  top: 37%;
-  left: 34%;
-  width: 100%;
-  height: 600rpx;
-  opacity: 0.7;
-  z-index: -1;
+
+.completeness-canvas-error image{
+  width: 50rpx;
+  height: 60rpx;
+  margin-right: 10rpx;
+  /* margin-top: 30rpx; */
 }
 
 
 .completeness-panel-bottom{
+  position: fixed;
   display:flex;
   flex-direction: row;
   justify-content: space-around;
-  margin: 40rpx 60rpx 10rpx 20rpx;
+  bottom: 40rpx;
+  left: 65rpx;
+  /* margin: 40rpx 60rpx 10rpx 20rpx; */
 }
 
 
 .completeness-button{
   width: 120rpx;
   height: 60rpx;
-  margin-right: 1%;
+  margin-right: 50rpx;
 
   /* text */
   font-size: 22rpx; 
@@ -335,7 +341,7 @@ image{
 .completeness-button-checked{
   width: 120rpx;
   height: 60rpx;
-  margin-right: 1%;
+  margin-right: 50rpx;
 
   /* text */
   font-size: 24rpx; 
@@ -475,6 +481,9 @@ button::after{
 .detail-loop-panel-left{
   margin-left: -41rpx;
   margin-top: 40rpx;
+  width: 40rpx;
+  height: 40rpx;
+  margin-bottom: 10rpx;
 }
 
 .detail-loop-panel-right{

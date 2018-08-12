@@ -2,6 +2,7 @@ const express = require('express');
 const config = require('../config.js');
 const dbhelper = require('../helpers/dbhelper.js');
 const redishelper = require('../helpers/redishelper.js');
+const TABLE_NAME = 'user_topic';
 const router = express.Router();
 
 
@@ -45,10 +46,9 @@ router.post('/createtopic', function (req, res) {
       res.send({ 'error_code': 102, 'msg': 'redis数据库里找不到对应用户数据' });
       return;
     }
-    dbhelper.insert('user_topic', 
-      'user_id, topic_name, topic_url, insist_day, start_date, end_date', 
-      [value, req.body.topicname, req.body.topicurl, 0, req.body.startdate,
-      req.body.enddate,], '',
+    dbhelper.insert(TABLE_NAME, 
+      'user_id, topic_name, topic_url, start_date, end_date', 
+      [value, req.body.topicname, req.body.topicurl,req.body.startdate, req.body.enddate,], '',
       (status, errmsg) => {
         if (!status){
           // let errReason = errmsg.substr(0, errmsg.indexOf(':'));
@@ -86,21 +86,74 @@ router.post('/update', function (req, res) {
       topic_url = req.body.topic_url,
       start_date = req.body.start_date,
       end_date = req.body.end_date;
+
+
+  let updateTopicCheck = function(openid){
+    dbhelper.update('topic_check', 'topic_name=?',
+      'user_id=? AND topic_name=?',
+      [topic_name, openid, original_topic_name],
+      (status, result_list) => {
+        let statusCode = status ? 200 : 100;
+        let resList = status ? result_list : false;
+        res.send({ 'error_code': statusCode, 'msg': '', 'result_list': resList });
+      });
+  };
+
+
   redishelper.getValue(id, (openid) => {
     if (!openid) {
       res.send({ 'error_code': 102, 'msg': '' });
       return;
     }
-    let url = req.body.url;
-    dbhelper.update('user_topic', 'topic_name=?,topic_url=?, start_date=?,end_date=?', 'user_id=? AND topic_name=?', [topic_name, topic_url, start_date, end_date, openid, original_topic_name],
+    dbhelper.update(TABLE_NAME, 'topic_name=?,topic_url=?, start_date=?,end_date=?', 'user_id=? AND topic_name=?', [topic_name, topic_url, start_date, end_date, openid, original_topic_name],
       (status, errmsg) => {
-        if (status) res.send({ 'error_code': 200, 'msg': '' });
-        else{
+        if (!status) {
           if (errmsg == 'ER_DUP_ENTRY'){
             res.send({ 'error_code': 101, 'msg': errmsg });
           }
           res.send({ 'error_code': 100, 'msg': errmsg });
+          return;
         }
+
+        updateTopicCheck(openid);
+      });
+  });
+});
+
+
+
+
+
+
+/**
+ * 删除卡片
+ */
+router.post('/delete', function (req, res) {
+  let id = req.header('session-id');
+  let topic_name = req.body.topic_name;
+
+  let deleteTopicCheck = function(openid){
+    dbhelper.deleteRow('topic_check', 'user_id=? AND topic_name=?',
+      [openid, topic_name],
+      (status, errmsg) => {
+        if (status) res.send({ 'error_code': 200, 'msg': '' });
+        else res.send({ 'error_code': 100, 'msg': errmsg });
+      });
+  };
+
+  redishelper.getValue(id, (openid) => {
+    if (!openid) {
+      res.send({ 'error_code': 102, 'msg': '' });
+      return;
+    }
+    dbhelper.deleteRow(TABLE_NAME, 'user_id=? AND topic_name=?',
+      [openid, topic_name],
+      (status, errmsg) => {
+        if (!status) {
+          res.send({ 'error_code': 100, 'msg': errmsg });
+          return;
+        }
+        deleteTopicCheck(openid);
       });
   });
 });

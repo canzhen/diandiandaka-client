@@ -7,8 +7,8 @@ const yearList = ['1月', '2月', '3月', '4月', '5月', '6月', '7月',
 var option = {
   color: ['#37a2da', '#32c5e9', '#67e0e3'],
   grid: {
-    left: 10,
-    top: 0,
+    left: 0,
+    top: 20,
     right: 10,
     bottom: 10,
     width: 340,

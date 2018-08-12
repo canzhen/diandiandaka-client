@@ -147,7 +147,6 @@ function update(table_name, column_string, condition_string, value_list, cb){
     function (err, result) {
       if (err) {
         console.log('update ' + table_name + ' 失败，失败信息:');
-        console.log(err);
         cb(false, err.code);
       } else {
         console.log('update ' + table_name + ' 成功');

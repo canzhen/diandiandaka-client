@@ -71,7 +71,7 @@
 <view hidden="{{currentTab!==1}}">
 
   <!-- 没有任何日志的时候显示 -->
-  <view class="completeness-panel" style="margin-top: 50rpx;" wx:if="{{!check_info_per_topic}}">
+  <view class="completeness-panel" wx:if="{{!check_info_per_topic}}">
     您当前没有任何卡片喔~
   </view>
 
@@ -79,43 +79,50 @@
     <!-- <view class='mask' catchtouchmove="move"></view> -->
     <view class="completeness-panel">
       <view class="completeness-first-row">
-        <image src="/images/graph-left.png" 
-        style="width:35rpx;height:35rpx;margin-right:30rpx;margin-top:10rpx;"
-        bindtap="completenessPreTimelapse"
-        hidden="{{selected_timelapse==3}}"></image>
-        <text> {{completeness_week_subtitle}}</text>
-        <image src="/images/graph-right.png" 
-        style="width:35rpx;height:35rpx;margin-left:30rpx;margin-top:10rpx;" 
-        bindtap="completenessNextTimelapse"
-        hidden="{{selected_timelapse==3}}"></image>
+        <view class="completeness-first-row1">
+          <image src="/images/graph-left.png" 
+          style="width:35rpx;height:35rpx;margin-right:30rpx;"
+          bindtap="completenessPreTimelapse"
+          disabled="{{selected_timelapse==3}}"></image>
+          <text> {{completeness_week_subtitle}}</text>
+          <image src="/images/graph-right.png" 
+          style="width:35rpx;height:35rpx;margin-left:30rpx;" 
+          bindtap="completenessNextTimelapse"
+          disabled="{{selected_timelapse==3}}"></image>
+        </view>
+        <text wx:if="{{!user_click_no_data&&!user_click_on_future}}">平均完成度{{average_completeness}}%</text>
       </view>
-      <text wx:if="{{!user_click_no_data&&!user_click_on_future}}">平均完成度{{average_completeness}}%</text>
-    </view>
 
 
   <!-- style="height:{{scrollHeight}}-300px;width:{{scrollWidth}}-20px;" -->
-    <view class='completeness-canvas' 
-      style="height:{{canvasHeight}}px;">
-      <ec-canvas id='mychart-dom-bar' 
+    <!-- <view style="height:370px;"> -->
+      <ec-canvas class='completeness-canvas'
+          style="height:{{canvasHeight+150}}px;"
+          hidden="{{!user_click_no_data && !user_click_on_future}}"
+          id='mychart-dom-bar' 
           canvas-id='mychart-bar' 
           bindtouchstart='canvasTouchStart'
           bindtouchmove='canvasTouchMove' 
           bindtap="tapCanvas"
           ec="{{ec}}"
           disable-scroll='true'> </ec-canvas>
-    </view>
+
+      <view class="completeness-canvas-error" 
+            hidden="{{!user_click_no_data}}">
+        <image src="/images/unhappy.png"></image>
+        <text>该段时间您没有打卡嗷~</text>
+      </view>
 
 
-    <view class="completeness-canvas-error" hidden="{{!user_click_no_data}}">
-      <image src="/images/unhappy.png" style="width:200rpx;height:270rpx;"></image>
-      <text style="margin-left: -250rpx;color:black;">该段时间您没有打卡嗷~</text>
-    </view>
+      <view class="completeness-canvas-error" 
+            hidden="{{!user_click_on_future}}">
+        <image src="/images/wronged.png"></image>
+        <text style="">未来的事情宝宝还不知道呢~</text>
+      </view>
+    <!-- </view> -->
 
+    <!-- <view style="clear:both;height:0"></view> -->
 
-    <view class="completeness-canvas-error2" hidden="{{!user_click_on_future}}">
-      <image src="/images/wronged.png" style="width:224rpx;height:270rpx;"></image>
-      <text style="margin-left: -280rpx;">未来的事情宝宝不知道呢~</text>
-    </view>
 
 
     <!-- 底部固定的1周/1个月/1年/全部的选项卡 -->
@@ -125,6 +132,7 @@
   </view>
 
 
+  </view>
 </view>
 
 

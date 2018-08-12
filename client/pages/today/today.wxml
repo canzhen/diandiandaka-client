@@ -23,7 +23,7 @@
         </view>
         <text style="text-align:center; margin-top: -5rpx;">{{my_topic_data[num].topic_name}}</text>
         <text wx:if="{{my_topic_data[num]&&my_topic_data[num].insist_day != -1}}" 
-              style="text-align:center;font-size:23rpx; margin-top: -30rpx;" >
+              style="text-align:center;font-size:23rpx; margin-top: -28rpx;" >
               连续{{my_topic_data[num].insist_day}}天
         </text>
       </view>

@@ -109,7 +109,7 @@ function getSubscriptByLength(l, numEachRow){
 
 /**
  * 从数据库中获取，显示到前台的时候的过滤函数
- * 1. 将24小时未打卡的卡片insist_day设置为0，
+ * 1. 将如果超过2天未打卡的卡片insist_day设置为0，
  * 2. 将过期的卡片删除（当前日期大于用户设置的end_date）
  * 3. 今日打过卡的，直接is_checked设置为true
  */
@@ -120,7 +120,7 @@ function filterDatedData(user_topic_list){
     var item = user_topic_list[i];
     // 将过期的卡片删除（当前日期大于用户设置的end_date）
     if (currentMoment > moment(item['end_date'], 'YYYY-MM-DD')) continue;
-    //如果超过2天未打卡，则显示的时候自动显示insist_day为0
+    // 如果超过2天未打卡，则显示的时候自动显示insist_day为0
     let lastupdateMoment = moment(item['last_check_time'], 'YYYY-MM-DD');
     if (moment().diff(lastupdateMoment, 'days') >= 2)
       item['insist_day'] = 0;

@@ -2,6 +2,7 @@ const express = require('express');
 const config = require('../config.js');
 const dbhelper = require('../helpers/dbhelper.js');
 const redishelper = require('../helpers/redishelper.js');
+const TABLE_NAME = 'topic_check';
 const router = express.Router();
 
 
@@ -38,7 +39,7 @@ router.post('/check', function (req, res) {
   // 删除uncheck数据
   let deleteUncheck = function (openid) {
     // console.log('start deleting')
-    dbhelper.deleteRow('topic_check',
+    dbhelper.deleteRow(TABLE_NAME,
       topic_check_delete_str,
       topic_check_delete_list,
       (status, errmsg) => {
@@ -97,7 +98,7 @@ router.post('/check', function (req, res) {
       user_topic_insert_list[i].push("'" + openid + "'");
 
     dbhelper.insertMulti( //update topic_check，记录具体打卡详情
-      'topic_check',
+      TABLE_NAME,
       'topic_name, check_time, check_timestamp, log, user_id',
       user_topic_insert_list, '',
       (status, errmsg) => {
@@ -122,7 +123,7 @@ router.post('/getAll', function (req, res) {
       res.send({ 'error_code': 102, 'msg': '' });
       return;
     }
-    dbhelper.select('topic_check', 'topic_name, check_time, check_timestamp, log', 'user_id=?', [openid], 'ORDER BY check_time DESC, check_timestamp DESC',
+    dbhelper.select(TABLE_NAME, 'topic_name, check_time, check_timestamp, log', 'user_id=?', [openid], 'ORDER BY check_time DESC, check_timestamp DESC',
       (status, result_list) => {
         let statusCode = status ? 200 : 100;
         let resList = status ? result_list : false;
@@ -149,7 +150,7 @@ router.post('/deleteCheck', function (req, res) {
     }
 
     // 删除uncheck数据
-    dbhelper.deleteRow('topic_check',
+    dbhelper.deleteRow(TABLE_NAME,
       'user_id=? AND topic_name=? AND check_time=? AND check_timestamp=?',
       [openid, topic_name, check_time, check_timestamp],
       (status, errmsg) => {
@@ -178,7 +179,7 @@ router.post('/updateLog', function (req, res) {
       res.send({ 'error_code': 102, 'msg': '' });
       return;
     }
-    dbhelper.update('topic_check', 'log=?', 
+    dbhelper.update(TABLE_NAME, 'log=?', 
     'user_id=? AND topic_name=? AND check_time=? AND check_timestamp=?', 
     [log, openid, topic_name, check_time, check_timestamp], 
     (status, result_list) => {
@@ -204,17 +205,8 @@ router.post('/updateName', function (req, res) {
       res.send({ 'error_code': 102, 'msg': '' });
       return;
     }
-    dbhelper.update('topic_check', 'topic_name=?',
-      'user_id=? AND topic_name=?',
-      [topic_name, openid, original_topic_name],
-      (status, result_list) => {
-        let statusCode = status ? 200 : 100;
-        let resList = status ? result_list : false;
-        res.send({ 'error_code': statusCode, 'msg': '', 'result_list': resList });
-      });
   });
 });
-
 
 
 module.exports = router;
