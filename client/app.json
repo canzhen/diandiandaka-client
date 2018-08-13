@@ -1,9 +1,9 @@
 {
   "pages": [
+    "pages/today/today",
     "pages/index/index",
     "pages/me/settings",
     "pages/history/history",
-    "pages/today/today",
     "pages/me/me",
     "pages/newtopic/newtopic",
     "pages/me/mytopic",

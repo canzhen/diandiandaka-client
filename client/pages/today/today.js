@@ -137,7 +137,7 @@ Page({
           let result_list = utils.filterDatedData(res.result_list);
           result_list.push({
             'topic_name': '添加新卡片\n',
-            'topic_url': '/images/xinkapian.png',
+            'topic_url': '/images/xinkapian.png',
             'insist_day': -1,
             'is_checked': false
           });
