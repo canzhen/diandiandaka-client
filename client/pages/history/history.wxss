@@ -57,7 +57,7 @@ image{
   flex-direction: column;
   width: 20%;
   height: 100%;
-  margin: 40rpx 0rpx 0rpx 10rpx;
+  padding: 40rpx 0rpx 0rpx 10rpx;
   color: #888888;
 }
 
@@ -119,6 +119,7 @@ image{
   justify-content:center;
   align-items:center;
   margin: 0rpx 10rpx 20rpx 0rpx;
+  height: 30rpx;
   color: #888888;
 }
 

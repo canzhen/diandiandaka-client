@@ -13,7 +13,7 @@ let colorList = ['#f8d3ad', '#f3c6ca'];
 Page({
   data: {
     navbar: ['打卡日历', '每日完成度', '历史日志'],
-    currentTab: 1,
+    currentTab: 0,
     colorList: [ '#f3faf998', '#f6f3fa98', '#f6faf398', '#f9faf398',
                '#faf3f898', '#faf3f498', '#f3faf9a4', '#f3f7faa4'],
 
@@ -23,7 +23,7 @@ Page({
     check_info_per_topic: [], //每个topic的具体信息：{'跑步': [{check_time': '2018-06-13', 'log': '很好'}, {check_time': '2018-06-24', 'log': '还是很好'}], {'起床': [{}, {}, ..}], '':[], '': [],...}
     checked_data_list: [], // 用于展示每日具体打卡信息
     // topic_name_list: [], // 所有topic名字的集合：['减肥','跑步','早睡']
-    topic_info: [], //该用户的打卡数据：[{'topic_name':'', 'topic_url':'', 'insist_day':''}, {}, ...] 用于【打卡日历】标题栏
+    topic_info: [2], //该用户的打卡数据：[{'topic_name':'', 'topic_url':'', 'insist_day':''}, {}, ...] 用于【打卡日历】标题栏
     topic_info_map: {}, // {'name': {'topic_url':'', 'start_date':'',..}}
     start_date_list: [], //一个都是moment的list，所有topic的开始日期的集合
     end_date_list: [], //一个都是moment的list，所有topic的结束日期的集合
@@ -189,7 +189,6 @@ Page({
     this.setData({
       current_date: moment().format('YYYY-MM-DD'),
     });
-    console.log('1111111')
     this.fillCalendar(moment().format('YYYY-MM'));
   },
 
@@ -201,7 +200,6 @@ Page({
       this.setData({
         user_click_no_data: true
       });
-      return;
     }
 
     let that = this;
@@ -252,16 +250,15 @@ Page({
 
   /* 具体实现往前端填充数据的方法 */
   fillCalendar: function (date) {
-    console.log(2222222)
     date = moment(date, 'YYYY-MM');
-    let allData = this.data.checked_data_list; //所有的data（按照topic分类的所有check信息
-    // let allTopic = this.data.topic_name_list; //所有topic名字的集合
-    let topic = this.data.topic_info[this.data.selected_topic_idx]['topic_name']; //当前选中的topic名
-    let checkedTime = this.data.check_time_per_topic[topic]; //当前选中的topic的所有check信息
+    let checkedTime = [];
+    if (this.data.topic_info.length != 0){
+      let topic = this.data.topic_info[this.data.selected_topic_idx]['topic_name']; //当前选中的topic名
+      checkedTime = this.data.check_time_per_topic[topic]; //当前选中的topic的所有check信息
+    }
     var currentMoment = moment(date);
     var preMoment = moment(date).subtract(1, 'month');
     var prepreMoment = moment(date).subtract(2, 'month');
-
 
     this.setData({
       'year_month_list[2]': data.getCalendar(checkedTime, currentMoment, colorList[currentMoment.month() % 2]),
@@ -269,8 +266,13 @@ Page({
       'year_month_list[0]': data.getCalendar(checkedTime, prepreMoment, colorList[prepreMoment.month() % 2]),
     });
 
+
+    if (this.data.topic_info.length != 0){
+      this.setData({
+        selected_topic: this.data.topic_info[0]['topic_name'],
+      });
+    }
     this.setData({
-      selected_topic: this.data.topic_info[0]['topic_name'],
       scroll_into_view_id: 'id' + moment().format('YYYY-MM')
     });
   },
@@ -304,14 +306,16 @@ Page({
 
 
     if (e.detail.scrollTop == 0 ) {//上滑到顶了
-      // let idx = this.data.year_month_list_max_idx;
       let currentSelectedDate = moment(this.data.date);
-      // let allTopic = this.data.topic_name_list; //所有topic名字的集合
-      let topic = this.data.topic_info[this.data.selected_topic_idx]['topic_name']; //当前选中的topic名
-      let checkedTime = this.data.check_time_per_topic[topic]; //当前选中的topic的所有check信息
+      let checkedTime = [];
+      if (this.data.topic_info.length != 0) {
+        let topic = this.data.topic_info[this.data.selected_topic_idx]['topic_name']; //当前选中的topic名
+        checkedTime = this.data.check_time_per_topic[topic]; //当前选中的topic的所有check信息
+      }
 
       let newDate = moment(currentSelectedDate).subtract(3, 'month');
-      if (newDate < this.data.check_last_date) {
+      if (newDate < this.data.check_last_date ||
+          this.data.check_last_date == '') {
         wx.showToast({
           title: '没有更多打卡数据惹~',
           icon: 'none'
@@ -513,6 +517,8 @@ Page({
       completeness_current_date: ans['enddate'].format('YYYY-MM-DD'),
       completeness_week_subtitle: ans['subtitle'],
     });
+
+    console.log(this.data.completeness_week_subtitle);
 
 
     if (this.data.user_click_no_data || this.data.user_click_on_future)

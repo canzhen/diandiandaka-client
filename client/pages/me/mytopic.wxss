@@ -159,3 +159,12 @@
   height: 0;
   color: transparent;
 }
+
+
+.no-data-panel{
+  display: flex;
+  /* flex-direction: column; */
+  justify-content: center;
+  align-items: center;
+  margin-top: 50rpx;
+}

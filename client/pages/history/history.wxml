@@ -6,12 +6,8 @@
  
 <!-- 打卡日历 -->
 <view hidden="{{currentTab!==0}}">
-  <!-- 没有任何日志的时候显示 -->
-  <view class="completeness-nodata" wx:if="{{topic_info_list.length == 0}}">
-    您当前没有任何卡片喔~
-  </view>
 
-  <view class="check-calendar-panel" wx:if="{{topic_info_list.length != 0}}">
+  <view class="check-calendar-panel" wx:if="{{topic_info.length != 0}}">
     <view class="all-history-left">
       <!-- 显示出所有正在打卡的topic|左侧 -->
       <scroll-view style="height:{{scrollHeight}}px;" scroll-y scroll-with-animation enable-back-to-top>
@@ -65,6 +61,13 @@
 
     </view>
   </view>
+
+
+  <!-- 没有任何日志的时候显示 -->
+  <view class="completeness-nodata" wx:if="{{topic_info.length == 0}}">
+    您当前没有任何卡片喔~
+  </view>
+
 </view>
  
 
@@ -75,15 +78,9 @@
 
 <!-- 每日完成度 -->
 <view hidden="{{currentTab!==1}}">
-
-  <!-- 没有任何日志的时候显示
-  <view class="completeness-nodata" wx:if="{{checked_data_list.length == 0}}">
-    您当前没有任何打卡数据喔~
-  </view> -->
-
     <!-- <view class='mask' catchtouchmove="move"></view> -->
     <view class="completeness-panel">
-      <view class="completeness-first-row" wx:if="{{checked_data_list.length != 0}}">
+      <view class="completeness-first-row" wx:if="{{topic_info.length != 0}}">
         <view class="completeness-first-row1">
           <image src="/images/graph-left.png" 
           style="width:35rpx;height:35rpx;margin-right:30rpx;"
@@ -113,22 +110,17 @@
           disable-scroll='true'> </ec-canvas>
 
       <view class="completeness-canvas-error" 
-            hidden="{{!user_click_no_data && checked_data_list.length != 0}}">
+            hidden="{{(!user_click_no_data && checked_data_list.length != 0) || topic_info.length == 0}}">
         <image src="/images/unhappy.png"></image>
         <text>该段时间您没有打卡嗷~</text>
       </view>
 
 
       <view class="completeness-canvas-error" 
-            hidden="{{!user_click_on_future}}">
+            hidden="{{!user_click_on_future || topic_info.length == 0}}">
         <image src="/images/wronged.png"></image>
         <text style="">未来的事情宝宝还不知道呢~</text>
       </view>
-    <!-- </view> -->
-
-    <!-- <view style="clear:both;height:0"></view> -->
-
-
 
     <!-- 底部固定的1周/1个月/1年/全部的选项卡 -->
       <view class="completeness-panel-bottom" wx:if="{{checked_data_list.length != 0}}">
@@ -136,21 +128,26 @@
       </view>
     <!-- 底部固定的1周/1个月/1年/全部的选项卡 -->
     </view>
+
+  <!-- 没有任何日志的时候显示 -->
+  <view class="completeness-nodata" wx:if="{{topic_info.length == 0}}">
+    您当前没有任何卡片喔~
+  </view>
+
 </view>
+
+
+
+
+
 
 
 
 <!-- 历史日志 -->
 <view hidden="{{currentTab!==2}}">
 
-  <!-- 没有任何日志的时候显示 -->
-  <view class="check-log-panel" wx:if="{{topic_info_list.length == 0}}">
-    您当前没有任何卡片喔~
-  </view>
-
-
   <!-- 有日志的时候显示 -->
-  <view class="check-log-panel" wx:if="{{topic_info_list.length != 0}}">
+  <view class="check-log-panel" wx:if="{{topic_info.length != 0}}">
     <scroll-view class="check-log-scroll-view" style="height:{{scrollHeight-20}}px;" scroll-y scroll-with-animation enable-back-to-top>
       <view class="block" style="background-color:{{colorList[check_info_per_topic[topic_name].length%8]}};" wx:for="{{check_info_per_topic}}"  wx:key="key" wx:for-index="topic_name" wx:for-item="check_info" >
         <view class="check-log-topic-image-text" bindtap="selectTopicLog" data-idx="{{topic_name}}" >
@@ -182,8 +179,17 @@
       </view>
     </scroll-view>
   </view>
+
+  <!-- 没有任何日志的时候显示 -->
+  <view class="check-log-panel" wx:if="{{topic_info.length == 0}}">
+    您当前没有任何卡片喔~
+  </view>
+
 </view>
  
+
+
+
 
 
 

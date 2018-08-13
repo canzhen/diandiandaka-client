@@ -1,17 +1,18 @@
-<!-- <scroll-view scroll-y scroll-with-animation enable-back-to-top> -->
-  <movable-area  class="my-topic" style="width:{{scrollWidth}}px; height:{{scrollHeight}}px;">
-    <!-- 每个item -->
-    <movable-view direction="all" x="{{random_position_list[idx].x}}" y="{{random_position_list[idx].y}}" wx:for="{{topic_list}}"  wx:for-item="item" wx:for-index="idx" wx:key="key" class="movable-item">
-      <view class="item-background" bindtap="tapOnTopic" data-index="{{idx}}" animation="{{animation_list[idx]}}">
-        <!-- 每个item里的第一行文字和图片 -->
-        <view class="me-lower-part-item-first-row">
-          <image class="me-lower-part-item-image" src="{{item.topic_url}}"/>
-          <text class="me-lower-part-item-text">{{item.topic_name}}</text>
-        </view>
-        <!-- 每个item里的第一行文字和图片结束 -->
-        <text style="font-size:23rpx;margin-left:100rpx; margin-top: -33rpx;"> 已坚持{{item.total_day}}天，连续{{item.insist_day}}天</text>
+<movable-area class="my-topic" wx:if="{{topic_list.length != 0}}" style="width:{{scrollWidth}}px; height:{{scrollHeight}}px;">
+  <!-- 每个item -->
+  <movable-view direction="all" x="{{random_position_list[idx].x}}" y="{{random_position_list[idx].y}}" wx:for="{{topic_list}}"  wx:for-item="item" wx:for-index="idx" wx:key="key" class="movable-item">
+    <view class="item-background" bindtap="tapOnTopic" data-index="{{idx}}" animation="{{animation_list[idx]}}">
+      <!-- 每个item里的第一行文字和图片 -->
+      <view class="me-lower-part-item-first-row">
+        <image class="me-lower-part-item-image" src="{{item.topic_url}}"/>
+        <text class="me-lower-part-item-text">{{item.topic_name}}</text>
       </view>
-    </movable-view>
-    <!-- 每个item结束 -->
-  </movable-area>
-<!-- </scroll-view> -->
+      <!-- 每个item里的第一行文字和图片结束 -->
+      <text style="font-size:23rpx;margin-left:100rpx; margin-top: -33rpx;"> 已坚持{{item.total_day}}天，连续{{item.insist_day}}天</text>
+    </view>
+  </movable-view>
+  <!-- 每个item结束 -->
+</movable-area>
+
+
+<view class="no-data-panel" wx:if="{{topic_list.length == 0}}"> 您当前没有任何卡片喔~ </view>
