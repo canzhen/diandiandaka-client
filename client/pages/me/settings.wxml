@@ -1,7 +1,27 @@
-<view class="title"> 提醒设置 </view>
-<view class="line"/>
+<view class="settings-panel">
+  <view class="title"> 基本设置 </view>
+  <view class="line"></view>
 
-<view class="one-line">
-  <text>用户名：</text>
-  <input placeholder="默认为微信名"></input>
+  <view class="one-line">
+    <text>用户名：</text>
+    <input placeholder="默认为微信名"></input>
+  </view>
+
+  <view class="one-line">
+    <text>地区：</text>
+    <import src="../../vendor/area-picker/picker.wxml"/>
+    <view class="infoText"  bindtap="translate">{{province}} {{city}} {{county}}</view>
+    <!-- <button class="animation-button" bindtap="translate">选择城市</button> -->
+    <template is="areaData" data="{{...areaPickerItem}}"/>
+  </view>
+
+
+
+  <view class="title" style="margin-top: 50rpx;"> 提醒设置 </view>
+  <view class="line"></view>
+
+  <view class="one-line">
+    <text>用户名：</text>
+    <input placeholder="默认为微信名"></input>
+  </view>
 </view>

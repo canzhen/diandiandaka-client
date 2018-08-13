@@ -208,7 +208,6 @@ Page({
     }
 
     let that = this;
-    
     wx.getSystemInfo({
       success: function (res) {
         wx.createSelectorQuery().selectAll('.completeness-first-row').boundingClientRect((rects) => {
