@@ -113,6 +113,9 @@ function getCheckDataList(cb){
     }
   });
 }
+
+
+
 /* 获取当前用户的卡片信息 */
 function getTopicInfoList(cb) {
   api.postRequest({
@@ -209,12 +212,14 @@ function getCheckDetailOnGivenDay(checkedList, givenDate) {
  * 获取某一天的完成度百分比
  * 起始日期是左开右闭
  */
-function getCompletePercentageOfDay(currentdate, checked_topic_num, total_topic_num, start_date_list, end_date_list){
-  currentdate = moment(currentdate);
+function getCompletePercentageOfDay(currentdate, topic_list_per_day, total_topic_num, start_date_list, end_date_list) {
   if (currentdate > moment()) return null; //未来无法计算
+  if (currentdate < start_date_list[0]) return null; //之前并没有任何卡片开始
+  if (topic_list_per_day[currentdate.format('YYYY-MM-DD')] == undefined) return 0;
+
+  currentdate = moment(currentdate);
   let l = start_date_list.length;
   let total_num = 0;
-
 
   // 如果时间位于最晚开始和最早结束的卡片之间，则总数为卡片总数
   if (currentdate < end_date_list[0] && currentdate >= start_date_list[l-1]){
@@ -243,7 +248,7 @@ function getCompletePercentageOfDay(currentdate, checked_topic_num, total_topic_
 
   if (!total_num) return null;
 
-  let percentage = (checked_topic_num / total_num * 100 ).toFixed(2);
+  let percentage = (topic_list_per_day[currentdate.format('YYYY-MM-DD')].length / total_num * 100 ).toFixed(2);
   percentage = percentage ? parseFloat(percentage) : null;
   return percentage;
 }
@@ -264,9 +269,8 @@ function _getCanvasData(percentageList, startdate, enddate,
       let formatDate = date.format('YYYY-MM-DD');
       if (ifAddXTestList)
         xTextList.push(date.format('MM月DD日'));
-      if (check_time_list.indexOf(formatDate) != -1)
-        percentage = getCompletePercentageOfDay(date,topic_list_per_day[formatDate].length, total_topic_num, start_date_list, end_date_list);
-      if (!percentage) allZero = false;
+      percentage = getCompletePercentageOfDay(date,topic_list_per_day, total_topic_num, start_date_list, end_date_list);
+      if (percentage) allZero = false;
       percentageList.push(percentage);
     }
   }else{
@@ -292,11 +296,9 @@ function _getCanvasData(percentageList, startdate, enddate,
         curMonth += 1; //把当前月份加一
       }
 
-      let formatDate = date.format('YYYY-MM-DD');
-      if (check_time_list.indexOf(formatDate) != -1){
-        validDaysPerMonth+=1;
-        percentage = getCompletePercentageOfDay(date, topic_list_per_day[formatDate].length, total_topic_num, start_date_list, end_date_list);
-      }
+      percentage = getCompletePercentageOfDay(date, topic_list_per_day, total_topic_num, start_date_list, end_date_list);
+      if (percentage != null) validDaysPerMonth += 1;
+
       if (!percentage) allZero = false;
       tmpList.push(percentage);
     }
@@ -305,26 +307,6 @@ function _getCanvasData(percentageList, startdate, enddate,
   if (allZero) percentageList = [];
 }
 
-
-
-/**
- * 获取本周的周一的日期
- */
-function getWeekStartDate(date) {
-  var currentdate = moment(date);
-  let weekOfDay = parseInt(currentdate.format('E'));
-  return currentdate.subtract(weekOfDay - 1, 'days');//周一日期
-}
-
-
-/**
- * 获取本周日的时间
- */
-function getWeekEndDate(date) {
-  var currentdate = moment(date);
-  let weekOfDay = parseInt(currentdate.format('E'));
-  return currentdate.add(7 - weekOfDay, 'days');//周日日期
-}
 
 
 /**
@@ -392,6 +374,7 @@ function getCanvasData(
   }
   let subtitle = startdate.format('YYYY-MM-DD') + ' 到 ' + enddate.format('YYYY-MM-DD');
 
+
   return {'ydata': percentageList, 
           'xtext': xTextList, //x轴横坐标的值
           'subtitle': subtitle, 
@@ -427,6 +410,28 @@ function getDaysListOfGivenMonth(year, month) {
  */
 function isLeap(year) {
   return year % 400 === 0 || year % 4 === 0 && year % 100 !== 0 ? true : false;
+}
+
+
+
+
+/**
+ * 获取本周的周一的日期
+ */
+function getWeekStartDate(date) {
+  var currentdate = moment(date);
+  let weekOfDay = parseInt(currentdate.format('E'));
+  return currentdate.subtract(weekOfDay - 1, 'days');//周一日期
+}
+
+
+/**
+ * 获取本周日的时间
+ */
+function getWeekEndDate(date) {
+  var currentdate = moment(date);
+  let weekOfDay = parseInt(currentdate.format('E'));
+  return currentdate.add(7 - weekOfDay, 'days');//周日日期
 }
 
 /**

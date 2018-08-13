@@ -132,7 +132,7 @@ Page({
         let topicInfoMap = getTopicInfoMap(topic_info_list);
         let [checkTimeListPerTopic, checkInfoListPerTopic] = data.getCheckedDataOfEveryTopic(checked_data_list, topicInfoMap); //按照每个topic分类的打卡时间集合
         let [startDateList, endDateList] = data.getStartEndDateList(topic_info_list);
-        
+
         that.setData({
           date: moment(),
           topic_info: topic_info_list,
@@ -480,8 +480,6 @@ Page({
     let canvasYData = ans['ydata'];
     let avg = 0;
 
-    console.log(canvasYData)
-
     if (ans['startdate'] > moment()){
       this.setData({
         user_click_on_future: true,
@@ -497,7 +495,7 @@ Page({
       let validNum = 0;
       for (let i in canvasYData){
         sum += canvasYData[i];
-        validNum += canvasYData[i] ? 1 : 0;
+        validNum += canvasYData[i] != null ? 1 : 0;
       }
 
       avg = (sum/validNum).toFixed(2);
