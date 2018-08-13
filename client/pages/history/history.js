@@ -13,7 +13,7 @@ let colorList = ['#f8d3ad', '#f3c6ca'];
 Page({
   data: {
     navbar: ['打卡日历', '每日完成度', '历史日志'],
-    currentTab: 1,
+    currentTab: 0,
     colorList: [ '#f3faf998', '#f6f3fa98', '#f6faf398', '#f9faf398',
                '#faf3f898', '#faf3f498', '#f3faf9a4', '#f3f7faa4'],
 
@@ -133,6 +133,8 @@ Page({
         let [checkTimeListPerTopic, checkInfoListPerTopic] = data.getCheckedDataOfEveryTopic(checked_data_list, topicInfoMap); //按照每个topic分类的打卡时间集合
         let [startDateList, endDateList] = data.getStartEndDateList(topic_info_list);
 
+        let [checkTimeList, checkedTopicListPerDay] = data.getTopicListPerDay(checked_data_list);
+
         that.setData({
           date: moment(),
           topic_info: topic_info_list,
@@ -142,6 +144,8 @@ Page({
           topic_info_map: topicInfoMap,
           start_date_list: startDateList,  //一个都是moment的list
           end_date_list: endDateList,
+          check_time_list: checkTimeList,
+          checked_topic_list_per_day: checkedTopicListPerDay,
         });
 
         if (tab == 0) {
@@ -203,13 +207,8 @@ Page({
       return;
     }
 
-    let [checkTimeList, checkedTopicListPerDay] = data.getTopicListPerDay(this.data.checked_data_list);
     let that = this;
-    this.setData({
-      check_time_list: checkTimeList,
-      checked_topic_list_per_day: checkedTopicListPerDay,
-    });
-
+    
     wx.getSystemInfo({
       success: function (res) {
         wx.createSelectorQuery().selectAll('.completeness-first-row').boundingClientRect((rects) => {
@@ -381,15 +380,20 @@ Page({
 
   // 单击日历上的某一天，跳转显示当前具体打的卡片
   bindTapOnDate: function (e) {
-    let chosenDate = e.currentTarget.dataset.currentDate;
-    if (moment(chosenDate, 'YYYY-MM-DD') > moment()){
+    let chosenDate = moment(e.currentTarget.dataset.currentDate, 'YYYY-MM-DD');
+    if (chosenDate > moment()){
       content = '未来的事情宝宝无法预测嗷~';
     }else{
-      let checkedDetail = data.getCheckDetailOnGivenDay(
-                  this.data.checked_data_list, chosenDate);
+      let checkedDetail = this.data.checked_topic_list_per_day[chosenDate.format('YYYY-MM-DD')];
+      checkedDetail = checkedDetail == undefined ? [] : checkedDetail
 
-      let completeness = data.getCompletePercentageOfDay(chosenDate, checkedDetail.length, this.data.topic_info.length, this.data.start_date_list, this.data.end_date_list);
-      var content = '您在' + chosenDate;
+      let completeness = data.getCompletePercentageOfDay(
+        chosenDate,
+        this.data.checked_topic_list_per_day,
+        this.data.topic_info.length, 
+        this.data.start_date_list, 
+        this.data.end_date_list);
+      var content = '您在' + chosenDate.format('YYYY年MM月DD日');
       checkedDetail.length == 0 ? content += '没打卡,继续努力哟~'
         : content += '打了' + checkedDetail.length + "张卡：[" + checkedDetail.toString() +
         ']，当日打卡完成度为' + completeness + '%';

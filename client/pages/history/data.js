@@ -199,12 +199,12 @@ function getCheckedDataOfEveryTopic(dataList, topicInfoMap) {
 @param givenDate '2018-07-02'
 */
 function getCheckDetailOnGivenDay(checkedList, givenDate) {
-  var checkedTopicList = [];
+  var checkedTopicList = new Set();
   for (var i = 0; i < checkedList.length; i++) {
-    if (checkedList[i].check_time === givenDate)
-      checkedTopicList.push(checkedList[i].topic_name);
+    if (checkedList[i].check_time === givenDate.format('YYYY-MM-DD'))
+      checkedTopicList.add(checkedList[i].topic_name);
   }
-  return checkedTopicList;
+  return Array.from(checkedTopicList);
 }
 
 
