@@ -128,11 +128,11 @@ Page({
     let getTopicInfoList = function (checked_data_list) {
       data.getTopicInfoList((error_code, msg, topic_info_list) => {
         if (error_code != 200) return;
-        console.log('获取用户打卡信息成功');
         topic_info_list = utils.filterDatedData(topic_info_list);
         let topicInfoMap = getTopicInfoMap(topic_info_list);
         let [checkTimeListPerTopic, checkInfoListPerTopic] = data.getCheckedDataOfEveryTopic(checked_data_list, topicInfoMap); //按照每个topic分类的打卡时间集合
         let [startDateList, endDateList] = data.getStartEndDateList(topic_info_list);
+        
         that.setData({
           date: moment(),
           topic_info: topic_info_list,

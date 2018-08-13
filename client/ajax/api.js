@@ -1,5 +1,6 @@
 const root = 'https://zhoucanzhendevelop.com';
 const utils = require('../vendor/utils.js');
+var sessionId = null;
 
 // 接口信息
 const API = {
@@ -18,6 +19,8 @@ const API = {
  *                 'header' : {}}
  */
 function postRequest(params) {
+  if (!sessionId) 
+    sessionId = utils.getStorageSync('sessionId');
   if (params.showLoading){
     wx.showLoading({
       title: '加载中',
@@ -36,7 +39,7 @@ function postRequest(params) {
       //添加header
       if (!params.header) params.header = {};
       params.header['content-type'] = 'application/json';
-      params.header['session-id'] = utils.getStorageSync('sessionId');
+      params.header['session-id'] = sessionId;
       wx.request({
         url: root + params.url,
         method: 'POST',

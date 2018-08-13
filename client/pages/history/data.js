@@ -615,7 +615,6 @@ module.exports = {
   getCheckDataList,
   getTopicInfoList,
   getCheckedDataOfEveryTopic,
-  // divideTopicInfoIntoGroups,
   getCheckDetailOnGivenDay,
   getCanvasData,
   getTopicListPerDay,
