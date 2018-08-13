@@ -13,12 +13,15 @@ Page{
 }
 
 .first-line-view{
-  margin-bottom: 40rpx;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 50rpx;
+  align-items: center;
 }
 
 .avatar{
   margin-top: -90rpx;
-  margin-left: 288rpx;
+  /* margin-left: 288rpx; */
   width: 180rpx;
   height: 180rpx;
   overflow:hidden;
@@ -29,8 +32,8 @@ Page{
 }
 
 .username{
-  margin-top:30rpx;
-  margin-left: 330rpx;
+  margin-top: 15rpx;
+  /* margin-left: 330rpx; */
 }
 
 .notopic-reminder{

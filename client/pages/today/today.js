@@ -52,43 +52,46 @@ Page({
     } else {
       this.init();
     }
+    this.setData({
+      is_loaded: true
+    });
   },
 
 
 
-  /* 页面显示函数，tab切换回来也会调用 */
-  onShow() {
+  /* tab来回切换时也会调用的function */
+  onShow: function(){
+    if (this.data.is_loaded){
+      this.setData({
+        is_loaded: false
+      });
+      return;
+    }
     this.init();
   },
-
-
 
   /**
    * 页面初始化，获取数据
    */
   init: function (ifShowLoading = true) {
-    if (this.data.if_init) return;
     let that = this;
 
     if (wx.getStorageSync('avatarUrl')) {
       this.setData({
         avatar_url: wx.getStorageSync('avatarUrl'),
-        is_reset_avatar: true,
-        if_init: true,
+        is_reset_avatar: true
       });
     }
 
     if (wx.getStorageSync('userName')) {
       this.setData({
         user_name: wx.getStorageSync('userName'),
-        is_reset_name: true,
-        if_init: true,
+        is_reset_name: true
       });
     }
-    
-    
-    
-    if (!this.data.if_init) {
+
+    if (!wx.getStorageSync('avatarUrl') ||
+      !wx.getStorageSync('userName')){
 
       /* 获取用户的个性化头像和姓名 */
       api.postRequest({
@@ -104,8 +107,7 @@ Page({
                 is_reset_name: !(reslist['user_name'] == false),
                 is_reset_avatar: !(reslist['avatar_url'] == false),
                 user_name: reslist['user_name'] ? reslist['user_name'] : '',
-                avatar_url: reslist['avatar_url'] ? reslist['avatar_url'] : '',
-                if_init: true,
+                avatar_url: reslist['avatar_url'] ? reslist['avatar_url'] : ''
               });
               wx.setStorageSync('avatarUrl', this.data.avatar_url);
               wx.setStorageSync('userName', this.data.user_name);
@@ -114,7 +116,9 @@ Page({
         }
       });
     }
-    
+
+
+
     // 根据当前卡片数来生成每一行图片的的下标
     let createRowNum = function () {
       that.setData({
@@ -148,6 +152,8 @@ Page({
       }
     });
   },
+
+
 
 
   /**

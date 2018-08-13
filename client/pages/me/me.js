@@ -9,7 +9,6 @@ Page({
    * 页面的初始数据
    */
   data: {
-    if_init: false,
     topic_list: [], //用户的打卡数据
     topic_num_list: [], //用于存排列下标的数组
 
@@ -22,14 +21,12 @@ Page({
 
 
   init: function(){
-    if (this.data.if_init) return;
     let that = this;
 
     if (wx.getStorageSync('avatarUrl')){
       this.setData({
         avatar_url: wx.getStorageSync('avatarUrl'),
         is_reset_avatar: true,
-        if_init: true,
       });
     }
 
@@ -37,11 +34,11 @@ Page({
       this.setData({
         user_name: wx.getStorageSync('userName'),
         is_reset_name: true,
-        if_init: true,
       });
     }
-    
-    if (!this.data.if_init){
+
+    if (!wx.getStorageSync('avatarUrl') ||
+      !wx.getStorageSync('userName')) {
       /* 获取用户的个性化头像和姓名 */
       api.postRequest({
         'url': '/user/getNameAvatar',
@@ -50,13 +47,12 @@ Page({
           if (res.error_code == 200 && res.result_list != []) {
             let reslist = res.result_list;
             if (reslist == undefined) return;
-            if (reslist['user_name'] || reslist['avatar_url']){
+            if (reslist['user_name'] || reslist['avatar_url']) {
               this.setData({
                 is_reset_name: !(reslist['user_name'] == false),
                 is_reset_avatar: !(reslist['avatar_url'] == false),
                 user_name: reslist['user_name'] ? reslist['user_name'] : '',
-                avatar_url: reslist['avatar_url'] ? reslist['avatar_url'] : '',
-                if_init: true,
+                avatar_url: reslist['avatar_url'] ? reslist['avatar_url'] : ''
               });
               wx.setStorageSync('avatarUrl', this.data.avatar_url);
               wx.setStorageSync('userName', this.data.user_name);
@@ -66,6 +62,9 @@ Page({
       });
     }
   },
+
+
+
 
   /**
    * 生命周期函数--监听页面加载
@@ -82,21 +81,21 @@ Page({
     } else {
       this.init();
     }
+    this.setData({
+      is_loaded: true
+    });
   },
 
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
+  /* tab来回切换时也会调用的function */
   onShow: function () {
+    if (this.data.is_loaded) {
+      this.setData({
+        is_loaded: false
+      });
+      return;
+    }
     this.init();
   },
-  
 
   /**
    * 生命周期函数--监听页面隐藏

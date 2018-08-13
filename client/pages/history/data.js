@@ -211,14 +211,19 @@ function getCheckDetailOnGivenDay(checkedList, givenDate) {
  */
 function getCompletePercentageOfDay(currentdate, checked_topic_num, total_topic_num, start_date_list, end_date_list){
   currentdate = moment(currentdate);
+  if (currentdate > moment()) return null; //未来无法计算
   let l = start_date_list.length;
   let total_num = 0;
 
+
+  // 如果时间位于最晚开始和最早结束的卡片之间，则总数为卡片总数
   if (currentdate < end_date_list[0] && currentdate >= start_date_list[l-1]){
     total_num = l;
+  // 如果时间位于最早开始之前，或者最晚结束之后，总数为0
   }else if (currentdate < start_date_list[0] || 
             currentdate >= end_date_list[l-1]){
     total_num = 0;
+  // 否则，位于最早开始和最晚开始之间，每往前推时间，减少一个卡片
   }else if (currentdate < start_date_list[l-1]){
     for (let i = 1; i < l; i++){
       if (currentdate >= start_date_list[l-1-i]){
@@ -226,6 +231,7 @@ function getCompletePercentageOfDay(currentdate, checked_topic_num, total_topic_
         break;
       }
     }
+  // 否则，位于最晚结束和最早结束之间，每向后推时间，减少一个卡片
   }else if(currentdate >= end_date_list[0]){
     for (let i = 1; i < l; i++){
       if (currentdate < end_date_list[i]){
@@ -245,19 +251,21 @@ function getCompletePercentageOfDay(currentdate, checked_topic_num, total_topic_
 
 
 function _getCanvasData(percentageList, startdate, enddate, 
-  start_date_list, end_date_list, check_time_list, topic_list_per_day,
-  total_topic_num, ifAverage, ifAddXTestList = false, xTextList=null, ) {
+          start_date_list, end_date_list, check_time_list,
+          topic_list_per_day,total_topic_num, ifAverage, 
+          ifAddXTestList = false, xTextList=null, ) {
+
   let allZero = true;
   let diff = parseInt(enddate.diff(startdate, 'days'));
   if (!ifAverage){
     for (let i = diff; i >= 0; i--) {
-      let percentage = null;
+      let percentage = 0.0;
       let date = moment(enddate).subtract(i, 'days');
       let formatDate = date.format('YYYY-MM-DD');
       if (ifAddXTestList)
         xTextList.push(date.format('MM月DD日'));
       if (check_time_list.indexOf(formatDate) != -1)
-        percentage = getCompletePercentageOfDay(date, topic_list_per_day[formatDate].length, total_topic_num, start_date_list, end_date_list);
+        percentage = getCompletePercentageOfDay(date,topic_list_per_day[formatDate].length, total_topic_num, start_date_list, end_date_list);
       if (!percentage) allZero = false;
       percentageList.push(percentage);
     }
@@ -266,7 +274,7 @@ function _getCanvasData(percentageList, startdate, enddate,
     let validDaysPerMonth = 0;
     let tmpList = [];
     for (let i = diff; i >= 0; i--) {
-      let percentage = null;
+      let percentage = 0.0;
       let date = moment(enddate).subtract(i, 'days');
 
       if (date.month() > curMonth) { //进入到下一个月了

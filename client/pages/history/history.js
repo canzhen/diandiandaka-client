@@ -13,7 +13,7 @@ let colorList = ['#f8d3ad', '#f3c6ca'];
 Page({
   data: {
     navbar: ['打卡日历', '每日完成度', '历史日志'],
-    currentTab: 0,
+    currentTab: 1,
     colorList: [ '#f3faf998', '#f6f3fa98', '#f6faf398', '#f9faf398',
                '#faf3f898', '#faf3f498', '#f3faf9a4', '#f3f7faa4'],
 
@@ -67,11 +67,55 @@ Page({
   },
 
 
+
+
+  onLoad: function (options) {
+    let that = this;
+    //设置scroll-view高度，自适应屏幕
+    wx.getSystemInfo({
+      success: function (res) {
+        wx.createSelectorQuery().selectAll('.navbar').boundingClientRect((rects) => {
+          that.setData({
+            scrollHeight: res.windowHeight - rects[0].bottom - 30,
+            scrollWidth: res.windowWidth
+          });
+        }).exec();
+      }
+    });
+
+    if (!utils.getStorageSync('sessionId')) {
+      utils.login((res) => {
+        if (res) {
+          console.log('login success');
+          this.init();
+        } else
+          console.log('login fail');
+      });
+    } else {
+      this.init();
+    }
+
+    this.setData({
+      is_loaded: true
+    });
+  },
+
+
+  /* tab来回切换时也会调用的function */
+  onShow: function () {
+    if (this.data.is_loaded) {
+      this.setData({
+        is_loaded: false
+      });
+      return;
+    }
+    this.init();
+  },
+
   /**
    * 初始化函数
    */
   init: function (tab) {
-    if (this.data.if_init) return;
     if (tab == undefined) tab = this.data.currentTab;
     let that = this;
 
@@ -98,7 +142,6 @@ Page({
           topic_info_map: topicInfoMap,
           start_date_list: startDateList,  //一个都是moment的list
           end_date_list: endDateList,
-          if_init: true
         });
 
         if (tab == 0) {
@@ -127,11 +170,6 @@ Page({
       return topicInfoMap;
     }
   },
-
-
-  // tapCanvas: function(params){
-  //   console.log(params)
-  // },
 
 
   // 初始化每日打卡
@@ -198,38 +236,6 @@ Page({
     this.setData({
       completeness_list: completenessList
     });
-  },
-
-
-  onLoad: function (options) {
-    let that = this;
-    //设置scroll-view高度，自适应屏幕
-    wx.getSystemInfo({
-      success: function (res) {
-        wx.createSelectorQuery().selectAll('.navbar').boundingClientRect((rects) => {
-          that.setData({
-            scrollHeight: res.windowHeight - rects[0].bottom - 30,
-            scrollWidth: res.windowWidth
-          });
-        }).exec();
-      }
-    });
-
-    if (!utils.getStorageSync('sessionId')) {
-      utils.login((res) => {
-        if (res) {
-          console.log('login success');
-          this.init();
-        } else
-          console.log('login fail');
-      });
-    } else {
-      this.init();
-    }
-  },
-
-  onShow: function () {
-    this.init();
   },
 
 
@@ -400,7 +406,7 @@ Page({
 
 
 
-  /*------------------------以下是每日完成度部分-------------------------*/
+  /*----------------------以下是每日完成度部分-----------------------*/
   
   /**
    *  单击时间区间触发的方法
@@ -473,6 +479,8 @@ Page({
     let canvasXText = ans['xtext'];
     let canvasYData = ans['ydata'];
     let avg = 0;
+
+    console.log(canvasYData)
 
     if (ans['startdate'] > moment()){
       this.setData({

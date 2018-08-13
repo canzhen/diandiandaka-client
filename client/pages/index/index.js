@@ -26,7 +26,6 @@ Page({
           this.setData({
             hot_topic_data: res.data
           });
-          this.setScrollHeight();
         } else {
           setTimeout(function () {
             wx.navigateTo({
@@ -47,7 +46,12 @@ Page({
   },
 
 
-  setScrollHeight: function () {
+  /**
+   * 生命周期函数--监听页面加载
+   */
+  onLoad: function (options) {
+    this.init();
+
     let that = this;
     //设置scroll-view高度，自适应屏幕
     wx.getSystemInfo({
@@ -60,19 +64,23 @@ Page({
         }).exec();
       }
     });
+    this.setData({
+      is_loaded: true
+    });
   },
 
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad: function (options) {
-    // this.init();
-  },
-
-  onShow: function (options) {
+  /* tab来回切换时也会调用的function */
+  onShow: function () {
+    if (this.data.is_loaded) {
+      this.setData({
+        is_loaded: false
+      });
+      return;
+    }
     this.init();
   },
+
 
   /**
    * 当输入框的数据发生改变时，触发该函数
