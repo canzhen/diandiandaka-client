@@ -1,27 +1,59 @@
 <view class="settings-panel">
-  <view class="title"> 基本设置 </view>
-  <view class="line"></view>
 
-  <view class="one-line">
-    <text>用户名：</text>
-    <input placeholder="默认为微信名"></input>
-  </view>
+  
+  <scroll-view style="height:{{scrollHeight}}px;" scroll-y scroll-with-animation enable-back-to-top>
+    <view class="title"> 基本设置 </view>
+    <view class="line"></view>
 
-  <view class="one-line">
-    <text>地区：</text>
-    <import src="../../vendor/area-picker/picker.wxml"/>
-    <view class="infoText"  bindtap="translate">{{province}} {{city}} {{county}}</view>
-    <!-- <button class="animation-button" bindtap="translate">选择城市</button> -->
-    <template is="areaData" data="{{...areaPickerItem}}"/>
-  </view>
+    <view class="content">
+      <view class="one-line">
+        <text>用户名：</text>
+        <input placeholder="默认为微信名"></input>
+      </view>
+
+      <view class="one-line">
+        <text>地　区：</text>
+        <import src="../../vendor/area-picker/picker.wxml"/>
+        <view class="infoText"  bindtap="translate">{{province}} {{city}} {{county}}</view>
+        <!-- <button class="animation-button" bindtap="translate">选择城市</button> -->
+        <template is="areaData" data="{{...areaPickerItem}}"/>
+      </view>
+
+
+      <view class="one-line">
+        <text>性　别：</text>
+        <radio-group style="margin-left:-8rpx;" bindchange="radioChange">
+          <label class="radio" wx:for="{{radioItems}}" wx:key="key">
+            <radio value="{{item.name}}" checked="{{item.checked}}">
+            {{item.value}}
+            </radio> 
+          </label>
+        </radio-group>
+      </view>
+    </view>
 
 
 
-  <view class="title" style="margin-top: 50rpx;"> 提醒设置 </view>
-  <view class="line"></view>
+    <view class="title" style="margin-top: 50rpx;"> 提醒设置 </view>
+    <view class="line"></view>
 
-  <view class="one-line">
-    <text>用户名：</text>
-    <input placeholder="默认为微信名"></input>
-  </view>
+    <view class="content">
+      <view class="topic-remind-oneline">
+        <text>是否开启微信提醒打卡</text>
+        <switch style='margin-right: 50rpx;' class="if-open-reminder" bindchange="switchChange"/>
+      </view>
+
+      <view wx:if="{{show_topic_panel}}" style="margin-left:20rpx;">
+        <view class="topic-remind-oneline" wx:for="{{topic_list}}" wx:for-item="item" wx:key="key">
+          <text>{{item.topic_name}}</text>
+          <checkbox style='margin-right: 80rpx;' bindchange="topicRemindChange"/>
+        </view>
+      </view>
+    </view>
+  
+  </scroll-view>
+
+
+
+  <button class="save-button" bindtap="saveSettings"> 保存设置 </button>
 </view>

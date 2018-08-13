@@ -1,26 +1,37 @@
 @import '../../vendor/area-picker/picker.wxss';
 
 Page{
-  font-size: 30rpx;
   display: flex;
   flex-direction: column;
   padding: 50rpx 50rpx 50rpx 50rpx;
+  font-size: 30rpx;
+  width: 100%;
+  height: 100%;
 }
 
 .settings-panel{
   display: flex;
   flex-direction: column;
-  width: 100%;
-  height: 100%;
 }
 
 .title{
-  width: 100%;
-  margin-bottom: 50rpx;
+  display: flex;
+  font-size: 35rpx;
+  /* background-color:#fff9f2; */
+  align-items: center;
+  height: 60rpx;
+  /* border-radius: 20rpx; */
+  /* box-shadow: darkgrey 1px 1px 3px 1px; */
+  /* padding-left: 30rpx; */
+}
+
+.content{
+  display: flex;
+  flex-direction: column;
+  /* padding-left: 30rpx; */
 }
 
 .line{
-  /* margin-top: 50rpx; */
   margin-bottom: 20rpx;
   width: 90%;
   height: 2rpx;
@@ -31,6 +42,54 @@ Page{
   display: flex;
   flex-direction: row;
   align-items: center;
-  margin-bottom: 10rpx;
+  height: 70rpx;
+  width: 100%;
 }
 
+
+.radio{
+  margin-right: 15rpx;
+  font-size: 42.8rpx;
+  width: 10rpx;
+  height: 10rpx;
+}
+
+
+radio{ transform:scale(.7) }
+
+.if-open-reminder{
+  margin-left: 20rpx;
+}
+
+switch{ transform:scale(.7) }
+
+checkbox{ transform:scale(.7)  }
+
+.topic-remind-oneline{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 70rpx;
+  width: 100%;
+}
+
+.save-button{
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30rpx;
+  bottom: 50rpx;
+  left: 270rpx;
+  width: 200rpx;
+  height: 80rpx;
+  border-radius: 4px;
+  background-color: #feddbb;
+}
+
+
+/* 去除button边框 */
+button::after{
+  border: none;
+}

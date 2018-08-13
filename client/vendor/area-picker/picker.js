@@ -84,7 +84,6 @@ function updateAreaData( that, status, e){
     //滑动事件
     var valueChange = function(e,that){
       var val = e.detail.value
-       console.log(e)
       //判断滑动的是第几个column
       //若省份column做了滑动则定位到地级市和区县第一位
       if (value[0] != val[0]) {
@@ -101,12 +100,6 @@ function updateAreaData( that, status, e){
       value = val;
 
       assignmentData(that, that.data.areaPickerItem.show)
-
-      console.log(val);
-      
-      //回调
-      //callBack(val);
-
     }
    
     if (status == 0){
@@ -126,7 +119,6 @@ function updateAreaData( that, status, e){
 
 //动画事件
 function animationEvents(that, moveY, show, duration) {
-  console.log("moveY:" + moveY + "\nshow:" + show);
   that.animation = wx.createAnimation({
     transformOrigin: "50% 50%",
     duration: duration,

@@ -5,8 +5,8 @@ page{
 
 .infoText{
     /* margin-top: 20rpx; */
-    text-align: center;
-    justify-content: center; 
+  text-align: center;
+  justify-content: center; 
 }
 
 .centerText{
@@ -83,13 +83,4 @@ picker-view-column view{
 }
 .right-bt {
   right: 30rpx;
-}
-
-.line{
-  display: block;
-  position: fixed;
-  height: 1rpx;
-  width: 100%;
-  margin-top: 89rpx; 
-  background-color: #eeeeee;
 }

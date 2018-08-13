@@ -14,7 +14,7 @@
         <text class="left-bt" catchtap="hiddenFloatView" data-id="555">取消</text>
         <text class="right-bt" catchtap="hiddenFloatView" data-id="666">确定</text>
 
-        <picker-view indicator-style = "height: 50rpx;" value="{{value}}" bindchange="bindChange" catchtap="nono">
+        <picker-view indicator-style="height:50rpx;" value="{{value}}" bindchange="bindChange" catchtap="nono">
         <!--省-->
         <picker-view-column>
            <view wx:for="{{provinces}}" wx:for-item="sheng" wx:key="">
