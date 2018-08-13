@@ -5,7 +5,9 @@
 
     <view class="me-upper-panel">
       <!-- 头像 -->
-      <open-data class="avatar" type="userAvatarUrl" mode="aspectFill" bindtap="changeAvatar" wx:if="{{!is_reset_avatar}}"></open-data>
+      <view class="avatar" bindtap="changeAvatar" wx:if="{{!is_reset_avatar}}">
+        <open-data mode="aspectFill" type="userAvatarUrl"></open-data>
+      </view>
       <image class="avatar" bindtap="changeAvatar" mode="aspectFill" src="{{avatar_url}}" wx:if="{{is_reset_avatar}}"></image>
 
 

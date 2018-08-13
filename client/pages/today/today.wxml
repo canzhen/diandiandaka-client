@@ -6,7 +6,7 @@
     <!-- 头像 -->
     <image class="avatar" bindtap="changeAvatar" mode="aspectFill" src="{{avatar_url}}" wx:if="{{is_reset_avatar}}"></image>
     <view class="avatar" bindtap="changeAvatar" wx:if="{{!is_reset_avatar}}">
-      <open-data type="userAvatarUrl"></open-data>
+      <open-data type="userAvatarUrl" mode="aspectFill"></open-data>
     </view>
     <!-- 用户名 -->
     <text class="username" wx:if="{{is_reset_name}}">{{user_name}}</text>
