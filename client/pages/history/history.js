@@ -121,6 +121,8 @@ Page({
 
     /* 获取当前用户具体打卡信息 */
     data.getCheckDataList((error_code, msg, checked_data_list) => {
+      console.log('查看checked_data_list');
+      console.log(!checked_data_list);
       if (error_code != 200 || !checked_data_list) return;
       getTopicInfoList(checked_data_list);
     });

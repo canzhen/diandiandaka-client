@@ -49,6 +49,7 @@ image{
   flex-direction: row;
   width: 100%;
   margin-top: 20rpx;
+  align-items: center;
 }
 
 .all-history-left{

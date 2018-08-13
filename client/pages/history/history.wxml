@@ -6,7 +6,12 @@
  
 <!-- 打卡日历 -->
 <view hidden="{{currentTab!==0}}">
-  <view class="check-calendar-panel">
+  <!-- 没有任何日志的时候显示 -->
+  <view class="completeness-nodata" wx:if="{{checked_data_list.length == 0}}">
+    您当前没有任何卡片喔~
+  </view>
+
+  <view class="check-calendar-panel" wx:if="{{checked_data_list.length != 0}}">
     <view class="all-history-left">
       <!-- 显示出所有正在打卡的topic|左侧 -->
       <scroll-view style="height:{{scrollHeight}}px;" scroll-y scroll-with-animation enable-back-to-top>
@@ -72,11 +77,11 @@
 <view hidden="{{currentTab!==1}}">
 
   <!-- 没有任何日志的时候显示 -->
-  <view class="completeness-nodata" wx:if="{{!check_info_per_topic}}">
+  <view class="completeness-nodata" wx:if="{{checked_data_list.length == 0}}">
     您当前没有任何卡片喔~
   </view>
 
-  <view wx:if="{{check_info_per_topic}}">
+  <view wx:if="{{checked_data_list.length != 0}}">
     <!-- <view class='mask' catchtouchmove="move"></view> -->
     <view class="completeness-panel">
       <view class="completeness-first-row">
@@ -137,14 +142,17 @@
 
 
 
-
-
-
-
 <!-- 历史日志 -->
 <view hidden="{{currentTab!==2}}">
+
+  <!-- 没有任何日志的时候显示 -->
+  <view class="check-log-panel" wx:if="{{checked_data_list.length == 0}}">
+    您当前没有任何卡片喔~
+  </view>
+
+
   <!-- 有日志的时候显示 -->
-  <view class="check-log-panel" wx:if="{{check_info_per_topic}}">
+  <view class="check-log-panel" wx:if="{{checked_data_list.length != 0}}">
     <scroll-view class="check-log-scroll-view" style="height:{{scrollHeight-20}}px;" scroll-y scroll-with-animation enable-back-to-top>
       <view class="block" style="background-color:{{colorList[check_info_per_topic[topic_name].length%8]}};" wx:for="{{check_info_per_topic}}"  wx:key="key" wx:for-index="topic_name" wx:for-item="check_info" >
         <view class="check-log-topic-image-text" bindtap="selectTopicLog" data-idx="{{topic_name}}" >
@@ -175,13 +183,6 @@
         <!-- 日志部分结束 -->
       </view>
     </scroll-view>
-  </view>
-
-
-
-  <!-- 没有任何日志的时候显示 -->
-  <view class="check-log-panel" wx:if="{{!check_info_per_topic}}">
-    您当前没有任何卡片喔~
   </view>
 </view>
  
