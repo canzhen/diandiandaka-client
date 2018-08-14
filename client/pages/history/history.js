@@ -1,5 +1,5 @@
 // var Charts = require('wxcharts.js');
-const moment = require('../../vendor/moment.min.js');
+const moment = require('../../vendor/moment.js');
 const utils = require('../../vendor/utils.js');
 const api = require('../../ajax/api.js');
 const helper = require('helper.js');
@@ -256,9 +256,9 @@ Page({
       let topic = this.data.topic_info[this.data.selected_topic_idx]['topic_name']; //当前选中的topic名
       checkedTime = this.data.check_time_per_topic[topic]; //当前选中的topic的所有check信息
     }
-    var currentMoment = moment(date);
-    var preMoment = moment(date).subtract(1, 'month');
-    var prepreMoment = moment(date).subtract(2, 'month');
+    var currentMoment = date.clone();
+    var preMoment = date.clone().subtract(1, 'month');
+    var prepreMoment = date.clone().subtract(2, 'month');
 
     this.setData({
       'year_month_list[2]': data.getCalendar(checkedTime, currentMoment, colorList[currentMoment.month() % 2]),
@@ -306,14 +306,14 @@ Page({
 
 
     if (e.detail.scrollTop == 0 ) {//上滑到顶了
-      let currentSelectedDate = moment(this.data.date);
+      let currentSelectedDate = this.data.date.clone();
       let checkedTime = [];
       if (this.data.topic_info.length != 0) {
         let topic = this.data.topic_info[this.data.selected_topic_idx]['topic_name']; //当前选中的topic名
         checkedTime = this.data.check_time_per_topic[topic]; //当前选中的topic的所有check信息
       }
 
-      let newDate = moment(currentSelectedDate).subtract(3, 'month');
+      let newDate = currentSelectedDate.clone().subtract(3, 'month');
       if (newDate < this.data.check_last_date ||
           this.data.check_last_date == '') {
         wx.showToast({
@@ -334,7 +334,7 @@ Page({
 
       this.setData({
         year_month_list: new_year_month_list,
-        date: moment(currentSelectedDate).subtract(1, 'month'),
+        date: currentSelectedDate.clone().subtract(1, 'month'),
       });
       wx.hideLoading();
     }
@@ -749,3 +749,4 @@ function initChart(canvas, width, height) { //初始化图表
   canvas.setChart(chart);
   return chart;
 }
+

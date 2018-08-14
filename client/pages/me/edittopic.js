@@ -1,6 +1,6 @@
 const utils = require('../../vendor/utils');
 const api = require('../../ajax/api.js');
-const moment = require('../../vendor/moment.min.js');
+const moment = require('../../vendor/moment.js');
 const qiniuhelper = require('../../vendor/qiniuhelper.js');
 const numEachRow = 5;
 

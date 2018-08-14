@@ -1,6 +1,6 @@
 const qiniuhelper = require('../../vendor/qiniuhelper.js');
 const utils = require('../../vendor/utils.js');
-const moment = require('../../vendor/moment.min.js');
+const moment = require('../../vendor/moment.js');
 const api = require('../../ajax/api.js');
 const numEachRow = 4;
 
@@ -182,7 +182,6 @@ Page({
       'showLoading': false, 
       'success': (res) => {
         console.log('success')
-        console.log(res)
       },
       'fail': (res) => {
         console.log('fail')

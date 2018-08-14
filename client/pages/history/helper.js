@@ -1,4 +1,4 @@
-const moment = require('../../vendor/moment.min.js');
+const moment = require('../../vendor/moment.js');
 
 /**
  * 给year，month和day，返回'2018-07-08'格式的string

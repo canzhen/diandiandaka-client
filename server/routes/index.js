@@ -1,11 +1,11 @@
-var express = require('express');
+const express = require('express');
 const redishelper = require('../helpers/redishelper.js');
 const qiniuhelper = require('../helpers/qiniuhelper.js');
 const dbhelper = require('../helpers/dbhelper.js');
 const utils = require('../helpers/utils.js');
 const config = require('../config.js');
 const request = require('request');
-var router = express.Router();
+const router = express.Router();
 
 
 
@@ -18,6 +18,7 @@ var router = express.Router();
  */
 router.post('/login', function (req, res) {
   let code = req.body.code;
+  let timezone = req.body.timezone;
   let sessionid = req.header('session-id');
   let openid = '';
   let that = this;
@@ -58,8 +59,10 @@ router.post('/login', function (req, res) {
       'json': true
     }, (error, response, body) => {
       if (!error && response.statusCode == 200) {
-        dbhelper.insert('user', 'user_id', [body.openid],
-          "ON DUPLICATE KEY UPDATE user_id='" + body.openid + "'",
+        dbhelper.insert('user', 'user_id, timezone', 
+          [body.openid, timezone],
+          "ON DUPLICATE KEY UPDATE user_id='"+body.openid+
+          "', timezone='"+timezone+"'",
           (status, errmsg) => {
             // 不管是不是duplicate，
             // 只要前端sessionid不存在，或者后端redis过期

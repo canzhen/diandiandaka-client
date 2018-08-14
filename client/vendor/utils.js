@@ -1,5 +1,9 @@
-const moment = require('./moment.min.js');
+const moment = require('./moment.js');
 const api = require('../ajax/api.js');
+
+function getTimezone(){
+  return -parseInt(new Date().getTimezoneOffset());
+}
 
 /**
  * 用户登录，无须让用户授权，在后端保存用户的openid，
@@ -16,6 +20,7 @@ module.exports.login = function login(cb) {
         'url': '/login',
         'data': {
           'code': code,
+          'timezone': getTimezone()
         },
         'success': (res) => {
           module.exports.setStorageSync('sessionId', res.sessionId, 1000 * 60 * 60 * 2); //服务端的session也是默认2小时过期

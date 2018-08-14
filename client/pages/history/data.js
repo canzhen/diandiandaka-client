@@ -1,5 +1,5 @@
 const api = require('../../ajax/api.js');
-const moment = require('../../vendor/moment.min.js');
+const moment = require('../../vendor/moment.js');
 const weekList = ['一', '二', '三', '四', '五', '六', '七'];
 const yearList = ['1月', '2月', '3月', '4月', '5月', '6月', '7月',
   '8月', '9月', '10月', '11月', '12月'];
@@ -217,7 +217,7 @@ function getCompletePercentageOfDay(currentdate, topic_list_per_day, total_topic
   if (currentdate < start_date_list[0]) return null; //之前并没有任何卡片开始
   if (topic_list_per_day[currentdate.format('YYYY-MM-DD')] == undefined) return 0;
 
-  currentdate = moment(currentdate);
+  currentdate = currentdate.clone();
   let l = start_date_list.length;
   let total_num = 0;
 
@@ -265,7 +265,7 @@ function _getCanvasData(percentageList, startdate, enddate,
   if (!ifAverage){
     for (let i = diff; i >= 0; i--) {
       let percentage = 0.0;
-      let date = moment(enddate).subtract(i, 'days');
+      let date = enddate.clone().subtract(i, 'days');
       let formatDate = date.format('YYYY-MM-DD');
       if (ifAddXTestList)
         xTextList.push(date.format('MM月DD日'));
@@ -279,7 +279,7 @@ function _getCanvasData(percentageList, startdate, enddate,
     let tmpList = [];
     for (let i = diff; i >= 0; i--) {
       let percentage = 0.0;
-      let date = moment(enddate).subtract(i, 'days');
+      let date = enddate.clone().subtract(i, 'days');
 
       if (date.month() > curMonth) { //进入到下一个月了
         if (validDaysPerMonth == 0) percentageList.push(null);
@@ -340,16 +340,16 @@ function getCanvasData(
       break;
     case "1个月":
       enddate.add(n, 'month');
-      enddate = moment(enddate).endOf('month');
-      startdate = moment(enddate).startOf('month')
+      enddate = enddate.clone().endOf('month');
+      startdate = enddate.clone().startOf('month')
 
       xTextList = getDaysListOfGivenMonth(
         enddate.year(), enddate.month() + 1);
       break;
     case "1年":
-      if (n != 0) enddate = moment(enddate).add(n, 'year');
+      if (n != 0) enddate = enddate.clone().add(n, 'year');
       enddate = enddate.endOf('year');
-      startdate = moment(enddate).startOf('year');
+      startdate = enddate.clone().startOf('year');
       ifAverage = true;
       xTextList = yearList;
       break;
@@ -419,7 +419,7 @@ function isLeap(year) {
  * 获取本周的周一的日期
  */
 function getWeekStartDate(date) {
-  var currentdate = moment(date);
+  var currentdate = date.clone();
   let weekOfDay = parseInt(currentdate.format('E'));
   return currentdate.subtract(weekOfDay - 1, 'days');//周一日期
 }
@@ -429,7 +429,7 @@ function getWeekStartDate(date) {
  * 获取本周日的时间
  */
 function getWeekEndDate(date) {
-  var currentdate = moment(date);
+  var currentdate = date.clone();
   let weekOfDay = parseInt(currentdate.format('E'));
   return currentdate.add(7 - weekOfDay, 'days');//周日日期
 }
@@ -577,18 +577,18 @@ function getTotalTopicNumPerDay(check_last_date, topic_info_list){
     if (!prestartdate){
       let diff = parseInt(enddate.diff(startdate, 'days'));
       for (let j = diff; j > 0; j--) {
-        let date = moment(enddate).subtract(j, 'days').format('YYYY-MM-DD');
+        let date = enddate.clone().subtract(j, 'days').format('YYYY-MM-DD');
         totalNumPerDay[date] = l - i;
       }
     } else {
       let diff = parseInt(enddate.diff(preenddate, 'days'));
       for (let j = diff; j > 0; j--) {
-        let date = moment(enddate).subtract(j, 'days').format('YYYY-MM-DD');
+        let date = enddate.clone().subtract(j, 'days').format('YYYY-MM-DD');
         totalNumPerDay[date] = l - i;
       }
       let diff2 = parseInt(prestartdate.diff(startdate, 'days'));
       for (let j = diff2; j > 0; j--) {
-        let date = moment(prestartdate).subtract(j, 'days').format('YYYY-MM-DD');
+        let date = prestartdate.clone().subtract(j, 'days').format('YYYY-MM-DD');
         totalNumPerDay[date] = l - i;
       }
     }
