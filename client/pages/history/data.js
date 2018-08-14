@@ -96,7 +96,7 @@ var option = {
 /* 获取当前用户具体打卡信息 */
 function getCheckDataList(cb){
   api.postRequest({
-    'url': '/topicCheck/getAll',
+    'url': '/db/topicCheck/getAll',
     'data': {},
     'success': (res) => {
       if (res.error_code != 200) {
@@ -119,7 +119,7 @@ function getCheckDataList(cb){
 /* 获取当前用户的卡片信息 */
 function getTopicInfoList(cb) {
   api.postRequest({
-    'url': '/userTopic/getTopicListByUserId',
+    'url': '/db/userTopic/getTopicListByUserId',
     'data': [],
     'showLoading': true,
     'success': (res) => { //成功

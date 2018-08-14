@@ -174,4 +174,27 @@ router.post('/updateUserName', function (req, res) {
   });
 });
 
+
+
+/**
+ * 保存获取到的用户的formid
+ */
+router.post('/updateFormId', function (req, res) {
+  let id = req.header('session-id');
+  redishelper.getValue(id, (openid) => {
+    if (!openid) {
+      res.send({ 'error_code': 102, 'msg': '' });
+      return;
+    }//
+    let form_id = req.body.form_id + ',';
+    dbhelper.update('user', 'form_id=CONCAT(form_id, ?)', 'user_id=?', [form_id, openid],
+      (status, result) => {
+        if (status) res.send({ 'error_code': 200, 'msg': '' });
+        else res.send({ 'error_code': 100, 'msg': result });
+      });
+  });
+});
+
+
+
 module.exports = router;

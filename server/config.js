@@ -13,6 +13,16 @@ const CONF = {
 
   getUserInfoUrl: 'https://api.weixin.qq.com/sns/jscode2session',
 
+
+  // 给用户推送模板消息的参数
+  message: {
+    getAccessTokenUrl: 'https://api.weixin.qq.com/cgi-bin/token',
+    sendMessageUrl: 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send',
+    templateId: 'E_gRYCEJ2jXX0tWjKYV4FfuYVrKH15RgZp4g1VgUzwM', //提醒
+  },
+
+
+
   /**
    * MySQL 配置
    */

@@ -677,7 +677,7 @@ Page({
    */
   onConfirm: function () {
     api.postRequest({
-      'url': '/topicCheck/updateLog',
+      'url': '/db/topicCheck/updateLog',
       'data': {
         topic_name: this.data.topic_name,
         check_time: this.data.check_time,

@@ -31,7 +31,7 @@ Page({
     };
 
     api.postRequest({
-      'url': '/topicUrl/getAll',
+      'url': '/db/topicUrl/getAll',
       'data': {},
       'showLoading': true,
       'success': (res) => {
@@ -179,7 +179,7 @@ Page({
 
     let updateTopicCheck = function(){
       api.postRequest({
-        'url': '/topicCheck/updateName',
+        'url': '/db/topicCheck/updateName',
         'data': {
           original_topic_name: that.data.topic_name,
           topic_name: value.input_topic_name
@@ -198,7 +198,7 @@ Page({
 
     // 更新卡片信息
     api.postRequest({
-      'url': '/topic/update',
+      'url': '/db/topic/update',
       'data': {
         original_topic_name: this.data.topic_name,
         topic_name: value.input_topic_name,
@@ -241,7 +241,7 @@ Page({
         if (res.cancel) return;
 
         api.postRequest({
-          'url': '/topic/delete',
+          'url': '/db/topic/delete',
           'data': {
             topic_name: this.data.topic_name
           },
@@ -315,7 +315,7 @@ Page({
 
     let insertNewTopicUrl = function (url) {
       api.postRequest({
-        'url': '/topicUrl/insert',
+        'url': '/db/topicUrl/insert',
         'data': { 'url': url },
         'success': (res) => {
           if (res.error_code == 200)

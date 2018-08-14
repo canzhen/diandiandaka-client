@@ -95,7 +95,7 @@ Page({
 
       /* 获取用户的个性化头像和姓名 */
       api.postRequest({
-        'url': '/user/getNameAvatar',
+        'url': '/db/user/getNameAvatar',
         'data': [],
         'success': (res) => {
           if (res.error_code == 200 && res.result_list != []) {
@@ -128,7 +128,7 @@ Page({
 
     /* 获取当前用户的打卡信息 */
     api.postRequest({
-      'url': '/userTopic/getTopicListByUserId',
+      'url': '/db/userTopic/getTopicListByUserId',
       'data': [],
       'showLoading': ifShowLoading, 
       'success': (res) => { //成功
@@ -171,7 +171,7 @@ Page({
          utils.formatCheckData(changed_topic_list);
     
     api.postRequest({
-      'url': '/topicCheck/check',
+      'url': '/db/topicCheck/check',
       'data': { 
         'topic_check_delete_str': topic_check_delete_str, 
         'topic_check_delete_list': topic_check_delete_list,
@@ -371,7 +371,7 @@ Page({
 
     let updateAvatarUrl = function(url){
       api.postRequest({
-        'url': '/user/updateAvatarUrl',
+        'url': '/db/user/updateAvatarUrl',
         'data': {'url': url},
         'success': (res) => {
           if (res.error_code == 200) 
@@ -463,7 +463,7 @@ Page({
     let that = this;
     let updateDBNotShowLog = function (topic_name){
       api.postRequest({
-        'url': '/userTopic/udpateColumnByUserIdTopicName',
+        'url': '/db/userTopic/udpateColumnByUserIdTopicName',
         'data': {
           'topic_name': topic_name,
           'column_name': 'if_show_log',

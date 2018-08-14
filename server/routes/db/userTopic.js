@@ -1,6 +1,6 @@
 const express = require('express');
-const dbhelper = require('../helpers/dbhelper.js');
-const redishelper = require('../helpers/redishelper.js');
+const dbhelper = require('../../helpers/dbhelper.js');
+const redishelper = require('../../helpers/redishelper.js');
 const router = express.Router();
 
 

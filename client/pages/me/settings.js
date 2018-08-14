@@ -1,4 +1,5 @@
 const api = require('../../ajax/api.js');
+const utils = require('../../vendor/utils.js');
 var areaPicker = require('../../vendor/area-picker/picker.js')
 var areaPickerItem = {};
 
@@ -100,10 +101,11 @@ Page({
       if (this.data.topic_list.length == 0){
         let that = this;
         api.postRequest({
-          'url': '/userTopic/getTopicListByUserId',
+          'url': '/db/userTopic/getTopicListByUserId',
           'data': [],
           'showLoading': true,
           'success': (res) => { //成功
+            console.log(res)
             if (res.error_code != 200) {
               console.log('从数据库中获取用户卡片信息失败');
               return;
@@ -142,6 +144,17 @@ Page({
    * 保存设置
    */
   saveSettings: function(e){
+    // utils.updateFormId(e.detail.formId);
+    let formId = e.detail.formId;
+    // api.postRequest({
+    //   'url': '/me/saveSettings',
+    //   'data': {
+    //     topic_name_list: [], 
+    //     form_id: formId
+    //   },
+    //   'success': (res) => {},
+    //   'fail': (res) => {},
+    // });
   }
 
 })

@@ -1,6 +1,6 @@
-var express = require('express');
-var mysql = require('mysql');
-var {mysql : config} = require('../config.js');
+const express = require('express');
+const mysql = require('mysql');
+const {mysql : config} = require('../config.js');
 
 
 
@@ -147,6 +147,7 @@ function update(table_name, column_string, condition_string, value_list, cb){
     function (err, result) {
       if (err) {
         console.log('update ' + table_name + ' 失败，失败信息:');
+        console.log(err)
         cb(false, err.code);
       } else {
         console.log('update ' + table_name + ' 成功');

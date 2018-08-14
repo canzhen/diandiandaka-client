@@ -16,7 +16,7 @@ Page({
     // if (utils.getStorageSync('sessionId')) return;
     // 从数据库中获取topic
     api.postRequest({
-      'url': '/topic/getAll',
+      'url': '/db/topic/getAll',
       'data': { 
         'limit_num': MAX_HOT_TOPIC_NUM
       },
@@ -64,6 +64,20 @@ Page({
         }).exec();
       }
     });
+
+    if (!utils.getStorageSync('sessionId')) {
+      utils.login((res) => {
+        if (res) {
+          console.log('login success');
+          this.init();
+        } else
+          console.log('login fail');
+      });
+    } else {
+      this.init();
+    }
+
+    
     this.setData({
       is_loaded: true
     });

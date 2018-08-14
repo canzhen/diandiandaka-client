@@ -1,7 +1,7 @@
 const express = require('express');
-const config = require('../config.js');
-const dbhelper = require('../helpers/dbhelper.js');
-const redishelper = require('../helpers/redishelper.js');
+const config = require('../../config.js');
+const dbhelper = require('../../helpers/dbhelper.js');
+const redishelper = require('../../helpers/redishelper.js');
 const TABLE_NAME = 'user_topic';
 const router = express.Router();
 

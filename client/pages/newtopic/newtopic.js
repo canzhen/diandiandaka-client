@@ -32,7 +32,7 @@ Page({
     };
 
     api.postRequest({
-      'url': '/topicUrl/getAll',
+      'url': '/db/topicUrl/getAll',
       'data': {},
       'showLoading': true,
       'success': (res) => {
@@ -188,7 +188,7 @@ Page({
     
     //将卡片姓名和卡片图像url添加到卡片表中
     api.postRequest({
-      'url': '/topic/createtopic',
+      'url': '/db/topic/createtopic',
       'data': {
         'topicname': value.input_topic_name,
         'topicurl': this.data.topic_url,
@@ -276,7 +276,7 @@ Page({
 
     let insertNewTopicUrl = function (url) {
       api.postRequest({
-        'url': '/topicUrl/insert',
+        'url': '/db/topicUrl/insert',
         'data': { 'url': url },
         'success': (res) => {
           if (res.error_code == 200)

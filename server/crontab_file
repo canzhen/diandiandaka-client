@@ -1,1 +1,0 @@
-0 */2 * * * /home/ubuntu/diandiandaka/check_insist_day_script > /dev/null 2>&1

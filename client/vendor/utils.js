@@ -1,4 +1,5 @@
 const moment = require('./moment.min.js');
+const api = require('../ajax/api.js');
 
 /**
  * 用户登录，无须让用户授权，在后端保存用户的openid，
@@ -6,19 +7,18 @@ const moment = require('./moment.min.js');
  * 每次发送post请求会在header里带一个sessionid，
  * sessionid的header这个功能直接写在api.js里了，封装在每个post请求里
  */
-function login(cb) {
-  const api = require('../ajax/api.js');
+module.exports.login = function login(cb) {
   wx.login({ //用户登录
     success(loginResult) {
       console.log('登录成功');
       let code = loginResult.code;
       api.postRequest({
-        'url': '/user/login',
+        'url': '/login',
         'data': {
           'code': code,
         },
         'success': (res) => {
-          setStorageSync('sessionId', res.sessionId, 1000 * 60 * 60 * 2); //服务端的session也是默认2小时过期
+          module.exports.setStorageSync('sessionId', res.sessionId, 1000 * 60 * 60 * 2); //服务端的session也是默认2小时过期
           cb(res.error_code, res.msg);
         },
         'fail': (res) => {
@@ -42,7 +42,8 @@ function login(cb) {
  * @param cb: 回调函数
  * @param return: true/false
  */
-function setStorageSync(key, data, expiration){
+module.exports.setStorageSync = 
+    function setStorageSync(key, data, expiration){
   var timestamp = Date.parse(new Date());
   var expiration_time = timestamp + expiration;
   wx.setStorageSync(key.toString(), data);
@@ -57,7 +58,7 @@ function setStorageSync(key, data, expiration){
  * 如果缓存存在且没过期，则返回；
  * 否则返回false
  */
-function getStorageSync(key) {
+module.exports.getStorageSync = function getStorageSync(key) {
   var timestamp = Date.parse(new Date());
   var expiration = wx.getStorageSync(key + '_expiration');
   var data = wx.getStorageSync(key);
@@ -81,7 +82,7 @@ function getStorageSync(key) {
 /**
  * 计算下标
  */
-function getSubscriptByLength(l, numEachRow){
+module.exports.getSubscriptByLength = function getSubscriptByLength(l, numEachRow){
   /* 动态创建my_topic_data_num作为分行下标 */
   var r = parseInt(l / numEachRow),
       c = l % numEachRow;
@@ -113,7 +114,7 @@ function getSubscriptByLength(l, numEachRow){
  * 2. 将过期的卡片删除（当前日期大于用户设置的end_date）
  * 3. 今日打过卡的，直接is_checked设置为true
  */
-function filterDatedData(user_topic_list){
+module.exports.filterDatedData = function filterDatedData(user_topic_list){
   let currentMoment = moment(moment().format('YYYY-MM-DD'), 'YYYY-MM-DD');
   var filteredList = [];
   for (var i in user_topic_list) {
@@ -138,7 +139,7 @@ function filterDatedData(user_topic_list){
  * 要发送到数据库打卡前的过滤函数
  * 过滤掉没变化的数据，只剩下用户修改过的数据
  */
-function filterUnchangeData(user_topic_list){
+module.exports.filterUnchangeData = function filterUnchangeData(user_topic_list){
   user_topic_list.pop(); //pop掉"添加卡片"
   var filtered_list = [];
   for (var i in user_topic_list){
@@ -155,7 +156,7 @@ function filterUnchangeData(user_topic_list){
  * 把checklist整理成后端update数据库时需要的格式并返回
  * 
  */
-function formatCheckData(topic_list){
+module.exports.formatCheckData = function formatCheckData(topic_list){
   let checked_topic_list = [],
       uncheck_topic_list = [];
   for (let i in topic_list){
@@ -241,7 +242,7 @@ function formatCheckData(topic_list){
 /**
  * 参数为随机数的最小值和最大值
  */
-function getRandom(min, max){
+module.exports.getRandom = function getRandom(min, max){
   // var seed = today.getTime();
   // seed = (seed * 9301 + 49297) % 233280;
   var Range = max - min;
@@ -250,17 +251,35 @@ function getRandom(min, max){
 }
 
 
-module.exports = {
-  /* 功能方面 */
-  login, 
-  setStorageSync, 
-  getStorageSync,
-  getRandom, //产生随机数
-
-
-  /* 我的打卡mytopic 部分 */
-  getSubscriptByLength, //计算下标
-  filterDatedData, //过滤掉过期的数据，主要是看insist_day连续坚持天数是否正确
-  filterUnchangeData, //过滤掉没变化的数据，只剩下有变化的数据
-  formatCheckData,
+module.exports.updateFormId = function updateFormId(formId){
+  api.postRequest({
+    'url': '/db/userMessage/updateFormId',
+    'data': {
+      form_id: formId
+    },
+    'success': (res) => {
+      console.log(res)
+      if (res.error_code != 200){
+        console.log('更新用户formid到user表中失败');
+        return;
+      }
+      console.log('更新用户formid到user表中成功');
+    },
+    'fail': (res) => {
+      console.log('更新用户formid到user表中失败');
+    }
+  });
 }
+
+// module.exports = {
+//   /* 功能方面 */
+//   getRandom, //产生随机数
+
+
+//   /* 我的打卡mytopic 部分 */
+//   getSubscriptByLength, //计算下标
+//   filterDatedData, //过滤掉过期的数据，主要是看insist_day连续坚持天数是否正确
+//   filterUnchangeData, //过滤掉没变化的数据，只剩下有变化的数据
+//   formatCheckData,
+//   updateFormId, //存入formid到user表里，以供推送消息时使用
+// }
