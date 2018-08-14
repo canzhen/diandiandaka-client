@@ -112,10 +112,12 @@ Page({
   clickHotTopic: function(e){
     let topicname = e.currentTarget.dataset.selectedTopicName;
     let topicurl = e.currentTarget.dataset.selectedTopicUrl;
-    this.setData({
-      'topic_name': topicname,
-      'topic_url': topicurl
-    });
+    // this.setData({
+    //   'topic_name': topicname,
+    //   'topic_url': topicurl
+    // });
+
+    helper.navigateToNewTopicPage(topicname, topicurl);
   },
 
 
@@ -126,12 +128,20 @@ Page({
     let topicname = this.data.topic_name;
     let topicurl = this.data.topic_url;
 
+    if (topicname.length == 0){
+      wx.showToast({
+        title: '你好像啥都没输？',
+        icon: 'none'
+      })
+      return;
+    }
+
     var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥\\\\……&*（）——|{}【】‘；：”“'。，、？]");
     for (var i = 0; i < topicname.length; i++) {
       if (pattern.test(topicname.substr(i, 1))) {
         wx.showToast({
-          title: '您输入的字符中带有非法字符，请删除之后再添加',
-          icon: 'fail'
+          title: '好像有非法字符诶',
+          icon: 'none'
         })
         return;
       }
