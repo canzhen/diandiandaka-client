@@ -24,7 +24,7 @@ Page({
       { name: '1', value: '女' }
     ],
     topic_list: [], //该用户的topic列表
-    remind_topic_list: [], //该用户选择要提醒的topic列表
+    remind_topic_list: {}, //该用户选择要提醒的topic列表, 'name': 'remind_time'
   },
 
   /**
@@ -143,10 +143,31 @@ Page({
   /**
    * 开启是否提醒的卡片checkbox变化时触发的函数
    */
-  topicRemindChange: function(e){
-    let topic_name = e.currentTarget.dataset.topicName;
+  topicRemindChange: function (e) {
     let remind_topic_list = this.data.remind_topic_list;
-    remind_topic_list.push(topic_name);
+    let topic_name = e.currentTarget.dataset.topicName;
+
+    if (e.detail.value.length != 0){ //选中
+      if (remind_topic_list[topic_name] == undefined)
+        remind_topic_list[topic_name] = '00:00';
+    }else{
+      delete remind_topic_list[topic_name];
+    }
+
+
+    this.setData({
+      remind_topic_list: remind_topic_list
+    });
+  },
+
+
+  /**
+   * 用户选择提醒时间所触发的函数
+   */
+  bindTimeChange: function(e){
+    let time = e.detail.value;
+    let remind_topic_list = this.data.remind_topic_list;
+    remind_topic_list[e.currentTarget.dataset.topicName] = time;
     this.setData({
       remind_topic_list: remind_topic_list
     });
@@ -159,7 +180,14 @@ Page({
   saveSettings: function(e){
     // utils.updateFormId(e.detail.formId);
     let formId = e.detail.formId;
-    let topic_name_list = this.data.remind_topic_list.toString();
+    let topic_list = [];
+    //拼接成string
+    for (let item in this.data.remind_topic_list)
+      topic_list.push(item + ' ' + this.data.remind_topic_list[item]);
+    
+
+    console.log(topic_list.toString())
+
     let that = this;
     api.postRequest({
       'url': '/me/saveSettings',
@@ -169,7 +197,7 @@ Page({
         city: that.data.city,
         county: that.data.county,
         gender: that.data.gender,
-        topic_name_list: topic_name_list, 
+        topic_list: topic_list.toString(), 
         form_id: formId
       },
       'success': (res) => {

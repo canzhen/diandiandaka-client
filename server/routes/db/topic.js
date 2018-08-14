@@ -11,6 +11,7 @@ const router = express.Router();
  * 获取topic表的所有数据
  */
 router.post('/getAll', function (req, res) {
+  console.log('topic getall')
   dbhelper.select(
     'topic', '', '', [],
     'ORDER BY use_people_num DESC LIMIT ' + req.body.limit_num,

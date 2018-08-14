@@ -41,12 +41,12 @@ router.post('/saveSettings', function (req, res) {
 
     //2. 保存用户要通知的topic和form_id到user_message表
     let updateUserMessage = function(){
-      let topic_name_list = req.body.topic_name_list,
+      let topic_list = req.body.topic_list,
         form_id = req.body.form_id + ',';
       dbhelper.insertOrUpdate('user_message', //table name
-        'user_id, topic_name_list, form_id_list', //column string
+        'user_id, topic_list, form_id_list', //column string
         '?, ?, CONCAT(form_id_list, ?)', // column value
-        '', [openid, topic_name_list, form_id],
+        '', [openid, topic_list, form_id],
         (status, result) => {
           if (status) res.send({ 'error_code': 200, 'msg': '' });
           else res.send({ 'error_code': 100, 'msg': result });

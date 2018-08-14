@@ -125,6 +125,18 @@ Page({
   createNewTopic: function (e) {
     let topicname = this.data.topic_name;
     let topicurl = this.data.topic_url;
+
+    var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥\\\\……&*（）——|{}【】‘；：”“'。，、？]");
+    for (var i = 0; i < topicname.length; i++) {
+      if (pattern.test(topicname.substr(i, 1))) {
+        wx.showToast({
+          title: '您输入的字符中带有非法字符，请删除之后再添加',
+          icon: 'fail'
+        })
+        return;
+      }
+    }
+
     helper.navigateToNewTopicPage(topicname, topicurl);
   },
 
