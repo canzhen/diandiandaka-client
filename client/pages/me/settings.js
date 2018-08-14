@@ -186,8 +186,6 @@ Page({
       topic_list.push(item + ' ' + this.data.remind_topic_list[item]);
     
 
-    console.log(topic_list.toString())
-
     let that = this;
     api.postRequest({
       'url': '/me/saveSettings',

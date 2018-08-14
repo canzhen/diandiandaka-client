@@ -101,7 +101,7 @@ function insertMulti(table_name, column_string, value_list, other_operation_stri
   sql = "INSERT INTO " + table_name + "(" + column_string + ") VALUES(";
   for (let i = 0; i < value_list.length; i++) {
     sql += value_list[i].toString() + ")";
-    if ( i != value_list.length -1 ) sql += ", (";
+    if (i != value_list.length - 1) sql += ", (";
   }
   sql += ' ';
   sql += other_operation_string;
