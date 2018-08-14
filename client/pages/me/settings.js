@@ -13,16 +13,18 @@ Page({
     areaPickerItem: {
       show: false
     },
+    user_name: '',
+    gender: -1, 
     province: '北京市',
     city: '市辖区',
     county: '东城区',
     is_check_area: false,
-    gender: '', 
     radioItems: [
-      { name: '男', value: '男'},
-      { name: '女', value: '女' }
+      { name: '0', value: '男'},
+      { name: '1', value: '女' }
     ],
     topic_list: [], //该用户的topic列表
+    remind_topic_list: [], //该用户选择要提醒的topic列表
   },
 
   /**
@@ -81,14 +83,21 @@ Page({
   
   },
 
-
+  /**
+   * 输入新的用户名的框修改时触发的函数
+   */
+  usernameInputChange: function(e){
+    this.setData({
+      user_name: e.detail.value
+    });
+  },
 
   /**
    * 选择性别的按钮变化时触发的函数
    */
   radioChange: function(e){
     this.setData({
-      gender: e.detail.value
+      gender: parseInt(e.detail.value)
     });
   },
 
@@ -105,7 +114,6 @@ Page({
           'data': [],
           'showLoading': true,
           'success': (res) => { //成功
-            console.log(res)
             if (res.error_code != 200) {
               console.log('从数据库中获取用户卡片信息失败');
               return;
@@ -136,7 +144,12 @@ Page({
    * 开启是否提醒的卡片checkbox变化时触发的函数
    */
   topicRemindChange: function(e){
-    console.log(e.detail.value)
+    let topic_name = e.currentTarget.dataset.topicName;
+    let remind_topic_list = this.data.remind_topic_list;
+    remind_topic_list.push(topic_name);
+    this.setData({
+      remind_topic_list: remind_topic_list
+    });
   },
 
 
@@ -146,15 +159,30 @@ Page({
   saveSettings: function(e){
     // utils.updateFormId(e.detail.formId);
     let formId = e.detail.formId;
-    // api.postRequest({
-    //   'url': '/me/saveSettings',
-    //   'data': {
-    //     topic_name_list: [], 
-    //     form_id: formId
-    //   },
-    //   'success': (res) => {},
-    //   'fail': (res) => {},
-    // });
+    let topic_name_list = this.data.remind_topic_list.toString();
+    let that = this;
+    api.postRequest({
+      'url': '/me/saveSettings',
+      'data': {
+        user_name: that.data.user_name,
+        province: that.data.province,
+        city: that.data.city,
+        county: that.data.county,
+        gender: that.data.gender,
+        topic_name_list: topic_name_list, 
+        form_id: formId
+      },
+      'success': (res) => {
+        if (res && res.error_code != 200){
+          console.log('保存用户设置失败');
+          return;
+        }
+        console.log('保存用户设置成功');
+      },
+      'fail': (res) => {
+        console.log('保存用户设置失败');
+      },
+    });
   }
 
 })

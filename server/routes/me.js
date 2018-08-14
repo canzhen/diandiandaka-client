@@ -17,13 +17,41 @@ router.post('/saveSettings', function (req, res) {
       res.send({ 'error_code': 102, 'msg': '' });
       return;
     }
-    let topic_name_list = req.body.topic_name_list;
-    let form_id = req.body.form_id + ',';
-    dbhelper.update('user_message', 'topic_name_list=?, form_id_list=CONCAT(form_id_list, ?)', 'user_id=?', [topic_name_list, form_id, openid],
+
+    //1. 保存用户信息到user表
+    let user_name = req.body.user_name,
+        province = req.body.province,
+        city = req.body.city,
+        county = req.body.county,
+        gender = req.body.gender;
+        
+    dbhelper.update('user', 
+    'user_name=?, province=?, city=?, county=?, gender=?', 
+    'user_id=?', 
+      [user_name, province, city, county, gender, openid],
       (status, result) => {
-        if (status) res.send({ 'error_code': 200, 'msg': '' });
-        else res.send({ 'error_code': 100, 'msg': result });
+        if (!status){
+          res.send({ 'error_code': 100, 'msg': result });
+          return;
+        }
+        res.send({ 'error_code': 200, 'msg': '' });
+        updateUserMessage();
       });
+
+
+    //2. 保存用户要通知的topic和form_id到user_message表
+    let updateUserMessage = function(){
+      let topic_name_list = req.body.topic_name_list,
+        form_id = req.body.form_id + ',';
+      dbhelper.insertOrUpdate('user_message', //table name
+        'user_id, topic_name_list, form_id_list', //column string
+        '?, ?, CONCAT(form_id_list, ?)', // column value
+        '', [openid, topic_name_list, form_id],
+        (status, result) => {
+          if (status) res.send({ 'error_code': 200, 'msg': '' });
+          else res.send({ 'error_code': 100, 'msg': result });
+        });
+    };
   });
 });
 

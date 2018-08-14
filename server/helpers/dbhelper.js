@@ -137,9 +137,9 @@ function insertMulti(table_name, column_string, value_list, other_operation_stri
  * @param condition_string: 跟在where后面的string，例如id=? AND name=?
  * @cb: 回调函数 (bool是否成功，errmsg错误信息)
  */
-function update(table_name, column_string, condition_string, value_list, cb){
+function insertOrUpdate(table_name, column_string, column_value, condition_string, value_list, cb){
   let client = connectServer();
-  let sql = 'UPDATE ' + table_name + ' SET ' + column_string;
+  let sql = 'REPLACE INTO ' + table_name + '(' + column_string + ') VALUES(' + column_value + ')';
   if (condition_string != '')
     sql += ' WHERE ' + condition_string;
 
@@ -156,6 +156,40 @@ function update(table_name, column_string, condition_string, value_list, cb){
   });
   client.end();
 }
+
+
+/**
+ * 更新表中的一行数据
+ * @param table_name: 表名，string
+ * @param column_string: 写有column的string，例如id=?, name=?
+ * @param value_list: value 的list，例如[2349018, 'canzhen', ...]
+ * @param condition_string: 跟在where后面的string，例如id=? AND name=?
+ * @cb: 回调函数 (bool是否成功，errmsg错误信息)
+ */
+function update(table_name, column_string, condition_string, value_list, cb) {
+  let client = connectServer();
+  let sql = 'UPDATE ' + table_name + ' SET ' + column_string;
+  if (condition_string != '')
+    sql += ' WHERE ' + condition_string;
+
+  console.log(sql);
+  console.log(value_list)
+
+  client.query(sql, value_list,
+    function (err, result) {
+      if (err) {
+        console.log('update ' + table_name + ' 失败，失败信息:');
+        console.log(err)
+        cb(false, err.code);
+      } else {
+        console.log('update ' + table_name + ' 成功');
+        cb(true, '');
+      }
+    });
+  client.end();
+}
+
+
 
 /**
  * 通过id和外键，uncheck当天打卡，并从topic_check表中找到最新打卡时间
@@ -268,6 +302,7 @@ module.exports = {
   connectServer,
   insert,
   insertMulti,
+  insertOrUpdate,
   select, 
   update,
   deleteRow,
