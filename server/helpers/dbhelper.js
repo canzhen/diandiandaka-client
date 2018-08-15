@@ -20,7 +20,6 @@ function connectServer() {
 
 
 
-
 /**
  * 从表中SELECT
  * @param table_name: 表名，string
@@ -66,6 +65,10 @@ function insert(table_name, column_string, value_list, other_operation_string, c
   sql += ") ";
   sql += other_operation_string;
 
+
+  console.log(sql)
+  console.log(value_list)
+  
   client.query(
     sql, value_list,
     function (err, result) {
@@ -137,27 +140,27 @@ function insertMulti(table_name, column_string, value_list, other_operation_stri
  * @param condition_string: 跟在where后面的string，例如id=? AND name=?
  * @cb: 回调函数 (bool是否成功，errmsg错误信息)
  */
-function insertOrUpdate(table_name, column_string, column_value, condition_string, value_list, cb){
-  let client = connectServer();
-  let sql = 'REPLACE INTO ' + table_name + '(' + column_string + ') VALUES(' + column_value + ')';
-  if (condition_string != '')
-    sql += ' WHERE ' + condition_string;
+// function insertOrUpdate(table_name, column_string, column_value, condition_string, value_list, cb){
+//   let client = connectServer();
+//   let sql = 'REPLACE INTO ' + table_name + '(' + column_string + ') VALUES(' + column_value + ')';
+//   if (condition_string != '')
+//     sql += ' WHERE ' + condition_string;
 
-  client.query(sql, value_list, 
-    function (err, result) {
-      let status = true, errmsg = '';
-      if (err) {
-        console.log('update ' + table_name + ' 失败，失败信息:');
-        console.log(err)
-        status = false;
-        errmsg = err.code;
-      } else {
-        console.log('update ' + table_name + ' 成功');
-      }
-      cb(status, errmsg);
-  });
-  client.end();
-}
+//   client.query(sql, value_list, 
+//     function (err, result) {
+//       let status = true, errmsg = '';
+//       if (err) {
+//         console.log('update ' + table_name + ' 失败，失败信息:');
+//         console.log(err)
+//         status = false;
+//         errmsg = err.code;
+//       } else {
+//         console.log('update ' + table_name + ' 成功');
+//       }
+//       cb(status, errmsg);
+//   });
+//   client.end();
+// }
 
 
 /**
@@ -169,10 +172,15 @@ function insertOrUpdate(table_name, column_string, column_value, condition_strin
  * @cb: 回调函数 (bool是否成功，errmsg错误信息)
  */
 function update(table_name, column_string, condition_string, value_list, cb){
+  console.log('我要开始update' + table_name + '了')
   let client = connectServer();
   let sql = 'UPDATE ' + table_name + ' SET ' + column_string;
   if (condition_string != '')
     sql += ' WHERE ' + condition_string;
+
+
+  console.log(sql)
+  console.log(value_list)
 
   client.query(sql, value_list,
     function (err, result) {
@@ -301,7 +309,7 @@ module.exports = {
   connectServer,
   insert,
   insertMulti,
-  insertOrUpdate,
+  // insertOrUpdate,
   select, 
   update,
   deleteRow,

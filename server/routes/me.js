@@ -44,13 +44,15 @@ router.post('/saveSettings', function (req, res) {
     let updateUserMessage = function(){
       let topic_list = req.body.topic_list,
           remind_time = req.body.remind_time;
-      dbhelper.insertOrUpdate(
-        'user_message', //table name
-        'user_id, topic_list, remind_time', //column string
-        "'" + openid + "','" + topic_list + "','" + remind_time + "'", 
-        '', [], (status, errmsg) => {
-          if (status) res.send({ 'error_code': 200, 'msg': '' });
-          else res.send({ 'error_code': 100, 'msg': errmsg });
+
+      dbhelper.insert('user_message', 
+        'user_id, topic_list, remind_time',
+        [openid, topic_list, remind_time],
+        "ON DUPLICATE KEY UPDATE topic_list='" + topic_list + "'" + 
+        ", remind_time='" + remind_time + "'",
+        (status, errmsg) => {
+          let error_code = status ? 200 : 100;
+          res.send({ 'error_code': error_code, 'msg': '' });
         });
     };
   });

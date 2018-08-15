@@ -179,7 +179,7 @@ Page({
 
     // 更新卡片信息
     api.postRequest({
-      'url': '/db/topic/update',
+      'url': '/topic/update',
       'data': {
         original_topic_name: this.data.topic_name,
         topic_name: value.input_topic_name,
@@ -220,7 +220,7 @@ Page({
         if (res.cancel) return;
 
         api.postRequest({
-          'url': '/db/topic/delete',
+          'url': '/topic/delete',
           'data': {
             topic_name: this.data.topic_name
           },

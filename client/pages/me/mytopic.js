@@ -38,8 +38,6 @@ Page({
       that.setData({
         random_position_list: randompos_list,
       });
-
-      console.log(that.data.random_position_list)
     };
 
     let createAnimation = function (l, xlimit, ylimit, zlimit) {

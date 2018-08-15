@@ -2,7 +2,7 @@ const config = require('./config.js');
 const dbhelper = require('./helpers/dbhelper.js');
 const messagehelper = require('./helpers/messagehelper.js');
 const moment = require('moment');
-
+const Promise = require('promise');
 
 /** 模拟阻塞方法 */
 function sleep(milliSeconds) {
@@ -163,4 +163,43 @@ let sendMessage = function(openid, formid, messageBody, cb){
 
 
 console.log('starting....')
-start()
+// start()
+
+
+
+function innerFucntion (name){
+  console.log('You are in inner function:' + name);
+}
+
+let insertFromDb = function (){
+  let a = new Promise((resolve) => {
+    innerFucntion('insertFromDb');
+    resolve('insertFromDb')
+  })
+  return a;
+};
+
+let getFromDb = function(){
+  let a = new Promise((resolve) =>{
+    innerFucntion('getFromDb');
+    resolve('getFromDb')
+  })
+  return a;
+}
+
+
+let deleteFromDb = function(){
+  let a = new Promise((resolve) => {
+    innerFucntion('deleteFromDb');
+    resolve('deleteFromDb')
+  });
+  return a;
+}
+
+Promise.all([getFromDb(), deleteFromDb()])
+.then((res) => {
+  console.log(res);
+});
+
+
+
