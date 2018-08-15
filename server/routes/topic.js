@@ -67,7 +67,7 @@ router.post('/getUserTopic', function (req, res) {
 
 
 /**
- * 往topic table里添加一条数据
+ * 用户新增一个topic
  */
 router.post('/create', function (req, res) {
   if (!req.body.topicname || !req.body.topicurl) return false;
@@ -85,28 +85,56 @@ router.post('/create', function (req, res) {
       res.send({ 'error_code': 102, 'msg': 'redis数据库里找不到对应用户数据' });
       return;
     }
-    dbhelper.insert('user_topic', 
-      'user_id, topic_name, topic_url, start_date, end_date', 
-      [value, req.body.topicname, req.body.topicurl,req.body.startdate, req.body.enddate,], '',
-      (status, errmsg) => {
-        if (!status){
-          // let errReason = errmsg.substr(0, errmsg.indexOf(':'));
-          if (errmsg == 'ER_DUP_ENTRY')
-            res.send({ 'error_code': 101, 'msg': errmsg });
-          else res.send({ 'error_code': 100, 'msg': errmsg });
-          return;
-        }
 
-        /* 2. 如果成功插入user_topic，则开始更新topic表 */
+    let insertTopic = function(){
+      return new Promise((resolve) => {
+        /* 更新topic表 */
         // 存在，则打卡人数加一；不存在，新增数据
         dbhelper.insert('topic', 'topic_name, topic_url, use_people_num',
           [req.body.topicname, req.body.topicurl, 1],
           "ON DUPLICATE KEY UPDATE use_people_num=use_people_num+1",
           (status, errmsg) => {
             let error_code = status ? 200 : 100;
-            res.send({ 'error_code': error_code, 'msg': '' });
-            return;
+            resolve({ 'error_code': error_code, 'msg': '' });
           });
+      });
+    }
+
+
+
+    let insertUserTopic = function(){
+      return new Promise((resolve) => {
+        dbhelper.insert('user_topic',
+          'user_id, topic_name, topic_url, start_date, end_date',
+          [value, req.body.topicname, req.body.topicurl, req.body.startdate, req.body.enddate,], '',
+          (status, errmsg) => {
+            if (!status) {
+              // let errReason = errmsg.substr(0, errmsg.indexOf(':'));
+              if (errmsg == 'ER_DUP_ENTRY')
+                resolve({ 'error_code': 101, 'msg': errmsg });
+              else resolve({ 'error_code': 100, 'msg': errmsg });
+            }
+            resolve({ 'error_code': 200, 'msg': errmsg })
+          });
+      })
+    }
+
+
+    Promise.all([insertTopic(), insertUserTopic()])
+    .then((result) => { //如果成功
+      console.log(result)
+      for (let i in result) {
+        if (result[i].error_code != 200) {
+          res.send({
+            'error_code': result[i].error_code,
+            'msg': result[i].msg
+          });
+          return;
+        }
+      }
+      res.send({ 'error_code': 200, 'msg': '' });
+    }, (res) => { //如果失败
+      res.send({ 'error_code': 100, 'msg': '' });
     });
   });
 });
@@ -211,6 +239,9 @@ router.post('/update', function (req, res) {
           });
       });
     }
+
+
+
 
     Promise.all([updateUserTopic(), updateTopicCheck(), updateTopic()])
     .then((result) => { //如果成功
