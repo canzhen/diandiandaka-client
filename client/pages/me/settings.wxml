@@ -44,16 +44,16 @@
         </view>
 
         <view wx:if="{{show_topic_panel}}" style="margin-left:20rpx;">
+
+          <picker wx:if="{{show_topic_panel}}" mode="time" value="{{remind_time}}" start="00:00" end="23:59" data-topic-name="{{item.topic_name}}" class="topic-remind-oneline" bindchange="bindTimeChange">
+          设置提醒时间：{{remind_time}}
+          </picker>
+
           <view class="topic-remind-oneline" wx:for="{{topic_list}}" wx:for-item="item" wx:for-index="index" wx:key="key">
             <text>{{item.topic_name}}</text>
-            <view style="display:flex; flex-direction:row; align-items:center;">
-              <picker wx:if="{{remind_topic_list[item.topic_name] != undefined}}" mode="time" value="{{remind_topic_list[item.topic_name]}}" start="00:00" end="23:59" data-topic-name="{{item.topic_name}}"  style="font-size:25rpx;" bindchange="bindTimeChange">
-              提醒时间：{{remind_topic_list[item.topic_name]}}
-              </picker>
-              <checkbox-group data-topic-name="{{item.topic_name}}" bindchange="topicRemindChange">
-                <checkbox style='margin-right: 80rpx;'/>
-              </checkbox-group>
-            </view>
+            <checkbox-group data-topic-name="{{item.topic_name}}" bindchange="topicRemindChange">
+              <checkbox style='margin-right: 80rpx;'/>
+            </checkbox-group>
           </view>
         </view>
       </view>

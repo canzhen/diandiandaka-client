@@ -9,8 +9,8 @@ const qiniu = require('./routes/qiniu');
 const me = require('./routes/me');
 
 const user = require('./routes/db/user');
-const topic = require('./routes/db/topic');
-const userTopic = require('./routes/db/userTopic');
+const dbtopic = require('./routes/db/topic');
+const topic = require('./routes/topic');
 const topicUrl = require('./routes/db/topicUrl');
 const topicCheck = require('./routes/db/topicCheck');
 const userMessage = require('./routes/db/userMessage');
@@ -28,10 +28,11 @@ app.set('view engine', 'jade');
 
 app.use('/', routes);
 app.use('/qiniu', qiniu);
+app.use('/topic', topic);
 app.use('/me', me);
-app.use('/db/topic', topic);
+
+app.use('/db/topic', dbtopic);
 app.use('/db/user', user);
-app.use('/db/userTopic', userTopic);
 app.use('/db/topicUrl', topicUrl);
 app.use('/db/topicCheck', topicCheck);
 app.use('/db/userMessage', userMessage);

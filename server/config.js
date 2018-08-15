@@ -18,7 +18,7 @@ const CONF = {
   message: {
     getAccessTokenUrl: 'https://api.weixin.qq.com/cgi-bin/token',
     sendMessageUrl: 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send',
-    templateId: 'E_gRYCEJ2jXX0tWjKYV4FfuYVrKH15RgZp4g1VgUzwM', //提醒
+    templateId: 'E_gRYCEJ2jXX0tWjKYV4FXpzfh3QJugCx-WtnuvSLTo', //提醒
   },
 
 

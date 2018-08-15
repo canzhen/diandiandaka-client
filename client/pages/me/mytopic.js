@@ -89,7 +89,7 @@ Page({
 
 
     api.postRequest({
-      'url': '/db/userTopic/getTopicListByUserId',
+      'url': '/topic/getUserTopic',
       'data': [],
       'showLoading': true,
       'success': (res) => { //成功

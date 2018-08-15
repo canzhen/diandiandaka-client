@@ -145,14 +145,16 @@ function insertOrUpdate(table_name, column_string, column_value, condition_strin
 
   client.query(sql, value_list, 
     function (err, result) {
+      let status = true, errmsg = '';
       if (err) {
         console.log('update ' + table_name + ' 失败，失败信息:');
         console.log(err)
-        cb(false, err.code);
+        status = false;
+        errmsg = err.code;
       } else {
         console.log('update ' + table_name + ' 成功');
-        cb(true, '');
       }
+      cb(status, errmsg);
   });
   client.end();
 }

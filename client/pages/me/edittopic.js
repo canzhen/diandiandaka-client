@@ -177,25 +177,6 @@ Page({
 
     let that = this;
 
-    let updateTopicCheck = function(){
-      api.postRequest({
-        'url': '/db/topicCheck/updateName',
-        'data': {
-          original_topic_name: that.data.topic_name,
-          topic_name: value.input_topic_name
-        },
-        'success': (res) => { 
-          if (res.error_code == 200){
-            console.log('update topic_check 信息成功');
-            that.showSucceedToast();
-          }
-        },
-        'fail': (res) => { 
-          console.log('update topic_check 信息失败');
-        },
-      });
-    };
-
     // 更新卡片信息
     api.postRequest({
       'url': '/db/topic/update',
@@ -210,15 +191,13 @@ Page({
         console.log(res.error_code);
         if (res.error_code == 101)
           that.showFailToast('这个卡片名字好像你用过喔！换个名字吧~');
-        else if (res.error_code == 103) {
+        else if (res.error_code == 102 || res.error_code == 103) {
           utils.login((res) => { });
           that.showFailToast('好像出了点问题，可以再提交一次咩~');
         } else if (res.error_code == 100)
           that.showFailToast('提交失败..大爷饶命，小的这就去查看原因..');
         else if (res.error_code == 200){
-          if (value.input_topic_name != that.data.topic_name)
-            updateTopicCheck();
-          else that.showSucceedToast();
+          that.showSucceedToast();
         }
       },
       'fail': (res) => {
@@ -232,7 +211,7 @@ Page({
   /**
    * 删除卡片
    */
-  deleteTopic: function(e){
+  deleteTopic: function(e){ 
     wx.showModal({
       title: '确认删除',
       content: '您确认要删除该卡片吗？删除卡片将同时删除打卡记录',

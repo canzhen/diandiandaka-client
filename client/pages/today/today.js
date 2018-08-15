@@ -128,7 +128,7 @@ Page({
 
     /* 获取当前用户的打卡信息 */
     api.postRequest({
-      'url': '/db/userTopic/getTopicListByUserId',
+      'url': '/topic/getUserTopic',
       'data': [],
       'showLoading': ifShowLoading, 
       'success': (res) => { //成功
@@ -206,9 +206,9 @@ Page({
    * 监听页面的卸载，
    * 当前处于A页面，点击返回按钮时，则将是A页面卸载
    */
-  onUnload: function(event){
-    this.saveCheckData();
-  },
+  // onUnload: function(event){
+  //   this.saveCheckData();
+  // },
 
 
   /**
@@ -462,7 +462,7 @@ Page({
     let that = this;
     let updateDBNotShowLog = function (topic_name){
       api.postRequest({
-        'url': '/db/userTopic/udpateColumnByUserIdTopicName',
+        'url': '/topic/udpateColumn',
         'data': {
           'topic_name': topic_name,
           'column_name': 'if_show_log',

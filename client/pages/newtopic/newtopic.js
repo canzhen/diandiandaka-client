@@ -188,7 +188,7 @@ Page({
     
     //将卡片姓名和卡片图像url添加到卡片表中
     api.postRequest({
-      'url': '/db/topic/createtopic',
+      'url': '/topic/create',
       'data': {
         'topicname': value.input_topic_name,
         'topicurl': this.data.topic_url,
@@ -200,7 +200,7 @@ Page({
         console.log(res.error_code);
         if (res.error_code == 101) 
           that.showFailToast('这个卡片好像你以前添加过喔！换个卡片吧~');
-        else if (res.error_code == 103){
+        else if (res.error_code == 102 || res.error_code == 103){
           utils.login((res)=>{});
           that.showFailToast('好像出了点问题，可以再提交一次咩~');
         }else if (res.error_code == 100)

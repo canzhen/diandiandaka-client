@@ -23,8 +23,9 @@ Page({
       { name: '0', value: '男'},
       { name: '1', value: '女' }
     ],
+    remind_time: '08:00',
     topic_list: [], //该用户的topic列表
-    remind_topic_list: {}, //该用户选择要提醒的topic列表, 'name': 'remind_time'
+    remind_topic_list: [], //该用户选择要提醒的topic列表
   },
 
   /**
@@ -36,7 +37,7 @@ Page({
     wx.getSystemInfo({
       success: function (res) {
         that.setData({
-          scrollHeight: res.windowHeight - 200
+          scrollHeight: res.windowHeight - 100
         });
       }
     });
@@ -110,7 +111,7 @@ Page({
       if (this.data.topic_list.length == 0){
         let that = this;
         api.postRequest({
-          'url': '/db/userTopic/getTopicListByUserId',
+          'url': '/topic/getUserTopic',
           'data': [],
           'showLoading': true,
           'success': (res) => { //成功
@@ -148,12 +149,12 @@ Page({
     let topic_name = e.currentTarget.dataset.topicName;
 
     if (e.detail.value.length != 0){ //选中
-      if (remind_topic_list[topic_name] == undefined)
-        remind_topic_list[topic_name] = '00:00';
+      remind_topic_list.push(topic_name);
     }else{
-      delete remind_topic_list[topic_name];
+      // delete remind_topic_list[topic_name];
+      let idx = remind_topic_list.indexOf(topic_name);
+      remind_topic_list.splice(idx, 1);
     }
-
 
     this.setData({
       remind_topic_list: remind_topic_list
@@ -166,10 +167,8 @@ Page({
    */
   bindTimeChange: function(e){
     let time = e.detail.value;
-    let remind_topic_list = this.data.remind_topic_list;
-    remind_topic_list[e.currentTarget.dataset.topicName] = time;
     this.setData({
-      remind_topic_list: remind_topic_list
+      remind_time: time
     });
   },
 
@@ -180,10 +179,6 @@ Page({
   saveSettings: function(e){
     // utils.updateFormId(e.detail.formId);
     let formId = e.detail.formId;
-    let topic_list = [];
-    //拼接成string
-    for (let item in this.data.remind_topic_list)
-      topic_list.push(item + ' ' + this.data.remind_topic_list[item]);
     
 
     let that = this;
@@ -195,7 +190,8 @@ Page({
         city: that.data.city,
         county: that.data.county,
         gender: that.data.gender,
-        topic_list: topic_list.toString(), 
+        topic_list: that.data.remind_topic_list.toString(),
+        remind_time: that.data.remind_time,
         form_id: formId
       },
       'success': (res) => {

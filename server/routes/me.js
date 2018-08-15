@@ -36,26 +36,25 @@ router.post('/saveSettings', function (req, res) {
           res.send({ 'error_code': 100, 'msg': result });
           return;
         }
-        res.send({ 'error_code': 200, 'msg': '' });
         updateUserMessage();
       });
 
 
     //2. 保存用户要通知的topic和form_id到user_message表
     let updateUserMessage = function(){
-      let topic_list = req.body.topic_list;
-
-      dbhelper.insertOrUpdate('user_message', //table name
-        'user_id, topic_list', //column string
-        "'" + openid + "','" + topic_list + "'",  '', [],
-        (status, errmsg) => {
+      let topic_list = req.body.topic_list,
+          remind_time = req.body.remind_time;
+      dbhelper.insertOrUpdate(
+        'user_message', //table name
+        'user_id, topic_list, remind_time', //column string
+        "'" + openid + "','" + topic_list + "','" + remind_time + "'", 
+        '', [], (status, errmsg) => {
           if (status) res.send({ 'error_code': 200, 'msg': '' });
           else res.send({ 'error_code': 100, 'msg': errmsg });
         });
     };
   });
 });
-
 
 
 module.exports = router;

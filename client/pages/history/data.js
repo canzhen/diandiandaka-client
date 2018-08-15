@@ -119,7 +119,7 @@ function getCheckDataList(cb){
 /* 获取当前用户的卡片信息 */
 function getTopicInfoList(cb) {
   api.postRequest({
-    'url': '/db/userTopic/getTopicListByUserId',
+    'url': '/topic/getUserTopic',
     'data': [],
     'showLoading': true,
     'success': (res) => { //成功

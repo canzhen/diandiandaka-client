@@ -1,8 +1,7 @@
 const express = require('express');
-const config = require('../../config.js');
-const dbhelper = require('../../helpers/dbhelper.js');
-const redishelper = require('../../helpers/redishelper.js');
-const TABLE_NAME = 'user_topic';
+const config = require('../config.js');
+const dbhelper = require('../helpers/dbhelper.js');
+const redishelper = require('../helpers/redishelper.js');
 const router = express.Router();
 
 
@@ -10,7 +9,7 @@ const router = express.Router();
 /**
  * 获取topic表的所有数据
  */
-router.post('/getAll', function (req, res) {
+router.post('/getAllTopic', function (req, res) {
   dbhelper.select(
     'topic', '', '', [],
     'ORDER BY use_people_num DESC LIMIT ' + req.body.limit_num,
@@ -27,10 +26,49 @@ router.post('/getAll', function (req, res) {
 });
 
 
+
+
+
+
+
+
+/**
+ * 通过用户id在数据库中获取该用户的卡片列表
+ */
+router.post('/getUserTopic', function (req, res) {
+  let id = req.header('session-id');
+  redishelper.getValue(id, (openid) => {
+    if (!openid) {
+      res.send({ 'error_code': 102, 'msg': '' });
+      return;
+    }
+
+    dbhelper.select('user_topic', '', 'user_id=?', [openid], 
+      'ORDER BY create_time',
+      (status, result) => {
+        if (status) {
+          //删除user_id，不要暴露给前端
+          for (let i in result) {
+            delete result[i].user_id;
+          }
+          res.send({ 'error_code': 200, 'msg': '', 'result_list': result });
+          return;
+        } else {
+          res.send({ 'error_code': 100, 'msg': result, 'result_list': '' });
+          return;
+        }
+      }
+    );
+  });
+});
+
+
+
+
 /**
  * 往topic table里添加一条数据
  */
-router.post('/createtopic', function (req, res) {
+router.post('/create', function (req, res) {
   if (!req.body.topicname || !req.body.topicurl) return false;
 
   if (!req.header('session-id')) {
@@ -46,7 +84,7 @@ router.post('/createtopic', function (req, res) {
       res.send({ 'error_code': 102, 'msg': 'redis数据库里找不到对应用户数据' });
       return;
     }
-    dbhelper.insert(TABLE_NAME, 
+    dbhelper.insert('user_topic', 
       'user_id, topic_name, topic_url, start_date, end_date', 
       [value, req.body.topicname, req.body.topicurl,req.body.startdate, req.body.enddate,], '',
       (status, errmsg) => {
@@ -80,6 +118,11 @@ router.post('/createtopic', function (req, res) {
  * 更新卡片信息
  */
 router.post('/update', function (req, res) {
+  if (!req.header('session-id')) {
+    res.send({ 'error_code': 103, 'msg': '用户未登录' });
+    return;
+  }
+
   let id = req.header('session-id');
   let original_topic_name = req.body.original_topic_name,
       topic_name = req.body.topic_name,
@@ -105,7 +148,7 @@ router.post('/update', function (req, res) {
       res.send({ 'error_code': 102, 'msg': '' });
       return;
     }
-    dbhelper.update(TABLE_NAME, 'topic_name=?,topic_url=?, start_date=?,end_date=?', 'user_id=? AND topic_name=?', [topic_name, topic_url, start_date, end_date, openid, original_topic_name],
+    dbhelper.update('user_topic', 'topic_name=?,topic_url=?, start_date=?,end_date=?', 'user_id=? AND topic_name=?', [topic_name, topic_url, start_date, end_date, openid, original_topic_name],
       (status, errmsg) => {
         if (!status) {
           if (errmsg == 'ER_DUP_ENTRY'){
@@ -114,14 +157,11 @@ router.post('/update', function (req, res) {
           res.send({ 'error_code': 100, 'msg': errmsg });
           return;
         }
-
-        updateTopicCheck(openid);
+        if (topic_name != original_topic_name)
+          updateTopicCheck(openid);
       });
   });
 });
-
-
-
 
 
 
@@ -129,6 +169,10 @@ router.post('/update', function (req, res) {
  * 删除卡片
  */
 router.post('/delete', function (req, res) {
+  if (!req.header('session-id')) {
+    res.send({ 'error_code': 103, 'msg': '用户未登录' });
+    return;
+  }
   let id = req.header('session-id');
   let topic_name = req.body.topic_name;
 
@@ -146,7 +190,7 @@ router.post('/delete', function (req, res) {
       res.send({ 'error_code': 102, 'msg': '' });
       return;
     }
-    dbhelper.deleteRow(TABLE_NAME, 'user_id=? AND topic_name=?',
+    dbhelper.deleteRow('user_topic', 'user_id=? AND topic_name=?',
       [openid, topic_name],
       (status, errmsg) => {
         if (!status) {
@@ -158,6 +202,33 @@ router.post('/delete', function (req, res) {
   });
 });
 
+
+
+/**
+ * 通过用户id和卡片名称在数据库中更新该条数据的某一栏
+ */
+router.post('/udpateColumn', function (req, res) {
+  let id = req.header('session-id');
+  let topic_name = req.body.topic_name;
+  let column_name = req.body.column_name;
+  let column_value = req.body.column_value;
+
+  redishelper.getValue(id, (openid) => {
+    if (!openid) {
+      res.send({ 'error_code': 102, 'msg': '' });
+      return;
+    }
+
+    dbhelper.update('user_topic', column_name + '=?',
+      "user_id = ? AND topic_name = ?",
+      [column_value, openid, topic_name],
+      (status, errmsg) => {
+        if (status)
+          res.send({ 'error_code': 200, 'msg': '' });
+        else res.send({ 'error_code': 100, 'msg': errmsg });
+      });
+  });
+});
 
 
 
