@@ -141,14 +141,85 @@ router.post('/update', function (req, res) {
       res.send({ 'error_code': 102, 'msg': '' });
       return;
     }
-    
+
+
+    let updateUserTopic = function () {
+      return new Promise((resolve) => {
+        dbhelper.update('user_topic',
+          'topic_name=?,topic_url=?, start_date=?,end_date=?',
+          'user_id=? AND topic_name=?',
+          [topic_name, topic_url, start_date, end_date, openid, original_topic_name],
+          (status, errmsg) => {
+            console.log('updateUserTopic的状态是：' + status)
+            if (!status) {
+              if (errmsg == 'ER_DUP_ENTRY')
+                resolve({ 'error_code': 101, 'msg': errmsg });
+              else
+                resolve({ 'error_code': 100, 'msg': errmsg });
+            } else
+              resolve({ 'error_code': 200, 'msg': '' });
+          });
+      });
+    }
+
+
+
+    let updateTopicCheck = function () {
+      return new Promise((resolve) => {
+        if (topic_name == original_topic_name) {
+          resolve({ 'error_code': 200, 'msg': '' });
+          return;
+        }
+        dbhelper.update('topic_check', 'topic_name=?',
+          'user_id=? AND topic_name=?',
+          [topic_name, openid, original_topic_name],
+          (status, result_list) => {
+            let statusCode = status ? 200 : 100;
+            let resList = status ? result_list : false;
+            resolve({ 'error_code': statusCode, 'msg': '', 'result_list': resList });
+          });
+      });
+    }
+
+
+
+    let updateTopic = function () {
+      return new Promise((resolve) => {
+        if (topic_name == original_topic_name) {
+          resolve({ 'error_code': 200, 'msg': '' });
+          return;
+        }
+        // 把原来的topic_name的打卡人数减一
+        dbhelper.update('topic', 'use_people_num=use_people_num-1',
+          'topic_name=?', [original_topic_name],
+          (status, errmsg) => {
+            console.log('减少原来topic的人数: ' + status);
+            if (!status) {
+              resolve({ 'error_code': 100, 'msg': '' });
+              return;
+            }
+
+            // 存在，则打卡人数加一；不存在，新增数据
+            dbhelper.insert('topic', 'topic_name, topic_url, use_people_num',
+              [topic_name, topic_url, 1],
+              "ON DUPLICATE KEY UPDATE use_people_num=use_people_num+1",
+              (status, errmsg) => {
+                console.log(' 存在，则打卡人数加一；不存在，新增数据: ' + status);
+                let error_code = status ? 200 : 100;
+                resolve({ 'error_code': error_code, 'msg': '' });
+              });
+          });
+      });
+    }
+
     Promise.all([updateUserTopic(), updateTopicCheck(), updateTopic()])
-    .then((res) => { //如果成功
-      console.log('从Promise.all返回了嗷')
-      console.log(res)
-      for (let i in res){
-        if (res[i].error_code != 200){
-          res.send({ 'error_code': res[i].error_code, 'msg': res[i].msg });
+    .then((result) => { //如果成功
+      console.log(result)
+      for (let i in result){
+        if (result[i].error_code != 200){
+          res.send({ 
+            'error_code': result[i].error_code, 
+            'msg': result[i].msg });
           return;
         }
       }
@@ -156,90 +227,8 @@ router.post('/update', function (req, res) {
     }, (res) => { //如果失败
       res.send({ 'error_code': 100, 'msg': '' });
     });
+
   });
-
-
-  let updateUserTopic = function(){
-    let promise = new Promise((resolve) => {
-      console.log('我在updateUserTopic')
-
-      
-      dbhelper.update('user_topic', 
-      'topic_name=?,topic_url=?, start_date=?,end_date=?', 
-      'user_id=? AND topic_name=?', 
-      [topic_name, topic_url, start_date, end_date, openid, original_topic_name],
-      (status, errmsg) => {
-          console.log('updateUserTopic的状态是：' + status)
-          if (!status) {
-            if (errmsg == 'ER_DUP_ENTRY')
-              resolve({ 'error_code': 101, 'msg': errmsg });
-            else
-              resolve({ 'error_code': 100, 'msg': errmsg });
-          } else
-            resolve({ 'error_code': 200, 'msg': '' });
-        });
-
-      console.log('我【出】updateUserTopic')
-    });
-    return promise;
-  }
-
-
-  let updateTopicCheck = function(){
-    let promise = new Promise((resolve) => {
-      if (topic_name == original_topic_name) {
-        resolve({ 'error_code': 200, 'msg': '' });
-        return;
-      }
-      console.log('我在updateTopicCheck')
-      dbhelper.update('topic_check', 'topic_name=?',
-        'user_id=? AND topic_name=?',
-        [topic_name, openid, original_topic_name],
-        (status, result_list) => {
-          let statusCode = status ? 200 : 100;
-          let resList = status ? result_list : false;
-          resolve({ 'error_code': statusCode, 'msg': '', 'result_list': resList });
-        });
-      console.log('我【出】updateTopicCheck')
-    });
-    return promise;
-  }
-
-
-
-  let updateTopic = function(){
-    let promise = new Promise((resolve) => {
-      if (topic_name == original_topic_name) {
-        resolve({ 'error_code': 200, 'msg': '' });
-        return;
-      }
-      console.log('我在updateTopic')
-      // 把原来的topic_name的打卡人数减一
-      dbhelper.update('topic', 'use_people_num=use_people_num-1',
-        'topic_name=?', [topic_name],
-        (status, errmsg) => {
-          console.log('减少原来topic的人数: ' + status);
-          if (!status) {
-            resolve({ 'error_code': 100, 'msg': '' });
-            return;
-          }
-
-          // 存在，则打卡人数加一；不存在，新增数据
-          dbhelper.insert('topic', 'topic_name, topic_url, use_people_num',
-            [topic_name, topic_url, 1],
-            "ON DUPLICATE KEY UPDATE use_people_num=use_people_num+1",
-            (status, errmsg) => {
-              console.log(' 存在，则打卡人数加一；不存在，新增数据: ' + status);
-              let error_code = status ? 200 : 100;
-              resolve({ 'error_code': error_code, 'msg': '' });
-            });
-        });
-
-      console.log('我【出】updateTopic')
-    });
-    return promise;
-  }
-
 
 });
 

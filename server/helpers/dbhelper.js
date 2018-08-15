@@ -172,7 +172,7 @@ function insertMulti(table_name, column_string, value_list, other_operation_stri
  * @cb: 回调函数 (bool是否成功，errmsg错误信息)
  */
 function update(table_name, column_string, condition_string, value_list, cb){
-  console.log('我要开始update' + table_name + '了')
+  console.log('我要开始update ' + table_name + '了')
   let client = connectServer();
   let sql = 'UPDATE ' + table_name + ' SET ' + column_string;
   if (condition_string != '')

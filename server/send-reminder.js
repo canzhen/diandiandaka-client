@@ -168,7 +168,7 @@ console.log('starting....')
 
 
 function innerFucntion (name){
-  console.log('You are in inner function:' + name);
+  console.log('You are in inner functionnnnn:' + name);
 }
 
 let insertFromDb = function (){
@@ -196,7 +196,7 @@ let deleteFromDb = function(){
   return a;
 }
 
-Promise.all([getFromDb(), deleteFromDb()])
+Promise.all([getFromDb()])
 .then((res) => {
   console.log(res);
 });
