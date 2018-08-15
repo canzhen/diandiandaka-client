@@ -66,6 +66,8 @@ router.post('/getUserTopic', function (req, res) {
 
 
 
+
+
 /**
  * 用户新增一个topic
  */
@@ -99,7 +101,6 @@ router.post('/create', function (req, res) {
           });
       });
     }
-
 
 
     let insertUserTopic = function(){
@@ -187,9 +188,7 @@ router.post('/update', function (req, res) {
             } else
               resolve({ 'error_code': 200, 'msg': '' });
           });
-      });
-    }
-
+      });}
 
 
     let updateTopicCheck = function () {
@@ -206,9 +205,7 @@ router.post('/update', function (req, res) {
             let resList = status ? result_list : false;
             resolve({ 'error_code': statusCode, 'msg': '', 'result_list': resList });
           });
-      });
-    }
-
+      });}
 
 
     let updateTopic = function () {
@@ -237,10 +234,7 @@ router.post('/update', function (req, res) {
                 resolve({ 'error_code': error_code, 'msg': '' });
               });
           });
-      });
-    }
-
-
+      })}
 
 
     Promise.all([updateUserTopic(), updateTopicCheck(), updateTopic()])
@@ -258,10 +252,12 @@ router.post('/update', function (req, res) {
     }, (res) => { //如果失败
       res.send({ 'error_code': 100, 'msg': '' });
     });
-
   });
-
 });
+
+
+
+
 
 
 
@@ -276,31 +272,70 @@ router.post('/delete', function (req, res) {
   let id = req.header('session-id');
   let topic_name = req.body.topic_name;
 
-  let deleteTopicCheck = function(openid){
-    dbhelper.deleteRow('topic_check', 'user_id=? AND topic_name=?',
-      [openid, topic_name],
-      (status, errmsg) => {
-        if (status) res.send({ 'error_code': 200, 'msg': '' });
-        else res.send({ 'error_code': 100, 'msg': errmsg });
-      });
-  };
+  
 
   redishelper.getValue(id, (openid) => {
     if (!openid) {
       res.send({ 'error_code': 102, 'msg': '' });
       return;
     }
-    dbhelper.deleteRow('user_topic', 'user_id=? AND topic_name=?',
-      [openid, topic_name],
-      (status, errmsg) => {
-        if (!status) {
-          res.send({ 'error_code': 100, 'msg': errmsg });
-          return;
+
+    let deleteTopicCheck = function () {
+      return new Promise((resolve) => {
+        dbhelper.deleteRow('topic_check', 
+          'user_id=? AND topic_name=?',
+          [openid, topic_name],
+          (status, errmsg) => {
+            if (status) resolve({ 'error_code': 200, 'msg': '' });
+            else resolve({ 'error_code': 100, 'msg': errmsg });
+          });
+      })}
+
+    let deleteUserTopic = function() {
+      return new Promise((resolve) => {
+        dbhelper.deleteRow('user_topic', 
+        'user_id=? AND topic_name=?', 
+        [openid, topic_name],
+        (status, errmsg) => {
+          if (status) resolve({ 'error_code': 200, 'msg': '' });
+          else resolve({ 'error_code': 100, 'msg': errmsg });
+        });
+      })}
+
+
+    let updateTopic = function () {
+      return new Promise((resolve) => {
+        dbhelper.update('topic',
+          'use_people_num=use_people_num-1', 'topic_name=?',
+          [topic_name],
+          (status, errmsg) => {
+            if (status) resolve({ 'error_code': 200, 'msg': '' });
+            else resolve({ 'error_code': 100, 'msg': errmsg });
+          });
+      })
+    }
+
+    Promise.all([deleteTopicCheck(), deleteUserTopic(), updateTopic()])
+      .then((result) => { //如果成功
+        console.log(result)
+        for (let i in result) {
+          if (result[i].error_code != 200) {
+            res.send({
+              'error_code': result[i].error_code,
+              'msg': result[i].msg
+            });
+            return;
+          }
         }
-        deleteTopicCheck(openid);
+        res.send({ 'error_code': 200, 'msg': '' });
+      }, (res) => { //如果失败
+        res.send({ 'error_code': 100, 'msg': '' });
       });
   });
 });
+
+
+
 
 
 
