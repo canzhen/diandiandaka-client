@@ -43,6 +43,7 @@ var option = {
   yAxis: {
     show: false,
     min: 0,
+    max: 100,
   },
   series: [{
     type: 'bar',

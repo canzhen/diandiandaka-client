@@ -15,6 +15,7 @@ Page({
     currentTab: 0,
     colorList: [ '#f3faf998', '#f6f3fa98', '#f6faf398', '#f9faf398',
                '#faf3f898', '#faf3f498', '#f3faf9a4', '#f3f7faa4'],
+    form_id_list: [], //用于存储用户单击所产生的form_id
 
 
     /* --------------以下的data属于公共-------------- */
@@ -356,8 +357,9 @@ Page({
 
   // 单击左侧topic触发的事件
   tapTopic: function (e) {
+    this.saveFormId(e.detail.formId);
     this.setData({
-      selected_topic_idx: e.currentTarget.dataset.topicIdx,
+      selected_topic_idx: e.currentTarget.dataset.topicIdx
     });
     this.fillCalendar(this.data.date.format('YYYY-MM'));
   },
@@ -517,8 +519,6 @@ Page({
       completeness_week_subtitle: ans['subtitle'],
     });
 
-    console.log(this.data.completeness_week_subtitle);
-
 
     if (this.data.user_click_no_data || this.data.user_click_on_future)
       canvasXText = [];
@@ -554,6 +554,7 @@ Page({
 
   /*---------------------以下是打卡日志部分---------------------------*/
   selectTopicLog: function(e){
+    this.saveFormId(e.detail.formId);
     let indexKey = e.currentTarget.dataset.idx;
     // console.log(indexKey)
     if (indexKey == this.data.selected_topic_log)
@@ -724,6 +725,34 @@ Page({
 
 
 
+  /**
+   * 用于保存formId的helper方法
+   */
+  saveFormId: function (formId) {
+    console.log(formId);
+    let form_id_list = this.data.form_id_list;
+    form_id_list.push(formId);
+    this.setData({
+      form_id_list: form_id_list
+    });
+  },
+
+
+
+  /** 
+   * 页面隐藏函数
+   * 监听页面的隐藏，
+   * 当从当前A页跳转到其他页面，那么A页面处于隐藏状态
+   * */
+  onHide: function (event) {
+    if (this.data.form_id_list.length == 0) return;
+    console.log('I am hiding')
+    console.log(this.data.form_id_list);
+    utils.saveFormId(this.data.form_id_list);
+    this.setData({
+      form_id_list: []
+    });
+  },
 })
 
 

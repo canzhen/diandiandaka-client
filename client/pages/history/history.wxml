@@ -2,7 +2,6 @@
   <text wx:for="{{navbar}}" data-idx="{{index}}" class="item {{currentTab==index ? 'active' : ''}}" wx:key="unique" bindtap="navbarTap">{{item}}</text>
 </view>
 
-<!-- <view class="line"></view> -->
  
 <!-- 打卡日历 -->
 <view hidden="{{currentTab!==0}}">
@@ -11,12 +10,15 @@
     <view class="all-history-left">
       <!-- 显示出所有正在打卡的topic|左侧 -->
       <scroll-view style="height:{{scrollHeight}}px;" scroll-y scroll-with-animation enable-back-to-top>
-        <view class="all-history-left-item" bindtap="tapTopic"
-              wx:for="{{topic_info}}" wx:for-item="data" wx:key="key"
-              wx:for-index="index" data-topic-idx="{{index}}">
+      
+        <!-- <view > -->
+        <form class="all-history-left-item" wx:for="{{topic_info}}" wx:for-item="data" wx:key="key" wx:for-index="index" bindsubmit="tapTopic" data-topic-idx="{{index}}" report-submit='true' >
+        <button class="all-history-left-button-image" hover-class="none" form-type="submit">
           <image class="all-history-left-image" src="{{data.topic_url}}"></image>
-          <text style="font-size: 25rpx;">{{data.topic_name}}</text>
-        </view> 
+        </button>
+        <text style="font-size:25rpx;">{{data.topic_name}}</text>
+        </form>
+        <!-- </view>  -->
       </scroll-view>
     </view>
 
@@ -49,11 +51,10 @@
            <!-- 圆形块结束 -->
           <view class="calendar-right-part">
             <view class="calendar-days-row" wx:for="{{date.days}}" wx:key="idx" wx:for-item="sevenDays">
-                <view space="emsp" class="calendar-days-each-item" wx:for="{{sevenDays}}" wx:key="idx" wx:for-item="day"
-                      bindtap="bindTapOnDate" data-current-date="{{date.year}}-{{date.month}}-{{day._day}}">
-                  <text>{{day._day}}</text>
-                  <image src="/images/duigou.png" hidden="{{!day._checked}}" class="checked"></image>
-                </view> 
+              <view space="emsp" class="calendar-days-each-item" wx:for="{{sevenDays}}" wx:key="idx" wx:for-item="day" bindtap="bindTapOnDate" data-current-date="{{date.year}}-{{date.month}}-{{day._day}}">
+                <text>{{day._day}}</text>
+                <image src="/images/duigou.png" hidden="{{!day._checked}}" class="checked"></image>
+              </view> 
             </view>
           </view> 
         </view> 
@@ -115,7 +116,6 @@
         <text>该段时间您没有打卡嗷~</text>
       </view>
 
-
       <view class="completeness-canvas-error" 
             hidden="{{!user_click_on_future || topic_info.length == 0}}">
         <image src="/images/wronged.png"></image>
@@ -148,15 +148,19 @@
 
   <!-- 有日志的时候显示 -->
   <view class="check-log-panel" wx:if="{{topic_info.length != 0}}">
-    <scroll-view class="check-log-scroll-view" style="height:{{scrollHeight-20}}px;" scroll-y scroll-with-animation enable-back-to-top>
-      <view class="block" style="background-color:{{colorList[check_info_per_topic[topic_name].length%8]}};" wx:for="{{check_info_per_topic}}"  wx:key="key" wx:for-index="topic_name" wx:for-item="check_info" >
-        <view class="check-log-topic-image-text" bindtap="selectTopicLog" data-idx="{{topic_name}}" >
+    <scroll-view style="height:{{scrollHeight-20}}px;" scroll-y scroll-with-animation enable-back-to-top>
+      <view class="block" style="background-color:{{colorList[check_info_per_topic[topic_name].length%8]}};" wx:for="{{check_info_per_topic}}" wx:key="key" wx:for-index="topic_name" wx:for-item="check_info">
+        <form bindsubmit="selectTopicLog" data-idx="{{topic_name}}" report-submit='true' >
+        <button class="check-log-topic-image-text" hover-class="none" form-type="submit" >
+        <!-- <view bindtap="selectTopicLog" > -->
           <image class="check-log-topic-image" src="{{topic_info_map[topic_name].topic_url}}"></image>
-          <view style="display:flex; flex-direction: column;">
+          <view style="font-size:30rpx; display:flex;flex-direction:column; align-items:flex-start; margin-top:50rpx;">
             <text class="check-log-topic-text">{{topic_name}}</text>
             <progress class="check-log-progress" show-info="true" stroke-width="3" activeColor="#fcbc7d" backgroundColor="#fee0c1" active percent="{{completeness_list[topic_name]}}">完成度</progress>
           </view>
-        </view>
+        <!-- </view> -->
+        </button>
+        </form>
         
         <!-- 日志部分开始 -->
         <view class="detail" hidden="{{selected_topic_log!=topic_name}}">
