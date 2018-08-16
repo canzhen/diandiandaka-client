@@ -109,9 +109,7 @@ function updateAreaData( that, status, e){
         getProvinceData();
 
       });  
-    }
-    //滑动事件
-    else{
+    } else {//滑动事件
       valueChange(e,that);
     }
     

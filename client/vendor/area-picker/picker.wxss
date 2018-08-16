@@ -1,18 +1,21 @@
 /* model.wxss */
 page{
-  background-color: rgba(255, 255, 255, 1); 
+  background-color: rgba(255, 255, 255, 1);
+  z-index: 1500; 
 }
 
 .infoText{
     /* margin-top: 20rpx; */
   text-align: center;
   justify-content: center; 
+  z-index: 1500;
 }
 
 .centerText{
   margin-top: 100rpx;
   width: 100%;
   text-align: center;
+  z-index: 1500;
 }
 
 /* --------------分割线------------- */
@@ -24,6 +27,7 @@ picker-view{
   height: 380rpx;
   bottom: 0;
   position: fixed;
+  z-index: 1500;
 }
 
 picker-view-column view{
@@ -34,17 +38,18 @@ picker-view-column view{
   display: flex;
   align-items: center;
   justify-content: center;
+  z-index: 1500;
 }
 
 .animation-element-wrapper {
   display: flex;  
   position: fixed;
   left: 0;
-  top:0;
+  top: 0;
   height: 100%;
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
-  z-index: 100;
+  background-color: rgba(0, 0, 0, 0.8);
+  z-index: 1000;
 }
 
 .animation-element {
@@ -54,6 +59,7 @@ picker-view-column view{
   height: 470rpx;
   bottom: 0;
   background-color: rgba(255, 255, 255, 1);
+  z-index: 1500;
 }
 
 .animation-button {
@@ -63,6 +69,7 @@ picker-view-column view{
   align-items: center;
   justify-content: center;
   margin-right: 10%;
+  z-index: 1500;
 }
 
 
@@ -76,11 +83,14 @@ picker-view-column view{
   line-height: 50rpx;
   font-size: 34rpx;
   font-family: Arial, Helvetica, sans-serif;
+  z-index: 1500;
 }
 
 .left-bt{
   left: 30rpx;
+  z-index: 1500;
 }
 .right-bt {
   right: 30rpx;
+  z-index: 1500;
 }

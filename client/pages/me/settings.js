@@ -38,9 +38,12 @@ Page({
     //设置scroll-view高度，自适应屏幕
     wx.getSystemInfo({
       success: function (res) {
-        that.setData({
-          scrollHeight: res.windowHeight - 100
-        });
+        wx.createSelectorQuery().selectAll('.topic-remind-oneline1').
+        boundingClientRect((rects) => {
+          that.setData({
+            scrollHeight: res.windowHeight - 360
+          });
+        }).exec();
       }
     });
 
@@ -87,14 +90,16 @@ Page({
         if (res.error_code == 200 && res.result_list.length != 0) {
           let user_info = res.result_list[0];
           let radioGenderItems = that.data.radioItems;
-          if (user_info['gender'] != -1)
-            radioGenderItems[user_info['gender']].checked = true;
+          let gender = user_info['gender'];
+          if (gender != -1)
+            radioGenderItems[gender].checked = true;
           
           that.setData({
             province: user_info['province'] ? user_info['province'] : '北京市',
             city: user_info['city'] ? user_info['city'] : '市辖区',
             county: user_info['county'] ? user_info['county'] : '海淀区',
-            radioItems: radioGenderItems
+            radioItems: radioGenderItems,
+            gender: gender
           });
         }
       }
@@ -145,19 +150,22 @@ Page({
 
   //隐藏picker-view
   hiddenFloatView: function (e) {
+    let id = e.currentTarget.dataset.id;
+    if (id == 666){//确定 
+      this.setData({
+        province: areaPickerItem.provinces[areaPickerItem.value[0]].name,
+        city: areaPickerItem.citys[areaPickerItem.value[1]].name,
+        county: areaPickerItem.countys[areaPickerItem.value[2]].name
+      });
+    }
     areaPicker.animationEvents(this, 200, false, 400);
   },
 
   
   //滑动事件
-  bindChange: function (e) {
+  areaPickerChange: function (e) {
     areaPicker.updateAreaData(this, 1, e);
     areaPickerItem = this.data.areaPickerItem;
-    this.setData({
-      province: areaPickerItem.provinces[areaPickerItem.value[0]].name,
-      city: areaPickerItem.citys[areaPickerItem.value[1]].name,
-      county: areaPickerItem.countys[areaPickerItem.value[2]].name
-    });
   },
 
 
@@ -286,10 +294,7 @@ Page({
       if (that.data.topic_list[i].checked)
         remind_topic_list.push(that.data.topic_list[i].topic_name)
     }
-    
-    console.log(that.data.topic_list)
-    console.log(formId)
-    
+
     api.postRequest({
       'url': '/me/saveSettings',
       'data': {
