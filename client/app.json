@@ -1,7 +1,7 @@
 {
   "pages": [
-    "pages/me/settings",
     "pages/index/index",
+    "pages/me/settings",
     "pages/me/me",
     "pages/history/history",
     "pages/today/today",

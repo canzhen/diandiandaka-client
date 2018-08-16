@@ -1,7 +1,7 @@
 const helper = require('./helper.js');
 const api = require('../../ajax/api.js');
 const utils = require('../../vendor/utils.js');
-const MAX_HOT_TOPIC_NUM = 10;
+const MAX_HOT_TOPIC_NUM = 8;
 
 Page({
   data: {
