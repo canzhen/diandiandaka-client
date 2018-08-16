@@ -94,6 +94,36 @@ router.post('/login', function (req, res) {
 
 
 
+/**
+ * 保存用户的form_id
+ */
+router.post('/saveFormId', function (req, res) {
+  if (!req.header('session-id')) {
+    res.send({ 'error_code': 103, 'msg': '用户未登录' });
+    return;
+  }
+
+  let id = req.header('session-id');
+  let form_id_list = req.body.form_id_list + ',';
+
+  redishelper.getValue(id, (openid) => {
+    if (!openid) {
+      res.send({ 'error_code': 102, 'msg': '' });
+      return;
+    }
+
+    dbhelper.insert('user_message',
+      'user_id, form_id_list',
+      [openid, form_id_list],
+      "ON DUPLICATE KEY UPDATE form_id_list=CONCAT(form_id_list, '" +
+      form_id_list + "')",
+      (status, errmsg) => {
+        let error_code = status ? 200 : 100;
+        let error_message = status ? '' : errmsg;
+        res.send({ 'error_code': error_code, 'msg': error_message });
+      });
+  });
+});
 
 
 module.exports = router;

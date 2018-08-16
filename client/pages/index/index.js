@@ -9,6 +9,7 @@ Page({
     hot_topic_data: [], //热门卡片
     topic_name: '', //用户在输入框输入的卡片名称
     topic_url: '', //如果用户直接单击热门卡片，则图片的url会被记录下来
+    form_id_list: [], //用于存储用户单击所产生的form_id
   },
   
 
@@ -112,19 +113,25 @@ Page({
   clickHotTopic: function(e){
     let topicname = e.currentTarget.dataset.selectedTopicName;
     let topicurl = e.currentTarget.dataset.selectedTopicUrl;
-    // this.setData({
-    //   'topic_name': topicname,
-    //   'topic_url': topicurl
-    // });
-
     helper.navigateToNewTopicPage(topicname, topicurl);
   },
 
+  /**
+   * 用于保存formId的helper方法
+   */
+  saveFormId: function(formId){
+    let form_id_list = this.data.form_id_list;
+    form_id_list.push(formId);
+    this.setData({
+      form_id_list: form_id_list
+    });
+  },
 
   /**
    * 单击"开始进步"触发的函数
    */
   createNewTopic: function (e) {
+    this.saveFormId(e.detail.formId);
     let topicname = this.data.topic_name;
     let topicurl = this.data.topic_url;
 
@@ -164,6 +171,21 @@ Page({
       wx.hideNavigationBarLoading() //完成停止加载
       wx.stopPullDownRefresh() //停止下拉刷新
     }, 800);
-  }
+  },
+
+
+
+  /**
+   * 退出该界面会触发的方法
+   */
+  onHide: function(){
+    if (this.data.form_id_list.length == 0) return;
+    console.log('I am hiding')
+    console.log(this.data.form_id_list);
+    utils.saveFormId(this.data.form_id_list);
+    this.setData({
+      form_id_list: []
+    });
+  },
 
 })

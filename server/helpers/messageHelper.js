@@ -21,9 +21,9 @@ function getAccessToken(cb){
       'json': true
     }, (error, response, body) => {
       if (!error && response.statusCode == 200) {
-         //让redis早点过期，防止
+         //让redis提前两小时过期，防止失效
         redis.storeValue('accessToken', body.access_token,
-          body.expires_in - 1000);
+          body.expires_in - 60*60*2); 
         cb(body.access_token);
       } else cb(false);
     });
@@ -38,7 +38,7 @@ function sendMessage(openid,formid, messageBody, cb){
   getAccessToken((access_token) => {
     if (!access_token) {
       console.log('无法获取access_token，推送消息失败');
-      return;
+      cb(false, '无法获取access_token');
     }
 
     console.log(access_token)
@@ -57,8 +57,8 @@ function sendMessage(openid,formid, messageBody, cb){
     }, (error, response, body) => {
       if (!error && response.statusCode == 200 && 
             response.body.errcode==0) {
-        cb(true)
-      } else cb(false);
+        cb(true, '')
+      } else cb(false, response.body);
     });
 
   });

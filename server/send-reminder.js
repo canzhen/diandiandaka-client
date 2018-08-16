@@ -42,24 +42,22 @@ function start(){
       for (let i in user_topic_list) {
         let user_id = user_topic_list[i]['user_id'],
           topic_list = user_topic_list[i]['topic_list'].split(','),
+          form_id_list = user_topic_list[i]['form_id_list'].split(','),
           remind_time = user_topic_list[i]['remind_time'];
 
         if (!topic_list) continue;
 
         // 到user表获取timezone和formid
-        dbhelper.select('user', 'timezone, form_id_list',
+        dbhelper.select('user', 'timezone',
           'user_id=?', [user_id], '',
           (status, userlist) => {
             if (!status) {
-              console.log('3. 获取用户' + user_id + '的formid失败');
+              console.log('3. 获取用户' + user_id + '的timezone失败');
               return;
             }
-            let timezone = userlist[0]['timezone'],
-              form_id_list = userlist[0]['form_id_list'];
+            let timezone = userlist[0]['timezone'];
 
             /** 准备参数 */
-            // 从string分割成form_id_list
-            form_id_list = form_id_list.split(',');
             let form_id = '';
             while (form_id_list.length != 0) {
               form_id = form_id_list.pop();
@@ -75,14 +73,9 @@ function start(){
 
             // 计算总共一起参与所有topic的人数
             let total_people_num = 0;
-            console.log(topic_use_map['写五个自己的优点'])
-            for (let i in topic_list) {
-              console.log(topic_list[i])
-              console.log(topic_use_map[topic_list[i]])
-              total_people_num += topic_use_map[topic_list[i]];
-            }
+            for (let i in topic_list)
+              total_people_num += topic_use_map[topic_list[i]]
 
-            console.log(total_people_num)
 
             // 计算时区
             let userCurrentTime = moment();
@@ -101,20 +94,20 @@ function start(){
             setTimeout(() => {
               console.log(diffTime / 1000 + '秒计时到啦！准备推送消息给' + user_id);
               /** 推送message */
-              // messagehelper.sendMessage(user_id, form_id,
-              //   {
-              //     keyword1: { value:  }, //打卡项目
-              //     keyword2: { value: '2018年8月14日' }, //打卡时间
-              //     keyword3: { value: '13' }, //已打卡天数
-              //     keyword4: { value: '23' }, //今日排名
-              //     keyword5: { value: '55' }, //参加人数
-              //     keyword6: { value: '坚持不懈才能积沙成塔喔~' }, //温馨提示
-              //   },
-              //   (res) => {
-              //     if (res) console.log('推送消息成功');
-              //     else console.log('推送消息失败');
-              //   }
-              // )
+              messagehelper.sendMessage(user_id, form_id,
+                { keyword1: { value: topic_list.toString() }, //打卡项目
+                  keyword2: { value: moment().format('YYYY年MM月DD日') }, //打卡时间
+                  keyword3: { value: total_people_num }, //参加人数
+                  keyword4: { value: '坚持不懈才能积沙成塔喔~' }, //温馨提示
+                },
+                (status, errmsg) => {
+                  if (status) console.log('推送消息成功');
+                  else {
+                    console.log('推送消息失败，错误原因：');
+                    console.log(errmsg);
+                  }
+                }
+              )
             }, diffTime);
           });
       }
@@ -126,8 +119,8 @@ function start(){
     // 这里有个问题，要是同时前端也调用了update form_id，
     // 同时处理一行数据怎么办
     let setFormId = function (user_id, form_id_list) {
-      dbhelper.update('user', 'form_id_list=?', 'user_id=?',
-        [form_id_list.toString(), user_id],
+      dbhelper.update('user_message', 'form_id_list=?', 'user_id=?',
+        [form_id_list.toString() + ',' , user_id],
         (status, errmsg) => {
           if (!status) {
             console.log('重新update user' + user_id + '的form_id_list失败');
@@ -163,43 +156,6 @@ let sendMessage = function(openid, formid, messageBody, cb){
 
 
 console.log('starting....')
-// start()
-
-
-
-function innerFucntion (name){
-  console.log('You are in inner functionnnnn:' + name);
-}
-
-let insertFromDb = function (){
-  let a = new Promise((resolve) => {
-    innerFucntion('insertFromDb');
-    resolve('insertFromDb')
-  })
-  return a;
-};
-
-let getFromDb = function(){
-  let a = new Promise((resolve) =>{
-    innerFucntion('getFromDb');
-    resolve('getFromDb')
-  })
-  return a;
-}
-
-
-let deleteFromDb = function(){
-  let a = new Promise((resolve) => {
-    innerFucntion('deleteFromDb');
-    resolve('deleteFromDb')
-  });
-  return a;
-}
-
-Promise.all([getFromDb()])
-.then((res) => {
-  console.log(res);
-});
-
+start()
 
 

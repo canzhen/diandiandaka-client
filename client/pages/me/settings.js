@@ -179,8 +179,9 @@ Page({
   saveSettings: function(e){
     // utils.updateFormId(e.detail.formId);
     let formId = e.detail.formId;
-    
 
+    console.log(formId)
+    
     let that = this;
     api.postRequest({
       'url': '/me/saveSettings',

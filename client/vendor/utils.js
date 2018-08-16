@@ -11,7 +11,7 @@ function getTimezone(){
  * 每次发送post请求会在header里带一个sessionid，
  * sessionid的header这个功能直接写在api.js里了，封装在每个post请求里
  */
-module.exports.login = function login(cb) {
+module.exports.login = function(cb) {
   wx.login({ //用户登录
     success(loginResult) {
       console.log('登录成功');
@@ -39,6 +39,29 @@ module.exports.login = function login(cb) {
   })
 }
 
+
+/**
+ * 批量保存搜集而来的formId
+ */
+module.exports.saveFormId = function (formIdList){
+  api.postRequest({
+    'url': '/saveFormId',
+    'data':{
+      form_id_list: formIdList
+    },
+    'success': (res) => {
+      console.log(res)
+      if (res.error_code != 200) console.log('update form_id 失败')
+      else console.log('update form_id 成功')
+    },
+    'fail': (res) => {
+      console.log('update form_id 失败')
+    }
+  });
+}
+
+
+
 /**
  * 设置缓存
  * @param key: 键
@@ -47,8 +70,7 @@ module.exports.login = function login(cb) {
  * @param cb: 回调函数
  * @param return: true/false
  */
-module.exports.setStorageSync = 
-    function setStorageSync(key, data, expiration){
+module.exports.setStorageSync =  function (key, data, expiration){
   var timestamp = Date.parse(new Date());
   var expiration_time = timestamp + expiration;
   wx.setStorageSync(key.toString(), data);
@@ -63,7 +85,7 @@ module.exports.setStorageSync =
  * 如果缓存存在且没过期，则返回；
  * 否则返回false
  */
-module.exports.getStorageSync = function getStorageSync(key) {
+module.exports.getStorageSync = function (key) {
   var timestamp = Date.parse(new Date());
   var expiration = wx.getStorageSync(key + '_expiration');
   var data = wx.getStorageSync(key);
@@ -87,7 +109,7 @@ module.exports.getStorageSync = function getStorageSync(key) {
 /**
  * 计算下标
  */
-module.exports.getSubscriptByLength = function getSubscriptByLength(l, numEachRow){
+module.exports.getSubscriptByLength = function (l, numEachRow){
   /* 动态创建my_topic_data_num作为分行下标 */
   var r = parseInt(l / numEachRow),
       c = l % numEachRow;
@@ -119,7 +141,7 @@ module.exports.getSubscriptByLength = function getSubscriptByLength(l, numEachRo
  * 2. 将过期的卡片删除（当前日期大于用户设置的end_date）
  * 3. 今日打过卡的，直接is_checked设置为true
  */
-module.exports.filterDatedData = function filterDatedData(user_topic_list){
+module.exports.filterDatedData = function (user_topic_list){
   let currentMoment = moment(moment().format('YYYY-MM-DD'), 'YYYY-MM-DD');
   var filteredList = [];
   for (var i in user_topic_list) {
@@ -144,7 +166,7 @@ module.exports.filterDatedData = function filterDatedData(user_topic_list){
  * 要发送到数据库打卡前的过滤函数
  * 过滤掉没变化的数据，只剩下用户修改过的数据
  */
-module.exports.filterUnchangeData = function filterUnchangeData(user_topic_list){
+module.exports.filterUnchangeData = function (user_topic_list){
   user_topic_list.pop(); //pop掉"添加卡片"
   var filtered_list = [];
   for (var i in user_topic_list){
@@ -161,7 +183,7 @@ module.exports.filterUnchangeData = function filterUnchangeData(user_topic_list)
  * 把checklist整理成后端update数据库时需要的格式并返回
  * 
  */
-module.exports.formatCheckData = function formatCheckData(topic_list){
+module.exports.formatCheckData = function (topic_list){
   let checked_topic_list = [],
       uncheck_topic_list = [];
   for (let i in topic_list){
@@ -247,7 +269,7 @@ module.exports.formatCheckData = function formatCheckData(topic_list){
 /**
  * 参数为随机数的最小值和最大值
  */
-module.exports.getRandom = function getRandom(min, max){
+module.exports.getRandom = function (min, max){
   // var seed = today.getTime();
   // seed = (seed * 9301 + 49297) % 233280;
   var Range = max - min;

@@ -1,5 +1,5 @@
 <view class="settings-panel">
-  <form bindsubmit="saveSettings" report-submit='true'>
+  <form bindsubmit="saveSettings" report-submit="true">
     <scroll-view style="height:{{scrollHeight}}px;" scroll-y scroll-with-animation enable-back-to-top>
       <view class="title"> 基本设置 </view>
       <view class="line"></view>

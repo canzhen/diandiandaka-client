@@ -1,4 +1,3 @@
-// var Charts = require('wxcharts.js');
 const moment = require('../../vendor/moment.js');
 const utils = require('../../vendor/utils.js');
 const api = require('../../ajax/api.js');

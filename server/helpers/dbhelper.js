@@ -64,10 +64,6 @@ function insert(table_name, column_string, value_list, other_operation_string, c
   for (let i = 1; i < value_list.length; i++) sql += ",?";
   sql += ") ";
   sql += other_operation_string;
-
-
-  console.log(sql)
-  console.log(value_list)
   
   client.query(
     sql, value_list,
