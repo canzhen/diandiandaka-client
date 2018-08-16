@@ -19,6 +19,7 @@ Page({
     modal_todate_time: '', //弹出框要显示的今日日期时间
     word_left_num: 140, //微信默认textarea最多输入140字
     textarea_value: '', //textarea默认字
+    form_id_list: [], //用于存储用户单击所产生的form_id
   },
 
 
@@ -197,6 +198,14 @@ Page({
    * */
   onHide: function(event){
     this.saveCheckData();
+
+    if (this.data.form_id_list.length == 0) return;
+    console.log('I am hiding')
+    console.log(this.data.form_id_list);
+    utils.saveFormId(this.data.form_id_list);
+    this.setData({
+      form_id_list: []
+    });
   },
 
 
@@ -263,6 +272,7 @@ Page({
    * 打卡功能
    */
   check: function(event) {
+    this.saveFormId(event.detail.formId);
     let id = parseInt(event.currentTarget.dataset.idx);
     let data = this.data.my_topic_data[id];
     // 查看是否是空白栏，如果是，直接返回
@@ -514,6 +524,20 @@ Page({
     this.setData({
       word_left_num: 140 - e.detail.value.length, //默认最多输入140
       textarea_value: e.detail.value
+    });
+  },
+
+
+
+  /**
+   * 用于保存formId的helper方法
+   */
+  saveFormId: function (formId) {
+    console.log(formId);
+    let form_id_list = this.data.form_id_list;
+    form_id_list.push(formId);
+    this.setData({
+      form_id_list: form_id_list
     });
   },
 

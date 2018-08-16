@@ -9,7 +9,7 @@ Page{
   width: 100%;
   height: 100rpx;
   background: #fee0c1;
-  z-index: -1;
+  z-index: -200;
 }
 
 .first-line-view{
@@ -28,7 +28,6 @@ Page{
   border: 0 solid #ffffff;
   border-radius: 50%;
   background-size: 100% 100%;
-  z-index: 100;
 }
 
 .username{
@@ -199,4 +198,14 @@ Page{
   width: 0;
   height: 0;
   color: transparent;
+}
+
+
+button{
+  background-color: transparent;
+}
+
+
+button::after{
+  border:none;
 }
