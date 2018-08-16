@@ -18,7 +18,7 @@
           <text wx:if="{{is_reset_name}}">{{user_name}}</text>
           <image class="username-edit-image" src="/images/xiugai.png"></image>
         </view>
-        <text class="edit-data" bindtap="editPersonalData">编辑个人资料 ></text>
+        <!-- <text class="edit-data" bindtap="editPersonalData">编辑个人资料 ></text> -->
       </view>
 
     </view>

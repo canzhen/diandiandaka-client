@@ -10,7 +10,6 @@ function sleep(milliSeconds) {
   while (new Date().getTime() < startTime + milliSeconds);
 };
 
-// console.log(moment().utcOffset(480).inspect())
 
 /** 脚本开始运行 */
 function start(){
@@ -37,7 +36,6 @@ function start(){
           result[i]['use_people_num'];
       }
 
-
       /* 遍历user_topic_list，给每个user的每个topic发送通知 */
       for (let i in user_topic_list) {
         let user_id = user_topic_list[i]['user_id'],
@@ -45,7 +43,7 @@ function start(){
           form_id_list = user_topic_list[i]['form_id_list'].split(','),
           remind_time = user_topic_list[i]['remind_time'];
 
-        if (!topic_list) continue;
+        if (!topic_list || !remind_time) continue;
 
         // 到user表获取timezone和formid
         dbhelper.select('user', 'timezone',
@@ -63,10 +61,10 @@ function start(){
               form_id = form_id_list.pop();
               if (form_id != '') break;
             }
-            // if (!form_id) {
-            //   console.log('Oops，该用户没有可用的form_id了……');
-            //   return;
-            // }
+            if (!form_id) {
+              console.log('Oops，该用户没有可用的form_id了……');
+              return;
+            }
             // 将pop过的form_id_list重新放入user表中
             if (!form_id) form_id_list = '';
             setFormId(user_id, form_id_list);

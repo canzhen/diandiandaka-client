@@ -35,6 +35,10 @@ router.post('/getAllTopic', function (req, res) {
  * 通过用户id在数据库中获取该用户的卡片列表
  */
 router.post('/getUserTopic', function (req, res) {
+  if (!req.header('session-id')) {
+    res.send({ 'error_code': 103, 'msg': '用户未登录' });
+    return;
+  }
   let id = req.header('session-id');
   redishelper.getValue(id, (openid) => {
     if (!openid) {
@@ -149,7 +153,6 @@ router.post('/create', function (req, res) {
  * 更新卡片信息
  */
 router.post('/update', function (req, res) {
-
   if (!req.header('session-id')) {
     res.send({ 'error_code': 103, 'msg': '用户未登录' });
     return;
@@ -341,6 +344,10 @@ router.post('/delete', function (req, res) {
  * 通过用户id和卡片名称在数据库中更新该条数据的某一栏
  */
 router.post('/udpateColumn', function (req, res) {
+  if (!req.header('session-id')) {
+    res.send({ 'error_code': 103, 'msg': '用户未登录' });
+    return;
+  }
   let id = req.header('session-id');
   let topic_name = req.body.topic_name;
   let column_name = req.body.column_name;

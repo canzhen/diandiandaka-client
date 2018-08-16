@@ -10,6 +10,10 @@ const router = express.Router();
  * 打卡方法，同时涉及到topic_check表和user_topic表
  */
 router.post('/check', function (req, res) {
+  if (!req.header('session-id')) {
+    res.send({ 'error_code': 103, 'msg': '用户未登录' });
+    return;
+  }
   let id = req.header('session-id');
   let topic_check_delete_str = req.body.topic_check_delete_str,
     topic_check_delete_list = req.body.topic_check_delete_list,
@@ -112,10 +116,18 @@ router.post('/check', function (req, res) {
 
 
 
+
+
+
+
 /**
  * 获取某个用户的所有打卡记录
  */
 router.post('/getAll', function (req, res) {
+  if (!req.header('session-id')) {
+    res.send({ 'error_code': 103, 'msg': '用户未登录' });
+    return;
+  }
   let id = req.header('session-id');
 
   redishelper.getValue(id, (openid) => {
@@ -134,10 +146,16 @@ router.post('/getAll', function (req, res) {
 
 
 
+
+
 /**
  * 删除某次打卡记录
  */
 router.post('/deleteCheck', function (req, res) {
+  if (!req.header('session-id')) {
+    res.send({ 'error_code': 103, 'msg': '用户未登录' });
+    return;
+  }
   let id = req.header('session-id');
   let topic_name = req.body.topic_name,
       check_time = req.body.check_time,
@@ -164,10 +182,18 @@ router.post('/deleteCheck', function (req, res) {
 });
 
 
+
+
+
+
 /**
  * 更新某个打卡日志
  */
 router.post('/updateLog', function (req, res) {
+  if (!req.header('session-id')) {
+    res.send({ 'error_code': 103, 'msg': '用户未登录' });
+    return;
+  }
   let id = req.header('session-id');
   let topic_name = req.body.topic_name;
   let check_time = req.body.check_time;
@@ -192,10 +218,17 @@ router.post('/updateLog', function (req, res) {
 
 
 
+
+
+
 /**
  * 更新卡片名称
  */
 router.post('/updateName', function (req, res) {
+  if (!req.header('session-id')) {
+    res.send({ 'error_code': 103, 'msg': '用户未登录' });
+    return;
+  }
   let id = req.header('session-id');
   let original_topic_name = req.body.original_topic_name,
       topic_name = req.body.topic_name;

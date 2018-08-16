@@ -11,6 +11,10 @@ const router = express.Router();
  * 保存获取到的用户的formid
  */
 router.post('/saveSettings', function (req, res) {
+  if (!req.header('session-id')) {
+    res.send({ 'error_code': 103, 'msg': '用户未登录' });
+    return;
+  }
   let id = req.header('session-id');
   redishelper.getValue(id, (openid) => {
     if (!openid) {

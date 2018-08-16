@@ -9,6 +9,10 @@ const router = express.Router();
  * 根据用户id获取用户的姓名和头像url
  */
 router.post('/getNameAvatar', function (req, res) {
+  if (!req.header('session-id')) {
+    res.send({ 'error_code': 103, 'msg': '用户未登录' });
+    return;
+  }
   let sessionid = req.header('session-id');
   redishelper.getValue(sessionid, (openid) => {
     if (!sessionid){
@@ -48,6 +52,10 @@ router.post('/getNameAvatar', function (req, res) {
  * 更新用户的头像
  */
 router.post('/updateAvatarUrl', function (req, res) {
+  if (!req.header('session-id')) {
+    res.send({ 'error_code': 103, 'msg': '用户未登录' });
+    return;
+  }
   let id = req.header('session-id');
   redishelper.getValue(id, (openid) => {
     if (!openid){
@@ -72,6 +80,10 @@ router.post('/updateAvatarUrl', function (req, res) {
  * 更新用户的头像
  */
 router.post('/updateUserName', function (req, res) {
+  if (!req.header('session-id')) {
+    res.send({ 'error_code': 103, 'msg': '用户未登录' });
+    return;
+  }
   let id = req.header('session-id');
   redishelper.getValue(id, (openid) => {
     if (!openid) {
@@ -94,6 +106,10 @@ router.post('/updateUserName', function (req, res) {
  * 保存获取到的用户的formid
  */
 router.post('/updateFormId', function (req, res) {
+  if (!req.header('session-id')) {
+    res.send({ 'error_code': 103, 'msg': '用户未登录' });
+    return;
+  }
   let id = req.header('session-id');
   redishelper.getValue(id, (openid) => {
     if (!openid) {

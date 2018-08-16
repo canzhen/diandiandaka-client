@@ -8,7 +8,8 @@
 
         <view class="one-line">
           <text>用户名：</text>
-          <input bindchange="usernameInputChange" placeholder="默认为微信名"></input>
+          <input bindchange="usernameInputChange" value="{{user_name}}" placeholder="默认为微信名" wx:if="{{is_reset_name}}"></input>
+          <open-data type="userNickName" lang="zh_CN" wx:if="{{!is_reset_name}}"></open-data>
         </view>
 
         <view class="one-line">
@@ -40,7 +41,7 @@
       <view class="content">
         <view class="topic-remind-oneline">
           <text>是否开启微信提醒打卡</text>
-          <switch style='margin-right: 50rpx;' class="if-open-reminder" bindchange="switchChange"/>
+          <switch style='margin-right: 50rpx;' class="if-open-reminder" bindchange="switchChange" checked="{{is_remind_switch_on}}"/>
         </view>
 
         <view wx:if="{{show_topic_panel}}" style="margin-left:20rpx;">
@@ -51,8 +52,8 @@
 
           <view class="topic-remind-oneline" wx:for="{{topic_list}}" wx:for-item="item" wx:for-index="index" wx:key="key">
             <text>{{item.topic_name}}</text>
-            <checkbox-group data-topic-name="{{item.topic_name}}" bindchange="topicRemindChange">
-              <checkbox style='margin-right: 80rpx;'/>
+            <checkbox-group data-index="{{index}}" bindchange="topicRemindChange">
+              <checkbox style='margin-right: 80rpx;' checked="{{item.checked}}"/>
             </checkbox-group>
           </view>
         </view>
