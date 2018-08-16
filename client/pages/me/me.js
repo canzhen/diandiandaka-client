@@ -17,6 +17,7 @@ Page({
     is_reset_avatar: false, //默认用户没有修改头像
     is_reset_name: false, //默认用户没修改过名字
     start_reset_user_name: false, //是否开始修改用户名（显示input）
+    form_id_list: [], //用于存储用户单击所产生的form_id
   },
 
 
@@ -241,13 +242,15 @@ Page({
     });
   },
 
-  redirectToMyTopic: function(){
+  redirectToMyTopic: function(e){
+    this.saveFormId(e.detail.formId);
     wx.navigateTo({
       url: '/pages/me/mytopic',
     })
   },
 
-  redirectToSettings: function(){
+  redirectToSettings: function(e){
+    this.saveFormId(e.detail.formId);
     wx.navigateTo({
       url: '/pages/me/settings'
     })
@@ -332,4 +335,34 @@ Page({
     this.hideModal();
   },
 
+
+  /**
+   * 用于保存formId的helper方法
+   */
+  saveFormId: function (formId) {
+    console.log(formId);
+    let form_id_list = this.data.form_id_list;
+    form_id_list.push(formId);
+    this.setData({
+      form_id_list: form_id_list
+    });
+  },
+
+
+
+
+  /** 
+   * 页面隐藏函数
+   * 监听页面的隐藏，
+   * 当从当前A页跳转到其他页面，那么A页面处于隐藏状态
+   * */
+  onHide: function (event) {
+    if (this.data.form_id_list.length == 0) return;
+    console.log('I am hiding')
+    console.log(this.data.form_id_list);
+    utils.saveFormId(this.data.form_id_list);
+    this.setData({
+      form_id_list: []
+    });
+  },
 })
