@@ -16,7 +16,7 @@ router.post('/getAllTopic', function (req, res) {
     'ORDER BY use_people_num DESC LIMIT ' + req.body.limit_num,
     (status, result_list) => {
       for (var i in result_list) {
-        result_list[i]['topic_url'] = config.qiniu.prefix + result_list[i]['topic_url'];
+        result_list[i]['topic_url'] = result_list[i]['topic_url'];
       }
       let error_code = status ? 200 : 100;
       res.send({

@@ -27,7 +27,7 @@ router.post('/getAll', function (req, res) {
           return;
         }
         for (var i in result_list) {
-          result_list[i] = config.qiniu.prefix + result_list[i]['url'];
+          result_list[i] = result_list[i]['url'];
         }
         res.send({ 'error_code': 200, 'msg': '', 'result_list': result_list });
       });

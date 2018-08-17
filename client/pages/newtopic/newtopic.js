@@ -37,6 +37,7 @@ Page({
       'showLoading': true,
       'success': (res) => {
         if (res.error_code == 200) {
+          console.log(res.result_list)
           this.setData({
             icon_data: res.result_list,
             icon_name_num: utils.getSubscriptByLength(res.result_list.length, numEachRow),
