@@ -224,6 +224,8 @@ Page({
               });
               // 更新数据库里的avatar_url字段
               updateAvatarUrl(url);
+              // 更新storage里的url
+              wx.setStorageSync('avatarUrl', url);
               console.log('成功上传新头像！地址是：' + that.data.avatar_url);
             });
           } else { showFailToast(); return; }

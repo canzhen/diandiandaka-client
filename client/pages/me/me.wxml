@@ -64,7 +64,7 @@
   <view class="modal-title">修改用户名</view>
   <view class="modal-content">
     <view class="modal-input">
-      <input style="padding-left:10rpx;width:100%;" bindinput="newUserNameInputChange" placeholder='输入新的用户名'> </input>
+      <input style="padding-left:10rpx;width:100%;" bindinput="newUserNameInputChange" value="{{user_name}}" placeholder='输入新的用户名'> </input>
     </view>
   </view>
   <view class="modal-footer">
