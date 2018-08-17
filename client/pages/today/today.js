@@ -172,7 +172,7 @@ Page({
          utils.formatCheckData(changed_topic_list);
     
     api.postRequest({
-      'url': '/db/topicCheck/check',
+      'url': '/topic/check',
       'data': { 
         'topic_check_delete_str': topic_check_delete_str, 
         'topic_check_delete_list': topic_check_delete_list,

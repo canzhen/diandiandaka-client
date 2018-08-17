@@ -97,7 +97,7 @@ var option = {
 /* 获取当前用户具体打卡信息 */
 function getCheckDataList(cb){
   api.postRequest({
-    'url': '/db/topicCheck/getAll',
+    'url': '/topic/getAllCheckDataOfUser',
     'data': {},
     'success': (res) => {
       if (res.error_code != 200) {
