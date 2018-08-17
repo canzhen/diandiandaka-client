@@ -1,7 +1,7 @@
 var qiniu = require('qiniuUploader.js');
 
 const config = {
-  'prefix': 'http://pcjzq4ixp.bkt.clouddn.com/',
+  'prefix': 'http://images.zhoucanzhendevelop.com/',
   'scaleAPI': '?imageView2/1/w/90/h/90/q/75|imageslim',
 }
 
@@ -37,7 +37,7 @@ function upload(file, key, token, cb){
     region: 'ECN',
     uptoken: token,
     uploadURL: 'https://upload.qiniup.com',
-    domain: 'http://pcjzq4ixp.bkt.clouddn.com'
+    domain: 'http://images.zhoucanzhendevelop.com'
   });
 
   // console.log('进入qiniuhelper，准备上传。');
