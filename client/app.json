@@ -1,8 +1,8 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/me/settings",
     "pages/me/me",
+    "pages/me/settings",
     "pages/history/history",
     "pages/today/today",
     "pages/newtopic/newtopic",

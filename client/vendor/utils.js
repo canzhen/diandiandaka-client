@@ -50,7 +50,6 @@ module.exports.saveFormId = function (formIdList){
       form_id_list: formIdList
     },
     'success': (res) => {
-      console.log(res)
       if (res.error_code != 200) console.log('update form_id 失败')
       else console.log('update form_id 成功')
     },

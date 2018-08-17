@@ -70,7 +70,6 @@ Page({
                 is_reset_name: !(reslist['user_name'] == false),
                 user_name: reslist['user_name'] ? reslist['user_name'] : '',
               });
-              console.log(that.data.user_name)
               wx.setStorageSync('userName', that.data.user_name);
             }
           }
@@ -115,9 +114,11 @@ Page({
         if (res.error_code == 200 && res.result_list.length != 0) {
           let remind_info = res.result_list[0];
           // console.log(remind_info)
-          if (remind_info['topic_list'] == '') return;
-          that.getUserTopic(remind_info['topic_list']);
+          let checked_topic_str = remind_info['topic_list'];
+          if (checked_topic_str == '') return;
+          that.getUserTopic(checked_topic_str);
           that.setData({
+            checked_topic_str: checked_topic_str,
             is_remind_switch_on: true,
             show_topic_panel: true
           });
@@ -209,7 +210,8 @@ Page({
         console.log('从数据库中获取用户卡片信息成功');
         let user_topic_list = res.result_list;
         // 将已经设置为要提醒的卡片打勾
-        if (checked_topic_str != ''){
+        if (checked_topic_str != undefined && 
+              checked_topic_str != ''){
           for (let i in user_topic_list) {
             if (checked_topic_str.indexOf(user_topic_list[i].topic_name) != -1)
               user_topic_list[i].checked = true;
@@ -240,7 +242,7 @@ Page({
       });
       //如果已经获取过一次，就不需要再发送请求了
       if (this.data.topic_list.length != 0) return;
-      this.getUserTopic();
+      this.getUserTopic(this.data.checked_topic_str);
       
     }else{
       this.setData({
@@ -281,6 +283,10 @@ Page({
   },
 
 
+
+
+
+
   /**
    * 保存设置
    */
@@ -290,10 +296,12 @@ Page({
     let formId = e.detail.formId;
     let remind_topic_list = [];
 
-    for (let i in this.data.topic_list){
+    for (let i in this.data.topic_list) {
       if (that.data.topic_list[i].checked)
         remind_topic_list.push(that.data.topic_list[i].topic_name)
     }
+
+    let is_set_reminder = remind_topic_list.length != 0;
 
     api.postRequest({
       'url': '/me/saveSettings',
@@ -314,7 +322,7 @@ Page({
           return;
         }
         console.log('保存用户设置成功');
-        this.showSucceedToast();
+        this.showSucceedToast(is_set_reminder);
       },
       'fail': (res) => {
         this.showFailToast();
@@ -331,15 +339,24 @@ Page({
     })
   },
 
-  showSucceedToast: function(){
-    wx.showModal({
-      title: '温馨提示',
-      content: '开启提醒之后，将于次日生效喔~',
-      showCancel: false,
-      success: (res) => {
+  showSucceedToast: function (is_set_reminder){
+    if (is_set_reminder){
+      wx.showModal({
+        title: '温馨提示',
+        content: '开启提醒之后，将于次日生效喔~',
+        showCancel: false,
+        success: (res) => {
+          wx.navigateBack({})
+        }
+      })
+    } else {
+      wx.showToast({
+        title: '设置保存成功',
+      })
+      setTimeout(function(){
         wx.navigateBack({})
-      }
-    })
+      }, 2000);
+    }
   },
 
 })
