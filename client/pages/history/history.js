@@ -118,9 +118,9 @@ Page({
   init: function (tab) {
     if (tab == undefined) tab = this.data.currentTab;
     let that = this;
-
-    
-
+    wx.showLoading({
+      title: '正在加载中',
+    })
       /* 获取当前用户的所有卡片 */
     data.getTopicInfoList((error_code, msg, topic_info_list) => {
       if (error_code != 200) return;
@@ -145,6 +145,8 @@ Page({
           check_time_list: checkTimeList,
           checked_topic_list_per_day: checkedTopicListPerDay,
         });
+
+        wx.hideLoading();
 
         if (tab == 0) {
           that.initCheckCalendar();

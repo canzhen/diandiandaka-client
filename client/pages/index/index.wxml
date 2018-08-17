@@ -1,7 +1,7 @@
 <view style="display:flex; flex-direction:column;margin-left:60rpx; margin-right:60rpx;">
   <!-- 第一行，输入框以及“开始进步”button -->
   <view class="first-line-view">
-      <input type='text' class="new-topic-input" placeholder="输入卡片，每天进步一点点" cursor-spacing="5" bindinput='bindInputTopicChange' value="{{topic_name}}"/>
+      <input type='text' class="new-topic-input" placeholder="输入卡片名称，开始打卡" cursor-spacing="5" bindinput='bindInputTopicChange' value="{{topic_name}}"/>
 
       <form bindsubmit="createNewTopic" report-submit="true">
         <button lang="zh_CN" form-type="submit"
@@ -20,10 +20,17 @@
 
   <!-- 第三行，热门卡片部分 -->
   <scroll-view style="height:{{scrollHeight}}px;" scroll-y scroll-with-animation enable-back-to-top>
-    <view class="hot-topic-panel" wx:for="{{hot_topic_data}}" wx:key="key" wx:for-item="topic" bindtap="clickHotTopic" data-selected-topic-name="{{topic.topic_name}}" data-selected-topic-url="{{topic.topic_url}}">
-      <image class="image" src="{{topic.topic_url}}" mode="aspectFit"></image>
-      <text class="text hot-topic-content">{{topic.topic_name}}\n已有{{topic.use_people_num}}人参与打卡</text>
-      <!-- </button> -->
-    </view>
+    <form class="hot-topic-panel" bindsubmit="clickHotTopic" report-submit="true" wx:for="{{hot_topic_data}}" wx:key="key" wx:for-item="topic" data-selected-topic-name="{{topic.topic_name}}" data-selected-topic-url="{{topic.topic_url}}">
+    <button class="hot-topic-item-button" form-type="submit" hover-class="none" >
+      <!-- <view > -->
+        <image class="image" src="{{topic.topic_url}}" mode="aspectFit"></image>
+        <view class="hot-topic-content">
+        <text>{{topic.topic_name}}</text>
+        <text>已有{{topic.use_people_num}}人参与打卡</text>
+        </view>
+      <!-- </view> -->
+
+    </button>
+    </form>
   </scroll-view>
 </view>

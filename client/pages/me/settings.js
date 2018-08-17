@@ -106,7 +106,6 @@ Page({
     });
 
 
-
     // 查看是否用户已经设置提醒某些卡片，
     // 如果已经设置，则直接显示出来
     api.postRequest({
@@ -125,8 +124,6 @@ Page({
         }
       }
     });
-
-
     
   },
 
@@ -230,18 +227,21 @@ Page({
     });
   },
 
+
+
+
   /**
    * 选择是否开关提醒的按钮变化时触发的函数
    */
   switchChange: function(e){
     if (e.detail.value){
+      this.setData({
+        show_topic_panel: true
+      });
       //如果已经获取过一次，就不需要再发送请求了
       if (this.data.topic_list.length != 0) return;
       this.getUserTopic();
       
-      this.setData({
-        show_topic_panel: true
-      });
     }else{
       this.setData({
         show_topic_panel: false

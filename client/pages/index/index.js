@@ -110,7 +110,8 @@ Page({
   /**
    * 选择某个热门卡片时所触发的函数
    */
-  clickHotTopic: function(e){
+  clickHotTopic: function (e) {
+    this.saveFormId(e.detail.formId);
     let topicname = e.currentTarget.dataset.selectedTopicName;
     let topicurl = e.currentTarget.dataset.selectedTopicUrl;
     helper.navigateToNewTopicPage(topicname, topicurl);
@@ -180,7 +181,6 @@ Page({
    */
   onHide: function(){
     if (this.data.form_id_list.length == 0) return;
-    console.log('I am hiding')
     console.log(this.data.form_id_list);
     utils.saveFormId(this.data.form_id_list);
     this.setData({
