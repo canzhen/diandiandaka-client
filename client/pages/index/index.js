@@ -14,6 +14,10 @@ Page({
   
 
   init: function(ifShowLoading = true){
+    // 返回时的卡片名称应该清空
+    this.setData({
+      topic_name: ''
+    }); 
     // if (utils.getStorageSync('sessionId')) return;
     // 从数据库中获取topic
     api.postRequest({

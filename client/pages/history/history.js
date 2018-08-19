@@ -116,6 +116,10 @@ Page({
    * 初始化函数
    */
   init: function (tab) {
+    // 返回时初始化数据
+    this.setData({
+      currentTab: 0, 
+    })
     if (tab == undefined) tab = this.data.currentTab;
     let that = this;
     wx.showLoading({
