@@ -12,7 +12,7 @@ let colorList = ['#f8d3ad', '#f3c6ca'];
 Page({
   data: {
     navbar: ['打卡日历', '每日完成度', '历史日志'],
-    currentTab: 0,
+    currentTab: 1,
     colorList: [ '#f3faf998', '#f6f3fa98', '#f6faf398', '#f9faf398',
                '#faf3f898', '#faf3f498', '#f3faf9a4', '#f3f7faa4'],
     form_id_list: [], //用于存储用户单击所产生的form_id

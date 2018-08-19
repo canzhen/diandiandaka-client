@@ -214,9 +214,14 @@ function getCheckDetailOnGivenDay(checkedList, givenDate) {
  * 起始日期是左开右闭
  */
 function getCompletePercentageOfDay(currentdate, topic_list_per_day, total_topic_num, start_date_list, end_date_list) {
-  if (currentdate > moment()) return null; //未来无法计算
+  if (currentdate.diff(moment(), 'days') > 0) {
+    console.log('currentdate > moment')
+    return null; //未来无法计算
+  }
   if (currentdate < start_date_list[0]) return null; //之前并没有任何卡片开始
-  if (topic_list_per_day[currentdate.format('YYYY-MM-DD')] == undefined) return 0;
+  if (topic_list_per_day[currentdate.format('YYYY-MM-DD')] == undefined) {
+    return 0;
+  }
 
   currentdate = currentdate.clone();
   let l = start_date_list.length;
@@ -227,7 +232,7 @@ function getCompletePercentageOfDay(currentdate, topic_list_per_day, total_topic
     total_num = l;
   // 如果时间位于最早开始之前，或者最晚结束之后，总数为0
   }else if (currentdate < start_date_list[0] || 
-            currentdate >= end_date_list[l-1]){
+    currentdate >= end_date_list[l - 1]) {
     total_num = 0;
   // 否则，位于最早开始和最晚开始之间，每往前推时间，减少一个卡片
   }else if (currentdate < start_date_list[l-1]){
@@ -238,7 +243,7 @@ function getCompletePercentageOfDay(currentdate, topic_list_per_day, total_topic
       }
     }
   // 否则，位于最晚结束和最早结束之间，每向后推时间，减少一个卡片
-  }else if(currentdate >= end_date_list[0]){
+  } else if (currentdate >= end_date_list[0]) {
     for (let i = 1; i < l; i++){
       if (currentdate < end_date_list[i]){
         total_num = l - i; 
@@ -246,11 +251,12 @@ function getCompletePercentageOfDay(currentdate, topic_list_per_day, total_topic
       }
     }
   }
-
+  
   if (!total_num) return null;
 
   let percentage = (topic_list_per_day[currentdate.format('YYYY-MM-DD')].length / total_num * 100 ).toFixed(2);
   percentage = percentage ? parseFloat(percentage) : null;
+
   return percentage;
 }
 
