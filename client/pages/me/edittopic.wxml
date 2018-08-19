@@ -50,8 +50,9 @@
       </view>
     </scroll-view>
 
-
-    <button class="new-topic-button" form-type="submit"> 确定修改 </button>
-    <button class="delete-topic-button" bindtap="deleteTopic"> 删除卡片 </button>
+    <view style="display:flex; flex-direction: row; margin-top: 40rpx;">
+      <button class="new-topic-button" form-type="submit"> 确定修改 </button>
+      <button class="delete-topic-button" bindtap="deleteTopic"> 删除卡片</button>
+    </view>
   </form>
 </view>

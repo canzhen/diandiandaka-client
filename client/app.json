@@ -1,13 +1,13 @@
 {
   "pages": [
-    "pages/history/history",
     "pages/index/index",
+    "pages/me/edittopic",
+    "pages/newtopic/newtopic",
+    "pages/history/history",
     "pages/me/me",
     "pages/me/settings",
     "pages/today/today",
-    "pages/newtopic/newtopic",
-    "pages/me/mytopic",
-    "pages/me/edittopic"
+    "pages/me/mytopic"
   ],
 
   "window": {

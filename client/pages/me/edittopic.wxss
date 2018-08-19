@@ -42,8 +42,7 @@ checkbox {
 .pick-icon-text{
   display: flex;
   flex-direction: row;
-  /* margin-top: 40rpx; */
-  /* margin-bottom: 20rpx; */
+  margin-bottom: 10rpx;
   align-items: center;
 }
 
@@ -96,12 +95,12 @@ checkbox {
 }
 
 .new-topic-button{
-  position: fixed;
-  top: 89%;
-  left: 20%;
+  /* position: fixed; */
+  /* top: 89%; */
+  /* left: 20%; */
   width: 180rpx;
   height: 85rpx;
-  /* margin: auto 70rpx 90rpx 220rpx; */
+  margin: auto 20rpx auto 110rpx;
 
   display: flex;
   flex-direction: row;
@@ -123,12 +122,12 @@ checkbox {
 
 
 .delete-topic-button{
-  position: fixed;
-  top: 89%;
-  left: 55%;
+  /* position: fixed; */
+  /* top: 89%; */
+  /* left: 55%; */
   width: 180rpx;
   height: 85rpx;
-  /* margin: auto 70rpx 90rpx 220rpx; */
+  margin: auto 20rpx auto 30rpx;
 
   display: flex;
   flex-direction: row;
