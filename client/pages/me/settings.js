@@ -52,7 +52,6 @@ Page({
         user_name: wx.getStorageSync('userName'),
         is_reset_name: true
       });
-      console.log(this.data.user_name)
     }
 
 
@@ -115,6 +114,10 @@ Page({
           let remind_info = res.result_list[0];
           // console.log(remind_info)
           let checked_topic_str = remind_info['topic_list'];
+          let remind_time = remind_info['remind_time'] ? remind_info['remind_time'] : '08:00';
+          that.setData({
+            remind_time: remind_time
+          });
           if (checked_topic_str == '') return;
           that.getUserTopic(checked_topic_str);
           that.setData({
