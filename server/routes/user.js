@@ -13,6 +13,7 @@ router.post('/getNameAvatar', function (req, res) {
     res.send({ 'error_code': 103, 'msg': '用户未登录' });
     return;
   }
+  
   let sessionid = req.header('session-id');
   redishelper.getValue(sessionid, (openid) => {
     if (!sessionid){
