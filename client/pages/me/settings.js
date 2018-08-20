@@ -58,7 +58,7 @@ Page({
     if (!wx.getStorageSync('userName')){
       /* 获取用户的个性化头像和姓名 */
       api.postRequest({
-        'url': '/db/user/getNameAvatar',
+        'url': '/user/getNameAvatar',
         'data': [],
         'success': (res) => {
           if (res.error_code == 200 && res.result_list.length!=0) {
@@ -114,16 +114,17 @@ Page({
           let remind_info = res.result_list[0];
           // console.log(remind_info)
           let checked_topic_str = remind_info['topic_list'];
-          let remind_time = remind_info['remind_time'] ? remind_info['remind_time'] : '08:00';
-          that.setData({
-            remind_time: remind_time
-          });
           if (checked_topic_str == '') return;
-          that.getUserTopic(checked_topic_str);
-          that.setData({
-            checked_topic_str: checked_topic_str,
-            is_remind_switch_on: true,
-            show_topic_panel: true
+          that.getUserTopic(checked_topic_str, (status) => {
+            if (status != 0) return;
+            let remind_time = remind_info['remind_time'] ? 
+                              remind_info['remind_time'] : '08:00';
+            that.setData({
+              checked_topic_str: checked_topic_str,
+              remind_time: remind_time,
+              is_remind_switch_on: true,
+              show_topic_panel: true
+            });
           });
         }
       }
@@ -199,7 +200,7 @@ Page({
   /**
    * 获取该用户的卡片
    */
-  getUserTopic: function(checked_topic_str){
+  getUserTopic: function(checked_topic_str, cb){
     let that = this;
     api.postRequest({
       'url': '/topic/getUserTopic',
@@ -208,10 +209,17 @@ Page({
       'success': (res) => { //成功
         if (res.error_code != 200) {
           console.log('从数据库中获取用户卡片信息失败');
+          cb(1);
           return;
         }
         console.log('从数据库中获取用户卡片信息成功');
         let user_topic_list = res.result_list;
+        if (user_topic_list.length == 0) {
+          cb(2);
+          return;
+        }
+
+        console.log(user_topic_list)
         // 将已经设置为要提醒的卡片打勾
         if (checked_topic_str != undefined && 
               checked_topic_str != ''){
@@ -225,6 +233,7 @@ Page({
         that.setData({
           topic_list: user_topic_list
         });
+        cb(0)
       },
       'fail': (res) => { //失败
         console.log('从数据库中获取用户卡片信息失败');
@@ -240,13 +249,21 @@ Page({
    */
   switchChange: function(e){
     if (e.detail.value){
-      this.setData({
-        show_topic_panel: true
-      });
-      //如果已经获取过一次，就不需要再发送请求了
+      // 如果已经获取过一次，就不需要再发送请求了
       if (this.data.topic_list.length != 0) return;
-      this.getUserTopic(this.data.checked_topic_str);
-      
+      this.getUserTopic(
+        this.data.checked_topic_str,
+        (status) => {
+          if (status == 0)
+            this.setData({
+              show_topic_panel: true
+            });
+          else if (status == 2)
+            wx.showToast({
+              title: '您好像还没有卡片喔~',
+              icon: 'none'
+            })
+        });
     }else{
       this.setData({
         show_topic_panel: false
@@ -294,7 +311,6 @@ Page({
    * 保存设置
    */
   saveSettings: function(e){
-    // utils.updateFormId(e.detail.formId);
     let that = this;
     let formId = e.detail.formId;
     let remind_topic_list = [];

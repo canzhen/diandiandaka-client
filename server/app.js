@@ -8,7 +8,7 @@ const routes = require('./routes/index');
 const qiniu = require('./routes/qiniu');
 const me = require('./routes/me');
 
-const user = require('./routes/db/user');
+const user = require('./routes/user');
 const dbtopic = require('./routes/db/topic');
 const topic = require('./routes/topic');
 const topicUrl = require('./routes/db/topicUrl');
@@ -30,7 +30,7 @@ app.use('/topic', topic);
 app.use('/me', me);
 
 app.use('/db/topic', dbtopic);
-app.use('/db/user', user);
+app.use('/user', user);
 app.use('/db/topicUrl', topicUrl);
 
 

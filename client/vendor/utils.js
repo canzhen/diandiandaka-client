@@ -277,25 +277,6 @@ module.exports.getRandom = function (min, max){
 }
 
 
-module.exports.updateFormId = function updateFormId(formId){
-  api.postRequest({
-    'url': '/db/userMessage/updateFormId',
-    'data': {
-      form_id: formId
-    },
-    'success': (res) => {
-      console.log(res)
-      if (res.error_code != 200){
-        console.log('更新用户formid到user表中失败');
-        return;
-      }
-      console.log('更新用户formid到user表中成功');
-    },
-    'fail': (res) => {
-      console.log('更新用户formid到user表中失败');
-    }
-  });
-}
 
 // module.exports = {
 //   /* 功能方面 */

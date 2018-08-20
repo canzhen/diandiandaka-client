@@ -42,7 +42,7 @@ Page({
       !wx.getStorageSync('userName')) {
       /* 获取用户的个性化头像和姓名 */
       api.postRequest({
-        'url': '/db/user/getNameAvatar',
+        'url': '/user/getNameAvatar',
         'data': [],
         'success': (res) => {
           if (res.error_code == 200 && res.result_list != []) {
@@ -180,7 +180,7 @@ Page({
 
     let updateAvatarUrl = function (url) {
       api.postRequest({
-        'url': '/db/user/updateAvatarUrl',
+        'url': '/user/updateAvatarUrl',
         'data': { 'url': url },
         'success': (res) => {
           wx.hideLoading()
@@ -295,7 +295,7 @@ Page({
 
 
     api.postRequest({
-      'url': '/db/user/updateUserName',
+      'url': '/user/updateUserName',
       'data': {
         user_name: new_username
       },

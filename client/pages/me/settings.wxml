@@ -37,7 +37,7 @@
 
     <view class="content">
       <view class="topic-remind-oneline1">
-        <text>是否开启微信提醒打卡</text>
+        <text>是否开启微信通知打卡</text>
         <switch class="if-open-reminder" bindchange="switchChange" checked="{{is_remind_switch_on}}"/>
       </view>
 
