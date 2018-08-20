@@ -10,14 +10,17 @@ function sleep(milliSeconds) {
   while (new Date().getTime() < startTime + milliSeconds);
 };
 
+function writeLog(log){
+  console.log('[' + moment().format('YYYY-MM-DD HH:mm:ss') + '] ' + log);
+}
 
-/** 脚本开始运行 */
-function start(){
+/** 开始发送消息 */
+function startSendMessage(){
   /** 遍历user_message表 */ 
   dbhelper.select('user_message', '', '', [], '',
   (status, result) => {
     if (!status){
-      console.log('1. 遍历user_message表失败');
+      writeLog('1. 遍历user_message表失败');
       return;
     }
     if (result.length == 0) return;
@@ -28,7 +31,7 @@ function start(){
     dbhelper.select('topic', 'topic_name, use_people_num', '', [], '',
     (status, result) => {
       if (!status) {
-        console.log('2. 获取所有topic的使用人数失败');
+        writeLog('2. 获取所有topic的使用人数失败');
       }
       // 生成topic_use_map
       for (let i in result) {
@@ -50,7 +53,7 @@ function start(){
           'user_id=?', [user_id], '',
           (status, userlist) => {
             if (!status) {
-              console.log('3. 获取用户' + user_id + '的timezone失败');
+              writeLog('3. 获取用户' + user_id + '的timezone失败');
               return;
             }
             let timezone = userlist[0]['timezone'];
@@ -62,7 +65,7 @@ function start(){
               if (form_id != '') break;
             }
             if (!form_id) {
-              console.log('Oops，该用户没有可用的form_id了……');
+              writeLog('Oops，该用户没有可用的form_id了……');
               return;
             }
             // 将pop过的form_id_list重新放入user表中
@@ -88,9 +91,9 @@ function start(){
                 format('MM-DD ') + remind_time, 'MM-DD HH:mm');
             // 计算当地时间和用户要被提醒的时间差
             let diffTime = parseInt(remindTime.diff(userCurrentTime, 'seconds')) * 1000; //换算成毫秒
-            console.log(diffTime)
+            writeLog(diffTime)
             setTimeout(() => {
-              console.log(diffTime / 1000 + '秒计时到啦！准备推送消息给' + user_id);
+              writeLog(diffTime / 1000 + '秒计时到啦！准备推送消息给' + user_id);
               /** 推送message */
               messagehelper.sendMessage(user_id, form_id,
                 { keyword1: { value: topic_list.toString() }, //打卡项目
@@ -99,10 +102,10 @@ function start(){
                   keyword4: { value: '坚持不懈才能积沙成塔喔~' }, //温馨提示
                 },
                 (status, errmsg) => {
-                  if (status) console.log('推送消息成功');
+                  if (status) writeLog('推送消息成功');
                   else {
-                    console.log('推送消息失败，错误原因：');
-                    console.log(errmsg);
+                    writeLog('推送消息失败，错误原因：');
+                    writeLog(errmsg);
                   }
                 }
               )
@@ -121,10 +124,10 @@ function start(){
         [form_id_list.toString() + ',' , user_id],
         (status, errmsg) => {
           if (!status) {
-            console.log('重新update user' + user_id + '的form_id_list失败');
+            writeLog('重新update user' + user_id + '的form_id_list失败');
             setFormId(user_id, form_id_list);
           }
-          console.log('重新update user' + user_id + '的form_id_list成功');
+          writeLog('重新update user' + user_id + '的form_id_list成功');
         });
     };
   });
@@ -146,14 +149,26 @@ let sendMessage = function(openid, formid, messageBody, cb){
   //     keyword6: { value: '坚持不懈才能积沙成塔喔~' }, //温馨提示
   //   },
   //   (res) => {
-  //     if (res) console.log('推送消息成功');
-  //     else console.log('推送消息失败');
+  //     if (res) writeLog('推送消息成功');
+  //     else writeLog('推送消息失败');
   //   }
   // )
 };
 
 
-console.log('starting....')
-start()
+/** 开始查看是否有0使用的卡片，删除之 */
+function startCheckZeroUseTopic(){
+  dbhelper.deleteRow(
+    'topic', 'use_people_num=0', [],
+    (status, msg) => {
+      if (status) writeLog('删除0使用人数的卡片成功')
+      else writeLog('删除0使用人数的卡片失败')
+    });
+}
+
+
+writeLog('starting....')
+startSendMessage()
+startCheckZeroUseTopic()
 
 

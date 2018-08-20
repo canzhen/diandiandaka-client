@@ -165,7 +165,7 @@ Page{
   min-height:  300rpx;
   font-size: 30rpx;
   line-height: 28rpx;
-  padding: 0 10rpx;
+  padding: 5rpx 10rpx;
   box-sizing: border-box;
   color: #333;
 }
