@@ -42,12 +42,11 @@ function startSendMessage(){
       /* 遍历user_topic_list，给每个user的每个topic发送通知 */
       for (let i in user_topic_list) {
         let user_id = user_topic_list[i]['user_id'],
-          topic_list = user_topic_list[i]['topic_list'].split(','),
+          topic_list = user_topic_list[i]['topic_list'],
           form_id_list = user_topic_list[i]['form_id_list'].split(','),
           remind_time = user_topic_list[i]['remind_time'];
 
         if (!topic_list || !remind_time) continue;
-
         // 到user表获取timezone和formid
         dbhelper.select('user', 'timezone',
           'user_id=?', [user_id], '',
@@ -74,6 +73,7 @@ function startSendMessage(){
 
             // 计算总共一起参与所有topic的人数
             let total_people_num = 0;
+            topic_list = topic_list.split(',');
             for (let i in topic_list)
               total_people_num += topic_use_map[topic_list[i]]
 

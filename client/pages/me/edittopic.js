@@ -36,15 +36,15 @@ Page({
       'showLoading': true,
       'success': (res) => {
         if (res.error_code == 200) {
-          let icon_data_list = res.result_list;
           this.setData({
-            icon_data_list: icon_data_list,
+            icon_data_list: res.result_list,
             icon_name_num: utils.getSubscriptByLength(res.result_list.length, numEachRow),
             topic_name: options.topic_name ? options.topic_name : '',
             topic_url: options.topic_url ? options.topic_url : '',
             start_date: options.start_date ? options.start_date : '',
             end_date: options.end_date ? options.end_date : '',
           });
+          // 必须在设置完scroll-view相关高度之后设置scroll-into-id才有效
           this.setData({
             scroll_into_id: 'chosen'
           });

@@ -6,7 +6,7 @@ const numEachRow = 5;
 
 Page({
   data: {
-    icon_data: [], //可供选择的topic图标
+    icon_data_list: [], //可供选择的topic图标
     icon_name_num: [],
     topic_name: '',
     topic_url: '', //topic图片的url
@@ -38,10 +38,14 @@ Page({
       'success': (res) => {
         if (res.error_code == 200) {
           this.setData({
-            icon_data: res.result_list,
+            icon_data_list: res.result_list,
             icon_name_num: utils.getSubscriptByLength(res.result_list.length, numEachRow),
             topic_name: options.topic_name ? options.topic_name : '',
             topic_url: options.topic_url ? options.topic_url : '',
+          });
+          // 必须在设置完scroll-view相关高度之后设置scroll-into-id才有效
+          this.setData({
+            scroll_into_id: 'chosen'
           });
         } else showFailToast();
       },
@@ -81,7 +85,7 @@ Page({
    */
   checkIcon: function (event) {
     let id = parseInt(event.currentTarget.dataset.idx);
-    let data = this.data.icon_data[id];
+    let data = this.data.icon_data_list[id];
     // 查看是否是空白栏，如果是，直接返回
     if (typeof data == 'undefined') return;
 
@@ -310,16 +314,16 @@ Page({
             console.log('成功获取token:' + token);
             qiniuhelper.upload(filepath, filename, token, (status, url) => {
               if (!status) { showFailToast(); return; }
-              let old_data_list = that.data.icon_data;
+              let old_data_list = that.data.icon_data_list;
               old_data_list.push(url);
               that.setData({
-                icon_data: old_data_list,
+                icon_data_list: old_data_list,
                 icon_name_num: utils.getSubscriptByLength(old_data_list.length, numEachRow)
               });
               // 更新数据库里的avatar_url字段
               insertNewTopicUrl(filename);
               wx.hideLoading();
-              console.log('成功上传新头像！地址是：' + that.data.icon_data);
+              console.log('成功上传新头像！地址是：' + that.data.icon_data_list);
             });
           } else { showFailToast(); return; }
         });

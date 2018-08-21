@@ -41,14 +41,14 @@
       </view>
     </view>
 
-    <scroll-view class="icon-image-scroll-view" style="height:{{scrollHeight}}px;" scroll-y scroll-with-animation enable-back-to-top>
+    <scroll-view class="icon-image-scroll-view" style="height:{{scrollHeight}}px;" scroll-into-view="{{scroll_into_id}}" scroll-y scroll-with-animation enable-back-to-top>
       <!-- 展示图标（每行六个图标） -->
       <view class="icon-image-view" wx:for="{{icon_name_num}}" wx:key="idx" wx:for-item="row_data">
         <!-- 每一行 -->
         <view class="icon-image-row" wx:for="{{row_data}}" wx:key="col" wx:for-item="num">
-          <view class="icon-image-each-item" bindtap="checkIcon" data-idx="{{num}}" data-url="{{icon_data[num]}}">
-            <image class="image" src="{{icon_data[num]}}"></image>
-            <icon class="image-punched-in" wx:if="{{icon_data[num] == topic_url}}"
+          <view class="icon-image-each-item" id="{{icon_data_list[num] == topic_url ? 'chosen' : 'unchosen'}}" bindtap="checkIcon" data-idx="{{num}}" data-url="{{icon_data_list[num]}}">
+            <image class="image" src="{{icon_data_list[num]}}"></image>
+            <icon class="image-punched-in" wx:if="{{icon_data_list[num] == topic_url}}"
                     type="success_no_circle" size="30"></icon>
           </view>
         </view>
