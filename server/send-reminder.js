@@ -80,18 +80,23 @@ function startSendMessage(){
 
             // 计算时区
             let userCurrentTime = moment();
-            let remindTime = moment(remind_time, 'HH:mm');
-            if (remind_time != '480') { //中国时区，和服务器一致，无须转换
+            if (timezone != '480') { //中国时区，和服务器一致，无须转换
               // 计算用户所在地区现在的时间
-              userCurrentTime = moment().utcOffset(parseInt(remind_time));
+              console.log(parseInt(timezone))
+              userCurrentTime = moment().utcOffset(parseInt(timezone)).format('YYYY-MM-DD HH:mm');
+              // 格式化时间，否则比较时间大小时或出错
+              userCurrentTime = moment(userCurrentTime, 'YYYY-MM-DD HH:mm');
             }
+            let remindTime = moment(userCurrentTime.format('YYYY-MM-DD ') + remind_time, 'YYYY-MM-DD HH:mm');
+
             // 如果提醒时间已过，则设置明天提醒
             if (remindTime < userCurrentTime)
               remindTime = moment(userCurrentTime.clone().add(1, 'days').
                 format('MM-DD ') + remind_time, 'MM-DD HH:mm');
+
             // 计算当地时间和用户要被提醒的时间差
             let diffTime = parseInt(remindTime.diff(userCurrentTime, 'seconds')) * 1000; //换算成毫秒
-            writeLog(diffTime)
+            writeLog('给用户' + user_id + '设置了打卡提醒，在' + diffTime + '秒后提醒TA打卡' + topic_list.toString())
             setTimeout(() => {
               writeLog(diffTime / 1000 + '秒计时到啦！准备推送消息给' + user_id);
               /** 推送message */
