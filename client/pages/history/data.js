@@ -148,7 +148,7 @@ function getCheckedDataOfEveryTopic(dataList, topicInfoMap) {
     checkTimePerTopic[key] = new Set(); //去重，初始化
     checkInfoPerTopic[key] = []; //去重，初始化
   }
-
+  
   for (var i = 0; i < dataList.length; i++){
     checkTimePerTopic[dataList[i]['topic_name']]
         .add(dataList[i]['check_time']);

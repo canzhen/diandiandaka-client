@@ -186,7 +186,7 @@ Page({
       },
       'fail': (res) => {
         console.log('fail')
-        console.log(res)}
+      }
     });
   },
 
