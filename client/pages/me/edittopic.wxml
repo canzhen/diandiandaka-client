@@ -20,17 +20,19 @@
     <!-- 开始日期panel结束 -->
     <view class="line"></view>
 
-    <!-- <view wx:if="{{if_set_end_date}}"> -->
-      <view style="display:flex; flex-direction:row;">
-        <text class="topic-name"> 结束日期 </text>
-        <view class="topic-name-right">
-          <picker style="padding-bottom: 5rpx;" mode="date" value="{{end_date}}" name="end_date" start="{{start_date}}" end="3000-12-31" bindchange="bindEndDateChange">
+    <!-- 开始日期panel开始 -->
+    <view class="one-line-panel">
+      <!-- left panel开始 -->
+      <view class="one-line-inner-panel">
+        <text space="ensp">结束日期 </text>
+        <picker style="padding-bottom: 5rpx;" mode="date" value="{{end_date}}" name="end_date" start="{{start_date}}" end="3000-12-31" bindchange="bindEndDateChange">
             {{end_date}}
           </picker>
-        </view>
       </view>
-      <view class="line"></view>
-    <!-- </view> -->
+      <!-- left panel结束 -->
+    </view>
+    <!-- 开始日期panel结束 -->
+    <view class="line"></view>
 
     <view class="pick-icon-text"> 
       选择图标
