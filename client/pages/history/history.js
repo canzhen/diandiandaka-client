@@ -103,6 +103,10 @@ Page({
 
   /* tab来回切换时也会调用的function */
   onShow: function () {
+    // 返回时初始化数据
+    this.setData({
+      currentTab: 0,
+    })
     if (this.data.is_loaded) {
       this.setData({
         is_loaded: false
@@ -116,10 +120,6 @@ Page({
    * 初始化函数
    */
   init: function (tab) {
-    // 返回时初始化数据
-    this.setData({
-      currentTab: 0, 
-    })
     if (tab == undefined) tab = this.data.currentTab;
     let that = this;
     wx.showLoading({
@@ -264,12 +264,11 @@ Page({
     }
     var currentMoment = date.clone();
     var preMoment = date.clone().subtract(1, 'month');
-    var prepreMoment = date.clone().subtract(2, 'month');
+    // var prepreMoment = date.clone().subtract(2, 'month');
 
     this.setData({
-      'year_month_list[2]': data.getCalendar(checkedTime, currentMoment, colorList[currentMoment.month() % 2]),
-      'year_month_list[1]': data.getCalendar(checkedTime, preMoment, colorList[preMoment.month() % 2]),
-      'year_month_list[0]': data.getCalendar(checkedTime, prepreMoment, colorList[prepreMoment.month() % 2]),
+      'year_month_list[1]': data.getCalendar(checkedTime, currentMoment, colorList[currentMoment.month() % 2]),
+      'year_month_list[0]': data.getCalendar(checkedTime, preMoment, colorList[preMoment.month() % 2]),
     });
 
 

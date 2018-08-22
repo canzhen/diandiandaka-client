@@ -141,12 +141,12 @@ module.exports.getSubscriptByLength = function (l, numEachRow){
  * 3. 今日打过卡的，直接is_checked设置为true
  */
 module.exports.filterDatedData = function (user_topic_list){
-  let currentMoment = moment(moment().format('YYYY-MM-DD'), 'YYYY-MM-DD');
+  let currentMoment = moment();
   var filteredList = [];
   for (var i in user_topic_list) {
     var item = user_topic_list[i];
     // 将过期的卡片删除（当前日期大于用户设置的end_date）
-    if (currentMoment > moment(item['end_date'], 'YYYY-MM-DD')) continue;
+    if (currentMoment.diff(moment(item['end_date'], 'YYYY-MM-DD'), 'days') > 0) continue;
     // 如果超过2天未打卡，则显示的时候自动显示insist_day为0
     let lastupdateMoment = moment(item['last_check_time'], 'YYYY-MM-DD');
     if (moment().diff(lastupdateMoment, 'days') >= 2)

@@ -65,8 +65,8 @@ function insert(table_name, column_string, value_list, other_operation_string, c
   sql += ") ";
   sql += other_operation_string;
   
-  console.log(sql)
-  console.log(value_list)
+  // console.log(sql)
+  // console.log(value_list)
 
   client.query(
     sql, value_list,
@@ -76,6 +76,7 @@ function insert(table_name, column_string, value_list, other_operation_string, c
         cb(false, err.code);
       } else {
         if (result['changedRows'] == 0) { //为0代表duplicate key
+          console.log('insert, duplicate key')
           cb(true, 'duplicate');
           return;
         }
@@ -107,6 +108,9 @@ function insertMulti(table_name, column_string, value_list, other_operation_stri
   }
   sql += ' ';
   sql += other_operation_string;
+
+  // console.log(sql)
+  // console.log(value_list)
 
   client.query(
     sql, value_list,
@@ -214,6 +218,9 @@ function updateReduceUserTopicNumberByUserId(id, list, cb){
   sql += "ELSE last_check_time END WHERE user_id = ?;";
   list.push(id);
 
+  // console.log(sql)
+  // console.log(list)
+
   client.query(
     sql, list,
     function (err, result) {
@@ -254,6 +261,9 @@ function updateUserTopicNumberByUserId(id, list, cb) {
 
   list.push(id)
 
+  // console.log(sql)
+  // console.log(list)
+
   client.query(
     sql, list,
     function (err, result) {
@@ -278,6 +288,9 @@ function updateUserTopicNumberByUserId(id, list, cb) {
 function deleteRow(table_name, column_string, value_list, cb){
   let client = connectServer();
   sql = 'DELETE FROM ' + table_name + ' WHERE ' + column_string;
+
+  // console.log(sql)
+  // console.log(value_list)
   
   client.query(
     sql, value_list,

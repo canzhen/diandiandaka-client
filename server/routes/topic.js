@@ -22,6 +22,129 @@ router.post('/check', function (req, res) {
     user_topic_insert_list = req.body.user_topic_insert_list,
     user_topic_update_reduce_list = req.body.user_topic_update_reduce_list;
 
+
+  /**
+   * 处理删除打卡
+   */
+  let processDelete = function(openid) {
+    console.log('处理删除打卡')
+    Promise.all([deleteTopicCheck(openid), reduceUserTopicData(openid)])
+      .then((result) => { //如果成功
+        console.log(result)
+        for (let i in result) {
+          if (result[i].error_code != 200) {
+            res.send({
+              'error_code': result[i].error_code,
+              'msg': result[i].msg
+            });
+            return;
+          }
+          if (user_topic_insert_list.length != 0)
+            processAdd(openid);
+        }
+      }, (res) => { //如果失败
+        res.send({ 'error_code': 100, 'msg': '' });
+      })
+  }
+
+
+
+  /**
+   * 处理添加打卡
+   */
+  let processAdd = function(openid) {
+    console.log('处理添加打卡')
+    // 如果成功，继续update check的数据
+    Promise.all([updateUserTopic(openid), insertTopicCheck(openid)])
+      .then((result) => { //如果成功
+        console.log(result)
+        for (let i in result) {
+          if (result[i].error_code != 200) {
+            res.send({
+              'error_code': result[i].error_code,
+              'msg': result[i].msg
+            });
+            return;
+          }
+        }
+        // 如果都成功，则发送res.send， return成功的消息
+        res.send({ 'error_code': 200, 'msg': '' });
+      }, (res) => { //如果失败
+        res.send({ 'error_code': 100, 'msg': '' });
+      })
+  }
+
+
+  let deleteTopicCheck = function(openid) {
+    console.log('【uncheck】 start deleting topic_check')
+    return new Promise((resolve) => {
+      if (topic_check_delete_list.length == 0) {
+        resolve({ 'error_code': 200, 'msg': '' });
+        return;
+      }
+      topic_check_delete_list.unshift(openid);
+      dbhelper.deleteRow('topic_check',
+        topic_check_delete_str,
+        topic_check_delete_list,
+        (status, errmsg) => {
+          let error_code = status ? 200 : 100;
+          resolve({ 'error_code': error_code, 'msg': errmsg })
+        })
+    })
+  }
+
+
+  let reduceUserTopicData = function(openid) {
+    console.log('【uncheck】 start update user_topic')
+    return new Promise((resolve) => {
+      if (topic_check_delete_list.length == 0) {
+        resolve({ 'error_code': 200, 'msg': '' });
+        return;
+      }
+      dbhelper.updateReduceUserTopicNumberByUserId(openid,
+        user_topic_update_reduce_list,
+        (status) => {
+          let error_code = status ? 200 : 100;
+          resolve({ 'error_code': error_code, 'msg': '' })
+        });
+    })
+  }
+
+
+  //update check 数据的 user_topic表
+  let updateUserTopic = function(openid) {
+    console.log('【check】start updating user_topic')
+    return new Promise((resolve) => {
+      dbhelper.updateUserTopicNumberByUserId(
+        openid,
+        user_topic_update_list,
+        (status) => {
+          let error_code = status ? 200 : 100;
+          resolve({ 'error_code': error_code, 'msg': '' })
+        });
+    })
+  };
+
+
+  //insert into topic_check 打卡数据
+  let insertTopicCheck = function(openid) {
+    console.log('【check start inserting into topic_check')
+    return new Promise((resolve) => {
+      for (let i in user_topic_insert_list)
+        user_topic_insert_list[i].push("'" + openid + "'");
+
+      dbhelper.insertMulti( //update topic_check，记录具体打卡详情
+        'topic_check',
+        'topic_name, check_time, check_timestamp, log, user_id',
+        user_topic_insert_list, '',
+        (status, errmsg) => {
+          let error_code = status ? 200 : 100;
+          resolve({ 'error_code': error_code, 'msg': errmsg })
+        });
+    })
+  };
+
+
   redishelper.getValue(id, (openid) => {
     if (!openid) {
       res.send({ 'error_code': 102, 'msg': '' });
@@ -31,88 +154,13 @@ router.post('/check', function (req, res) {
     /* 如果有要删除的，则先删除之前的数据，
     再把新的打卡数据加进去，避免加完又被删除 */
     if (topic_check_delete_list.length != 0) {
-      topic_check_delete_list.unshift(openid);
       // console.log('have something to delete')
-      deleteUncheck(openid);
+      processDelete(openid);
     } else {
       // console.log('nothing to delete')
-      updateCheck(openid);
+      processAdd(openid);
     }
   });
-
-
-  // 删除uncheck数据
-  let deleteUncheck = function (openid) {
-    // console.log('start deleting')
-    dbhelper.deleteRow('topic_check',
-      topic_check_delete_str,
-      topic_check_delete_list,
-      (status, errmsg) => {
-        if (!status) {
-          res.send({ 'error_code': 100, 'msg': '' });
-          console.log('删除topic_check里数据失败');
-          return;
-        }
-        console.log('删除topic_check里数据成功');
-        updateUncheck(openid);
-      });
-  };
-
-  //update uncheck数据的user_topic表
-  let updateUncheck = function (openid) {
-    // console.log('start updating 【uncheck】 user_topic')
-    dbhelper.updateReduceUserTopicNumberByUserId(openid,
-      user_topic_update_reduce_list,
-      (status) => {
-        if (!status) {
-          res.send({ 'error_code': 100, 'msg': '' });
-          console.log('update uncheck数据的user_topic表失败');
-          return;
-        }
-        console.log('update uncheck数据的user_topic表成功');
-        if (user_topic_update_list.length != 0) {
-          updateCheck(openid);
-          insertCheck(openid);
-        } else {
-          res.send({ 'error_code': 200, 'msg': '' });
-        }
-      });
-  };
-
-  //update check 数据的 user_topic表
-  let updateCheck = function (openid) {
-    // console.log('start updating 【check】 user_topic')
-    dbhelper.updateUserTopicNumberByUserId(openid,
-      user_topic_update_list,
-      (status) => {
-        if (!status) {
-          res.send({ 'error_code': 100, 'msg': '' });
-          console.log('update check数据的user_topic表失败');
-          return;
-        }
-        console.log('update check数据的user_topic表成功');
-        insertCheck(openid);
-      });
-  };
-
-
-  //insert into topic_check 打卡数据
-  let insertCheck = function (openid) {
-    // console.log('start updating check topic_check')
-    for (let i in user_topic_insert_list)
-      user_topic_insert_list[i].push("'" + openid + "'");
-
-    dbhelper.insertMulti( //update topic_check，记录具体打卡详情
-      'topic_check',
-      'topic_name, check_time, check_timestamp, log, user_id',
-      user_topic_insert_list, '',
-      (status, errmsg) => {
-        console.log(errmsg)
-        if (!status) res.send({ 'error_code': 100, 'msg': errmsg });
-        else res.send({ 'error_code': 200, 'msg': '' });
-      });
-  };
-
 });
 
 
