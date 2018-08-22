@@ -10,18 +10,20 @@ button::after{
   border: none;
 }
 
-.topic-name{
-   /* margin-top: 5rpx;  */
-   width: 21%;
-}
-
-.topic-name-right{
+.one-line-panel{
   display: flex;
   flex-direction: row;
+  align-items: center;
   justify-content: space-between;
-  margin-left: 30rpx;
-  width: 79%;
 }
+
+
+.one-line-inner-panel{
+  display:flex; 
+  flex-direction:row; 
+  align-items:center;
+}
+
 
 /* 单选钮样式 */
 checkbox {
@@ -31,10 +33,10 @@ checkbox {
 
 
 .line{
-  margin-top: 10rpx;
+  margin-top: 5rpx;
   margin-bottom: 20rpx;
-  width: 600rpx;
-  height:2rpx;
+  width: 100%;
+  height: 3rpx;
   background:#aaa;
 }
 
@@ -49,6 +51,7 @@ checkbox {
 /* 展示图标的整块左右可滑动的区域 */
 .icon-image-scroll-view{
   height: 550rpx;
+  width: 100%;
 }
 
 /* 大的整块选择图标区域 */
@@ -74,7 +77,7 @@ checkbox {
   flex-direction: row;
   justify-content:center;
   align-items: center;
-  margin-right:5rpx;
+  margin-right: 10rpx;
 }
 
 .icon-image-each-item image{

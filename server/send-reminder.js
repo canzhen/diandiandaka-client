@@ -8,7 +8,7 @@ const Promise = require('promise');
 function sleep(milliSeconds) {
   var startTime = new Date().getTime();
   while (new Date().getTime() < startTime + milliSeconds);
-};
+}
 
 function writeLog(log){
   console.log('[' + moment().format('YYYY-MM-DD HH:mm:ss') + '] ' + log);
@@ -82,7 +82,6 @@ function startSendMessage(){
             let userCurrentTime = moment();
             if (timezone != '480') { //中国时区，和服务器一致，无须转换
               // 计算用户所在地区现在的时间
-              console.log(parseInt(timezone))
               userCurrentTime = moment().utcOffset(parseInt(timezone)).format('YYYY-MM-DD HH:mm');
               // 格式化时间，否则比较时间大小时或出错
               userCurrentTime = moment(userCurrentTime, 'YYYY-MM-DD HH:mm');

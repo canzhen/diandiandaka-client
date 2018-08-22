@@ -10,19 +10,20 @@ button::after{
   border: none;
 }
 
-.topic-name{
-   /* margin-top: 5rpx;  */
-   width: 21%;
-}
-
-.topic-name-right{
-  /* margin-top: 5rpx; */
+.one-line-panel{
   display: flex;
   flex-direction: row;
+  align-items: center;
   justify-content: space-between;
-  margin-left: 30rpx;
-  width: 79%;
 }
+
+
+.one-line-inner-panel{
+  display:flex; 
+  flex-direction:row; 
+  align-items:center;
+}
+
 
 /* 单选钮样式 */
 checkbox {
@@ -35,7 +36,7 @@ checkbox {
   margin-top: 10rpx;
   margin-bottom: 20rpx;
   width: 600rpx;
-  height:2rpx;
+  height: 3rpx;
   background:#aaa;
 }
 
@@ -95,12 +96,9 @@ checkbox {
 }
 
 .new-topic-button{
-  /* position: fixed; */
-  /* top: 89%; */
-  /* left: 20%; */
-  width: 180rpx;
+  width: 205rpx;
   height: 85rpx;
-  margin: auto 20rpx auto 110rpx;
+  margin: auto 30rpx auto 70rpx;
 
   display: flex;
   flex-direction: row;
@@ -108,7 +106,7 @@ checkbox {
   align-items: center;
 
   /* text */
-  font-size: 30rpx; 
+  font-size: 30rpx;
   color: #000000;
   text-align: center;
   /* padding-top: 12rpx; */
@@ -122,12 +120,8 @@ checkbox {
 
 
 .delete-topic-button{
-  /* position: fixed; */
-  /* top: 89%; */
-  /* left: 55%; */
-  width: 180rpx;
+  width: 205rpx;
   height: 85rpx;
-  margin: auto 20rpx auto 30rpx;
 
   display: flex;
   flex-direction: row;

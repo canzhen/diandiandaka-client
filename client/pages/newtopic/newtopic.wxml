@@ -1,33 +1,40 @@
-<view style="display:flex; flex-direction:column; margin-left: 70rpx; margin-right: 70rpx; padding-top: 40rpx;">
+<view style="display:flex; flex-direction:column; margin-left: 70rpx; margin-right: 70rpx; padding-top:50rpx;">
   <form bindsubmit="submitForm">
-    <view style="display:flex; flex-direction:row; align-items:center;">
-      <text class="topic-name"> 计划名称 </text>
-      <input class="topic-name-right" placeholder="输入计划名称" value="{{topic_name}}" name="input_topic_name" bindchange="bindTopicChange"/>
-    </view>
-    <view class="line"></view>
-    <view style="display:flex; flex-direction:row;">
-      <text class="topic-name"> 开始日期 </text>
-      <view class="topic-name-right">
-        <picker mode="date" value="{{start_date}}"  name="start_date" start="{{start_date}}" end="3000-12-31" bindchange="bindStartDateChange">
-          {{start_date}}
-        </picker>
-        <view style="display:flex; flex-direction:row;">
-          设置结束日期 
-          <checkbox-group bindchange="bindSetEndDate" style="margin-top: -4rpx;">
-            <checkbox checked="{{never_end}}"/>
-          </checkbox-group></view>
-      </view>
+    <view class="one-line-inner-panel">
+      <text space="ensp">计划名称 </text>
+      <input placeholder="输入计划名称" value="{{topic_name}}" name="input_topic_name" bindchange="bindTopicChange"/>
     </view>
     <view class="line"></view>
 
+    <!-- 开始日期panel开始 -->
+    <view class="one-line-panel">
+      <!-- left panel开始 -->
+      <view class="one-line-inner-panel">
+        <text space="ensp">开始日期 </text>
+        <picker mode="date" value="{{start_date}}"  name="start_date" start="{{start_date}}" end="3000-12-31" bindchange="bindStartDateChange">
+          {{start_date}}
+        </picker>
+      </view>
+      <!-- left panel结束 -->
+
+      <!-- right panel开始 -->
+      <view class="one-line-inner-panel">
+        设置结束日期 
+        <checkbox-group bindchange="bindSetEndDate">
+          <checkbox checked="{{never_end}}"/>
+        </checkbox-group>
+      </view>
+      <!-- right panel结束 -->
+    </view>
+    <!-- 开始日期panel结束 -->
+    <view class="line"></view>
+
     <view wx:if="{{if_set_end_date}}">
-      <view style="display:flex; flex-direction:row;">
-        <text class="topic-name"> 结束日期 </text>
-        <view class="topic-name-right">
+      <view class="one-line-inner-panel">
+        <text space="ensp">结束日期 </text>
           <picker style="padding-bottom: 5rpx;" mode="date" value="{{end_date}}" name="end_date" start="{{start_date}}" end="3000-12-31" bindchange="bindEndDateChange">
             {{end_date}}
           </picker>
-        </view>
       </view>
       <view class="line"></view>
     </view>
