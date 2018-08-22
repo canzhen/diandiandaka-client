@@ -455,7 +455,6 @@ Page({
    */
   onConfirm: function () {
     let id = this.data.selected_id;
-    let data = this.data.my_topic_data[id];
 
     let logData = 'my_topic_data[' + id + '].log';
     this.setData({
@@ -511,7 +510,6 @@ Page({
         that.setData({
           [notShowData]: 0
         });
-        that._check(id, data);
         
         updateDBNotShowLog(topic_name);
       }
