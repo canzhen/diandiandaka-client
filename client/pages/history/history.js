@@ -734,7 +734,6 @@ Page({
    * 用于保存formId的helper方法
    */
   saveFormId: function (formId) {
-    console.log(formId);
     let form_id_list = this.data.form_id_list;
     form_id_list.push(formId);
     this.setData({

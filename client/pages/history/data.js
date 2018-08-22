@@ -215,7 +215,6 @@ function getCheckDetailOnGivenDay(checkedList, givenDate) {
  */
 function getCompletePercentageOfDay(currentdate, topic_list_per_day, total_topic_num, start_date_list, end_date_list) {
   if (currentdate.diff(moment(), 'days') > 0) {
-    console.log('currentdate > moment')
     return null; //未来无法计算
   }
   if (currentdate < start_date_list[0]) return null; //之前并没有任何卡片开始
