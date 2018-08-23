@@ -8,7 +8,6 @@ const echarts = require('../../vendor/ec-canvas/echarts');
 let chart = null;
 let colorList = ['#f8d3ad', '#f3c6ca'];
 
-
 Page({
   data: {
     navbar: ['打卡日历', '每日完成度', '历史日志'],
@@ -238,6 +237,8 @@ Page({
     });
 
 
+
+    /* 保存每个卡片的完成度的数据 */
     // api.postRequest({
     //   'url': '/topic/updateCheckLog',
     //   'data': {
@@ -771,6 +772,7 @@ Page({
    * 当从当前A页跳转到其他页面，那么A页面处于隐藏状态
    * */
   onHide: function (event) {
+    /* 处理formid */
     if (this.data.form_id_list.length == 0) return;
     console.log('I am hiding')
     console.log(this.data.form_id_list);
@@ -778,6 +780,7 @@ Page({
     this.setData({
       form_id_list: []
     });
+
   },
 })
 

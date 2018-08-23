@@ -1,8 +1,22 @@
 const config = require('./config.js');
 const dbhelper = require('./helpers/dbhelper.js');
 const messagehelper = require('./helpers/messagehelper.js');
+const utils = require('./helpers/utils.js');
 const moment = require('moment');
 const Promise = require('promise');
+
+const perseveranceList = 
+['坚持不懈才能积沙成塔', 
+ '契而舍之，朽木不折；契而不舍，金石可偻。',
+ '苟有恒，何必三更起五更眠；最无益，只怕一日曝十日寒。',
+ '一日一钱，十日十钱。绳锯木断，水滴石穿。',
+ '人生在勤，不索何获。',
+ '业精于勤而荒于嬉，行成于思而毁于随。',
+ '盛年不再来，一日难再晨，及时当勉励，岁月不待人。',
+ '不经一番寒彻骨，怎得梅花扑鼻香？',
+ '流水不腐，户枢不蠹，民生在勤。',
+ '合抱之木，生于毫末；九层之台，起于垒土；千里之行，始于足下。',
+ '勤学如春起之苗，不见其增，日有所长。'];
 
 /** 模拟阻塞方法 */
 function sleep(milliSeconds) {
@@ -46,6 +60,8 @@ function startSendMessage(){
           form_id_list = user_topic_list[i]['form_id_list'].split(','),
           remind_time = user_topic_list[i]['remind_time'];
 
+        // if (user_id != 'ovMv05WNSF-fzJnoQ4UMSWtMWjFs') continue;
+
         if (!topic_list || !remind_time) continue;
         // 到user表获取timezone和formid
         dbhelper.select('user', 'timezone',
@@ -64,7 +80,7 @@ function startSendMessage(){
               if (form_id != '') break;
             }
             if (!form_id) {
-              writeLog('Oops，该用户没有可用的form_id了……');
+              writeLog('Oops，该用户' + user_id + '没有可用的form_id了……');
               return;
             }
             // 将pop过的form_id_list重新放入user表中
@@ -94,7 +110,7 @@ function startSendMessage(){
                 format('MM-DD ') + remind_time, 'MM-DD HH:mm');
 
             // 计算当地时间和用户要被提醒的时间差
-            let diffTime = parseInt(remindTime.diff(userCurrentTime, 'seconds')) * 1000; //换算成毫秒
+            let diffTime = (parseInt(remindTime.diff(userCurrentTime, 'seconds')) + 1) * 1000; //换算成毫秒
             writeLog('给用户' + user_id + '设置了打卡提醒，在' + diffTime + '秒后提醒TA打卡' + topic_list.toString())
             setTimeout(() => {
               writeLog(diffTime / 1000 + '秒计时到啦！准备推送消息给' + user_id);
@@ -103,7 +119,7 @@ function startSendMessage(){
                 { keyword1: { value: topic_list.toString() }, //打卡项目
                   keyword2: { value: moment().format('YYYY年MM月DD日') }, //打卡时间
                   keyword3: { value: total_people_num }, //参加人数
-                  keyword4: { value: '坚持不懈才能积沙成塔喔~' }, //温馨提示
+                  keyword4: { value: perseveranceList[utils.getRandom(0, perseveranceList.length-1)] }, //温馨提示
                 },
                 (status, errmsg) => {
                   if (status) writeLog('推送消息成功');

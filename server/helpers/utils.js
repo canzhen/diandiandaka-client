@@ -6,7 +6,7 @@ const COMMAND_GENERATE_RANDOM_SUFFIX = "' | fold -w " + RAMDOM_STRING_LENGTH + "
 /**
  * 通过ubuntu系统/dev/urandom生成随机数
  */
-function generateRandom(cb, range = '0-9a-zA-Z'){
+module.exports.generateRandom = function(cb, range = '0-9a-zA-Z'){
   let command = COMMAND_GENERATE_RANDOM_PREFIX + range + COMMAND_GENERATE_RANDOM_SUFFIX;
   process.exec(command, function (error, stdout, stderr) {
     if (!error) {
@@ -17,6 +17,15 @@ function generateRandom(cb, range = '0-9a-zA-Z'){
   });
 }
 
-module.exports = {
-  generateRandom
-};
+
+/**
+ * 低级的生成随机数方法，参数为随机数的最小值和最大值
+ * 范围：[min, max] 都是闭集
+ */
+module.exports.getRandom = function (min, max) {
+  // var seed = today.getTime();
+  // seed = (seed * 9301 + 49297) % 233280;
+  var Range = max - min;
+  var Rand = Math.random();
+  return (min + Math.round(Rand * Range));
+}

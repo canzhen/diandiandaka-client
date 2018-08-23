@@ -270,6 +270,7 @@ module.exports.formatCheckData = function (topic_list){
 
 /**
  * 参数为随机数的最小值和最大值
+ * 范围：[min, max] 都是闭集
  */
 module.exports.getRandom = function (min, max){
   // var seed = today.getTime();

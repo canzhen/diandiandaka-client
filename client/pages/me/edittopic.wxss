@@ -15,6 +15,7 @@ button::after{
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  width: 100%;
 }
 
 
@@ -35,7 +36,7 @@ checkbox {
 .line{
   margin-top: 10rpx;
   margin-bottom: 20rpx;
-  width: 600rpx;
+  width: 100%;
   height: 3rpx;
   background:#aaa;
 }
@@ -43,14 +44,16 @@ checkbox {
 .pick-icon-text{
   display: flex;
   flex-direction: row;
-  margin-bottom: 10rpx;
+  margin-bottom: 15rpx;
   align-items: center;
+  justify-content: space-between;
 }
 
 
 /* 展示图标的整块左右可滑动的区域 */
 .icon-image-scroll-view{
   height: 550rpx;
+  width: 100%;
 }
 
 /* 大的整块选择图标区域 */

@@ -55,10 +55,11 @@ function sendMessage(openid,formid, messageBody, cb){
       },
       'json': true
     }, (error, response, body) => {
+      // console.log(response.body);//
       if (!error && response.statusCode == 200 && 
             response.body.errcode==0) {
         cb(true, '')
-      } else cb(false, response.body);
+      } else cb(false, response.body.errmsg);
     });
 
   });
