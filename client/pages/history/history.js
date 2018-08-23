@@ -167,6 +167,7 @@ Page({
       let topicInfoMap = {};
       for (let i in list) {
         topicInfoMap[[list[i].topic_name]] = {
+          'dated': list[i].dated,
           'topic_url': list[i].topic_url,
           'insist_day': list[i].insist_day,
           'total_day': list[i].total_day,
@@ -235,6 +236,27 @@ Page({
     this.setData({
       completeness_list: completenessList
     });
+
+
+    // api.postRequest({
+    //   'url': '/topic/updateCheckLog',
+    //   'data': {
+    //     topic_name: this.data.topic_name,
+    //     check_time: this.data.check_time,
+    //     check_timestamp: this.data.check_timestamp,
+    //     log: this.data.new_log,
+    //   },
+    //   'success': (res) => {
+    //     if (res.error_code == 200)
+    //       console.log('更新日志成功');
+    //     else
+    //       console.log('更新日志失败');
+    //   },
+    //   'fail': (res) => {
+    //     console.log('更新日志失败');
+    //   }
+    // });
+
   },
 
 

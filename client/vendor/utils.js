@@ -149,7 +149,7 @@ module.exports.filterDatedData = function (user_topic_list){
     if (currentMoment.diff(
         moment(item['end_date'], 'YYYY-MM-DD'), 'days') > 0){
           item['dated'] = true;
-    };
+    }else item['dated'] = false;
     // 如果超过2天未打卡，则显示的时候自动显示insist_day为0
     let lastupdateMoment = moment(item['last_check_time'], 'YYYY-MM-DD');
     if (moment().diff(lastupdateMoment, 'days') >= 2)

@@ -530,12 +530,17 @@ button::after{
 }
 
 .check-log-topic-text{
+  display:flex; 
+  flex-direction:row;
+  align-items:center;
+  justify-content: space-betweeen;
   margin-left: 30rpx;
   line-height: 0rpx;
 }
 
+
 .check-log-progress{
-  margin: 10rpx auto auto 30rpx;
+  margin: 15rpx auto auto 30rpx;
   width: 400rpx;
 }
 
@@ -577,6 +582,7 @@ button::after{
   left: 0;
   z-index: 9999;
   background: #f9f9f9;
+  /* background: #bebebe5e; */
   margin: -180rpx 105rpx;
   border-radius: 36rpx;
 }

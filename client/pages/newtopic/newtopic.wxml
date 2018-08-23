@@ -1,6 +1,6 @@
 <view style="display:flex; flex-direction:column; margin-left: 70rpx; margin-right: 70rpx; padding-top:50rpx;">
   <form bindsubmit="submitForm">
-    <view class="one-line-inner-panel">
+    <view class="one-line-inner-panel" style="width:100%;">
       <text space="ensp">计划名称 </text>
       <input placeholder="输入计划名称" value="{{topic_name}}" name="input_topic_name" bindchange="bindTopicChange"/>
     </view>

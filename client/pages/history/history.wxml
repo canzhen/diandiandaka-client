@@ -149,13 +149,17 @@
   <!-- 有日志的时候显示 -->
   <view class="check-log-panel" wx:if="{{topic_info.length != 0}}">
     <scroll-view style="height:{{scrollHeight-20}}px;" scroll-y scroll-with-animation enable-back-to-top>
-      <view class="block" style="background-color:{{colorList[check_info_per_topic[topic_name].length%8]}};" wx:for="{{check_info_per_topic}}" wx:key="key" wx:for-index="topic_name" wx:for-item="check_info">
+      <view class="block" style="background-color:{{topic_info_map[topic_name].dated?'#bebebe5e':colorList[check_info_per_topic[topic_name].length%8]}};" wx:for="{{check_info_per_topic}}" wx:key="key" wx:for-index="topic_name" wx:for-item="check_info">
         <form bindsubmit="selectTopicLog" data-idx="{{topic_name}}" report-submit='true' >
-        <button class="check-log-topic-image-text" hover-class="none" form-type="submit" >
+        <button class="check-log-topic-image-text" style="color:{{topic_info_map[topic_name].dated?'#888888':'black'}};" hover-class="none" form-type="submit" >
         <!-- <view bindtap="selectTopicLog" > -->
           <image class="check-log-topic-image" src="{{topic_info_map[topic_name].topic_url}}"></image>
           <view style="font-size:30rpx; display:flex;flex-direction:column; align-items:flex-start; margin-top:50rpx;">
-            <text class="check-log-topic-text">{{topic_name}}</text>
+            <view class="check-log-topic-text" style="margin-bottom:{{topic_info_map[topic_name].dated?10:0}}rpx;">
+              <view>{{topic_name}}</view>
+              <view wx:if="{{topic_info_map[topic_name].dated}}">（该打卡已结束）</view>
+            </view>
+            
             <progress class="check-log-progress" show-info="true" stroke-width="3" activeColor="#fcbc7d" backgroundColor="#fee0c1" active percent="{{completeness_list[topic_name]}}">完成度</progress>
           </view>
         <!-- </view> -->
@@ -168,13 +172,13 @@
           <view class="detail-text">
             <view class="detail-loop-panel" bindtap="tapOnLog" wx:for="{{check_info}}" wx:key="key" wx:for-index="idx" wx:for-item="info" data-topic-name="{{topic_name}}" data-idx="{{idx}}" data-date="{{info.check_time}}" data-time="{{info.check_timestamp}}" data-log="{{info.log}}">
               <image class="detail-loop-panel-left" src="/images/log-dot.png"></image>
-              <view class="detail-loop-panel-right">
+              <view class="detail-loop-panel-right" style="color:{{topic_info_map[topic_name].dated?'#888888':'black'}};">
                 <text class="detail-date">
-                    {{info.check_time}}　{{info.check_timestamp}}
-                  </text>
-                  <text class="detail-log">
-                    {{info.log}}
-                  </text>
+                  {{info.check_time}}　{{info.check_timestamp}}
+                </text>
+                <text class="detail-log">
+                  {{info.log}}
+                </text>
               </view>
             </view>
           </view>

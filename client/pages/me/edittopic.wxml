@@ -1,6 +1,6 @@
 <view style="display:flex; flex-direction:column; margin-left: 70rpx; margin-right:70rpx; padding-top:50rpx;">
   <form bindsubmit="submitForm">
-    <view class="one-line-inner-panel">
+    <view class="one-line-inner-panel" style="width:100%;">
       <text space="ensp">计划名称 </text>
       <input placeholder="输入计划名称" value="{{topic_name}}" name="input_topic_name" bindchange="bindTopicChange"/>
     </view>
@@ -20,7 +20,7 @@
     <!-- 开始日期panel结束 -->
     <view class="line"></view>
 
-    <!-- 开始日期panel开始 -->
+    <!-- 结束日期panel开始 -->
     <view class="one-line-panel">
       <!-- left panel开始 -->
       <view class="one-line-inner-panel">
@@ -31,7 +31,7 @@
       </view>
       <!-- left panel结束 -->
     </view>
-    <!-- 开始日期panel结束 -->
+    <!-- 结束日期panel结束 -->
     <view class="line"></view>
 
     <view class="pick-icon-text"> 
