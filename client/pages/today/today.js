@@ -136,14 +136,20 @@ Page({
         if (res.error_code == 200) {
           console.log('获取用户打卡信息成功');
           let result_list = utils.filterDatedData(res.result_list);
-          result_list.push({
+          // 过滤掉过期的
+          let undated_topic_list = [];
+          for (let i in result_list){
+            if (result_list[i].dated) continue;
+            undated_topic_list.push(result_list[i]);
+          }
+          undated_topic_list.push({
             'topic_name': '添加新卡片\n',
             'topic_url': '/images/xinkapian.png',
             'insist_day': -1,
             'is_checked': false
           });
           this.setData({
-            my_topic_data: result_list
+            my_topic_data: undated_topic_list
           });
           createRowNum();
         } else console.log('获取用户打卡信息失败');

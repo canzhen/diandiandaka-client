@@ -104,7 +104,7 @@ Page({
   onShow: function () {
     // 返回时初始化数据
     this.setData({
-      currentTab: 2,
+      currentTab: 0,
     })
     if (this.data.is_loaded) {
       this.setData({
@@ -231,10 +231,26 @@ Page({
   initCheckLog: function(){
     if (this.data.topic_info_list == 0) return;
 
-    let completenessList = data.getCompletenessMap(this.data.topic_info_map, this.data.check_time_per_topic);
+    let all_topic_info_map = this.data.topic_info_map;
+    let completenessList = data.getCompletenessMap(all_topic_info_map, this.data.check_time_per_topic);
     console.log(completenessList)
+
+    console.log(all_topic_info_map)
+    // 分割过期的和不过期的
+    let dated_topic_info_map = {};
+    let undated_topic_info_map = {};
+    for (let topic_name in all_topic_info_map) {
+      if (all_topic_info_map[topic_name].dated) 
+        dated_topic_info_map[topic_name] = all_topic_info_map[topic_name];
+      else
+        undated_topic_info_map[topic_name] = all_topic_info_map[topic_name];
+    }
+
+    console.log(undated_topic_info_map)
     this.setData({
-      completeness_list: completenessList
+      completeness_list: completenessList,
+      undated_topic_info_map: undated_topic_info_map, 
+      dated_topic_info_map: dated_topic_info_map
     });
 
 
@@ -626,7 +642,7 @@ Page({
     let that = this;
     wx.showModal({
       title: '删除',
-      content: '确定要删除这次打卡吗？',
+      content: '确定要删除这次打卡吗？删除操作不可恢复，且删除打卡会影响该卡片完成度，以及连续、坚持天数喔',
       showCancel: true,
       success: (res)=>{
         if (!res.confirm) return;

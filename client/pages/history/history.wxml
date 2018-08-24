@@ -149,15 +149,15 @@
   <!-- 有日志的时候显示 -->
   <view class="check-log-panel" wx:if="{{topic_info.length != 0}}">
     <scroll-view style="height:{{scrollHeight-20}}px;" scroll-y scroll-with-animation enable-back-to-top>
-      <view class="block" style="background-color:{{topic_info_map[topic_name].dated?'#bebebe5e':colorList[check_info_per_topic[topic_name].length%8]}};" wx:for="{{check_info_per_topic}}" wx:key="key" wx:for-index="topic_name" wx:for-item="check_info">
+      <!-- 循环部分开始 -->
+      <view class="block" style="background-color:{{undated_topic_info_map[topic_name].dated?'#bebebe5e':colorList[check_info_per_topic[topic_name].length%8]}};" wx:for="{{undated_topic_info_map}}" wx:key="key" wx:for-index="topic_name" wx:for-item="topic_name">
         <form bindsubmit="selectTopicLog" data-idx="{{topic_name}}" report-submit='true' >
-        <button class="check-log-topic-image-text" style="color:{{topic_info_map[topic_name].dated?'#888888':'black'}};" hover-class="none" form-type="submit" >
+        <button class="check-log-topic-image-text" style="color:{{undated_topic_info_map[topic_name].dated?'#888888':'black'}};" hover-class="none" form-type="submit" >
         <!-- <view bindtap="selectTopicLog" > -->
-          <image class="check-log-topic-image" src="{{topic_info_map[topic_name].topic_url}}"></image>
+          <image class="check-log-topic-image" src="{{undated_topic_info_map[topic_name].topic_url}}"></image>
           <view style="font-size:30rpx; display:flex;flex-direction:column; align-items:flex-start; margin-top:50rpx;">
-            <view class="check-log-topic-text" style="margin-bottom:{{topic_info_map[topic_name].dated?10:0}}rpx;">
+            <view class="check-log-topic-text" style="margin-bottom:{{undated_topic_info_map[topic_name].dated?10:0}}rpx;">
               <view>{{topic_name}}</view>
-              <view wx:if="{{topic_info_map[topic_name].dated}}">（该打卡已结束）</view>
             </view>
             
             <progress class="check-log-progress" show-info="true" stroke-width="3" activeColor="#fcbc7d" backgroundColor="#fee0c1" active percent="{{completeness_list[topic_name]}}">完成度</progress>
@@ -170,9 +170,9 @@
         <view class="detail" hidden="{{selected_topic_log!=topic_name}}">
           <view class="timeline"></view>
           <view class="detail-text">
-            <view class="detail-loop-panel" bindtap="tapOnLog" bindlongpress='longTapLog' wx:for="{{check_info}}" wx:key="key" wx:for-index="idx" wx:for-item="info" data-topic-name="{{topic_name}}" data-idx="{{idx}}" data-date="{{info.check_time}}" data-time="{{info.check_timestamp}}" data-log="{{info.log}}">
+            <view class="detail-loop-panel" bindtap="tapOnLog" bindlongpress='longTapLog' wx:for="{{check_info_per_topic[topic_name]}}" wx:key="key" wx:for-index="idx" wx:for-item="info" data-topic-name="{{topic_name}}" data-idx="{{idx}}" data-date="{{info.check_time}}" data-time="{{info.check_timestamp}}" data-log="{{info.log}}">
               <image class="detail-loop-panel-left" src="/images/log-dot.png"></image>
-              <view class="detail-loop-panel-right" style="color:{{topic_info_map[topic_name].dated?'#888888':'black'}};">
+              <view class="detail-loop-panel-right" style="color:{{undated_topic_info_map[topic_name].dated?'#888888':'black'}};">
                 <text class="detail-date">
                   {{info.check_time}}　{{info.check_timestamp}}
                 </text>
@@ -185,8 +185,68 @@
         </view>
         <!-- 日志部分结束 -->
       </view>
+      <!-- 循环部分结束 -->
+
+
+
+
+
+    <!-- 一行，已过期卡片 -->
+    <view class="one-line-view">
+      <view class="line-left"></view>
+      <text style="margin:auto 15rpx auto 15rpx;"> 已过期的卡片 </text>
+      <view class="line-right"></view>
+    </view>
+
+
+
+      <!-- 已过期的卡片 -->
+      <!-- 循环部分开始 -->
+      <view class="block" style="background-color:{{dated_topic_info_map[topic_name].dated?'#bebebe5e':colorList[check_info_per_topic[topic_name].length%8]}};" wx:for="{{dated_topic_info_map}}" wx:key="key" wx:for-index="topic_name" wx:for-item="topic_name">
+        <form bindsubmit="selectTopicLog" data-idx="{{topic_name}}" report-submit='true' >
+        <button class="check-log-topic-image-text" style="color:{{dated_topic_info_map[topic_name].dated?'#888888':'black'}};" hover-class="none" form-type="submit" >
+        <!-- <view bindtap="selectTopicLog" > -->
+          <image class="check-log-topic-image" src="{{dated_topic_info_map[topic_name].topic_url}}"></image>
+          <view style="font-size:30rpx; display:flex;flex-direction:column; align-items:flex-start; margin-top:50rpx;">
+            <view class="check-log-topic-text" style="margin-bottom:{{dated_topic_info_map[topic_name].dated?10:0}}rpx;">
+              <view>{{topic_name}}</view>
+            </view>
+            
+            <progress class="check-log-progress" show-info="true" stroke-width="3" activeColor="#fcbc7d" backgroundColor="#fee0c1" active percent="{{completeness_list[topic_name]}}">完成度</progress>
+          </view>
+        <!-- </view> -->
+        </button>
+        </form>
+        
+        <!-- 日志部分开始 -->
+        <view class="detail" hidden="{{selected_topic_log!=topic_name}}">
+          <view class="timeline"></view>
+          <view class="detail-text">
+            <view class="detail-loop-panel" bindtap="tapOnLog" bindlongpress='longTapLog' wx:for="{{check_info_per_topic[topic_name]}}" wx:key="key" wx:for-index="idx" wx:for-item="info" data-topic-name="{{topic_name}}" data-idx="{{idx}}" data-date="{{info.check_time}}" data-time="{{info.check_timestamp}}" data-log="{{info.log}}">
+              <image class="detail-loop-panel-left" src="/images/log-dot.png"></image>
+              <view class="detail-loop-panel-right" style="color:{{dated_topic_info_map[topic_name].dated?'#888888':'black'}};">
+                <text class="detail-date">
+                  {{info.check_time}}　{{info.check_timestamp}}
+                </text>
+                <text class="detail-log">
+                  {{info.log}}
+                </text>
+              </view>
+            </view>
+          </view>
+        </view>
+        <!-- 日志部分结束 -->
+      </view>
+      <!-- 循环部分结束 -->
+      
     </scroll-view>
   </view>
+
+
+
+
+
+
 
   <!-- 没有任何日志的时候显示 -->
   <view class="check-log-panel" wx:if="{{topic_info.length == 0}}">

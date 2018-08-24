@@ -57,10 +57,10 @@ Page{
 .topic-image-each-item{
   display: flex; 
   flex-direction: column;
-  width: 220rpx;
+  width: 180rpx;
   /* height: 200rpx; */
-  margin-left: 5rpx;
-  margin-right: 5rpx; 
+  /* margin-left: 5rpx; */
+  /* margin-right: 5rpx;  */
   align-items: center;
   justify-items: space-between;
   justify-content: space-between;
@@ -90,12 +90,13 @@ Page{
   width: 100rpx;
   height: 100rpx;
   z-index: 0;
+  margin-bottom: 20rpx;
 }
 
 .image-punched-in {
   width: 80rpx;
   height: 80rpx;
-  margin-left: -80rpx;
+  margin-top: -100rpx;
   z-index: 2;
 }
 
@@ -203,6 +204,8 @@ Page{
 
 button{
   background-color: transparent;
+  line-height: 35rpx;
+  font-size: 30rpx;
 }
 
 
