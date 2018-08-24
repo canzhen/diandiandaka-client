@@ -24,9 +24,7 @@ router.post('/check', function (req, res) {
     user_topic_update_column_map = req.body.user_topic_update_column_map;
 
 
-  /**
-   * 处理删除打卡
-   */
+  /* 处理删除打卡 */
   let processDelete = function(openid) {
     console.log('处理删除打卡')
     Promise.all([deleteTopicCheck(openid), reduceUserTopicData(openid)])
@@ -50,9 +48,7 @@ router.post('/check', function (req, res) {
 
 
 
-  /**
-   * 处理添加打卡
-   */
+  /* 处理添加打卡 */
   let processAdd = function(openid) {
     console.log('处理添加打卡')
     // 如果成功，继续update check的数据
@@ -95,9 +91,7 @@ router.post('/check', function (req, res) {
   }
 
 
-  /**
-   * 减少user_topic的打卡天数
-   */
+  /* 减少user_topic的打卡天数 */
   let reduceUserTopicData = function(openid) {
     return new Promise((resolve) => {
       if (topic_check_delete_list.length == 0) {
@@ -142,7 +136,7 @@ router.post('/check', function (req, res) {
   }
 
 
-  //update check 数据的 user_topic表
+  /* update check 数据的 user_topic表 */
   let updateUserTopic = function(openid) {
     return new Promise((resolve) => {
       if (user_topic_update_list.length == 0) return;
@@ -165,7 +159,7 @@ router.post('/check', function (req, res) {
   };
 
 
-  //insert into topic_check 打卡数据
+  /* insert into topic_check 打卡数据 */
   let insertTopicCheck = function(openid) {
     console.log('【check】 start inserting into topic_check')
     return new Promise((resolve) => {
@@ -207,6 +201,10 @@ router.post('/check', function (req, res) {
 
 
 
+
+
+
+
 /**
  * 获取topic表的所有数据
  */
@@ -225,6 +223,7 @@ router.post('/getAllTopic', function (req, res) {
       });
     });
 });
+
 
 
 
@@ -264,6 +263,8 @@ router.post('/getUserTopic', function (req, res) {
     );
   });
 });
+
+
 
 
 
@@ -537,6 +538,11 @@ router.post('/delete', function (req, res) {
 
 
 
+
+
+
+
+
 /**
  * 通过用户id和卡片名称在数据库中更新某一栏，
  * 并根据条件不同，更新多条数据
@@ -568,6 +574,10 @@ router.post('/updateColumnMulti', function (req, res) {
       });
   });
 });
+
+
+
+
 
 
 /**
@@ -677,8 +687,9 @@ router.post('/deleteCheck', function (req, res) {
   }
   let id = req.header('session-id');
   let topic_name = req.body.topic_name,
-    check_time = req.body.check_time,
-    check_timestamp = req.body.check_timestamp;
+      check_time = req.body.check_time,
+      check_timestamp = req.body.check_timestamp,
+      last_check_time = req.body.last_check_time;
 
   redishelper.getValue(id, (openid) => {
     if (!openid) {
@@ -686,16 +697,55 @@ router.post('/deleteCheck', function (req, res) {
       return;
     }
 
-    // 删除uncheck数据
-    dbhelper.deleteRow('topic_check',
-      'user_id=? AND topic_name=? AND check_time=? AND check_timestamp=?',
-      [openid, topic_name, check_time, check_timestamp],
-      (status, errmsg) => {
-        if (status) console.log('删除check记录成功');
-        else console.log('删除check记录失败');
-        let statusCode = status ? 200 : 100;
-        res.send({ 'error_code': statusCode, 'msg': errmsg });
-      });
+
+
+    let deleteTopicCheck = function(){
+      return new Promise((resolve) => {
+        // 删除topic_check里的打卡记录
+        dbhelper.deleteRow('topic_check',
+          'user_id=? AND topic_name=? AND check_time=? AND check_timestamp=?',
+          [openid, topic_name, check_time, check_timestamp],
+          (status, errmsg) => {
+            if (status) console.log('删除check记录成功');
+            else console.log('删除check记录失败');
+            let statusCode = status ? 200 : 100;
+            resolve({ 'error_code': statusCode, 'msg': errmsg });
+          });
+      })
+    }
+
+    // 更新user_topic里的打卡数据
+    let reduceUserTopicData = function(){
+      return new Promise((resolve) => {
+        // 删除topic_check里的打卡记录
+        dbhelper.update('user_topic', 
+          'insist_day = insist_day - 1, total_day = total_day - 1',
+          'user_id = ? AND topic_name = ?', [openid, topic_name],
+          (status, errmsg) => {
+            if (status) console.log('删除check记录成功');
+            else console.log('删除check记录失败');
+            let statusCode = status ? 200 : 100;
+            resolve({ 'error_code': statusCode, 'msg': errmsg });
+          });
+      })
+    }
+
+    Promise.all([deleteTopicCheck(), reduceUserTopicData()])
+      .then((result) => { //如果成功
+        console.log(result)
+        for (let i in result) {
+          if (result[i].error_code != 200) {
+            res.send({
+              'error_code': result[i].error_code,
+              'msg': result[i].msg
+            });
+            return;
+          }
+          res.send({ 'error_code': 200, 'msg': '' });
+        }
+      }, (res) => { //如果失败
+        res.send({ 'error_code': 100, 'msg': '' });
+      })
 
   });
 });

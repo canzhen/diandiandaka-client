@@ -104,7 +104,7 @@ Page({
   onShow: function () {
     // 返回时初始化数据
     this.setData({
-      currentTab: 0,
+      currentTab: 2,
     })
     if (this.data.is_loaded) {
       this.setData({
@@ -622,45 +622,56 @@ Page({
   /**
    * 长按日志，弹出删除窗口
    */
-  // longTapLog: function(e){
-  //   let that = this;
-  //   wx.showModal({
-  //     title: '删除',
-  //     content: '确定要删除这次打卡吗？',
-  //     showCancel: true,
-  //     success: (res)=>{
-  //       if (!res.confirm) return;
-  //       let topic_name = e.currentTarget.dataset.topicName,
-  //         check_time = e.currentTarget.dataset.date,
-  //         check_timestamp = e.currentTarget.dataset.time,
-  //         idx = e.currentTarget.dataset.idx;
-  //       api.postRequest({
-  //         'url': '/topicCheck/deleteCheck',
-  //         'data':{
-  //           topic_name: topic_name, 
-  //           check_time: check_time,
-  //           check_timestamp: check_timestamp
-  //         },
-  //         'success': (res) => {
-  //           if (res.error_code != 200){
-  //             console.log('删除打卡失败');
-  //             return;
-  //           }
-  //           console.log('删除打卡成功');
-  //           let new_check_info_per_topic = that.data.check_info_per_topic;
-  //           let new_check_info = new_check_info_per_topic[topic_name];
-  //           delete new_check_info[idx];
-  //           console.log(new_check_info)
-  //           new_check_info_per_topic[topic_name] = new_check_info
-  //           that.setData({
-  //             check_info_per_topic: new_check_info_per_topic
-  //           });
-  //         },
-  //         'fail': (res) => { console.log('删除打卡失败');},
-  //       });
-  //     }
-  //   })
-  // },
+  longTapLog: function(e){
+    let that = this;
+    wx.showModal({
+      title: '删除',
+      content: '确定要删除这次打卡吗？',
+      showCancel: true,
+      success: (res)=>{
+        if (!res.confirm) return;
+        let topic_name = e.currentTarget.dataset.topicName,
+          check_time = e.currentTarget.dataset.date,
+          check_timestamp = e.currentTarget.dataset.time,
+          idx = e.currentTarget.dataset.idx,
+          new_check_info_per_topic = that.data.check_info_per_topic,
+          new_check_info = new_check_info_per_topic[topic_name],
+          last_check_time = '',
+          l = new_check_info.length;
+
+
+        // 如果一天有两个日志，则不需要update user_topic的数据
+        // 否则， 删掉日志则代表删掉一次打卡记录
+        if (new_check_info[l - 2].check_time == 
+          new_check_info[l - 1].check_time){
+          last_check_time = new_check_info[l - 2].check_time;
+        }
+        api.postRequest({
+          'url': '/topic/deleteCheck',
+          'data':{
+            topic_name: topic_name, 
+            check_time: check_time,
+            check_timestamp: check_timestamp,
+            last_check_time: last_check_time
+          },
+          'success': (res) => {
+            if (res.error_code != 200){
+              console.log('删除打卡失败');
+              return;
+            }
+            console.log('删除打卡成功');
+            new_check_info.splice(idx, 1);
+            console.log(new_check_info)
+            new_check_info_per_topic[topic_name] = new_check_info
+            that.setData({
+              check_info_per_topic: new_check_info_per_topic
+            });
+          },
+          'fail': (res) => { console.log('删除打卡失败');},
+        });
+      }
+    })
+  },
 
   /**
    * 弹出框蒙层截断touchmove事件
