@@ -180,11 +180,14 @@ function update(table_name, column_string, condition_string, value_list, cb){
   if (condition_string != '')
     sql += ' WHERE ' + condition_string;
 
+  console.log(sql)
+  console.log(value_list)
+
   client.query(sql, value_list,
     function (err, result) {
       if (err) {
         console.log('update ' + table_name + ' 失败，失败信息:');
-        console.log(err)
+        console.log(err.message)
         cb(false, err.code);
       } else {
         console.log('update ' + table_name + ' 成功');
@@ -196,85 +199,56 @@ function update(table_name, column_string, condition_string, value_list, cb){
 
 
 
+
 /**
- * 通过id和外键，uncheck当天打卡，并从topic_check表中找到最新打卡时间
- * 赋值给last_check_time 和 last_check_timestamp
+ * 更新表中的一行数据
+ * @param table_name: 表名，string
+ * @param column_map: {
+ *    'update_column' : {
+ *       'condition_column':'',
+ *       'condition_num': 4
+ *    },
+ *    '': {},
+ *    '': {},
+ *    .....
+ * }
+ * @param value_list: value 的list，例如[2349018, 'canzhen', ...]
+ * @param condition_string: 跟在where后面的string，例如id=? AND name=?
+ * @cb: 回调函数 (bool是否成功，errmsg错误信息)
  */
-function updateReduceUserTopicNumberByUserId(id, list, cb){
+function updateMulti(table_name, column_map, value_list, condition_string, cb) {
   let client = connectServer();
-  let l = list.length / 3;
-  let sql = "UPDATE user_topic SET insist_day = CASE topic_name ";
-  for (let i = 0; i < l / 2; i++) sql += "WHEN ? THEN ? ";//insist_day
+  let sql = 'UPDATE ' + table_name + ' SET ';
 
-  sql += "ELSE insist_day END, total_day = CASE topic_name ";//total_day
-  for (let i = 0; i < l / 2; i++) sql += "WHEN ? THEN ? ";
-
-  sql += "ELSE total_day END, last_check_time = CASE topic_name ";//time
-  for (let i = 0; i < l / 2; i++) {
-    sql += "WHEN ? THEN ";
-    sql += "(SELECT check_time from topic_check where user_id='"+id+"' and topic_name=? ORDER BY check_time DESC limit 1) ";
+  for (let update_column in column_map){
+    sql += update_column + ' =  CASE '
+    let condition = column_map[update_column];
+    sql += condition.condition_column + ' ';
+    for (let j = 0; j < condition.condition_num; j++){
+      sql += 'WHEN ? THEN ? '
+    }
+    sql += 'ELSE ' + update_column + ' END,';
   }
+  sql = sql.substr(0, sql.length - 1) //去掉最后一个逗号
 
-  sql += "ELSE last_check_time END WHERE user_id = ?;";
-  list.push(id);
 
-  // console.log(sql)
-  // console.log(list)
+  if (condition_string != '')
+    sql += ' WHERE ' + condition_string;
 
-  client.query(
-    sql, list,
+  console.log(sql)
+  console.log(value_list)
+
+  client.query(sql, value_list,
     function (err, result) {
       if (err) {
-        console.log("update reduce user_topic by id失败，失败信息:" + err.message);
+        console.log('update ' + table_name + ' 失败，失败信息:');
+        console.log(err.message)
+        cb(false, err.code);
       } else {
-        console.log('update reduce user_topic by id成功');
+        console.log('update ' + table_name + ' 成功');
+        cb(true, '');
       }
-      cb(!err);
     });
-
-  client.end();
-}
-
-
-/**
- * 通过用户id更新usertopic信息
- * @param id: 用户的openid
- * @param list: maplist:['topic_name': '', insist_day':'', 'topic_name': '', 'total_day':'', 'topic_name': '', 'if_show_log': 0]
- * @param cb: 回调函数
- */
-function updateUserTopicNumberByUserId(id, list, cb) {
-  let client = connectServer();
-  let l = list.length / 4;
-  let sql = "UPDATE user_topic SET insist_day = CASE topic_name ";
-  for (let i = 0; i <  l / 2; i++) sql += "WHEN ? THEN ? "; //insist_day
-
-  sql += "ELSE insist_day END, total_day = CASE topic_name "; //total_day
-  for (let i = 0; i < l / 2; i++) sql += "WHEN ? THEN ? ";
-
-  sql += "ELSE total_day END, if_show_log = CASE topic_name "; //if_show_log
-  for (let i = 0; i < l / 2; i++) sql += "WHEN ? THEN ? ";
-
-  sql += "ELSE if_show_log END, last_check_time = CASE topic_name "; //last_check_time
-  for (let i = 0; i < l / 2; i++) sql += "WHEN ? THEN ? ";
-
-  sql += "ELSE last_check_time END WHERE user_id = ?;"
-
-  list.push(id)
-
-  // console.log(sql)
-  // console.log(list)
-
-  client.query(
-    sql, list,
-    function (err, result) {
-      if (err) {
-        console.log("update user_topic by id失败，失败信息:" + err.message);
-      } else {
-        console.log('update user_topic by id成功');
-      }
-      cb(!err);
-    });
-
   client.end();
 }
 
@@ -320,10 +294,6 @@ module.exports = {
   // insertOrUpdate,
   select, 
   update,
+  updateMulti,
   deleteRow,
-
-
-  //user_topic部分
-  updateUserTopicNumberByUserId,
-  updateReduceUserTopicNumberByUserId
 };

@@ -20,7 +20,8 @@ router.post('/check', function (req, res) {
     topic_check_delete_list = req.body.topic_check_delete_list,
     user_topic_update_list = req.body.user_topic_update_list,
     user_topic_insert_list = req.body.user_topic_insert_list,
-    user_topic_update_reduce_list = req.body.user_topic_update_reduce_list;
+    user_topic_update_reduce_list = req.body.user_topic_update_reduce_list,
+    user_topic_update_column_map = req.body.user_topic_update_column_map;
 
 
   /**
@@ -94,16 +95,46 @@ router.post('/check', function (req, res) {
   }
 
 
+  /**
+   * 减少user_topic的打卡天数
+   */
   let reduceUserTopicData = function(openid) {
-    console.log('【uncheck】 start update user_topic')
     return new Promise((resolve) => {
       if (topic_check_delete_list.length == 0) {
         resolve({ 'error_code': 200, 'msg': '' });
         return;
       }
-      dbhelper.updateReduceUserTopicNumberByUserId(openid,
+      console.log('【uncheck】 start update user_topic')
+
+    /**
+     * 通过id和外键，uncheck当天打卡，并从topic_check表中找到最新打卡时间
+     * 赋值给last_check_time 和 last_check_timestamp
+     */
+      let l = user_topic_update_reduce_list.length / 3;
+      let sql = "insist_day = CASE topic_name ";
+      for (let i = 0; i < l / 2; i++) sql += "WHEN ? THEN ? ";//insist_day
+
+      sql += "ELSE insist_day END, total_day = CASE topic_name ";//total_day
+      for (let i = 0; i < l / 2; i++) sql += "WHEN ? THEN ? ";
+
+      sql += "ELSE total_day END, last_check_time = CASE topic_name ";//time
+      for (let i = 0; i < l / 2; i++) {
+        sql += "WHEN ? THEN ";
+        sql += "(SELECT check_time from topic_check where user_id='" + openid + "' and topic_name=? ORDER BY check_time DESC limit 1) ";
+      }
+
+      sql += "ELSE last_check_time END";
+      user_topic_update_reduce_list.push(openid);
+
+
+      dbhelper.update('user_topic', sql, 'user_id = ?',
         user_topic_update_reduce_list,
         (status) => {
+          if (status) 
+            console.log('update reduce user_topic by id成功');
+          else 
+            console.log('update reduce user_topic by id失败');
+
           let error_code = status ? 200 : 100;
           resolve({ 'error_code': error_code, 'msg': '' })
         });
@@ -113,12 +144,20 @@ router.post('/check', function (req, res) {
 
   //update check 数据的 user_topic表
   let updateUserTopic = function(openid) {
-    console.log('【check】start updating user_topic')
     return new Promise((resolve) => {
-      dbhelper.updateUserTopicNumberByUserId(
-        openid,
-        user_topic_update_list,
-        (status) => {
+      if (user_topic_update_list.length == 0) return;
+      console.log('【check】start updating user_topic')
+
+      user_topic_update_list.push(openid)
+
+      dbhelper.updateMulti('user_topic', 
+      user_topic_update_column_map, user_topic_update_list,
+      'user_id = ?', (status) => {
+          if (status)
+            console.log('update user_topic by id成功');
+          else
+            console.log('update user_topic by id失败');
+
           let error_code = status ? 200 : 100;
           resolve({ 'error_code': error_code, 'msg': '' })
         });
@@ -128,7 +167,7 @@ router.post('/check', function (req, res) {
 
   //insert into topic_check 打卡数据
   let insertTopicCheck = function(openid) {
-    console.log('【check start inserting into topic_check')
+    console.log('【check】 start inserting into topic_check')
     return new Promise((resolve) => {
       for (let i in user_topic_insert_list)
         user_topic_insert_list[i].push("'" + openid + "'");
@@ -225,7 +264,6 @@ router.post('/getUserTopic', function (req, res) {
     );
   });
 });
-
 
 
 
@@ -499,13 +537,43 @@ router.post('/delete', function (req, res) {
 
 
 
+/**
+ * 通过用户id和卡片名称在数据库中更新某一栏，
+ * 并根据条件不同，更新多条数据
+ */
+router.post('/updateColumnMulti', function (req, res) {
+  if (!req.header('session-id')) {
+    res.send({ 'error_code': 103, 'msg': '用户未登录' });
+    return;
+  }
+  let id = req.header('session-id');
+  let topic_name = req.body.topic_name;
+  let column_name = req.body.column_name;
+  let column_value_list = req.body.column_value_list;
 
+  redishelper.getValue(id, (openid) => {
+    if (!openid) {
+      res.send({ 'error_code': 102, 'msg': '' });
+      return;
+    }
+
+    column_value_list.push(openid)
+
+    dbhelper.update('user_topic', column_name + '=?',
+      "user_id = ?", column_value_list,
+      (status, errmsg) => {
+        if (status)
+          res.send({ 'error_code': 200, 'msg': '' });
+        else res.send({ 'error_code': 100, 'msg': errmsg });
+      });
+  });
+});
 
 
 /**
  * 通过用户id和卡片名称在数据库中更新该条数据的某一栏
  */
-router.post('/udpateColumn', function (req, res) {
+router.post('/updateColumn', function (req, res) {
   if (!req.header('session-id')) {
     res.send({ 'error_code': 103, 'msg': '用户未登录' });
     return;
@@ -537,10 +605,6 @@ router.post('/udpateColumn', function (req, res) {
 
 
 
-
-
-
-
 /**
  * 获取某个用户的所有打卡记录
  */
@@ -564,8 +628,6 @@ router.post('/getAllCheckDataOfUser', function (req, res) {
       });
   });
 });
-
-
 
 
 

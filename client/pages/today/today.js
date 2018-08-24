@@ -167,16 +167,20 @@ Page({
     
     // 整理出打卡的卡片，和取消打卡的卡片
     let [topic_check_delete_str, topic_check_delete_list,    
-         user_topic_update_reduce_list,user_topic_update_list,
+         user_topic_update_reduce_list,
+         user_topic_update_list, user_topic_update_column_map,
          user_topic_insert_list] = 
          utils.formatCheckData(changed_topic_list);
+
+    
     
     api.postRequest({
       'url': '/topic/check',
-      'data': { 
+      'data': {
         'topic_check_delete_str': topic_check_delete_str, 
         'topic_check_delete_list': topic_check_delete_list,
         'user_topic_update_list': user_topic_update_list,
+        'user_topic_update_column_map': user_topic_update_column_map,
         'user_topic_update_reduce_list': user_topic_update_reduce_list,
         'user_topic_insert_list': user_topic_insert_list,
       },
@@ -279,6 +283,15 @@ Page({
     if (typeof data == 'undefined') return;
     // 查看是否是添加新卡片，如果是，就直接跳转到newtopic function
     if (data.insist_day == -1) return this.newtopic(event);
+    // 查看是否已经过期，如果过期，则提示过期卡片无法打卡
+    if (data.dated) {
+      wx.showModal({
+        title: '已结束',
+        content: '该卡片已于' + data.end_date + '结束，无法继续打卡喔',
+        showCancel: false
+      })
+      return;
+    }
 
 
     // 新增data_changed 是因为：同一天打过卡的，is_checked本身就为true，
@@ -473,7 +486,7 @@ Page({
     let that = this;
     let updateDBNotShowLog = function (topic_name){
       api.postRequest({
-        'url': '/topic/udpateColumn',
+        'url': '/topic/updateColumn',
         'data': {
           'topic_name': topic_name,
           'column_name': 'if_show_log',

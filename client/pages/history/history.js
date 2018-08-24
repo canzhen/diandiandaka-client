@@ -232,6 +232,7 @@ Page({
     if (this.data.topic_info_list == 0) return;
 
     let completenessList = data.getCompletenessMap(this.data.topic_info_map, this.data.check_time_per_topic);
+    console.log(completenessList)
     this.setData({
       completeness_list: completenessList
     });
@@ -255,7 +256,7 @@ Page({
     //   },
     //   'fail': (res) => {
     //     console.log('更新日志失败');
-    //   }
+    //   } 
     // });
 
   },

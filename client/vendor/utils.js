@@ -200,6 +200,7 @@ module.exports.formatCheckData = function (topic_list){
 
   // 生成user_topic表update list
   let user_topic_update_list = [];
+  console.log(checked_topic_list)
   // push insist_day
   for (let i in checked_topic_list) {
     user_topic_update_list.push(checked_topic_list[i]['topic_name']);
@@ -220,6 +221,26 @@ module.exports.formatCheckData = function (topic_list){
     user_topic_update_list.push(checked_topic_list[i]['topic_name']);
     user_topic_update_list.push(checked_topic_list[i]['last_check_time']);
   }
+
+
+  let user_topic_update_column_map = {
+    insist_day: {
+      condition_column: 'topic_name',
+      condition_num: checked_topic_list.length,
+    },
+    total_day: {
+      condition_column: 'topic_name',
+      condition_num: checked_topic_list.length,
+    },
+    if_show_log: {
+      condition_column: 'topic_name',
+      condition_num: checked_topic_list.length,
+    },
+    last_check_time: {
+      condition_column: 'topic_name',
+      condition_num: checked_topic_list.length,
+    }
+  };
 
 
   // 生成topic_check表update list
@@ -264,7 +285,8 @@ module.exports.formatCheckData = function (topic_list){
 
 
   return [topic_check_delete_str, topic_check_delete_list, 
-          user_topic_update_reduce_list, user_topic_update_list,
+          user_topic_update_reduce_list,
+          user_topic_update_list, user_topic_update_column_map,
           user_topic_insert_list];
 }
 
