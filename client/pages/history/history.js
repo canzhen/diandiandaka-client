@@ -232,10 +232,8 @@ Page({
     if (this.data.topic_info_list == 0) return;
 
     let all_topic_info_map = this.data.topic_info_map;
-    let completenessList = data.getCompletenessMap(all_topic_info_map, this.data.check_time_per_topic);
-    console.log(completenessList)
+    let completenessMap = data.getCompletenessMap(all_topic_info_map, this.data.check_time_per_topic);
 
-    console.log(all_topic_info_map)
     // 分割过期的和不过期的
     let dated_topic_info_map = {};
     let undated_topic_info_map = {};
@@ -246,34 +244,36 @@ Page({
         undated_topic_info_map[topic_name] = all_topic_info_map[topic_name];
     }
 
-    console.log(undated_topic_info_map)
     this.setData({
-      completeness_list: completenessList,
+      completeness_map: completenessMap,
       undated_topic_info_map: undated_topic_info_map, 
       dated_topic_info_map: dated_topic_info_map
     });
 
 
 
+    let completenessList = [];
+    for (let name in completenessMap){
+      completenessList.push(name);
+      completenessList.push(completenessMap[name]);
+    }
+
     /* 保存每个卡片的完成度的数据 */
-    // api.postRequest({
-    //   'url': '/topic/updateCheckLog',
-    //   'data': {
-    //     topic_name: this.data.topic_name,
-    //     check_time: this.data.check_time,
-    //     check_timestamp: this.data.check_timestamp,
-    //     log: this.data.new_log,
-    //   },
-    //   'success': (res) => {
-    //     if (res.error_code == 200)
-    //       console.log('更新日志成功');
-    //     else
-    //       console.log('更新日志失败');
-    //   },
-    //   'fail': (res) => {
-    //     console.log('更新日志失败');
-    //   } 
-    // });
+    api.postRequest({
+      'url': '/topic/saveCompleteRate',
+      'data': {
+        value_list: completenessList,
+      },
+      'success': (res) => {
+        if (res.error_code == 200)
+          console.log('更新日志成功');
+        else
+          console.log('更新日志失败');
+      },
+      'fail': (res) => {
+        console.log('更新日志失败');
+      } 
+    });
 
   },
 

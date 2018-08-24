@@ -677,6 +677,45 @@ router.post('/updateCheckLog', function (req, res) {
 
 
 
+
+/**
+ * 更新某个用户所有卡片的完成度
+ */
+router.post('/saveCompleteRate', function (req, res) {
+  if (!req.header('session-id')) {
+    res.send({ 'error_code': 103, 'msg': '用户未登录' });
+    return;
+  }
+  let id = req.header('session-id');
+  let value_list = req.body.value_list;
+
+  let column_map = {
+    complete_rate: {
+      condition_column: 'topic_name',
+      condition_num: value_list.length / 2,
+    }
+  };
+
+  redishelper.getValue(id, (openid) => {
+    if (!openid) {
+      res.send({ 'error_code': 102, 'msg': '' });
+      return;
+    }
+
+    value_list.push(openid);
+    dbhelper.updateMulti('user_topic', column_map, value_list,
+      'user_id=?', (status, result_list) => {
+        let statusCode = status ? 200 : 100;
+        let resList = status ? result_list : false;
+        res.send({ 'error_code': statusCode, 'msg': '', 'result_list': resList });
+      });
+  });
+});
+
+
+
+
+
 /**
  * 删除某次打卡记录
  */

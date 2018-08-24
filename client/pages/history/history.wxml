@@ -160,7 +160,7 @@
               <view>{{topic_name}}</view>
             </view>
             
-            <progress class="check-log-progress" show-info="true" stroke-width="3" activeColor="#fcbc7d" backgroundColor="#fee0c1" active percent="{{completeness_list[topic_name]}}">完成度</progress>
+            <progress class="check-log-progress" show-info="true" stroke-width="3" activeColor="#fcbc7d" backgroundColor="#fee0c1" active percent="{{completeness_map[topic_name]}}">完成度</progress>
           </view>
         <!-- </view> -->
         </button>
@@ -212,7 +212,7 @@
               <view>{{topic_name}}</view>
             </view>
             
-            <progress class="check-log-progress" show-info="true" stroke-width="3" activeColor="#fcbc7d" backgroundColor="#fee0c1" active percent="{{completeness_list[topic_name]}}">完成度</progress>
+            <progress class="check-log-progress" show-info="true" stroke-width="3" activeColor="#fcbc7d" backgroundColor="#fee0c1" active percent="{{completeness_map[topic_name]}}">完成度</progress>
           </view>
         <!-- </view> -->
         </button>
