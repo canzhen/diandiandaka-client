@@ -110,7 +110,7 @@ router.post('/getRemindSettings', function (req, res) {
     dbhelper.select('user_message', '', 'user_id=?', [openid], '',
     (status, result_list) => {
       if (!status) {
-        cosole.log('get settings 失败');
+        console.log('get settings 失败');
         res.send({'error_code': 100, 'msg': '', 'result_list': []});
         return;
       }
@@ -137,7 +137,8 @@ router.post('/getUserInfo', function (req, res) {
       res.send({ 'error_code': 102, 'msg': '' });
       return;
     }
-    dbhelper.select('user', 'province, city, county, gender', 
+    dbhelper.select('user', 
+      'province, city, county, gender, wechat_id, phone_number, birthday', 
       'user_id=?', [openid], '',
       (status, result_list) => {
         if (!status) {

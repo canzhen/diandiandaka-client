@@ -47,43 +47,18 @@ router.post('/getNameAvatar', function (req, res) {
 
 
 
-
-
 /**
- * 更新用户的头像
+ * 更新用户表中的某一栏
  */
-router.post('/updateAvatarUrl', function (req, res) {
+router.post('/updateColumn', function (req, res) {
   if (!req.header('session-id')) {
     res.send({ 'error_code': 103, 'msg': '用户未登录' });
     return;
   }
   let id = req.header('session-id');
-  redishelper.getValue(id, (openid) => {
-    if (!openid){
-      res.send({ 'error_code': 102, 'msg': '' });
-      return;
-    }
-    // console.log('openid:' + openid);
-    let url = req.body.url;
-    dbhelper.update('user', 'avatar_url=?', 'user_id=?', [url, openid],
-      (status, result) => {
-        if (status) res.send({ 'error_code': 200, 'msg': '' });
-        else res.send({ 'error_code': 100, 'msg': result });
-      });
-  });
-});
+  let column_name = req.body.column_name;
+  let column_value = req.body.column_value;
 
-
-
-/**
- * 更新用户的头像
- */
-router.post('/updateUserName', function (req, res) {
-  if (!req.header('session-id')) {
-    res.send({ 'error_code': 103, 'msg': '用户未登录' });
-    return;
-  }
-  let id = req.header('session-id');
   redishelper.getValue(id, (openid) => {
     if (!openid) {
       res.send({ 'error_code': 102, 'msg': '' });
@@ -91,13 +66,47 @@ router.post('/updateUserName', function (req, res) {
     }
     // console.log('openid:' + openid);
     let user_name = req.body.user_name;
-    dbhelper.update('user', 'user_name=?', 'user_id=?', [user_name, openid],
+    dbhelper.update('user', column_name + '=?', 
+      'user_id=?', [column_value, openid],
       (status, result) => {
         if (status) res.send({ 'error_code': 200, 'msg': '' });
         else res.send({ 'error_code': 100, 'msg': result });
       });
   });
 });
+
+
+
+
+/**
+ * 更新用户表中的某一栏
+ */
+router.post('/updateRegion', function (req, res) {
+  if (!req.header('session-id')) {
+    res.send({ 'error_code': 103, 'msg': '用户未登录' });
+    return;
+  }
+  let id = req.header('session-id');
+  let province = req.body.province;
+  let city = req.body.city;
+  let county = req.body.county;
+
+  redishelper.getValue(id, (openid) => {
+    if (!openid) {
+      res.send({ 'error_code': 102, 'msg': '' });
+      return;
+    }
+    // console.log('openid:' + openid);
+    let user_name = req.body.user_name;
+    dbhelper.update('user', 'province=?, city=?, county=?',
+      'user_id=?', [province, city, county, openid],
+      (status, result) => {
+        if (status) res.send({ 'error_code': 200, 'msg': '' });
+        else res.send({ 'error_code': 100, 'msg': result });
+      });
+  });
+});
+
 
 
 

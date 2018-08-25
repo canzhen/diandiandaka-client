@@ -113,7 +113,7 @@ function startSendMessage(){
             let diffTime = (parseInt(remindTime.diff(userCurrentTime, 'seconds')) + 1) * 1000; //换算成毫秒
             writeLog('给用户' + user_id + '设置了打卡提醒，在' + diffTime + '秒后提醒TA打卡' + topic_list.toString())
             setTimeout(() => {
-              writeLog(diffTime / 1000 + '秒计时到啦！准备推送消息给' + user_id);
+              writeLog(diffTime / 1000 + '秒计时到啦！准备推送消息给' + user_id+'，推送使用的的form_id为：' + form_id);
               /** 推送message */
               messagehelper.sendMessage(user_id, form_id,
                 { keyword1: { value: topic_list.toString() }, //打卡项目
@@ -144,10 +144,10 @@ function startSendMessage(){
         [form_id_list.toString() + ',' , user_id],
         (status, errmsg) => {
           if (!status) {
-            writeLog('重新update user' + user_id + '的form_id_list失败');
+            writeLog('重新update user ' + user_id + '的form_id_list失败');
             setFormId(user_id, form_id_list);
           }
-          writeLog('重新update user' + user_id + '的form_id_list成功');
+          writeLog('重新update user ' + user_id + '的form_id_list成功');
         });
     };
   });

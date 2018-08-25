@@ -140,9 +140,12 @@ module.exports.getSubscriptByLength = function (l, numEachRow){
  * 2. 将过期的卡片标注为过期（当前日期大于用户设置的end_date）
  * 3. 今日打过卡的，直接is_checked设置为true
  */
-module.exports.filterDatedData = function (user_topic_list){
+module.exports.filterDataFromDB = function (user_topic_list){
   let currentMoment = moment();
   let filteredList = [];
+  let datedList = [];
+
+
   for (let i in user_topic_list) {
     let item = user_topic_list[i];
     // 如果超过2天未打卡，则显示的时候自动显示insist_day为0
@@ -158,11 +161,17 @@ module.exports.filterDatedData = function (user_topic_list){
     if (currentMoment.diff(
       moment(item['end_date'], 'YYYY-MM-DD'), 'days') > 0) {
       item['dated'] = true;
+      datedList.push(item);
     } else {
       item['dated'] = false;
+      filteredList.push(item);
     }
-    filteredList.push(item);
   }
+
+
+  // 把过期的卡片放在最后面
+  for (let i in datedList)
+    filteredList.push(datedList[i]);
 
   return filteredList;
 }
@@ -307,6 +316,22 @@ module.exports.getRandom = function (min, max){
 }
 
 
+function checkNumber(theObj) {
+  var reg = /^[0-9]+.?[0-9]*$/;
+  if (reg.test(theObj)) {
+    return true;
+  }
+  return false;
+}
+
+module.exports.isPhoneNumberLegal = function(phoneNumber){
+  phoneNumber = phoneNumber+''; //变成string
+  if (phoneNumber.length < 5) return false; //小于5位的手机号不存在吧？
+  if (!checkNumber(phoneNumber)) return false; //验证字符串是否是纯数字
+  
+  return true;
+}
+
 
 // module.exports = {
 //   /* 功能方面 */
@@ -315,7 +340,7 @@ module.exports.getRandom = function (min, max){
 
 //   /* 我的打卡mytopic 部分 */
 //   getSubscriptByLength, //计算下标
-//   filterDatedData, //过滤掉过期的数据，主要是看insist_day连续坚持天数是否正确
+//   filterDataFromDB, //过滤掉过期的数据，主要是看insist_day连续坚持天数是否正确
 //   filterUnchangeData, //过滤掉没变化的数据，只剩下有变化的数据
 //   formatCheckData,
 //   updateFormId, //存入formid到user表里，以供推送消息时使用

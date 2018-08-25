@@ -96,7 +96,6 @@ router.post('/login', function (req, res) {
 
 
 
-
 /**
  * 保存用户的form_id
  */
@@ -115,11 +114,9 @@ router.post('/saveFormId', function (req, res) {
       return;
     }
 
-    dbhelper.insert('user_message',
-      'user_id, form_id_list',
-      [openid, form_id_list],
-      "ON DUPLICATE KEY UPDATE form_id_list=CONCAT(form_id_list, '" +
-      form_id_list + "')",
+    dbhelper.update('user', 
+      "form_id_list = CONCAT(IFNULL(form_id_list, ''), ?)",
+      'user_id = ?', [form_id_list, openid],
       (status, errmsg) => {
         let error_code = status ? 200 : 100;
         let error_message = status ? '' : errmsg;

@@ -141,6 +141,9 @@ Page({
   },
 
 
+
+
+
   /**
    * 用户单击头像，修改头像
    */
@@ -180,8 +183,11 @@ Page({
 
     let updateAvatarUrl = function (url) {
       api.postRequest({
-        'url': '/user/updateAvatarUrl',
-        'data': { 'url': url },
+        'url': '/user/updateColumn',
+        'data': { 
+          column_name: 'avatar_url',
+          column_value: url
+         },
         'success': (res) => {
           wx.hideLoading()
           if (res.error_code == 200)
@@ -235,6 +241,9 @@ Page({
   },
 
 
+
+
+
   /**
    * 修改用户名
    */
@@ -251,10 +260,17 @@ Page({
     })
   },
 
+  redirectToMyRank: function (e) {
+    this.saveFormId(e.detail.formId);
+    wx.navigateTo({
+      url: '/pages/me/myrank',
+    })
+  },
+
   redirectToSettings: function(e){
     this.saveFormId(e.detail.formId);
     wx.navigateTo({
-      url: '/pages/me/settings'
+      url: '/pages/settings/settings'
     })
   },
 
@@ -285,6 +301,32 @@ Page({
     });
   },
 
+  /**
+   * 对话框确认按钮点击事件
+   */
+  onConfirm: function () {
+    let that = this;
+    let new_input = this.data.new_modal_input_value;
+    if (new_input == undefined || new_input == '') {
+      wx.showModal({
+        title: '内容为空',
+        content: '您填写的' + this.data.modal_title + '为空' +
+          '，您确定要修改咩？',
+        success: (res) => {
+          this.hideModal();
+          if (res.cancel) return;
+
+          if (this.data.modal_title == '用户名')
+            this._changeUserName(new_input);
+          else if (this.data.modal_title == '微信号')
+            this._changeWechatId(new_input);
+          else if (this.data.modal_title == '手机号')
+            this._changePhone(new_input);
+        }
+      })
+    }
+  },
+
 
   /**
    * 对话框确认按钮点击事件
@@ -293,29 +335,45 @@ Page({
     let that = this;
     let new_username = this.data.new_username;
 
-
-    api.postRequest({
-      'url': '/user/updateUserName',
-      'data': {
-        user_name: new_username
-      },
-      'success': (res) => {
-        if (res.error_code != 200){
-          console.log('修改用户名失败');
-          return;
+    let updateUserName = function(){
+      api.postRequest({
+        'url': '/user/updateColumn',
+        'data': {
+          column_name: 'user_name',
+          column_value: new_username
+        },
+        'success': (res) => {
+          if (res.error_code != 200) {
+            console.log('修改用户名失败');
+            return;
+          }
+          console.log('修改用户名成功');
+          showNewUserName();
+          wx.setStorageSync('userName', new_username);
+          wx.showToast({
+            title: '修改用户名成功',
+            icon: 'succeed'
+          })
+        },
+        'fail': (res) => {
+          console.log('修改用户名成功');
         }
-        console.log('修改用户名成功');
-        showNewUserName();
-        wx.setStorageSync('userName', new_username);
-        wx.showToast({
-          title: '修改用户名成功',
-          icon: 'succeed'
-        })
-      },
-      'fail': (res) => {
-        console.log('修改用户名成功');
-      }
-    });
+      });
+    }
+
+    if (new_username == undefined || new_username == '') {
+      wx.showModal({
+        title: '内容为空',
+        content: '您填写的' + this.data.modal_title + '为空' +
+          '，您确定要修改咩？',
+        success: (res) => {
+          this.hideModal();
+          if (res.cancel) return;
+          changeColumn();
+        }
+      })
+    }
+    
 
     let showNewUserName = function () {
       that.setData({

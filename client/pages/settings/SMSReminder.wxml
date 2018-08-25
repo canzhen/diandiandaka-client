@@ -1,0 +1,29 @@
+<view class="settings-panel">
+  <form bindsubmit="saveSettings" report-submit="true">
+    <view class="title"> 所有卡片 </view>
+
+    <view class="content">
+      <form bindsubmit="clickOnSetRemindTime" report-submit="true"
+            wx:for="{{topic_list}}" wx:for-item="topic" 
+            wx:for-index="index" wx:key="key">
+      <picker mode="time" value="{{remind_time_list[index] == '未设置时间' ? time : remind_time_list[index]}}" data-index="{{index}}" bindchange="bindRemindTimeChange"> 
+      <button class="one-row" form-type="submit" hover-class="none" >
+          <text>{{topic.topic_name}}</text>
+          <view class="one-row-right">
+            <view wx:if="{{topic.remind_time}}">{{topic.remind_time}}</view>
+            <view wx:elif="{{!topic.remind_time}}">未设置时间</view>
+            <image src='/images/right.png' class="one-row-right-arrow"></image>
+          </view>
+      </button>
+      </picker>
+      </form>
+
+    </view>
+
+
+
+    <button class="save-button" form-type="submit"> 
+      保存设置
+    </button>
+  </form>
+</view>

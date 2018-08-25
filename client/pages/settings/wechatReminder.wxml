@@ -1,0 +1,13 @@
+<view>
+  <picker mode="time" value="{{remind_time}}" start="00:00" end="23:59" data-topic-name="{{item.topic_name}}" class="topic-remind-oneline" bindchange="bindTimeChange">
+  设置提醒时间：{{remind_time}}
+  </picker>
+
+  <view class="topic-remind-oneline" wx:for="{{topic_list}}" wx:for-item="item" wx:for-index="index" wx:key="key">
+    <text>{{item.topic_name}}</text>
+    <checkbox-group data-index="{{index}}" bindchange="topicRemindChange">
+      <checkbox style='margin-right:30rpx;' checked="{{item.checked}}"/>
+    </checkbox-group>
+    
+  </view>
+</view>

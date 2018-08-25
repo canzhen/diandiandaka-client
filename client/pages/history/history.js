@@ -127,7 +127,7 @@ Page({
       /* 获取当前用户的所有卡片 */
     data.getTopicInfoList((error_code, msg, topic_info_list) => {
       if (error_code != 200) return;
-      topic_info_list = utils.filterDatedData(topic_info_list);
+      topic_info_list = utils.filterDataFromDB(topic_info_list);
       let topicInfoMap = getTopicInfoMap(topic_info_list);
       let [startDateList, endDateList] = data.getStartEndDateList(topic_info_list);
       /* 获取当前用户具体打卡信息 */

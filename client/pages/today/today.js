@@ -135,7 +135,7 @@ Page({
       'success': (res) => { //成功
         if (res.error_code == 200) {
           console.log('获取用户打卡信息成功');
-          let result_list = utils.filterDatedData(res.result_list);
+          let result_list = utils.filterDataFromDB(res.result_list);
           // 过滤掉过期的
           let undated_topic_list = [];
           for (let i in result_list){
@@ -399,8 +399,11 @@ Page({
 
     let updateAvatarUrl = function(url){
       api.postRequest({
-        'url': '/user/updateAvatarUrl',
-        'data': {'url': url},
+        'url': '/user/updateColumn',
+        'data': {
+          column_name: 'avatar_url',
+          column_value: url
+         },
         'success': (res) => {
           if (res.error_code == 200) 
             console.log('更新数据库里的avatar_url字段成功');

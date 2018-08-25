@@ -1,0 +1,211 @@
+<view class="settings-panel">
+  <form bindsubmit="saveSettings" report-submit="true">
+    <view class="title"> 基本设置 </view>
+
+    <view class="content">
+    
+      <form bindsubmit="changeUserName" report-submit="true">
+      <button class="one-row" form-type="submit" hover-class="none" >
+        <text>用户名</text>
+        <view class="one-row-right">
+          <text wx:if="{{is_reset_name}}">{{user_name}}</text>
+          <open-data type="userNickName" lang="zh_CN" wx:if="{{!is_reset_name}}"></open-data>
+          <image src='/images/right.png' class="one-row-right-arrow"></image>
+        </view>
+      </button>
+      </form>
+
+
+      <form bindsubmit="changeAvatar" report-submit="true">
+      <button class="one-row" form-type="submit" hover-class="none" >
+        <text>头像</text>
+        <view class="one-row-right">
+          <image class="avatar" mode="aspectFill" src="{{avatar_url}}" wx:if="{{is_reset_avatar}}"></image>
+          <view class="avatar" wx:if="{{!is_reset_avatar}}">
+          <open-data type="userAvatarUrl" mode="aspectFill"></open-data>
+          </view>
+          <image src='/images/right.png' class="one-row-right-arrow"></image>
+        </view>
+      </button>
+      </form>
+
+
+
+      <form bindsubmit="changeRegion" report-submit="true">
+      <picker mode="region" bindchange="bindRegionChange" value="{{region}}"> 
+      <button class="one-row" form-type="submit" hover-class="none" >
+        <text>地区</text>
+        <view class="one-row-right">
+          <view class="infoText">
+            {{region[0]}} {{region[1]}} {{region[2]}}
+          </view>
+          <image src='/images/right.png' class="one-row-right-arrow"></image>
+        </view>
+      </button>
+      </picker>
+      </form>
+
+
+
+      <form bindsubmit="saveFormId" report-submit="true">
+      <picker bindchange="bindGenderChange" range="{{genderItems}}"> 
+      <button class="one-row" form-type="submit" hover-class="none" >
+          <text>性别</text>
+          <view class="one-row-right">
+            {{gender}}
+            <image src='/images/right.png' class="one-row-right-arrow"></image>
+          </view>
+      </button>
+      </picker>
+      </form>
+
+
+
+      <form bindsubmit="changeWechatId" report-submit="true">
+      <button class="one-row" form-type="submit" hover-class="none" >
+        <text>微信号</text>
+        <view class="one-row-right">
+          <text>{{wechat_id}}</text>
+          <image src='/images/right.png' class="one-row-right-arrow"></image>
+        </view>
+      </button>
+      </form>
+
+
+
+      <form bindsubmit="changePhone" report-submit="true">
+      <button class="one-row" form-type="submit" hover-class="none" >
+        <text>手机号</text>
+        <view class="one-row-right">
+          <text>{{countryCode}}-{{phone_number}}</text>
+          <image src='/images/right.png' class="one-row-right-arrow"></image>
+        </view>
+      </button>
+      </form>
+
+
+
+      <form bindsubmit="saveBirthday" report-submit="true">
+      <picker mode="date" bindchange="bindBirthdayChange" value="{{birthday}}" range="{{genderItems}}"> 
+      <button class="one-row" form-type="submit" hover-class="none" >
+        <text>生日</text>
+        <view class="one-row-right">
+          <text>{{birthday}}</text>
+          <image src='/images/right.png' class="one-row-right-arrow"></image>
+        </view>
+      </button>
+      </picker>
+      </form> 
+
+    </view>
+
+
+
+
+    <view class="title" style="margin-top: 50rpx;"> 提醒设置
+    <text style='font-size: 20rpx;'>（微信和短信提醒只能设置一个）</text> </view>
+    <view class="content">
+      <form bindsubmit="gotoWechatReminder" report-submit="true">
+      <button class="one-row" form-type="submit" hover-class="none" >
+        <text>微信提醒</text>
+        <view class="one-row-right">
+          <text>设置微信打卡提醒</text>
+          <image src='/images/right.png' class="one-row-right-arrow"></image>
+        </view>
+      </button>
+      </form>
+
+
+
+
+      <form bindsubmit="gotoSMSReminder" report-submit="true">
+      <button class="one-row" form-type="submit" hover-class="none" >
+        <text>短信提醒</text>
+        <view class="one-row-right">
+          <text>设置短信打卡提醒</text>
+          <image src='/images/right.png' class="one-row-right-arrow"></image>
+        </view>
+      </button>
+      </form>
+
+    </view>
+
+    <!-- <button class="save-button" form-type="submit"> 
+      保存设置 
+    </button> -->
+  </form>
+</view>
+
+
+
+
+
+
+
+
+<!-- 弹窗部分开始 -->
+<view class="modal-mask" bindtap="hideModal" catchtouchmove="preventTouchMove" wx:if="{{show_modal}}"></view>
+
+<form bindsubmit="clickModal" report-submit="true" wx:if="{{show_modal}}">
+<view class="modal-dialog" >
+  <view class="modal-title">修改{{modal_title}}</view>
+  <view class="modal-content">
+    <view class="modal-input">
+      <input style="padding-left:10rpx;width:100%;" bindinput="newInputChange" value="{{modal_input_value}}" placeholder='输入{{modal_title}}'> </input>
+    </view>
+  </view>
+
+  <view class="modal-footer">
+    <button form-type="submit" hover-class="none" 
+            class="btn-cancel" bindtap="onCancel">
+            取消
+    </button>
+    <button form-type="submit" hover-class="none" 
+            class="btn-confirm" bindtap="onConfirm">
+            确定
+    </button>
+    <!-- <view class="btn-cancel" bindtap="onCancel">取消</view>
+    <view class="btn-confirm" bindtap="onConfirm">确定</view> -->
+  </view>
+</view>
+</form>
+<!-- 弹窗部分结束 -->
+
+
+
+
+
+
+
+<!-- 手机号专用弹窗部分开始 -->
+<view class="modal-mask" bindtap="hideModal" catchtouchmove="preventTouchMove" wx:if="{{show_phone_modal}}"></view>
+<form bindsubmit="clickModal" report-submit="true" wx:if="{{show_phone_modal}}">
+<view class="modal-dialog">
+  <view class="modal-title">修改手机号</view>
+  <view class="modal-content">
+    <view style="display:flex; flex-direction:row; align-items:center;">
+      <view class="modal-input" style="height:48rpx; width:20%; padding-left:10rpx; text-align:center;">
+        <picker bindchange="bindCountryPhoneCodeChange" value="0" range="{{country_code_list}}">
+          {{countryCode}}
+        </picker>
+      </view> 
+      <text space="ensp"> - </text>
+      <view class="modal-input" style="width:80%;">
+        <input type="number" style="padding-left:10rpx;width:100%;" bindinput="phoneInputChange" value="{{phone_number}}" placeholder='手机号'> </input>
+      </view>
+    </view>
+  </view>
+  
+  <view class="modal-footer">
+    <button form-type="submit" hover-class="none" 
+            class="btn-cancel" bindtap="onCancel">
+            取消
+    </button>
+    <button form-type="submit" hover-class="none" 
+            class="btn-confirm" bindtap="onConfirm">
+            确定
+    </button>
+  </view>
+</view>
+</form>
+<!-- 手机号专用弹窗部分结束 -->
