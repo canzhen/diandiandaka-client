@@ -331,8 +331,8 @@ Page({
             gender: user_info['gender'] ? user_info['gender'] : '未填写',
             wechat_id: user_info['wechat_id'] ? 
                       user_info['wechat_id'] : '未填写',
-            countryCode: phone ? phone.split('-')[0] : '未填写',
-            phone_number: phone ? phone.split('-')[1]: '未填写',
+            countryCode: phone ? phone.split('-')[0] : '',
+            phone_number: phone ? phone.split('-')[1]: '',
             birthday: user_info['birthday'] ?
                       user_info['birthday'] : '未填写',
           });
@@ -418,7 +418,7 @@ Page({
   /**
    * 跳转到短信提醒设置界面
    */
-  gotoSMSReminder: function (e) {
+  gotoReminder: function (e) {
     if (this.data.phone_number == '') {
       wx.showToast({
         title: '需要设置手机号才能开始短信提醒喔~',
@@ -428,7 +428,7 @@ Page({
     }
 
     wx.navigateTo({
-      url: '/pages/settings/SMSReminder',
+      url: '/pages/settings/reminder',
     })
   },
 

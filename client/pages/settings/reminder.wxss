@@ -7,6 +7,17 @@ Page{
   background-color: #f8f8f8;
 }
 
+.image{
+  width: 40rpx;
+  height: 40rpx;
+  /* margin-right:40rpx; */
+}
+
+.punched-image{
+  width: 30rpx;
+  height: 30rpx;
+  margin-left: -30rpx;
+}
 
 .reminder-panel{
   display: flex;
@@ -16,6 +27,7 @@ Page{
 
 .title{
   display: flex;
+  flex-direction: row;
   font-size: 25rpx;
   align-items: center;
   padding-left: 20rpx;
@@ -67,7 +79,7 @@ Page{
   width: 30rpx;
   height: 30rpx;
   margin-left: 10rpx;
-  margin-right: -10rpx;
+  margin-right: 30rpx;
 }
 
 

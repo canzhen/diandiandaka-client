@@ -270,6 +270,44 @@ router.post('/getUserTopic', function (req, res) {
 
 
 
+
+/**
+ * 保存用户的设置，包括用户的form_id一起存
+ */
+router.post('/saveTopicRemindSettings', function (req, res) {
+  if (!req.header('session-id')) {
+    res.send({ 'error_code': 103, 'msg': '用户未登录' });
+    return;
+  }
+  let id = req.header('session-id');
+  redishelper.getValue(id, (openid) => {
+    if (!openid) {
+      res.send({ 'error_code': 102, 'msg': '' });
+      return;
+    }
+
+    let column_map = req.body.column_map,
+        value_list = req.body.value_list;
+
+    value_list.push(openid);
+
+    dbhelper.updateMulti('user_topic', column_map, value_list,
+      'user_id=?', (status, errmsg) => {
+        let error_code = status ? 200 : 100;
+        res.send({ 'error_code': error_code, 'msg': errmsg });
+      });
+  });
+});
+
+
+
+
+
+
+
+
+
+
 /**
  * 用户新增一个topic
  */

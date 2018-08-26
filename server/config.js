@@ -14,11 +14,19 @@ const CONF = {
   getUserInfoUrl: 'https://api.weixin.qq.com/sns/jscode2session',
 
 
-  // 给用户推送模板消息的参数
+  // 小程序推送消息模板配置
   message: {
     getAccessTokenUrl: 'https://api.weixin.qq.com/cgi-bin/token',
     sendMessageUrl: 'https://api.weixin.qq.com/cgi-bin/message/wxopen/template/send',
-    templateId: 'E_gRYCEJ2jXX0tWjKYV4FXpzfh3QJugCx-WtnuvSLTo', //提醒
+    templateId: 'E_gRYCEJ2jXX0tWjKYV4FVMpXoyOC0McKT2wrLhFGjI', //提醒
+  },
+
+
+  // 腾讯短信服务配置
+  sms: {
+    AppID: '1400133069',
+    AppKey: '1f18619ce7d9085866fb8dc9a3c70dba',
+    templateId: '180962',
   },
 
 

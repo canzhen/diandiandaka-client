@@ -132,56 +132,6 @@ Page({
   },
 
 
-  /**
-   * 获取该用户的卡片
-   */
-  getUserTopic: function (checked_topic_str, cb) {
-    let that = this;
-    api.postRequest({
-      'url': '/topic/getUserTopic',
-      'data': [],
-      'showLoading': true,
-      'success': (res) => { //成功
-        if (res.error_code != 200) {
-          console.log('从数据库中获取用户卡片信息失败');
-          cb(1);
-          return;
-        }
-        console.log('从数据库中获取用户卡片信息成功');
-        let user_topic_list = res.result_list;
-        if (user_topic_list.length == 0) {
-          wx.showToast({
-            title: '您好像还没有卡片喔~',
-            icon: 'none'
-          })
-          return;
-        }
-
-        console.log(user_topic_list);
-
-        // 将已经设置为要提醒的卡片打勾
-        if (checked_topic_str != undefined &&
-          checked_topic_str != '') {
-          for (let i in user_topic_list) {
-            if (checked_topic_str.indexOf(user_topic_list[i].topic_name) != -1)
-              user_topic_list[i].checked = true;
-            else
-              user_topic_list[i].checked = false;
-          }
-        }
-        that.setData({
-          topic_list: user_topic_list
-        });
-        cb(0)
-      },
-      'fail': (res) => { //失败
-        console.log('从数据库中获取用户卡片信息失败');
-      }
-    });
-  },
-
-
-
 
   /**
    * 用于保存formId的helper方法
@@ -204,6 +154,7 @@ Page({
     let time = e.detail.value;
     let topic_list = this.data.topic_list;
     topic_list[index].remind_time = time;
+    topic_list[index].checked = true;
 
     this.setData({
       topic_list: topic_list
@@ -219,6 +170,26 @@ Page({
     this.saveFormId(e.detail.formId);
   },
 
+  /**
+   * 设置微信为提醒方式
+   */
+  setRemindMethod: function(e){
+    let index = e.currentTarget.dataset.topicIndex;
+    let remind_method = e.currentTarget.dataset.method;
+    let topic_list = this.data.topic_list;
+
+    topic_list[index].checked = true;
+    topic_list[index].remind_method = remind_method;
+    this.setData({
+      topic_list: topic_list
+    })
+  },
+
+
+  /**
+   * 设置短信为提醒方式
+   */
+  setSMSRemindMethod: function (e) { },
 
 
   /**
@@ -227,40 +198,85 @@ Page({
   saveSettings: function (e) {
     let that = this;
     let formId = e.detail.formId;
-    let remind_topic_list = [];
+    let value_list = [];
+
+    console.log(this.data.topic_list)
 
     for (let i in this.data.topic_list) {
-      if (that.data.topic_list[i].checked)
-        remind_topic_list.push(that.data.topic_list[i].topic_name)
+      if (!that.data.topic_list[i].checked) continue;
+      value_list.push(that.data.topic_list[i].topic_name)
+      value_list.push(that.data.topic_list[i].remind_time)
     }
 
-    console.log(remind_topic_list)
 
-    // api.postRequest({
-    //   'url': '/me/saveSettings',
-    //   'data': {
-    //     user_name: that.data.user_name,
-    //     province: that.data.province,
-    //     city: that.data.city,
-    //     county: that.data.county,
-    //     gender: that.data.gender,
-    //     topic_list: remind_topic_list.toString(),
-    //     remind_time: that.data.remind_time,
-    //     form_id: formId
-    //   },
-    //   'success': (res) => {
-    //     if (res && res.error_code != 200){
-    //       console.log('保存用户设置失败');
-    //       this.showFailToast();
-    //       return;
-    //     }
-    //     console.log('保存用户设置成功');
-    //     this.showSucceedToast(is_set_reminder);
-    //   },
-    //   'fail': (res) => {
-    //     this.showFailToast();
-    //     console.log('保存用户设置失败');
-    //   },
-    // });
+
+    for (let i in this.data.topic_list) {
+      if (!that.data.topic_list[i].checked) continue;
+      value_list.push(that.data.topic_list[i].topic_name)
+      value_list.push(that.data.topic_list[i].remind_method)
+    }
+
+
+    if (value_list.length == 0){
+      this.showSucceedToast();
+      return;
+    }
+
+    let l = (value_list.length / 2) / 2; //checked topic的数量
+
+    let columnMap = {
+      remind_time:{
+        condition_column: 'topic_name',
+        condition_num: l
+      },
+      remind_method: {
+        condition_column: 'topic_name',
+        condition_num: l
+      }
+    }
+
+    api.postRequest({
+      'url': '/topic/saveTopicRemindSettings',
+      'data': {
+        column_map: columnMap, 
+        value_list: value_list
+      },
+      'success': (res) => {
+        if (res && res.error_code != 200){
+          console.log('保存用户提醒设置失败');
+          this.showFailToast();
+          return;
+        }
+        console.log('保存用户提醒设置成功');
+        this.showSucceedToast();
+      },
+      'fail': (res) => {
+        this.showFailToast();
+        console.log('保存用户提醒设置失败');
+      },
+    });
   },
+
+
+  showSucceedToast: function(){
+    wx.showModal({
+      title: '设置成功',
+      content: '提醒设置成功，将于次日生效~',
+      showCancel: false
+    })
+  },
+
+
+
+  showFailToast: function () {
+    wx.showToast({
+      title: '啊哦，保存设置失败，我错了😞 可以重试一下咩~',
+      icon: 'none'
+    })
+
+    // setTimeout(() => {
+    //   wx.navigateBack({})
+    // }, 2000)
+  }
+  
 })

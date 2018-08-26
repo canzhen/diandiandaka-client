@@ -1,7 +1,7 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/settings/SMSReminder",
+    "pages/settings/reminder",
     "pages/settings/settings",
     "pages/settings/wechatReminder",
     "pages/me/me",
