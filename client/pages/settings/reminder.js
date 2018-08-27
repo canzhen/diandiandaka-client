@@ -26,6 +26,19 @@ Page({
       country_code: options.country_code,
       phone_number: options.phone_number
     })
+
+
+    //设置scroll-view高度，自适应屏幕
+    wx.getSystemInfo({
+      success: function (res) {
+        that.setData({
+          scrollHeight: res.windowHeight
+        });
+        console.log(res.windowHeight)
+      }
+    });
+
+
     api.postRequest({
       'url': '/topic/getUserTopic',
       'data': [],
@@ -279,35 +292,59 @@ Page({
     if(e.touches.length==1){
       this.setData({
         //设置触摸起始点水平方向位置
-        startX:e.touches[0].clientX
+        startX: e.touches[0].clientX,
+        startY: e.touches[0].clientY
       });
     }
   },
 
 
+
+  /**
+    * 计算滑动角度
+    * @param {Object} start 起点坐标
+    * @param {Object} end 终点坐标
+    */
+  angle: function (start, end) {
+    var _X = end.X - start.X,
+      _Y = end.Y - start.Y
+
+    //返回角度 /Math.atan()返回数字的反正切值
+    return 360 * Math.atan(_Y / _X) / (2 * Math.PI);
+  },
+
   touchMove:function(e){
     if(e.touches.length==1){
-      //手指移动时水平方向位置
-      var moveX = e.touches[0].clientX;
-      //手指起始点位置与移动期间的差值
-      let disX = this.data.startX - moveX;
-      let delBtnWidth = this.data.delBtnWidth;
-      let txtStyle = "";
-      if (disX == 0 || disX < 0){//如果移动距离小于等于0，文本层位置不变
-        txtStyle = "left:0px";
-      }else if(disX > 0 ){//移动距离大于0，文本层left值等于手指移动距离
-        txtStyle = "left:-"+disX+"px";
-        if(disX>=delBtnWidth){
-          //控制手指移动距离最大值为删除按钮的宽度
-          txtStyle = "left:-"+delBtnWidth+"px";
-        }
-      }
 
       //获取手指触摸的是哪一项
       let index = e.currentTarget.dataset.index;
       let topic_list = this.data.topic_list;
 
+      if (topic_list[index].remind_time == '') return;
+
+      //手指  起始点位置与移动期间的差值
+      let disX = this.data.startX - e.touches[0].clientX;
+      let disY = this.data.startY - e.touches[0].clientY;
+      let delBtnWidth = this.data.delBtnWidth;
+      let txtStyle = "";
+      let angle = this.angle(
+        { X: this.data.startX, Y: this.data.startY }, 
+        { X: disX, Y: disY });
+
+      if (Math.abs(angle) > 30) return;
+
+      if (disX == 0 || disX < 0){//如果移动距离小于等于0，文本层位置不变
+        txtStyle = "left:0px";
+      }else if(disX > 0 ){ //移动距离大于0，文本层left值等于手指移动距离
+        txtStyle = "left:-"+disX+"px";
+        if(disX >= delBtnWidth){
+          //控制手指移动距离最大值为删除按钮的宽度
+          txtStyle = "left:-"+delBtnWidth+"px";
+        }
+      }
+
       topic_list[index].txtStyle = txtStyle;
+
       //更新列表的状态
       this.setData({
         topic_list: topic_list
@@ -320,6 +357,13 @@ Page({
 
   touchEnd:function(e){
     if(e.changedTouches.length==1){
+      //获取手指触摸的是哪一项
+      let index = e.currentTarget.dataset.index;
+      let topic_list = this.data.topic_list;
+
+      if (topic_list[index].remind_time == '') return;
+
+
       //手指移动结束后水平位置
       let endX = e.changedTouches[0].clientX;
       //触摸开始与结束，手指移动的距离
@@ -327,9 +371,6 @@ Page({
       let delBtnWidth = this.data.delBtnWidth;
       //如果距离小于删除按钮的1/2，不显示删除按钮
       let txtStyle = disX > delBtnWidth/2 ? "left:-"+delBtnWidth+"px":"left:0px";
-      //获取手指触摸的是哪一项
-      let index = e.currentTarget.dataset.index;
-      let topic_list = this.data.topic_list;
 
       topic_list[index].txtStyle = txtStyle;
       //更新列表的状态

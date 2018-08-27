@@ -1,4 +1,5 @@
-<view class="settings-panel">
+<scroll-view class="settings-panel" style="height:95vh;"
+  scroll-y scroll-with-animation enable-back-to-top>
   <form bindsubmit="saveSettings" report-submit="true">
     <view class="title"> 设置微信或短信提醒 (左滑取消提醒） </view>
 
@@ -13,9 +14,9 @@
 
         <!-- touch部分开始 -->
         <view class="one-row"
-            bindtouchstart="touchStart"
-            bindtouchmove="touchMove"
-            bindtouchend="touchEnd"
+            catchtouchstart="touchStart"
+            catchtouchmove="touchMove"
+            catchtouchend="touchEnd"
             data-index="{{index}}"
             style="{{topic.txtStyle}}">
           <text>{{topic.topic_name}}</text>
@@ -65,4 +66,4 @@
       保存设置
     </button>
   </form>
-</view>
+</scroll-view>

@@ -132,3 +132,12 @@ checkbox {
   left: 75rpx;
   bottom: 1%;
 } */
+
+
+
+
+::-webkit-scrollbar{
+width: 0;
+height: 0;
+color: transparent;
+}
