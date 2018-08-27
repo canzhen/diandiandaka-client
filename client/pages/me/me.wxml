@@ -27,12 +27,14 @@
     
 
   <view class="me-lower-part" >
-    <view style="display:flex; flex-direction:row;">
+    <view style="display:flex; flex-direction:row; flex-direction:flex-start;">
+
+
       <!-- 我的卡片 -->
       <form bindsubmit="redirectToMyTopic" report-submit='true' >
-      <button class="me-lower-part-each-item" style="width: 150rpx;" hover-class="none" form-type="submit">
+      <button class="me-lower-part-each-item" hover-class="none" form-type="submit">
         <image class="image" src="/images/kapian.png"></image>
-        <text style="margin-top:10rpx;"> 我的卡片 </text>
+        <text> 我的卡片 </text>
       </button>
       </form>
 
@@ -41,9 +43,10 @@
 
       <!-- 我的排名 -->
       <form bindsubmit="redirectToMyRank" report-submit='true' >
-      <button class="me-lower-part-each-item" style="width: 150rpx;" hover-class="none" form-type="submit">
+      <button class="me-lower-part-each-item" hover-class="none" 
+              form-type="submit">
         <image class="image" src="/images/paiming.png"></image>
-        <text style="margin-top:10rpx;"> 我的排名 </text>
+        <text> 我的排名 </text>
       </button>
       </form>
 
@@ -52,9 +55,9 @@
 
       <!-- 设置 -->
       <form bindsubmit="redirectToSettings" report-submit='true' >
-      <button class="me-lower-part-each-item" style="width: 150rpx;" hover-class="none" form-type="submit">
+      <button class="me-lower-part-each-item" hover-class="none" form-type="submit">
         <image class="image" src="/images/shezhi.png"></image>
-        <text style="margin-top:10rpx;"> 高级设置 </text>
+        <text> 高级设置 </text>
       </button>
       </form>
 

@@ -1,10 +1,10 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/me/me",
     "pages/settings/reminder",
     "pages/settings/settings",
     "pages/settings/wechatReminder",
-    "pages/me/me",
     "pages/history/history",
     "pages/today/today",
     "pages/newtopic/newtopic",

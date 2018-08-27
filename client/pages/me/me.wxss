@@ -75,8 +75,9 @@ Page{
 .me-lower-part{
   display: flex;
   flex-direction: row;
-  margin-top: 60rpx;
-  padding-left: 30rpx;
+  align-items: center;
+  margin-top: 30rpx;
+  margin-left: 20rpx;
 }
 
 
@@ -84,12 +85,19 @@ Page{
   display:flex; 
   flex-direction:column;
   align-items: center;
+  justify-content: center;
   width: 150rpx;
   height: 200rpx;
   /* margin-right: 10rpx;  */
-  font-size: 25rpx;
 }
 
+
+.me-lower-part-each-item > text{
+  margin-top:15rpx;
+  font-size: 25rpx;
+  text-align: center;
+  width: 150rpx;
+}
 
 
 /* 弹窗部分 */
@@ -185,7 +193,7 @@ button{
   background-color: transparent;
   text-align:left;
   padding: 0;
-  margin: 0;
+  /* margin: 0; */
   line-height: 0;
   font-size: 30rpx;
   color: #888888;
