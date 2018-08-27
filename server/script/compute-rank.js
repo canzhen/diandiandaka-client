@@ -87,7 +87,6 @@ function startComputeRank() {
     return updateRank(topic_rate_map);
   }).then(()=>{
     console.log('结束了')
-    return;
   })
  
 }
