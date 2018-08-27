@@ -31,6 +31,7 @@ Page{
   font-size: 25rpx;
   align-items: center;
   padding-left: 20rpx;
+  padding-right: 10rpx;
   color: #888888;
   margin: 30rpx auto 16rpx auto;
 }

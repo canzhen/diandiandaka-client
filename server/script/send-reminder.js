@@ -1,9 +1,10 @@
-const dbhelper = require('./helpers/dbhelper.js');
-const messagehelper = require('./helpers/messagehelper.js');
-const smshelper = require('./helpers/smshelper.js')
-const utils = require('./helpers/utils.js');
+const dbhelper = require('../helpers/dbhelper.js');
+const messagehelper = require('../helpers/messagehelper.js');
+const smshelper = require('../helpers/smshelper.js')
+const utils = require('../helpers/utils.js');
 const moment = require('moment');
 const Promise = require('promise');
+
 
 const perseveranceList = [
 '坚持不懈才能积沙成塔', 
@@ -18,11 +19,11 @@ const perseveranceList = [
 '苟有恒，何必三更起五更眠；最无益，只怕一日曝十日寒。',
 '盛年不再来，一日难再晨，及时当勉励，岁月不待人。'];
 
-/** 模拟阻塞方法 */
-function sleep(milliSeconds) {
-  var startTime = new Date().getTime();
-  while (new Date().getTime() < startTime + milliSeconds);
-}
+// /** 模拟阻塞方法 */
+// function sleep(milliSeconds) {
+//   var startTime = new Date().getTime();
+//   while (new Date().getTime() < startTime + milliSeconds);
+// }
 
 function writeLog(log){
   console.log('[' + moment().format('YYYY-MM-DD HH:mm:ss') + '] ' + log);

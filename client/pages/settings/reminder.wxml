@@ -14,9 +14,9 @@
 
         <!-- touch部分开始 -->
         <view class="one-row"
-            catchtouchstart="touchStart"
-            catchtouchmove="touchMove"
-            catchtouchend="touchEnd"
+            bindtouchstart="touchStart"
+            bindtouchmove="touchMove"
+            bindtouchend="touchEnd"
             data-index="{{index}}"
             style="{{topic.txtStyle}}">
           <text>{{topic.topic_name}}</text>
@@ -59,7 +59,7 @@
     </view>
 
     <view class="title"> 
-    注意：已过期卡片无法设置提醒
+    注意：已结束卡片无法设置提醒
     </view>
 
     <button class="save-button" form-type="submit"> 

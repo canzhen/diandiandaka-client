@@ -28,17 +28,6 @@ Page({
     })
 
 
-    //设置scroll-view高度，自适应屏幕
-    wx.getSystemInfo({
-      success: function (res) {
-        that.setData({
-          scrollHeight: res.windowHeight
-        });
-        console.log(res.windowHeight)
-      }
-    });
-
-
     api.postRequest({
       'url': '/topic/getUserTopic',
       'data': [],
@@ -171,27 +160,31 @@ Page({
     let remind_method = e.currentTarget.dataset.method;
     let country_code = this.data.country_code;
     let phone_number = this.data.phone_number;
-    if (remind_method == 2 && (phone_number == undefined ||
-          !phone_number)){
-      wx.showToast({
-        title: '您没设置手机号码，无法进行短信提醒~',
-        icon: 'none'
-      })
-      return;
-    }
+    if (remind_method == 2){
+      if (phone_number == undefined || !phone_number) {
+        wx.showToast({
+          title: '您没设置手机号码，无法进行短信提醒~',
+          icon: 'none'
+        })
+        return;
+      }
 
-    if (country_code != undefined && country_code != '86') {
-      wx.showToast({
-        title: '目前短信提醒只支持国内手机号喔~',
-        icon: 'none'
-      })
-      return;
-    }
+      if (country_code != undefined && country_code != '86') {
+        wx.showToast({
+          title: '目前短信提醒只支持国内手机号喔~',
+          icon: 'none'
+        })
+        return;
+      }
+    } 
 
 
     let index = e.currentTarget.dataset.topicIndex;
     let topic_list = this.data.topic_list;
     topic_list[index].checked = true;
+    if (topic_list[index].remind_method == -1){
+      topic_list[index].remind_time = '08:00';
+    }
     topic_list[index].remind_method = remind_method;
     this.setData({
       topic_list: topic_list
@@ -312,6 +305,7 @@ Page({
     //返回角度 /Math.atan()返回数字的反正切值
     return 360 * Math.atan(_Y / _X) / (2 * Math.PI);
   },
+
 
   touchMove:function(e){
     if(e.touches.length==1){
