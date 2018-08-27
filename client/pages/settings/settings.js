@@ -322,16 +322,15 @@ Page({
         if (res.error_code == 200 && res.result_list.length != 0) {
           let user_info = res.result_list[0];
           let phone = user_info['phone_number'];
-          console.log(phone)
 
           that.setData({
             province: user_info['province'] ? user_info['province'] : '北京市',
             city: user_info['city'] ? user_info['city'] : '市辖区',
             county: user_info['county'] ? user_info['county'] : '海淀区',
-            gender: user_info['gender'] ? user_info['gender'] : '未填写',
+            gender: user_info['gender'] == '-1' ? '未设置' : user_info['gender'],
             wechat_id: user_info['wechat_id'] ? 
                       user_info['wechat_id'] : '未填写',
-            countryCode: phone ? phone.split('-')[0] : '',
+            countryCode: phone ? phone.split('-')[0] : '86',
             phone_number: phone ? phone.split('-')[1]: '',
             birthday: user_info['birthday'] ?
                       user_info['birthday'] : '未填写',
@@ -416,20 +415,29 @@ Page({
 
 
   /**
-   * 跳转到短信提醒设置界面
+   * 跳转到提醒设置界面
    */
   gotoReminder: function (e) {
+    let url = '/pages/settings/reminder?phone_number=' +
+                  this.data.phone_number + '&country_code=' +
+                  this.data.countryCode;
+      
     if (this.data.phone_number == '') {
-      wx.showToast({
-        title: '需要设置手机号才能开始短信提醒喔~',
-        icon: 'none'
+      wx.showModal({
+        title: '注意',
+        content: '您尚未设置手机号，将只能设置微信提醒，无法设置短信提醒',
+        showCancel: false,
+        success: (res) => {
+          wx.navigateTo({
+            url: url
+          })
+        }
       })
-      return;
+    } else {
+      wx.navigateTo({
+        url: url
+      })
     }
-
-    wx.navigateTo({
-      url: '/pages/settings/reminder',
-    })
   },
 
 
@@ -522,52 +530,6 @@ Page({
   clickModal: function(e){
     this.saveFormId(e.detail.formId);
   },
-
-
-  // /**
-  //  * 保存设置
-  //  */
-  // saveSettings: function(e){
-  //   let that = this;
-  //   let formId = e.detail.formId;
-  //   let remind_topic_list = [];
-
-  //   for (let i in this.data.topic_list) {
-  //     if (that.data.topic_list[i].checked)
-  //       remind_topic_list.push(that.data.topic_list[i].topic_name)
-  //   }
-
-  //   let is_set_reminder = remind_topic_list.length != 0;
-  //   console.log(this.data.county);
-  //   console.log(this.data.gender);
-
-  //   // api.postRequest({
-  //   //   'url': '/me/saveSettings',
-  //   //   'data': {
-  //   //     user_name: that.data.user_name,
-  //   //     province: that.data.province,
-  //   //     city: that.data.city,
-  //   //     county: that.data.county,
-  //   //     gender: that.data.gender,
-  //   //     topic_list: remind_topic_list.toString(),
-  //   //     remind_time: that.data.remind_time,
-  //   //     form_id: formId
-  //   //   },
-  //   //   'success': (res) => {
-  //   //     if (res && res.error_code != 200){
-  //   //       console.log('保存用户设置失败');
-  //   //       this.showFailToast();
-  //   //       return;
-  //   //     }
-  //   //     console.log('保存用户设置成功');
-  //   //     this.showSucceedToast(is_set_reminder);
-  //   //   },
-  //   //   'fail': (res) => {
-  //   //     this.showFailToast();
-  //   //     console.log('保存用户设置失败');
-  //   //   },
-  //   // });
-  // },
 
 
   showFailToast: function(){
@@ -702,13 +664,19 @@ Page({
         }
         that._changeWechatId(new_input);
       } else if (that.data.modal_title == '手机号') {
-
+        console.log(new_input)
         if (!utils.isPhoneNumberLegal(new_input)) {
           wx.showModal({
             title: '手机不合法',
             content: '您填写的手机号好像不太对劲诶，修改一下再去设置短信提醒好不好~',
             confirmText: '好哒',
             cancelText: '宝宝拒绝',
+            success: (res) => {
+              if (res.cancel){
+                that.hideModal();
+                return;
+              }
+            }
           })
           return;
         }

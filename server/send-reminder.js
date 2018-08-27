@@ -120,7 +120,7 @@ function startSendMessage() {
           remind_time = user_topic_list[i]['remind_time'];
 
       if (remind_method == -1 || !remind_time) continue;
-      if (user_id != 'ovMv05WNSF-fzJnoQ4UMSWtMWjFs') continue;
+      if (user_id != 'ovMv05V0Ac7Yib5g1TGAH95HC5XQ') continue;
 
       /* 计算时区 */
       let userCurrentTime = moment();
@@ -193,7 +193,7 @@ function startSendMessage() {
         let countryCode = phone_number.split('-')[0],
             phone = phone_number.split('-')[1];
         let params = [remind_time, "「" + topic + "」", 
-                  complete_rate + '%', rank,'人生在勤，不索何获。']
+              complete_rate + '%', rank,'人生在勤，不索何获。']
 
         /* 开始设置提醒 */
         setTimeout(() => {

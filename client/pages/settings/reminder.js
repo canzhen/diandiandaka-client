@@ -1,4 +1,5 @@
 const api = require('../../ajax/api.js');
+const moment = require('../../vendor/moment.js');
 // const utils = require('../../vendor/utils.js');
 
 Page({
@@ -11,14 +12,20 @@ Page({
     remind_time_list: [], //提醒时间
     form_id_list: [], //用于存储用户单击所产生的form_id
     time: '07:00', //选择时间是默认一开始显示的时间
+    country_code: '', //国家号
+    phone_number: '', //电话号码
+    delBtnWidth: 220,//删除按钮宽度单位（rpx）
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-
     let that = this;
+    that.setData({
+      country_code: options.country_code,
+      phone_number: options.phone_number
+    })
     api.postRequest({
       'url': '/topic/getUserTopic',
       'data': [],
@@ -36,9 +43,19 @@ Page({
             icon: 'none'
           })
           return;
+        } 
+        
+        for (let i in user_topic_list) {
+          user_topic_list[i].txtStyle = 'left:0rpx;'
+          let dated = false;
+          if (user_topic_list[i].end_date != '永不结束' &&
+              moment(user_topic_list[i].end_date, 'YYYY-MM-DD')
+               < moment()){
+            dated = true;
+          }
+          user_topic_list[i].dated = dated;
         }
-
-        console.log(user_topic_list);
+        console.log(user_topic_list)
         that.setData({
           topic_list: user_topic_list
         });
@@ -49,71 +66,34 @@ Page({
     });
 
 
+    this.initEleWidth(); // 初始化删除按钮的位置
+  },
 
 
+  /**
+   * 初始化删除按钮的宽度位置
+   */
+  initEleWidth: function () {
+    let delBtnWidth = this.getEleWidth(this.data.delBtnWidth);
+    this.setData({
+      delBtnWidth: delBtnWidth
+    });
+  },
 
 
-
-
-
-
-
-
-
-
-
-
-    // 查看是否用户已经设置提醒某些卡片，
-    // 如果已经设置，则直接显示出来
-    // api.postRequest({
-    //   'url': '/me/getRemindSettings',
-    //   'data': [],
-    //   'success': (res) => {
-    //     if (res.error_code == 200 && res.result_list.length != 0) {
-    //       let remind_info = res.result_list[0];
-    //       // console.log(remind_info)
-    //       let checked_topic_str = remind_info['topic_list'];
-    //       if (checked_topic_str == '') return;
-    //       that.getUserTopic(checked_topic_str, (status) => {
-    //         if (status != 0) return;
-
-    //         let topic_list = that.data.topic_list;
-    //         let remind_time = remind_info['remind_time']
-    //         // console.log(topic_list)
-
-    //         for (let i in topic_list){
-    //           if (checked_topic_str.indexOf(topic_list[i].topic_name) != -1){
-    //             // 用户已经设置了该卡片需要
-    //             console.log(111)
-    //           }
-    //         }
-
-
-
-
-
-
-    //         let remind_time_list = [];
-    //         // let remind_time = remind_info['remind_time'] ?
-    //         //   remind_info['remind_time'] : '未设置时间';
-    //         //设置微信提醒，只有一个时间
-    //         if (remind_info['remind_method'] == 1){ 
-    //           for (let i in that.data.topic_list)
-    //             remind_time_list.push(remind_time)
-    //         //设置短信提醒，有多个时间
-    //         } else if (remind_info['remind_method'] == 2){
-    //           remind_time_list = remind_info['remind_time'].split(',');
-    //         }
-    //         that.setData({
-    //           checked_topic_str: checked_topic_str,
-    //           remind_time_list: remind_time_list,
-    //           is_remind_switch_on: true
-    //         });
-    //       });
-    //     }
-    //   }
-    // });
-
+  /**
+   * 获取元素自适应后的实际宽度
+   */
+  getEleWidth: function (w) {
+    let real = 0;
+    try {
+      let res = wx.getSystemInfoSync().windowWidth;
+      let scale = (750 / 2) / (w / 2);//以宽度750px设计稿做宽度的自适应
+      real = Math.floor(res / scale);
+      return real;
+    } catch (e) {
+      return false;
+    }
   },
 
 
@@ -170,14 +150,34 @@ Page({
     this.saveFormId(e.detail.formId);
   },
 
+
   /**
-   * 设置微信为提醒方式
+   * 设置提醒方式，微信或短信
    */
   setRemindMethod: function(e){
-    let index = e.currentTarget.dataset.topicIndex;
     let remind_method = e.currentTarget.dataset.method;
-    let topic_list = this.data.topic_list;
+    let country_code = this.data.country_code;
+    let phone_number = this.data.phone_number;
+    if (remind_method == 2 && (phone_number == undefined ||
+          !phone_number)){
+      wx.showToast({
+        title: '您没设置手机号码，无法进行短信提醒~',
+        icon: 'none'
+      })
+      return;
+    }
 
+    if (country_code != undefined && country_code != '86') {
+      wx.showToast({
+        title: '目前短信提醒只支持国内手机号喔~',
+        icon: 'none'
+      })
+      return;
+    }
+
+
+    let index = e.currentTarget.dataset.topicIndex;
+    let topic_list = this.data.topic_list;
     topic_list[index].checked = true;
     topic_list[index].remind_method = remind_method;
     this.setData({
@@ -185,11 +185,6 @@ Page({
     })
   },
 
-
-  /**
-   * 设置短信为提醒方式
-   */
-  setSMSRemindMethod: function (e) { },
 
 
   /**
@@ -277,6 +272,92 @@ Page({
     // setTimeout(() => {
     //   wx.navigateBack({})
     // }, 2000)
+  },
+
+
+  touchStart:function(e){
+    if(e.touches.length==1){
+      this.setData({
+        //设置触摸起始点水平方向位置
+        startX:e.touches[0].clientX
+      });
+    }
+  },
+
+
+  touchMove:function(e){
+    if(e.touches.length==1){
+      //手指移动时水平方向位置
+      var moveX = e.touches[0].clientX;
+      //手指起始点位置与移动期间的差值
+      let disX = this.data.startX - moveX;
+      let delBtnWidth = this.data.delBtnWidth;
+      let txtStyle = "";
+      if (disX == 0 || disX < 0){//如果移动距离小于等于0，文本层位置不变
+        txtStyle = "left:0px";
+      }else if(disX > 0 ){//移动距离大于0，文本层left值等于手指移动距离
+        txtStyle = "left:-"+disX+"px";
+        if(disX>=delBtnWidth){
+          //控制手指移动距离最大值为删除按钮的宽度
+          txtStyle = "left:-"+delBtnWidth+"px";
+        }
+      }
+
+      //获取手指触摸的是哪一项
+      let index = e.currentTarget.dataset.index;
+      let topic_list = this.data.topic_list;
+
+      topic_list[index].txtStyle = txtStyle;
+      //更新列表的状态
+      this.setData({
+        topic_list: topic_list
+      });
+    }
+
+  },
+
+ 
+
+  touchEnd:function(e){
+    if(e.changedTouches.length==1){
+      //手指移动结束后水平位置
+      let endX = e.changedTouches[0].clientX;
+      //触摸开始与结束，手指移动的距离
+      let disX = this.data.startX - endX;
+      let delBtnWidth = this.data.delBtnWidth;
+      //如果距离小于删除按钮的1/2，不显示删除按钮
+      let txtStyle = disX > delBtnWidth/2 ? "left:-"+delBtnWidth+"px":"left:0px";
+      //获取手指触摸的是哪一项
+      let index = e.currentTarget.dataset.index;
+      let topic_list = this.data.topic_list;
+
+      topic_list[index].txtStyle = txtStyle;
+      //更新列表的状态
+      this.setData({
+        topic_list: topic_list
+      });
+    }
+  },
+
+
+  /**
+   * 删除卡片
+   */
+  deleteTopic: function(e){
+    this.saveFormId(e.detail.formId);
+
+    let index = e.target.dataset.index;
+    let topic_list = this.data.topic_list;
+
+    //移除列表中下标为index的项
+    topic_list[index].remind_time = '';
+    topic_list[index].remind_method = -1;
+    topic_list[index].txtStyle = 'left:0;';
+
+    //更新列表的状态
+    this.setData({
+      topic_list: topic_list
+    });
   }
   
 })

@@ -33,10 +33,6 @@ Page{
   padding-left: 20rpx;
   color: #888888;
   margin: 30rpx auto 16rpx auto;
-  /* border-radius: 20rpx; */
-  /* box-shadow: darkgrey 1px 1px 3px 1px; */
-  /* padding-left: 30rpx; */
-  /* background-color:#fff9f2; */
 }
 
 .content{
@@ -47,6 +43,9 @@ Page{
 
 
 .one-row{
+  position: absolute;
+  top:0;
+
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -59,12 +58,14 @@ Page{
 
   /* margin: 1rpx auto 5rpx auto; */
   padding-left: 20rpx;
-  padding-top: 25rpx;
-  padding-bottom: 25rpx;
 
-  
-  /* border */
-  border-bottom: thin solid #dadada83;
+
+  z-index: 5;
+  transition: left 0.2s ease-in-out;
+
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
 }
 
 .one-row-right{
@@ -96,6 +97,35 @@ Page{
   background-color: #feddbb;
   color: #616161;
 }
+
+.item{
+    position: relative;
+    border-top: 2rpx solid #eee;
+    height: 100rpx;
+    line-height: 100rpx;
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+.item:last-child{
+    border-bottom: 2rpx solid #eee;
+}
+
+.del-button{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top:0;
+
+  background-color: #e64340;
+  height: 100%;
+  z-index: 4;
+  right: 0;
+  color: #fff;
+}
+
 
 button{
   background-color: transparent;

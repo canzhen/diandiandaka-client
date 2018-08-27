@@ -1,34 +1,65 @@
 <view class="settings-panel">
   <form bindsubmit="saveSettings" report-submit="true">
-    <view class="title"> 设置微信或短信提醒 </view>
+    <view class="title"> 设置微信或短信提醒 (左滑取消提醒） </view>
 
     <view class="content">
-      <view class="one-row" wx:for="{{topic_list}}" wx:for-item="topic" 
-            wx:for-index="index" wx:key="key">
-        <text>{{topic.topic_name}}</text>
-        <view class="one-row-right">
-          <view style="display:flex;flex-direction:row;align-items:center;margin-right:20rpx;">
-            <image src="/images/weixin.png" class="image" data-topic-index="{{index}}"  data-method="1" bindtap="setRemindMethod"/>
-            <image wx:if="{{topic.remind_method == 1}}" src="/images/heigou.png" class="punched-image"/>
-            <image src="/images/duanxin.png" style="margin-left:20rpx;" class="image" data-topic-index="{{index}}" data-method="2" bindtap="setRemindMethod"/>
-            <image wx:if="{{topic.remind_method == 2}}"src="/images/heigou.png" class="punched-image"/>
-          </view>
+      <!-- 循环开始 -->
+      <view wx:for="{{topic_list}}" 
+            wx:for-item="topic" 
+            wx:for-index="index" 
+            wx:key="key"
+            class="item"
+            wx:if="{{!topic.dated}}">
 
-          <picker mode="time" value="{{topic.remind_time == '未设置时间' ? time : topic.remind_time}}" data-index="{{index}}" 
-          bindchange="bindRemindTimeChange"> 
-            <view wx:if="{{topic.remind_time}}">提醒时间：{{topic.remind_time}}</view>
-            <view wx:elif="{{!topic.remind_time}}">未设置时间</view>
-          </picker>
-          <image src='/images/right.png' class="one-row-right-arrow"></image>
+        <!-- touch部分开始 -->
+        <view class="one-row"
+            bindtouchstart="touchStart"
+            bindtouchmove="touchMove"
+            bindtouchend="touchEnd"
+            data-index="{{index}}"
+            style="{{topic.txtStyle}}">
+          <text>{{topic.topic_name}}</text>
+          <!-- 右边部分开始 -->
+          <view class="one-row-right">
+            <picker mode="time" value="{{topic.remind_time == '未设置时间' ? time : topic.remind_time}}" data-index="{{index}}" 
+            bindchange="bindRemindTimeChange"> 
+              <view wx:if="{{topic.remind_time}}">提醒时间：{{topic.remind_time}}</view>
+              <view wx:elif="{{!topic.remind_time}}">点击设置提醒时间</view>
+            </picker>
+
+            <view style="display:flex;flex-direction:row;align-items:center;margin-left:20rpx;">
+              <image src="/images/weixin.png" class="image" data-topic-index="{{index}}"  data-method="1" bindtap="setRemindMethod"/>
+              <image wx:if="{{topic.remind_method == 1}}" src="/images/heigou.png" class="punched-image"/>
+              <image src="/images/duanxin.png" style="margin-left:20rpx;" class="image" data-topic-index="{{index}}" data-method="2" bindtap="setRemindMethod"/>
+              <image wx:if="{{topic.remind_method == 2}}"src="/images/heigou.png" class="punched-image"/>
+            </view>
+            <image src='/images/right.png' class="one-row-right-arrow"></image>
+          </view>
+          <!-- 右边部分结束 -->
         </view>
+        <!-- touch部分结束 -->
+
+        
+        <form bindsubmit="deleteTopic"  data-index="{{index}}" 
+               report-submit="true" > 
+        <button class="del-button" hover-class="none" 
+                form-type="submit" style="width:{{delBtnWidth}}px;">
+          取消提醒
+        </button>
+        </form>
       </view>
+      <!-- 循环结束 -->
     </view>
+
 
 
     <view class="title"> 
     温馨提示：请在经常使用（1天至少1次）小程序的前提下设置微信提醒，否则会出现接受不到提醒的情况喔~ 
     </view>
 
+    <view class="title"> 
+    注意：已过期卡片无法设置提醒
+    </view>
 
     <button class="save-button" form-type="submit"> 
       保存设置

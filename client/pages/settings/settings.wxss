@@ -51,8 +51,10 @@ Page{
 
   
   /* border */
-  border-bottom: thin solid #dadada83;
+  border-top: 2rpx solid #eee;
 }
+
+
 
 .one-row-right{
   display: flex;
