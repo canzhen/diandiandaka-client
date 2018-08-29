@@ -34,7 +34,7 @@ function getAccessToken(cb){
 /**
  * 给用户推送模板消息的接口
  */
-function sendMessage(openid,formid, messageBody, cb){
+function sendMessage(openid,formid, messageBody, ifCombine, cb){
   getAccessToken((access_token) => {
     if (!access_token) {
       console.log('无法获取access_token，推送消息失败');
@@ -48,7 +48,7 @@ function sendMessage(openid,formid, messageBody, cb){
       'method': 'POST',
       'body': {
         touser: openid,
-        template_id: config.message.templateId,
+        template_id: ifCombine ? config.message.combineTemplateId: config.message.templateId,
         form_id: formid,
         page: '/pages/today/today', //用户单击之后自动跳到今日打卡
         data: messageBody,

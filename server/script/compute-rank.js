@@ -55,29 +55,46 @@ function startComputeRank() {
   let updateRank = function (topic_rate_map){
 
     return new Promise((resolve)=>{
+
+      
       let updateOneTopic = function (topic_name, value_list) {
-        let column_map = {
-          rank: {
-            condition_column: 'user_id',
-            condition_num: value_list.length / 2
+
+        return new Promise((resolve) => {
+          let column_map = {
+            rank: {
+              condition_column: 'user_id',
+              condition_num: value_list.length / 2
+            }
           }
-        }
-        dbhelper.updateMulti('user_topic', column_map, value_list,
-          "topic_name='" + topic_name + "'",
-          (status, errmsg) => {
-            if (status) writeLog('update' + topic_name + '的排名【成功】')
-            else writeLog('update' + topic_name + '的排名【失败】')
-          });
+          dbhelper.updateMulti('user_topic', column_map, value_list,
+            "topic_name='" + topic_name + "'",
+            (status, errmsg) => {
+              if (status) {
+                writeLog('update' + topic_name + '的排名【成功】');
+                resolve(true);
+              } else {
+                writeLog('update' + topic_name + '的排名【失败】');
+                resolve(false);
+              }
+            });
+        })
       }
 
+
+
+
+
+      let promiseList = [];
       for (let topic in topic_rate_map) {
         let value_list = [];
         for (let i in topic_rate_map[topic]) {
           value_list.push(topic_rate_map[topic][i]['user_id']);
           value_list.push(topic_rate_map[topic][i]['rank']);
         }
-        updateOneTopic(topic, value_list);
+        promiseList.push(updateOneTopic(topic, value_list));
       }
+
+      resolve(promiseList);
     })
   }
 
@@ -85,12 +102,15 @@ function startComputeRank() {
 
   getCompleteRateFromDB().then((topic_rate_map) => {
     return updateRank(topic_rate_map);
-  }).then(()=>{
-    console.log('结束了')
+  }).then((promiseList) => {
+    Promise.all(promiseList).then((result) => {
+      writeLog('脚本执行结束....');
+      process.exit(0);
+    })
   })
  
 }
 
 
-writeLog('starting....')
+writeLog('脚本开始执行....')
 startComputeRank()

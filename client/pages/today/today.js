@@ -339,6 +339,7 @@ Page({
     } else { //如果选择要弹框，则弹出框
       this.setData({
         selected_id: id,
+        current_time: moment().format('YYYY-MM-DD HH:mm'),
         show_modal: true,
         // modal_todate_time: moment().format('YYYY-MM-DD HH:mm'),
         modal_placeholder: '今天' + data.topic_name + '有什么感想咩~',

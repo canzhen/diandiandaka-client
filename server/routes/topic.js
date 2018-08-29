@@ -230,6 +230,13 @@ router.post('/getAllTopic', function (req, res) {
 
 
 
+
+
+
+
+
+
+
 /**
  * 通过用户id在数据库中获取该用户的卡片列表
  */
@@ -272,7 +279,7 @@ router.post('/getUserTopic', function (req, res) {
 
 
 /**
- * 保存用户的设置，包括用户的form_id一起存
+ * 保存用户的卡片提醒设置
  */
 router.post('/saveTopicRemindSettings', function (req, res) {
   if (!req.header('session-id')) {
@@ -301,13 +308,6 @@ router.post('/saveTopicRemindSettings', function (req, res) {
 
 
 
-
-
-
-
-
-
-
 /**
  * 用户新增一个topic
  */
@@ -319,7 +319,7 @@ router.post('/create', function (req, res) {
     return;
   }
 
-  /* 1. 往用户卡片表里新增一条数据 */
+
   // 从redis里获取用户的唯一标识：openid
   let sessionid = req.header('session-id')
   redishelper.getValue(sessionid, (value) => {
@@ -328,10 +328,12 @@ router.post('/create', function (req, res) {
       return;
     }
 
+    /**
+     * 更新topic表
+     * 存在，则打卡人数加一；不存在，新增数据
+     */
     let insertTopic = function(){
       return new Promise((resolve) => {
-        /* 更新topic表 */
-        // 存在，则打卡人数加一；不存在，新增数据
         dbhelper.insert('topic', 'topic_name, topic_url, use_people_num',
           [req.body.topicname, req.body.topicurl, 1],
           "ON DUPLICATE KEY UPDATE use_people_num=use_people_num+1",
@@ -343,6 +345,9 @@ router.post('/create', function (req, res) {
     }
 
 
+    /**
+     * 往用户表里新增数据
+     */
     let insertUserTopic = function(){
       return new Promise((resolve) => {
         dbhelper.insert('user_topic',

@@ -80,11 +80,11 @@ Page{
   margin-bottom:15rpx;
 }
 
-.topic-image-each-item image{
+/* .topic-image-each-item image{
   width: 100rpx;
   height: 100rpx;
   z-index: 0;
-}
+} */
 
 .image {
   width: 100rpx;
@@ -94,8 +94,8 @@ Page{
 }
 
 .image-punched-in {
-  width: 80rpx;
-  height: 80rpx;
+  width: 100rpx;
+  height: 100rpx;
   margin-top: -100rpx;
   z-index: 2;
 }
@@ -123,14 +123,14 @@ Page{
 }
 
 .modal-dialog {
-  width: 540rpx;
+  width: 560rpx;
   overflow: hidden;
   position: fixed;
   top: 32%;
   left: 0;
   z-index: 9999;
   background: #f9f9f9;
-  margin: -180rpx 105rpx;
+  margin: -180rpx 95rpx;
   border-radius: 36rpx;
 }
 

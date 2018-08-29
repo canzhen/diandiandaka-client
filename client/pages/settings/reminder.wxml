@@ -1,9 +1,27 @@
 <scroll-view class="settings-panel" style="height:95vh;"
   scroll-y scroll-with-animation enable-back-to-top>
   <form bindsubmit="saveSettings" report-submit="true">
-    <view class="title"> 设置微信或短信提醒 (左滑取消提醒） </view>
+    <view class="title" > 
+      <view class="row-view">
+        设置微信或短信提醒 
+        <view wx:if="{{!isCombine}}">（左滑取消提醒）</view>
+      </view>
+      <form bindsubmit="merge" report-submit="true">
+      <button form-type='submit' hover-class='none'
+              style="font-size:25rpx;padding-right:0;">
+      <view class="title-right" wx:if="{{!isCombine}}">
+        <text style="margin-right:10rpx;color:#616161;"> 合并提醒 </text>
+        <image src="/images/hebing.png" class="small-image"></image>
+      </view>
+      <view class="title-right" wx:if="{{isCombine}}">
+        <text style="margin-right:10rpx;color:#616161;"> 取消合并 </text>
+        <image src="/images/quxiaohebing.png" class="small-image"></image>
+      </view>
+      </button>
+      </form>
+    </view>
 
-    <view class="content">
+    <view class="content" wx:if="{{!isCombine}}">
       <!-- 循环开始 -->
       <view wx:for="{{topic_list}}" 
             wx:for-item="topic" 
@@ -22,19 +40,28 @@
           <text>{{topic.topic_name}}</text>
           <!-- 右边部分开始 -->
           <view class="one-row-right">
-            <picker mode="time" value="{{topic.remind_time == '未设置时间' ? time : topic.remind_time}}" data-index="{{index}}" 
-            bindchange="bindRemindTimeChange"> 
+            <picker mode="time" data-index="{{index}}" 
+                    value="{{topic.remind_time}}"
+                    bindchange="bindRemindTimeChange"> 
               <view wx:if="{{topic.remind_time}}">提醒时间：{{topic.remind_time}}</view>
               <view wx:elif="{{!topic.remind_time}}">点击设置提醒时间</view>
             </picker>
 
-            <view style="display:flex;flex-direction:row;align-items:center;margin-left:20rpx;">
-              <image src="/images/weixin.png" class="image" data-topic-index="{{index}}"  data-method="1" bindtap="setRemindMethod"/>
+            <form bindsubmit="setRemindMethod" report-submit="true"
+                  data-method="1" data-topic-index="{{index}}">
+            <button form-type='submit' hover-class='none' style="margin-left:-5rpx;">
+              <image src="/images/weixin.png" class="image"/>
               <image wx:if="{{topic.remind_method == 1}}" src="/images/heigou.png" class="punched-image"/>
-              <image src="/images/duanxin.png" style="margin-left:20rpx;" class="image" data-topic-index="{{index}}" data-method="2" bindtap="setRemindMethod"/>
+            </button>
+            </form>
+
+            <form bindsubmit="setRemindMethod" report-submit="true"
+                   data-method="2" data-topic-index="{{index}}">
+            <button form-type='submit' hover-class='none'  style="margin-left:-40rpx;">
+              <image src="/images/duanxin.png" class="image"/>
               <image wx:if="{{topic.remind_method == 2}}"src="/images/heigou.png" class="punched-image"/>
-            </view>
-            <image src='/images/right.png' class="one-row-right-arrow"></image>
+            </button>
+            </form>
           </view>
           <!-- 右边部分结束 -->
         </view>
@@ -54,6 +81,75 @@
 
 
 
+
+
+
+
+
+
+
+
+    <!-- 统一设置提醒时间开始 -->
+    <view class="content" wx:if="{{isCombine}}"
+          wx:for="{{combine_topic_list}}" wx:key="key"
+          wx:for-item="topic_info" wx:for-index="group_index">
+      <!-- <view class="item"> -->
+      <view class="one-row-combine">
+        <!-- 卡片名称 -->
+        <view class="column-view" style="width: 30%;">
+        <view class="row-view" 
+              wx:for="{{topic_info.topic}}" wx:key="key"
+              wx:for-item="topic_name" wx:for-index="index">
+          {{topic_name}}
+          <form bindsubmit="move" report-submit="true" 
+                data-group-index="{{group_index}}"
+                data-topic-index="{{index}}"
+                data-current-topic="{{topic_name}}">
+          <button form-type='submit' hover-class='none' style='margin-left:-20rpx;'>
+            <image src="/images/xiugai2.png" 
+                style="margin-left:10rpx;"
+                class="small-image"/>
+          </button>
+          </form>
+        </view>
+        </view>
+        <!-- 卡片名称结束 -->
+
+        <!-- 提醒方式和时间 -->
+        <view class="one-row-right" style="width:70%;padding-right:0;">
+          <picker mode="time" data-group-index="{{group_index}}" 
+                  value="{{topic_info.remind_time}}"
+                  bindchange="bindCombineRemindTimeChange"> 
+              <view>提醒时间：{{topic_info.remind_time}}</view>
+          </picker>
+
+          <form bindsubmit="setRemindMethod" report-submit="true"
+                  data-method="1" data-index="{{group_index}}">
+          <button form-type='submit' hover-class='none' style="margin-left:-5rpx;">
+            <image src="/images/weixin.png" class="image"/>
+            <image wx:if="{{topic_info.remind_method == 1}}" src="/images/heigou.png" class="punched-image"/>
+          </button>
+          </form>
+
+          <form bindsubmit="setRemindMethod" report-submit="true"
+                  data-method="2" data-index="{{group_index}}">
+          <button form-type='submit' hover-class='none'  style="margin-left:-40rpx;">
+            <image src="/images/duanxin.png" class="image"/>
+            <image wx:if="{{topic_info.remind_method == 2}}"src="/images/heigou.png" class="punched-image"/>
+          </button>
+          </form>
+        </view>
+        <!-- 提醒方式和时间结束 -->
+      </view>
+      <!-- </view> -->
+    </view>
+    <!-- 统一设置提醒时间结束 -->
+
+    <view class="title" wx:if="{{isCombine}}"> 
+    提示：合并提醒之后，将会统一提醒多个卡片，同时将无法显示排名、完成度等具体数据；合并提醒之后，只有一个卡片的组也将使用无排名、完成度的模板发送提醒
+    </view>
+
+
     <view class="title"> 
     温馨提示：请在经常使用（1天至少1次）小程序的前提下设置微信提醒，否则会出现接受不到提醒的情况喔~ 
     </view>
@@ -67,3 +163,44 @@
     </button>
   </form>
 </scroll-view>
+
+
+
+
+
+
+
+
+
+
+<!-- 设置分组modal开始 -->
+<view class="modal-mask" bindtap="hideModal" catchtouchmove="preventTouchMove" wx:if="{{show_modal}}"></view>
+
+<form bindsubmit="clickModal" report-submit="true" wx:if="{{show_modal}}">
+<view class="modal-dialog" >
+  <view class="modal-title">修改提醒分组</view>
+  <view class="modal-content">
+    <picker value="{{current_group}}" range="{{group_list}}"
+            bindchange="groupPickerChange">
+      <view class="modal-picker">
+      {{current_group}}
+      <image src="/images/zhankai.png" class="small-image"/>
+      </view>
+    </picker>
+  </view>
+
+  <view class="modal-footer">
+    <button form-type="submit" hover-class="none" 
+            class="btn-cancel" bindtap="onCancel">
+            取消
+    </button>
+    <button form-type="submit" hover-class="none" 
+            class="btn-confirm" bindtap="onConfirm">
+            确定
+    </button>
+    <!-- <view class="btn-cancel" bindtap="onCancel">取消</view>
+    <view class="btn-confirm" bindtap="onConfirm">确定</view> -->
+  </view>
+</view>
+</form>
+<!-- 设置分组modal结束 -->
