@@ -70,8 +70,7 @@
 3. mysql -uroot diandiandaka -p （mysql123）打开数据库
 4. 进入/home/ubuntu/diandiandaka，运行pm2 log bin/www --watch --name dddk，再运行pm2 log dddk即可查看日志
 5. 进入/usr/local/nginx（nginx当时是用编译安装的），运行sbin/nginx -c conf/nginx.conf，启动nginx
-6. 如果要编辑定时任务，vim /etc/crontab进行编辑，随后运行service cron reload和service cron restart即可
-
+6. 如果要编辑定时任务，crontab -e修改即可，crontab -l查看定时任务是否被添加
 
 本地
 1. 进入开发目录，进入server目录，运行fis3 release -w，即可自动监控改动同步到服务器
