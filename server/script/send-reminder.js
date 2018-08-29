@@ -29,9 +29,10 @@ function writeLog(log){
   console.log('[' + moment().format('YYYY-MM-DD HH:mm:ss') + '] ' + log);
 }
 
+
+
 /** 开始发送消息 */
 function startSendMessage() { 
-
   /**
    * 遍历usertopic表
    */
@@ -107,7 +108,7 @@ function startSendMessage() {
 
 
   /**
-   * 开始执行
+   * 正式开始执行
    */
   getAllFromUserTopic().then((user_topic_list) => {
     return getTopicUseMap(user_topic_list)
@@ -147,6 +148,7 @@ function startSendMessage() {
 
       let diffTime = getDiffSeconds(user_id, topic, timezone, remind_time, remind_method);
 
+
       /** 微信推送 */
       if (remind_method == 1){
         // 准备form_id
@@ -159,12 +161,16 @@ function startSendMessage() {
           messagehelper.sendMessage(user_id, form_id,
             {
               keyword1: { value: topic }, //打卡项目
-              keyword2: { value: moment().format('YYYY年MM月DD日') }, //打卡时间
+              keyword2: { value: moment().
+                          format('YYYY年MM月DD日') }, //打卡时间
               keyword3: { value: total_day }, //已打卡天数
               keyword4: { value: complete_rate + '%'}, //进度
-              keyword5: { value: rank }, //今日排名
+              keyword5: { value: rank == -1 ? 
+                          topic_use_map[topic]: rank }, //今日排名
               keyword6: { value: topic_use_map[topic] }, //参加人数
-              keyword7: { value: perseveranceList[utils.getRandom(0, perseveranceList.length - 1)] }, //提示语
+              keyword7: { value: perseveranceList[utils.
+                            getRandom(0, 
+                            perseveranceList.length - 1)] }, //提示语
             }, false, //单独发送
             (status, errmsg) => {
               if (status) writeLog('推送消息成功');
@@ -182,7 +188,9 @@ function startSendMessage() {
         let countryCode = phone_number.split('-')[0],
             phone = phone_number.split('-')[1];
         let params = [remind_time, "「" + topic + "」", 
-              complete_rate + '%', rank,'人生在勤，不索何获。']
+                      complete_rate + '%', 
+                      rank == -1 ? topic_use_map[topic] : rank ,
+                      '人生在勤，不索何获。']
 
         /* 开始设置提醒 */
         setTimeout(() => {
@@ -201,6 +209,12 @@ function startSendMessage() {
       }
     }
     // 循环发送单独提醒结束
+
+
+
+
+
+
 
 
 
