@@ -209,9 +209,11 @@ router.post('/check', function (req, res) {
  * 获取topic表的所有数据
  */
 router.post('/getAllTopic', function (req, res) {
+  let condition = (req.body.limit_num != undefined) ? 
+                    'LIMIT ' + req.body.limit_num : '';
   dbhelper.select(
     'topic', '', '', [],
-    'ORDER BY use_people_num DESC LIMIT ' + req.body.limit_num,
+    'ORDER BY use_people_num DESC ' + condition,
     (status, result_list) => {
       for (var i in result_list) {
         result_list[i]['topic_url'] = result_list[i]['topic_url'];
@@ -219,7 +221,7 @@ router.post('/getAllTopic', function (req, res) {
       let error_code = status ? 200 : 100;
       res.send({
         'error_code': error_code,
-        'data': result_list
+        'result_list': result_list
       });
     });
 });

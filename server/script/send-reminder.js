@@ -133,7 +133,7 @@ function startSendMessage() {
           (end_date != '永不结束' && moment() > 
           moment(end_date, 'YYYY-MM-DD'))) 
             continue;
-      if (user_id != 'ovMv05WNSF-fzJnoQ4UMSWtMWjFs') continue;
+      // if (user_id != 'ovMv05WNSF-fzJnoQ4UMSWtMWjFs') continue;
       if (remind_group != -1){
         if (combineTopicMap[remind_group] == undefined)
           combineTopicMap[remind_group] = { topic: [] }

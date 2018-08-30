@@ -189,18 +189,16 @@
 
 
 
-
-
-    <!-- 一行，已过期卡片 -->
-    <view class="one-line-view">
+    <!-- 一行，已结束卡片 -->
+    <view class="one-line-view" wx:if="{{dated_topic_length != 0}}">
       <view class="line-left"></view>
-      <text style="margin:auto 15rpx auto 15rpx;"> 已过期的卡片 </text>
+      <text style="margin:auto 15rpx auto 15rpx;"> 已结束的卡片 </text>
       <view class="line-right"></view>
     </view>
 
 
 
-      <!-- 已过期的卡片 -->
+      <!-- 已结束的卡片 -->
       <!-- 循环部分开始 -->
       <view class="block" style="background-color:{{dated_topic_info_map[topic_name].dated?'#bebebe5e':colorList[check_info_per_topic[topic_name].length%8]}};" wx:for="{{dated_topic_info_map}}" wx:key="key" wx:for-index="topic_name" wx:for-item="topic_name">
         <form bindsubmit="selectTopicLog" data-idx="{{topic_name}}" report-submit='true' >

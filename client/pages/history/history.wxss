@@ -276,8 +276,9 @@ image{
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  text-align: center;
   top: 120rpx;
-  /* left: 120rpx; */
+  left: 120rpx;
 }
 
 

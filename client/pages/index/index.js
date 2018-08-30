@@ -29,7 +29,7 @@ Page({
       'success': (res) => { //请求成功
         if (res.error_code == 200) {
           this.setData({
-            hot_topic_data: res.data
+            hot_topic_data: res.result_list
           });
         } else {
           setTimeout(function () {

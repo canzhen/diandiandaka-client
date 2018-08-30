@@ -1,1 +1,72 @@
-/* pages/me/myrank.wxss */
+Page{
+  display: flex;
+  flex-direction: column;
+  /* align-items: flex-start; */
+  /* justify-content: space-between; */
+  width:100%;
+  font-size: 30rpx;
+  color: #616161;
+}
+
+image{
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+}
+
+
+.one-row{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  height: 150rpx;
+  /* width: 100%; */
+
+  padding-left: 50rpx;
+  padding-right: 50rpx;
+
+  /* border */
+  border-top: 2rpx solid #eee;
+}
+
+
+.one-row:last-child{
+  border-bottom: 2rpx solid #eee;
+}
+
+
+
+
+.one-row-right{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+
+  padding-left: 50rpx;
+}
+
+
+
+
+
+
+
+
+button{
+  background-color: transparent;
+  font-size: 35rpx;
+  line-height: 40rpx;
+  color: #616161;
+  /* width: 100%; */
+  /* margin-left: 0;
+  margin-right:0; */
+  /* margin: 0 auto 0 0; */
+}
+
+
+/* 去除button边框 */
+button::after{
+  border: none;
+}

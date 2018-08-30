@@ -304,6 +304,7 @@ Page({
     // 这样在save的时候，就又会被save一次
     let dataChangedData = 'my_topic_data[' + id + '].data_changed'; 
     let boolData = 'my_topic_data[' + id + '].is_checked';
+    let deleteData = 'my_topic_data[' + id + '].is_deleted';
     let insistData = 'my_topic_data[' + id + '].insist_day';
     let totalData = 'my_topic_data[' + id + '].total_day';
     let origin_insist_day = data.insist_day;
@@ -320,6 +321,7 @@ Page({
             this.setData({
               [dataChangedData]: true,
               [boolData]: false,
+              [deleteData]: true, //删除的卡片及时又打卡了，也要先删除之前的
               [insistData]: origin_insist_day - 1,
               [totalData]: origin_total_day - 1
             });
@@ -480,11 +482,11 @@ Page({
     let id = this.data.selected_id;
 
     let logData = 'my_topic_data[' + id + '].log';
+    this.hideModal();
     this.setData({
       [logData]: this.data.textarea_value,
       textarea_value: '',
     });
-    this.hideModal();
   },
 
 
@@ -509,6 +511,9 @@ Page({
           }
           console.log('取消用户[' + topic_name + ']卡片的showlog成功');
           that.hideModal();
+          this.setData({
+            textarea_value: '',
+          });
         },
         'fail': (res) => {
           console.log('取消用户[' + topic_name + ']卡片的showlog失败T_T');

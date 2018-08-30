@@ -247,7 +247,8 @@ Page({
     this.setData({
       completeness_map: completenessMap,
       undated_topic_info_map: undated_topic_info_map, 
-      dated_topic_info_map: dated_topic_info_map
+      dated_topic_info_map: dated_topic_info_map,
+      dated_topic_length: Object.keys(dated_topic_info_map).length
     });
 
 

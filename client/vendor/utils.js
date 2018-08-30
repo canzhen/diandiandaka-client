@@ -202,10 +202,10 @@ module.exports.formatCheckData = function (topic_list){
   let checked_topic_list = [],
       uncheck_topic_list = [];
   for (let i in topic_list){
+    if (topic_list[i].is_deleted)
+      uncheck_topic_list.push(topic_list[i]);
     if (topic_list[i].is_checked)
       checked_topic_list.push(topic_list[i]);
-    else
-      uncheck_topic_list.push(topic_list[i]);
   }
 
   /* 第一步，处理checked topic，需要更新user_topic，并往topic_list里新增数据*/
