@@ -21,7 +21,8 @@ router.post('/check', function (req, res) {
     user_topic_update_list = req.body.user_topic_update_list,
     user_topic_insert_list = req.body.user_topic_insert_list,
     user_topic_update_reduce_list = req.body.user_topic_update_reduce_list,
-    user_topic_update_column_map = req.body.user_topic_update_column_map;
+    user_topic_update_column_map = req.body.user_topic_update_column_map,
+    user_topic_count_number = req.body.user_topic_count_number;
 
 
   /* 处理删除打卡 */
@@ -168,7 +169,7 @@ router.post('/check', function (req, res) {
 
       dbhelper.insertMulti( //update topic_check，记录具体打卡详情
         'topic_check',
-        'topic_name, check_time, check_timestamp, log, user_id',
+        'topic_name, check_time, check_timestamp, log, count, user_id',
         user_topic_insert_list, '',
         (status, errmsg) => {
           let error_code = status ? 200 : 100;
@@ -477,7 +478,10 @@ router.post('/update', function (req, res) {
       topic_name = req.body.topic_name,
       topic_url = req.body.topic_url,
       start_date = req.body.start_date,
-      end_date = req.body.end_date;
+      end_date = req.body.end_date,
+      if_show_log = req.body.if_show_log,
+      topic_count_phase = req.body.topic_count_phase,
+      topic_count_unit = req.body.topic_count_unit;
 
 
   redishelper.getValue(id, (openid) => {
@@ -490,9 +494,12 @@ router.post('/update', function (req, res) {
     let updateUserTopic = function () {
       return new Promise((resolve) => {
         dbhelper.update('user_topic',
-          'topic_name=?,topic_url=?, start_date=?,end_date=?',
+          'topic_name=?, topic_url=?, start_date=?, end_date=?,' + 
+          'if_show_log=?, topic_count_phase=?, topic_count_unit=?',
           'user_id=? AND topic_name=?',
-          [topic_name, topic_url, start_date, end_date, openid, original_topic_name],
+          [topic_name, topic_url, start_date, end_date, 
+            if_show_log, topic_count_phase, topic_count_unit,
+            openid, original_topic_name],
           (status, errmsg) => {
             console.log('updateUserTopic的状态是：' + status)
             if (!status) {
@@ -841,7 +848,8 @@ router.post('/deleteCheck', function (req, res) {
   let topic_name = req.body.topic_name,
       check_time = req.body.check_time,
       check_timestamp = req.body.check_timestamp,
-      last_check_time = req.body.last_check_time;
+      last_check_time = req.body.last_check_time,
+      reduce_day_num = req.body.reduce_day_num;
 
   redishelper.getValue(id, (openid) => {
     if (!openid) {
@@ -866,13 +874,18 @@ router.post('/deleteCheck', function (req, res) {
       })
     }
 
+
     // 更新user_topic里的打卡数据
     let reduceUserTopicData = function(){
       return new Promise((resolve) => {
+        if (reduce_day_num == 0) return;
         // 删除topic_check里的打卡记录
         dbhelper.update('user_topic', 
-          'insist_day = insist_day - 1, total_day = total_day - 1',
-          'user_id = ? AND topic_name = ?', [openid, topic_name],
+          'insist_day = insist_day - 1, total_day = total_day - ' +
+          reduce_day_num +',' + 
+          'last_check_time = ?',
+          'user_id = ? AND topic_name = ?', 
+          [last_check_time, openid, topic_name],
           (status, errmsg) => {
             if (status) console.log('删除check记录成功');
             else console.log('删除check记录失败');

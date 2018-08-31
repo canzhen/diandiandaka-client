@@ -636,10 +636,14 @@ Page({
   },
 
 
+
+
+
   /**
    * 长按日志，弹出删除窗口
    */
   longTapLog: function(e){
+    console.log(this.data.check_info_per_topic)
     let that = this;
     wx.showModal({
       title: '删除',
@@ -650,26 +654,41 @@ Page({
         let topic_name = e.currentTarget.dataset.topicName,
           check_time = e.currentTarget.dataset.date,
           check_timestamp = e.currentTarget.dataset.time,
+          insist_day = that.data.topic_info_map[topic_name].insist_day,
           idx = e.currentTarget.dataset.idx,
           new_check_info_per_topic = that.data.check_info_per_topic,
           new_check_info = new_check_info_per_topic[topic_name],
-          last_check_time = '',
+          last_check_time = '', reduce_day_num = 0,
           l = new_check_info.length;
 
 
         // 如果一天有两个日志，则不需要update user_topic的数据
         // 否则， 删掉日志则代表删掉一次打卡记录
-        if (new_check_info[l - 2].check_time == 
-          new_check_info[l - 1].check_time){
-          last_check_time = new_check_info[l - 2].check_time;
+        let lastDate = moment(new_check_info[0].check_time, 'YYYY-MM-DD')
+        let ifTodayCheck = lastDate == moment().format('YYYY-MM-DD');
+        let lastInsistDay = lastDate.clone().subtract(ifTodayCheck ? insist_day - 2 : insist_day - 1, 'days');
+        reduce_day_num = moment(check_time, 'YYYY-MM-DD') >= 
+                  lastInsistDay ? 1 : 0;
+        // console.log(ifTodayCheck ? insist_day - 1 : insist_day)
+        console.log(new_check_info[0].check_time)
+        console.log(lastDate.format('YYYY-MM-DD'))
+        console.log(lastInsistDay.format('YYYY-MM-DD'))
+        for (let i in new_check_info) {
+          let curDate = moment(check_time, 'YYYY-MM-DD');
+          if (moment(new_check_info[i].check_time, 'YYYY-MM-DD') 
+                >= curDate) continue;
+          last_check_time = new_check_info[i].check_time;
+          break;
         }
+        console.log(last_check_time, reduce_day_num)
         api.postRequest({
           'url': '/topic/deleteCheck',
           'data':{
             topic_name: topic_name, 
             check_time: check_time,
             check_timestamp: check_timestamp,
-            last_check_time: last_check_time
+            last_check_time: last_check_time,
+            reduce_day_num: reduce_day_num
           },
           'success': (res) => {
             if (res.error_code != 200){
@@ -836,3 +855,5 @@ function initChart(canvas, width, height) { //初始化图表
   return chart;
 }
 
+// console.log(moment().diff(moment('2018-08-25','YYYY-MM-DD'), 'days'))
+// console.log(moment().subtract(2, 'days').format('YYYY-MM-DD'))

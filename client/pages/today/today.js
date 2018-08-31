@@ -15,6 +15,7 @@ Page({
     is_reset_name: false, //默认用户没修改过名字
 
     show_modal: false, //是否弹出弹框
+    // count_number: '', //打卡计数
     modal_placeholder: '', //弹出框的默认字符串
     modal_todate_time: '', //弹出框要显示的今日日期时间
     word_left_num: 140, //微信默认textarea最多输入140字
@@ -188,7 +189,7 @@ Page({
         'user_topic_update_list': user_topic_update_list,
         'user_topic_update_column_map': user_topic_update_column_map,
         'user_topic_update_reduce_list': user_topic_update_reduce_list,
-        'user_topic_insert_list': user_topic_insert_list,
+        'user_topic_insert_list': user_topic_insert_list
       },
       'showLoading': false, 
       'success': (res) => {
@@ -215,7 +216,7 @@ Page({
     utils.saveFormId(this.data.form_id_list);
     this.setData({
       form_id_list: [],
-      show_modal: false
+      show_modal: false,
     });
   },
 
@@ -340,12 +341,15 @@ Page({
     if (data.if_show_log == 0) {
       this._check(id, data);
     } else { //如果选择要弹框，则弹出框
+      console.log(data)
       this.setData({
         selected_id: id,
         current_time: moment().format('YYYY-MM-DD HH:mm'),
         show_modal: true,
         // modal_todate_time: moment().format('YYYY-MM-DD HH:mm'),
         modal_placeholder: '今天' + data.topic_name + '有什么感想咩~',
+        count_phase: data.topic_count_phase,
+        count_unit: data.topic_count_unit
       });
     }
 
@@ -483,12 +487,17 @@ Page({
     let id = this.data.selected_id;
 
     let logData = 'my_topic_data[' + id + '].log';
+    let countData = 'my_topic_data[' + id + '].count';
     this.hideModal();
     this.setData({
       [logData]: this.data.textarea_value,
+      [countData]: this.data.count_number,
       textarea_value: '',
     });
   },
+
+
+
 
 
 
@@ -556,6 +565,15 @@ Page({
     });
   },
 
+
+  /**
+   * 打卡计数变化
+   */
+  bindTopicCountNumberChange: function(e){
+    this.setData({
+      count_number: e.detail.value
+    })
+  },
 
 
   /**

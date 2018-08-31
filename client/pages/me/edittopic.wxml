@@ -6,6 +6,7 @@
     </view>
     <view class="line"></view>
 
+
     <!-- 开始日期panel开始 -->
     <view class="one-line-panel">
       <!-- left panel开始 -->
@@ -20,6 +21,8 @@
     <!-- 开始日期panel结束 -->
     <view class="line"></view>
 
+
+
     <!-- 结束日期panel开始 -->
     <view class="one-line-panel">
       <!-- left panel开始 -->
@@ -33,6 +36,38 @@
     </view>
     <!-- 结束日期panel结束 -->
     <view class="line"></view>
+
+
+
+
+
+    <view class="one-line-inner-panel" style="width:100%;">
+      <text style="width: 190rpx;" space="ensp">计数关键词 </text>
+      <input style="width: 250rpx;" placeholder-class="center"
+       placeholder="例如：今天跑了" value="{{topic_count_phase}}" 
+       name="input_topic_count_phase" 
+       bindchange="bindTopicCountPhaseChange"/>
+      <text style="width: 30rpx;"space='ensp'>n   </text>
+      <input style="width: 100rpx;" placeholder-class="center" 
+        placeholder="步" value="{{topic_count_unit}}" 
+        name="input_topic_count_unit" maxlength="3"
+        bindchange="bindTopicCountUnitChange"/>
+    </view>
+    <view class="line"></view>
+
+    <view class="oneline-tips" wx:if="{{ifEditTopicCount}}">
+      注意：修改计数单位将影响之前所打卡的数字统计，请慎重修改喔~
+    </view>
+
+
+    <view class="one-line-inner-panel" style="width:100%;">
+      <text space="ensp">是否弹出打卡日志 </text>
+       <switch checked="{{if_show_log}}" 
+               bindchange="bindSwitchLogChange"/>
+    </view>
+    <view class="line"></view>
+
+
 
     <view class="pick-icon-text"> 
       <view>

@@ -10,8 +10,10 @@ Page({
     icon_name_num: [],
     topic_name: '',
     topic_url: '', //topic图片的url
-    start_date: moment().format('YYYY-MM-DD'),
+    start_date: '',
     end_date: '永不结束',
+    topic_count_phase: '', 
+    topic_count_unit: '', 
     pre_end_date: '', //在取消永不结束checkbox时，就把之前选好的end_date再放上去
     has_special_character: false, //计划名称中是否包含特殊字符
   },
@@ -43,6 +45,11 @@ Page({
             topic_url: options.topic_url ? options.topic_url : '',
             start_date: options.start_date ? options.start_date : '',
             end_date: options.end_date ? options.end_date : '',
+            if_show_log: options.if_show_log ? options.if_show_log : '',
+            topic_count_phase: options.topic_count_phase ? 
+                        options.topic_count_phase : '',
+            topic_count_unit: options.topic_count_unit ? 
+                        options.topic_count_unit : ''
           });
           // 必须在设置完scroll-view相关高度之后设置scroll-into-id才有效
           this.setData({
@@ -185,7 +192,10 @@ Page({
         topic_name: value.input_topic_name,
         topic_url: this.data.topic_url,
         start_date: value.start_date,
-        end_date: value.end_date
+        end_date: value.end_date,
+        if_show_log: this.data.if_show_log ? 1 : 0,
+        topic_count_phase: value.input_topic_count_phase,
+        topic_count_unit: value.input_topic_count_unit
       },
       'success': (res) => {
         console.log(res.error_code);
@@ -343,5 +353,27 @@ Page({
         });
       }
     });
+  },
+
+
+
+
+  /**
+   * 卡片计数单位修改
+   */
+  bindTopicCountUnitChange: function(e){
+    this.setData({
+      ifEditTopicCount: true
+    })
+  },
+
+
+  /**
+   * 是否弹出打卡日志修改
+   */
+  bindSwitchLogChange: function(e){
+    this.setData({
+      if_show_log: e.detail.value
+    })
   },
 });

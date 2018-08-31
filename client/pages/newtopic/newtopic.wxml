@@ -1,5 +1,5 @@
 <view style="display:flex; flex-direction:column; margin-left: 70rpx; margin-right: 70rpx; padding-top:50rpx;">
-  <form bindsubmit="submitForm">
+  <form bindsubmit="submitForm" report-submit="true">
     <view class="one-line-inner-panel">
       <text style="width: 190rpx;" space="ensp">计划名称* </text>
       <input placeholder="输入计划名称" placeholder-class="center" value="{{topic_name}}" name="input_topic_name" bindchange="bindTopicChange"/>
@@ -50,8 +50,8 @@
 
     <view class="one-line-inner-panel" style="width:100%;">
       <text style="width: 190rpx;" space="ensp">计数关键词 </text>
-      <input style="width: 200rpx;" placeholder-class="center"
-       placeholder="今天跑了" value="{{topic_count_phase}}" 
+      <input style="width: 250rpx;" placeholder-class="center"
+       placeholder="例如：今天跑了" value="{{topic_count_phase}}" 
        name="input_topic_count_phase" 
        bindchange="bindTopicCountPhaseChange"/>
       <text style="width: 30rpx;"space='ensp'>n   </text>
@@ -95,6 +95,6 @@
     </scroll-view>
 
 
-    <button class="new-topic-button" form-type="submit"> 确定 </button>
+    <button class="new-topic-button" form-type="submit" form-type="submit"> 确定 </button>
   </form>
 </view>

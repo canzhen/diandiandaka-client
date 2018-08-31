@@ -170,7 +170,14 @@
         <view class="detail" hidden="{{selected_topic_log!=topic_name}}">
           <view class="timeline"></view>
           <view class="detail-text">
-            <view class="detail-loop-panel" bindtap="tapOnLog" bindlongpress='longTapLog' wx:for="{{check_info_per_topic[topic_name]}}" wx:key="key" wx:for-index="idx" wx:for-item="info" data-topic-name="{{topic_name}}" data-idx="{{idx}}" data-date="{{info.check_time}}" data-time="{{info.check_timestamp}}" data-log="{{info.log}}">
+            <view class="detail-loop-panel" bindtap="tapOnLog" 
+            bindlongpress='longTapLog' 
+            wx:for="{{check_info_per_topic[topic_name]}}" 
+            wx:key="key" wx:for-index="idx" wx:for-item="info" 
+            data-topic-name="{{topic_name}}" data-idx="{{idx}}" 
+            data-date="{{info.check_time}}" 
+            data-time="{{info.check_timestamp}}"
+            data-log="{{info.log}}">
               <image class="detail-loop-panel-left" src="/images/log-dot.png"></image>
               <view class="detail-loop-panel-right" style="color:{{undated_topic_info_map[topic_name].dated?'#888888':'black'}};">
                 <text class="detail-date">

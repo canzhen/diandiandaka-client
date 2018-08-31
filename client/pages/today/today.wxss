@@ -123,14 +123,14 @@ Page{
 }
 
 .modal-dialog {
-  width: 560rpx;
+  width: 580rpx;
   overflow: hidden;
   position: fixed;
   top: 32%;
   left: 0;
   z-index: 9999;
   background: #f9f9f9;
-  margin: -180rpx 95rpx;
+  margin: -190rpx 95rpx;
   border-radius: 36rpx;
 }
 
@@ -152,12 +152,37 @@ Page{
   padding: 50rpx 32rpx;
 }
 
+
+.modal-line{
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  justify-content: flex-start;
+  font-size: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.modal-line > text{
+  margin-top: 10rpx;
+}
+
+
 .modal-input {
   display: flex;
   background: #fff;
   border: 2rpx solid #ddd;
   border-radius: 4rpx;
   font-size: 30rpx;
+}
+
+.modal-digit-input{
+  display: flex;
+  background: #fff;
+  border: 2rpx solid #ddd;
+  font-size: 30rpx;
+  margin:auto 10rpx auto 10rpx;
+  width:80rpx;
+  height:10rpx;
 }
 
 .textarea {
@@ -169,6 +194,11 @@ Page{
   padding: 5rpx 10rpx;
   box-sizing: border-box;
   color: #333;
+}
+
+.modal-placeholder{
+  padding-top: 10rpx;
+  padding-left: 10rpx;
 }
 
 .modal-footer {

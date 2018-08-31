@@ -25,12 +25,17 @@ button::after{
   align-items:center;
 }
 
+.oneline-tips{
+  font-size: 20rpx;
+  color: #888888;
+}
+
 
 /* 单选钮样式 */
-checkbox {
-  margin-top: 3rpx; 
+switch {
   transform:scale(0.6);
 }
+
 
 
 .line{

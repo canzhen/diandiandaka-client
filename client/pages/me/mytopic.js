@@ -167,11 +167,15 @@ Page({
    */
   tapOnTopic: function (e) {
     let data = this.data.topic_list[e.currentTarget.dataset.index];
+    console.log(data)
     wx.navigateTo({
       url: '/pages/me/edittopic?topic_name='+data.topic_name+
         '&start_date=' + data.start_date + 
         '&end_date=' + data.end_date + 
-        '&topic_url=' + data.topic_url 
+        '&topic_url=' + data.topic_url + 
+        '&if_show_log=' + data.if_show_log +
+        '&topic_count_phase=' + data.topic_count_phase + 
+        '&topic_count_unit=' + data.topic_count_unit
     })
   }, 
 

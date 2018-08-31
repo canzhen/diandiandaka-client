@@ -204,8 +204,10 @@ module.exports.formatCheckData = function (topic_list){
   for (let i in topic_list){
     if (topic_list[i].is_deleted)
       uncheck_topic_list.push(topic_list[i]);
-    if (topic_list[i].is_checked)
+    if (topic_list[i].is_checked){
+      if (topic_list[i].count == undefined) topic_list[i].count = -1;
       checked_topic_list.push(topic_list[i]);
+    }
   }
 
   /* 第一步，处理checked topic，需要更新user_topic，并往topic_list里新增数据*/
@@ -264,6 +266,7 @@ module.exports.formatCheckData = function (topic_list){
     tmp_list.push("'" + checked_topic_list[i]['last_check_time'] + "'");
     tmp_list.push("'" + checked_topic_list[i]['last_check_timestamp'] + "'");
     tmp_list.push("'" + checked_topic_list[i]['log'] + "'");
+    tmp_list.push("'" + checked_topic_list[i]['count'] + "'");
     user_topic_insert_list.push(tmp_list);
   }
 
