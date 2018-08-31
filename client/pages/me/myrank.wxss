@@ -21,7 +21,7 @@ image{
   align-items: center;
   justify-content: flex-start;
   height: 150rpx;
-  /* width: 100%; */
+  width: 100%;
 
   padding-left: 50rpx;
   padding-right: 50rpx;
@@ -36,21 +36,37 @@ image{
 }
 
 
-
-
 .one-row-right{
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 500rpx;
   padding-left: 50rpx;
 }
 
 
+.one-row-right-left{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
 
 
+.one-row-right-right{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  /* margin-right: 50rpx; */
+}
 
+
+.one-row-right-right > image{
+  height: 70rpx;
+  width: 70rpx;
+  opacity: 0.4;
+}
 
 
 
@@ -69,4 +85,14 @@ button{
 /* 去除button边框 */
 button::after{
   border: none;
+}
+
+
+
+.one-row-tips{
+  display: flex;
+  flex-direction: column;
+  color: #888888;
+  font-size: 25rpx;
+  margin: 30rpx 20rpx auto 20rpx;
 }

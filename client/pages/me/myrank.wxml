@@ -5,9 +5,20 @@
 <!-- <view > -->
   <image src="{{topic_info.topic_url}}"></image>
   <view class="one-row-right">
-    <text space='ensp'>{{topic_info.topic_name}} 第<text style="font-weight:bold;color:{{topic_info.rank<=10?'red':'blue'}};">{{topic_info.rank}}</text>名 </text>
-    <text style="font-size:25rpx;" space='ensp'>完成度<text style="font-weight:bold;color:{{topic_info.complete_rate>=50?'red':'blue'}};">{{topic_info.complete_rate}}</text>% 超过<text style="font-weight:bold;color:{{topic_info.higher_rate>=50?'red':'blue'}};">{{topic_info.higher_rate}}</text>%的同学</text>
+    <view class="one-row-right-left">
+      <text space='ensp'>{{topic_info.topic_name}} 第<text style="font-weight:bold;color:{{topic_info.rank<=10?'red':'blue'}};">{{topic_info.rank}}</text>名 </text>
+      <text style="font-size:25rpx;" space='ensp'>分数<text style="font-weight:bold;color:{{topic_info.score>=50?'red':'blue'}};">{{topic_info.score}}</text> 超过<text style="font-weight:bold;color:{{topic_info.higher_rate>=50?'red':'blue'}};">{{topic_info.higher_rate}}</text>%的同学</text>
+    </view>
+    <view class="one-row-right-right">
+      <image src="/images/{{topic_info.higher_rate>50?'xiaolian':'kulian'}}.png"/>
+    </view>
   </view>
 <!-- </view> -->
 </button>
 </form>
+
+<view class="one-row-tips">
+  <text>卡片分数计算公式：(坚持天数+总共打卡天数)*完成度</text>
+  <text>其中完成度计算公式为：总共打卡天数/(当前日期-开始打卡日期)</text>
+  <text>卡片分数每隔2小时更新一次</text>
+</view>

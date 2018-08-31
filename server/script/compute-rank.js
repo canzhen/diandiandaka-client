@@ -11,42 +11,54 @@ function writeLog(log) {
 
 /** 开始发送消息 */
 function startComputeRank() {
-  let getCompleteRateFromDB = function(){
-    return new Promise((resolve) => {
-      dbhelper.select('user_topic',
-        'topic_name, user_id, complete_rate',
-        '', [], 'ORDER BY topic_name, complete_rate DESC',
-        (status, result) => {
-          if (!status) {
-            writeLog('1. 获取所有user的topic和complete_rate失败');
-          }
-          let topic_rate_map = {};
 
-          // 生成user_map
-          for (let i in result) {
-            let topic_name = result[i]['topic_name'];
-            let rank = 1;
-            if (topic_rate_map[topic_name] == undefined) {
-              topic_rate_map[topic_name] = [];
-            } else {
-              let l = topic_rate_map[topic_name].length - 1;
-              if (result[i]['complete_rate'] ==
-                topic_rate_map[topic_name][l]['complete_rate'])
-                rank = topic_rate_map[topic_name][l]['rank'];
-              else
-                rank = topic_rate_map[topic_name][l]['rank'] + 1;
+  let calculateScore = function(){
+    return new Promise((resolve) => {
+      dbhelper.update('user_topic', 
+      'score = FORMAT((total_day + insist_day) * complete_rate/10, 2)',
+      '', [], (status, errmsg) => {
+        if (!status) {
+          resolve(false);
+          return;
+        }
+
+
+        dbhelper.select('user_topic',
+          'topic_name, user_id, score',
+          '', [], 'ORDER BY topic_name, score DESC',
+          (status, result) => {
+            if (!status) {
+              writeLog('1. 获取所有user的topic和score失败');
+            }
+            let topic_rate_map = {};
+
+            // 生成user_map
+            for (let i in result) {
+              let topic_name = result[i]['topic_name'];
+              let rank = 1;
+              if (topic_rate_map[topic_name] == undefined) {
+                topic_rate_map[topic_name] = [];
+              } else {
+                let l = topic_rate_map[topic_name].length - 1;
+                if (result[i]['score'] ==
+                  topic_rate_map[topic_name][l]['score'])
+                  rank = topic_rate_map[topic_name][l]['rank'];
+                else
+                  rank = topic_rate_map[topic_name][l]['rank'] + 1;
+              }
+
+
+              topic_rate_map[topic_name].push({
+                user_id: result[i]['user_id'],
+                score: result[i]['score'],
+                rank: rank
+              })
             }
 
+            resolve(topic_rate_map)
+          })
+      });
 
-            topic_rate_map[topic_name].push({
-              user_id: result[i]['user_id'],
-              complete_rate: result[i]['complete_rate'],
-              rank: rank
-            })
-          }
-
-          resolve(topic_rate_map)
-        })
     })
   }
 
@@ -55,10 +67,12 @@ function startComputeRank() {
   let updateRank = function (topic_rate_map){
 
     return new Promise((resolve)=>{
+      if (!topic_rate_map){
+        resolve(false);
+        return;
+      }
 
-      
       let updateOneTopic = function (topic_name, value_list) {
-
         return new Promise((resolve) => {
           let column_map = {
             rank: {
@@ -66,6 +80,7 @@ function startComputeRank() {
               condition_num: value_list.length / 2
             }
           }
+
           dbhelper.updateMulti('user_topic', column_map, value_list,
             "topic_name='" + topic_name + "'",
             (status, errmsg) => {
@@ -79,7 +94,6 @@ function startComputeRank() {
             });
         })
       }
-
 
 
 
@@ -100,7 +114,7 @@ function startComputeRank() {
 
 
 
-  getCompleteRateFromDB().then((topic_rate_map) => {
+  calculateScore().then((topic_rate_map) => {
     return updateRank(topic_rate_map);
   }).then((promiseList) => {
     Promise.all(promiseList).then((result) => {
