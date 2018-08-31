@@ -1,8 +1,8 @@
 <view style="display:flex; flex-direction:column; margin-left: 70rpx; margin-right: 70rpx; padding-top:50rpx;">
   <form bindsubmit="submitForm">
-    <view class="one-line-inner-panel" style="width:100%;">
-      <text style="width: 150rpx;" space="ensp">计划名称 </text>
-      <input placeholder="输入计划名称" value="{{topic_name}}" name="input_topic_name" bindchange="bindTopicChange"/>
+    <view class="one-line-inner-panel">
+      <text style="width: 190rpx;" space="ensp">计划名称* </text>
+      <input placeholder="输入计划名称" placeholder-class="center" value="{{topic_name}}" name="input_topic_name" bindchange="bindTopicChange"/>
     </view>
     <view class="line"></view>
 
@@ -10,12 +10,13 @@
     <view class="one-line-panel">
       <!-- left panel开始 -->
       <view class="one-line-inner-panel">
-        <text style="width: 150rpx;" space="ensp">开始日期 </text>
+        <text style="width: 190rpx;" space="ensp">开始日期* </text>
         <picker mode="date" value="{{start_date}}"  name="start_date" start="{{start_date}}" end="3000-12-31" bindchange="bindStartDateChange">
           {{start_date}}
         </picker>
       </view>
       <!-- left panel结束 -->
+
 
       <!-- right panel开始 -->
       <view class="one-line-inner-panel">
@@ -29,9 +30,13 @@
     <!-- 开始日期panel结束 -->
     <view class="line"></view>
 
+
+
+
+
     <view wx:if="{{if_set_end_date}}">
       <view class="one-line-inner-panel">
-        <text style="width: 150rpx;" space="ensp">结束日期 </text>
+        <text style="width: 190rpx;" space="ensp">结束日期 </text>
           <picker style="padding-bottom: 5rpx;" mode="date" value="{{end_date}}" name="end_date" start="{{start_date}}" end="3000-12-31" bindchange="bindEndDateChange">
             {{end_date}}
           </picker>
@@ -39,9 +44,31 @@
       <view class="line"></view>
     </view>
 
+
+
+
+
+    <view class="one-line-inner-panel" style="width:100%;">
+      <text style="width: 190rpx;" space="ensp">计数关键词 </text>
+      <input style="width: 200rpx;" placeholder-class="center"
+       placeholder="今天跑了" value="{{topic_count_phase}}" 
+       name="input_topic_count_phase" 
+       bindchange="bindTopicCountPhaseChange"/>
+      <text style="width: 30rpx;"space='ensp'>n   </text>
+      <input style="width: 100rpx;" placeholder-class="center" 
+        placeholder="步" value="{{topic_count_unit}}" 
+        name="input_topic_count_unit" maxlength="3"
+        bindchange="bindTopicCountUnitChange"/>
+    </view>
+    <view class="line"></view>
+
+
+
+
+
     <view class="pick-icon-text"> 
       <view>
-      选择图标
+      选择图标*
       <text style="font-size:25rpx;">(下滑查看更多)</text>
       </view>
       
@@ -58,8 +85,9 @@
         <view class="icon-image-row" wx:for="{{row_data}}" wx:key="col" wx:for-item="num">
           <view class="icon-image-each-item" id="{{icon_data_list[num] == topic_url ? 'chosen' : 'unchosen'}}" bindtap="checkIcon" data-idx="{{num}}" data-url="{{icon_data_list[num]}}">
             <image class="image" src="{{icon_data_list[num]}}"></image>
-            <icon class="image-punched-in" wx:if="{{icon_data_list[num] == topic_url}}"
-                    type="success_no_circle" size="30"></icon>
+            <icon class="image-punched-in" 
+              wx:if="{{icon_data_list[num] == topic_url}}"
+              type="success_no_circle" size="30"></icon>
           </view>
         </view>
         <!-- 每行结束 -->

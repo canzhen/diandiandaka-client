@@ -11,8 +11,6 @@ const me = require('./routes/me');
 const user = require('./routes/user');
 const dbtopic = require('./routes/db/topic');
 const topic = require('./routes/topic');
-const topicUrl = require('./routes/db/topicUrl');
-
 var app = express();
 
 app.use(favicon());
@@ -31,7 +29,6 @@ app.use('/me', me);
 
 app.use('/db/topic', dbtopic);
 app.use('/user', user);
-app.use('/db/topicUrl', topicUrl);
 
 
 /// catch 404 and forwarding to error handler

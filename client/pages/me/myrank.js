@@ -37,7 +37,6 @@ Page({
             let user_topic_list = this.data.topic_list;
             let topic_use_list = res.result_list;
             let topic_use_map = {};
-            console.log(res)
 
             for (let i in topic_use_list)
               topic_use_map[topic_use_list[i].topic_name] = 
@@ -48,7 +47,6 @@ Page({
             for (let i in user_topic_list) {
               let rank = user_topic_list[i].rank;
               let total = topic_use_map[user_topic_list[i].topic_name];
-              console.log(rank, total)
               user_topic_list[i].higher_rate = 
                       ((total-rank) / total * 100).toFixed(2);
             }

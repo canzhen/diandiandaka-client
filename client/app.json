@@ -1,16 +1,16 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/newtopic/newtopic",
     "pages/me/myrank",
+    "pages/today/today",
+    "pages/me/edittopic",
     "pages/me/me",
     "pages/history/history",
     "pages/settings/reminder",
-    "pages/today/today",
     "pages/settings/settings",
     "pages/settings/wechatReminder",
-    "pages/newtopic/newtopic",
-    "pages/me/mytopic",
-    "pages/me/edittopic"
+    "pages/me/mytopic"
   ],
 
   "window": {

@@ -31,7 +31,7 @@ Page({
     };
 
     api.postRequest({
-      'url': '/db/topicUrl/getAll',
+      'url': '/topic/getAllTopicUrl',
       'data': {},
       'showLoading': true,
       'success': (res) => {
@@ -294,7 +294,7 @@ Page({
 
     let insertNewTopicUrl = function (url) {
       api.postRequest({
-        'url': '/db/topicUrl/insert',
+        'url': '/topic/insertTopicUrl',
         'data': { 'url': url },
         'success': (res) => {
           if (res.error_code == 200)

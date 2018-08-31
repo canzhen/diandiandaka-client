@@ -215,9 +215,9 @@ router.post('/getAllTopic', function (req, res) {
     'topic', '', '', [],
     'ORDER BY use_people_num DESC ' + condition,
     (status, result_list) => {
-      for (var i in result_list) {
-        result_list[i]['topic_url'] = result_list[i]['topic_url'];
-      }
+      // for (var i in result_list) {
+        // result_list[i]['topic_url'] = result_list[i]['topic_url'];
+      // }
       let error_code = status ? 200 : 100;
       res.send({
         'error_code': error_code,
@@ -232,6 +232,65 @@ router.post('/getAllTopic', function (req, res) {
 
 
 
+/**
+ * 获取topic表的所有数据
+ */
+router.post('/getAllTopicUrl', function (req, res) {
+  if (!req.header('session-id')) {
+    res.send({ 'error_code': 103, 'msg': '用户未登录' });
+    return;
+  }
+  let sessionid = req.header('session-id');
+  redishelper.getValue(sessionid, (openid) => {
+    if (!openid) {
+      res.send({ 'error_code': 102, 'msg': '' });
+      return;
+    }
+    dbhelper.select(
+      'topic_url', 'url', "user_id=? or user_id=''", [openid], '',
+      (status, result_list) => {
+        if (!status) {
+          res.send({ 'error_code': 100, 'msg': '', 'result_list': '' });
+          return;
+        }
+        for (var i in result_list) {
+          result_list[i] = result_list[i]['url'];
+        }
+        res.send({ 'error_code': 200, 'msg': '', 'result_list': result_list });
+      });
+  });
+});
+
+
+
+
+
+
+
+
+/**
+ * 添加一个新的图标url
+ */
+router.post('/insertTopicUrl', function (req, res) {
+  let topic_url = req.body.url;
+  let sessionid = req.header('session-id');
+
+  redishelper.getValue(sessionid, (openid) => {
+    if (!openid) {
+      res.send({ 'error_code': 102, 'msg': '' });
+      return;
+    }
+    topic_url = config.qiniu.prefix + topic_url;
+    dbhelper.insert('topic_url', 'url, user_id', [topic_url, openid], '',
+      (status) => {
+        if (!status) {
+          res.send({ 'error_code': 100, 'msg': '' });
+          return;
+        }
+        res.send({ 'error_code': 200, 'msg': '' });
+      });
+  });
+});
 
 
 
@@ -321,11 +380,15 @@ router.post('/create', function (req, res) {
     return;
   }
 
-
+  let topicname = req.body.topicname;
+  let topicurl = req.body.topicurl;
+  let startdate = req.body.startdate;
+  let enddate = req.body.enddate;
   // 从redis里获取用户的唯一标识：openid
-  let sessionid = req.header('session-id')
-  redishelper.getValue(sessionid, (value) => {
-    if (!value) {
+  let sessionid = req.header('session-id');
+
+  redishelper.getValue(sessionid, (openid) => {
+    if (!openid) {
       res.send({ 'error_code': 102, 'msg': 'redis数据库里找不到对应用户数据' });
       return;
     }
@@ -337,7 +400,7 @@ router.post('/create', function (req, res) {
     let insertTopic = function(){
       return new Promise((resolve) => {
         dbhelper.insert('topic', 'topic_name, topic_url, use_people_num',
-          [req.body.topicname, req.body.topicurl, 1],
+          [topicname, topicurl, 1],
           "ON DUPLICATE KEY UPDATE use_people_num=use_people_num+1",
           (status, errmsg) => {
             let error_code = status ? 200 : 100;
@@ -351,10 +414,18 @@ router.post('/create', function (req, res) {
      * 往用户表里新增数据
      */
     let insertUserTopic = function(){
+      let countphase = req.body.countphase;
+      let countunit = req.body.countunit;
+      let select_rank = "select use_people_num from topic where "+
+                          "topic_name='" + topicname + "'";
       return new Promise((resolve) => {
         dbhelper.insert('user_topic',
-          'user_id, topic_name, topic_url, start_date, end_date',
-          [value, req.body.topicname, req.body.topicurl, req.body.startdate, req.body.enddate,], '',
+          'user_id, topic_name, topic_url, start_date, end_date, rank,' + 
+          'topic_count_phase, topic_count_unit',
+          [], "'" + openid + "'," + "'" + topicname + "','" + topicurl + 
+          "','" + startdate + "','" + enddate + "', (" + 
+          select_rank + ")" + ",'" + countphase + "','"
+          + countunit + "')",
           (status, errmsg) => {
             if (!status) {
               // let errReason = errmsg.substr(0, errmsg.indexOf(':'));
@@ -368,23 +439,20 @@ router.post('/create', function (req, res) {
     }
 
 
-    Promise.all([insertTopic(), insertUserTopic()])
-    .then((result) => { //如果成功
-      console.log(result)
-      for (let i in result) {
-        if (result[i].error_code != 200) {
-          res.send({
-            'error_code': result[i].error_code,
-            'msg': result[i].msg
-          });
-          return;
-        }
+    insertTopic()
+    .then((result) => { 
+      if (result.error_code != 200){
+        res.send({error_code: 100, msg: result.msg});
+        return;
       }
-      res.send({ 'error_code': 200, 'msg': '' });
-    }, (res) => { //如果失败
-      res.send({ 'error_code': 100, 'msg': '' });
-    });
-    
+      return insertUserTopic();
+    }).then((result) => {
+      if (result.error_code != 200) {
+        res.send({ error_code: 100, msg: result.msg });
+        return;
+      }
+      res.send({ error_code: 200, msg: '' });
+    })
   });
 });
 

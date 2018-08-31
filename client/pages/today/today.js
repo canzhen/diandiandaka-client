@@ -214,7 +214,8 @@ Page({
     console.log(this.data.form_id_list);
     utils.saveFormId(this.data.form_id_list);
     this.setData({
-      form_id_list: []
+      form_id_list: [],
+      show_modal: false
     });
   },
 

@@ -60,17 +60,21 @@ function select(table_name, column_string, condition_string, condition_list, oth
  */
 function insert(table_name, column_string, value_list, other_operation_string, cb) {
   let client = connectServer();
-  sql = "INSERT INTO " + table_name + "(" + column_string + ") VALUES(?";
-  for (let i = 1; i < value_list.length; i++) sql += ",?";
-  sql += ") ";
+  sql = 'INSERT INTO ' + table_name + '(' + column_string + ') VALUES(';
+  for (let i = 0; i < value_list.length; i++){
+    if (i == value_list.length - 1) sql += '?) ';
+    else sql += '?,';
+  }
   sql += other_operation_string;
   
-  // console.log(sql)
-  // console.log(value_list)
+  console.log(sql)
+  console.log(value_list)
 
   client.query(
     sql, value_list,
     function (err, result) {
+      console.log(err)
+      console.log(result)
       if (err) {
         console.log('insert ' + table_name + '表失败，失败信息:' + err.message);
         cb(false, err.code);

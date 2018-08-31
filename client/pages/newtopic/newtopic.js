@@ -32,7 +32,7 @@ Page({
     };
 
     api.postRequest({
-      'url': '/db/topicUrl/getAll',
+      'url': '/topic/getAllTopicUrl',
       'data': {},
       'showLoading': true,
       'success': (res) => {
@@ -114,6 +114,8 @@ Page({
     });
   },
 
+
+
   /**
    * 输入计划名称时触发的函数
    */
@@ -135,6 +137,60 @@ Page({
       });
     }
   },
+
+
+
+
+
+  /**
+   * 输入计数关键词【名称】时触发的函数
+   */
+  bindTopicCountPhaseChange: function (e) {
+    var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>《》/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]");
+    var inputName = e.detail.value;
+    if (pattern.test(inputName)) {
+      wx.showToast({
+        title: '不要输入特殊字符哟~',
+        icon: 'none',
+        duration: 1000
+      })
+      this.setData({
+        has_special_character: true
+      });
+    } else {
+      this.setData({
+        has_special_character: false
+      });
+    }
+  },
+
+
+
+
+
+
+  /**
+   * 输入计数关键词【单位】时触发的函数
+   */
+  bindTopicCountUnitChange: function (e) {
+    var pattern = new RegExp("[`~!@#$^&*()=|{}':;',\\[\\].<>《》/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]");
+    var inputName = e.detail.value;
+    if (pattern.test(inputName)) {
+      wx.showToast({
+        title: '不要输入特殊字符哟~',
+        icon: 'none',
+        duration: 1000
+      })
+      this.setData({
+        has_special_character: true
+      });
+    } else {
+      this.setData({
+        has_special_character: false
+      });
+    }
+  },
+
 
   /**
    * 永不结束checkbox单击所触发的函数
@@ -197,7 +253,9 @@ Page({
         'topicname': value.input_topic_name,
         'topicurl': this.data.topic_url,
         'startdate': value.start_date,
-        'enddate': value.end_date
+        'enddate': value.end_date,
+        'countphase': value.input_topic_count_phase,
+        'countunit': value.input_topic_count_unit,
       },
       'success': function(res){
         console.log('into success');
@@ -279,8 +337,9 @@ Page({
     };
 
     let insertNewTopicUrl = function (url) {
+      console.log('url:' + url)
       api.postRequest({
-        'url': '/db/topicUrl/insert',
+        'url': '/topic/insertTopicUrl',
         'data': { 'url': url },
         'success': (res) => {
           if (res.error_code == 200)

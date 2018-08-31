@@ -18,6 +18,13 @@ button::after{
   width: 100%;
 }
 
+.center{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  /* padding-bottom: 0; */
+}
 
 .one-line-inner-panel{
   display:flex; 
