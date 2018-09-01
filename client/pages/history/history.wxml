@@ -184,7 +184,8 @@
                   {{info.check_time}}　{{info.check_timestamp}}
                 </text>
                 <text class="detail-log">
-                  {{info.log}}
+                  <text style="color: black;" wx:if="{{info.count!=-1}}">「{{topic_info_map[topic_name].topic_count_phase}}{{info.count}}{{topic_info_map[topic_name].topic_count_unit}}」</text>
+                  <text>{{info.log}}</text>
                 </text>
               </view>
             </view>
@@ -234,7 +235,8 @@
                   {{info.check_time}}　{{info.check_timestamp}}
                 </text>
                 <text class="detail-log">
-                  {{info.log}}
+                  <text style="color: black;" wx:if="{{info.count!=-1}}">「{{topic_info_map[topic_name].topic_count_phase}}{{info.count}}{{topic_info_map[topic_name].topic_count_unit}}」</text>
+                  <text>{{info.log}}</text>
                 </text>
               </view>
             </view>

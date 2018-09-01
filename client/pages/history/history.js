@@ -135,6 +135,7 @@ Page({
         if (error_code != 200 || !checked_data_list) return;
         let [checkTimeListPerTopic, checkInfoListPerTopic] = data.getCheckedDataOfEveryTopic(checked_data_list, topicInfoMap); //按照每个topic分类的打卡时间集合
         let [checkTimeList, checkedTopicListPerDay] = data.getTopicListPerDay(checked_data_list);
+        console.log(checkInfoListPerTopic)
 
         that.setData({
           date: moment(),
@@ -172,7 +173,9 @@ Page({
           'total_day': list[i].total_day,
           'start_date': list[i].start_date,
           'end_date': list[i].end_date,
-          'last_check_time': list[i].last_check_time
+          'last_check_time': list[i].last_check_time,
+          'topic_count_phase': list[i].topic_count_phase,
+          'topic_count_unit': list[i].topic_count_unit
         };
       }
       return topicInfoMap;

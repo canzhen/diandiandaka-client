@@ -750,7 +750,7 @@ router.post('/getAllCheckDataOfUser', function (req, res) {
       res.send({ 'error_code': 102, 'msg': '' });
       return;
     }
-    dbhelper.select('topic_check', 'topic_name, check_time, check_timestamp, log', 'user_id=?', [openid], 'ORDER BY check_time DESC, check_timestamp DESC',
+    dbhelper.select('topic_check', 'topic_name, check_time, check_timestamp, count, log', 'user_id=?', [openid], 'ORDER BY check_time DESC, check_timestamp DESC',
       (status, result_list) => {
         let statusCode = status ? 200 : 100;
         let resList = status ? result_list : false;

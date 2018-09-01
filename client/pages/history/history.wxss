@@ -278,7 +278,9 @@ image{
   align-items: center;
   text-align: center;
   top: 120rpx;
-  left: 120rpx;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
 }
 
 
@@ -521,8 +523,9 @@ button::after{
 }
 
 .detail-log{
+  display: flex;
+  flex-direction: column;
   width: 500rpx;
-  margin-top: -35rpx;
   margin-left: 20rpx;
   font-size: 25rpx;
   color: #888888;

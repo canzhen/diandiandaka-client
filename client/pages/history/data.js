@@ -155,6 +155,7 @@ function getCheckedDataOfEveryTopic(dataList, topicInfoMap) {
     checkInfoPerTopic[dataList[i]['topic_name']].push({
       'check_time': dataList[i]['check_time'],
       'check_timestamp': dataList[i]['check_timestamp'],
+      'count': dataList[i]['count'],
       'log': dataList[i]['log']
     });
   }

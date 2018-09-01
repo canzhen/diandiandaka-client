@@ -127,14 +127,29 @@ function startSendMessage() {
           end_date = user_topic_list[i]['end_date'],
           remind_time = user_topic_list[i]['remind_time'],
           remind_method = user_topic_list[i]['remind_method'],
-          remind_group = user_topic_list[i]['remind_group'];
+          remind_group = user_topic_list[i]['remind_group'],
+          last_check_time = user_topic_list[i]['last_check_time'],
+          force_remind = false; //用户没设置提醒，自作主张提醒（超过五天没打卡）
 
-      if (remind_method == -1 || !remind_time ||
-          (end_date != '永不结束' && moment() > 
-          moment(end_date, 'YYYY-MM-DD'))) 
-            continue;
+
+
+      if (end_date != '永不结束' && moment() >
+        moment(end_date, 'YYYY-MM-DD')) continue;
+
+      // 如果已经五天没打卡了，即使用户没设置提醒仍要提醒用户
+      if (!remind_time){
+        if (moment().diff(moment(last_check_time, 'YYYY-MM-DD'),
+          'days') <= 5) continue;
+        // 没设置提醒，却已经五天没打卡了，就要强制提醒
+        else force_remind = true;
+      } 
+
+
+
+
+
       // if (user_id != 'ovMv05WNSF-fzJnoQ4UMSWtMWjFs') continue;
-      if (remind_group != -1){
+      if (remind_group != -1 || force_remind){
         if (combineTopicMap[remind_group] == undefined)
           combineTopicMap[remind_group] = { topic: [] }
         combineTopicMap[remind_group].topic.push(topic);
@@ -150,13 +165,16 @@ function startSendMessage() {
 
 
       /** 微信推送 */
-      if (remind_method == 1){
+      if (remind_method == 1){ //强制推送是通过微信
         // 准备form_id
         let form_id = getFormId(user_id, user_map);
+        if (!form_id) continue;
 
         // 开始设置提醒
         setTimeout(() => {
           writeLog(diffTime / 1000 + '秒计时到啦！准备【微信】推送消息给' + user_id + '，推送使用的的form_id为：' + form_id);
+          let words = perseveranceList[utils.
+            getRandom(0, perseveranceList.length - 1)];
           /** 推送message */
           messagehelper.sendMessage(user_id, form_id,
             {
@@ -168,9 +186,7 @@ function startSendMessage() {
               keyword5: { value: rank == -1 ? 
                           topic_use_map[topic]: rank }, //今日排名
               keyword6: { value: topic_use_map[topic] }, //参加人数
-              keyword7: { value: perseveranceList[utils.
-                            getRandom(0, 
-                            perseveranceList.length - 1)] }, //提示语
+              keyword7: { value: words}, //提示语
             }, false, //单独发送
             (status, errmsg) => {
               if (status) writeLog('推送消息成功');
@@ -232,15 +248,20 @@ function startSendMessage() {
       if (combineTopicMap[i].remind_method == 1){
         console.log(combineTopicMap[i].user_id)
         let form_id = getFormId(combineTopicMap[i].user_id, user_map);
+        if (!form_id) continue;
         /* 开始设置提醒 */
         setTimeout(() => {
           writeLog(diffTime / 1000 + '秒计时到啦！准备【微信】推送消息给' + combineTopicMap[i].user_id + '，推送使用的的form_id为：' + form_id);
+          let words = force_remind ? 
+            '你已经超过五天没有打卡了喔，卡卡好想你呀~': 
+            perseveranceList[utils.getRandom(0, 
+                perseveranceList.length - 1)];
           /** 推送message */
           messagehelper.sendMessage(combineTopicMap[i].user_id, form_id,
             {
               keyword1: { value: combineTopicMap[i].topic.toString() }, //打卡项目
               keyword2: { value: moment().format('YYYY年MM月DD日') }, //打卡时间
-              keyword3: { value: perseveranceList[utils.getRandom(0, perseveranceList.length - 1)] }, //提示语
+              keyword3: { value: words }, //提示语
             }, true, //合并发送
             (status, errmsg) => {
               if (status) writeLog('推送消息成功');
@@ -325,7 +346,7 @@ function startSendMessage() {
     let form_id_str = user_map[user_id]['form_id_list'];
     if (!form_id_str || form_id_str.indexOf(',') == -1) {
       writeLog('Oops，该用户' + user_id + '没有可用的form_id了……');
-      return;
+      return false;
     }
     let form_id_list = form_id_str.split(',');
 
@@ -336,7 +357,7 @@ function startSendMessage() {
     }
     if (!form_id) {
       writeLog('Oops，该用户' + user_id + '没有可用的form_id了……');
-      return;
+      return false;
     }
 
     // 将pop过的form_id_list重新放入user表中
