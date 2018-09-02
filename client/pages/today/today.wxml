@@ -51,9 +51,9 @@
   <view class="modal-subtitle">{{current_time}} | 还能输入{{word_left_num}}字</view>
   <view class="modal-content">
     <view class="modal-line">
-    <text>输入打卡计数： {{count_phase}} </text>
-    <input type='digit' class="modal-digit-input" value="{{count_number}}"  bindchange="bindTopicCountNumberChange"/>
-    <text>{{count_unit}}</text>
+    <text wx:if="{{count_phase}}">输入打卡计数： {{count_phase}} </text>
+    <input wx:if="{{count_phase}}" type='digit' class="modal-digit-input" value="{{count_number}}"  bindchange="bindTopicCountNumberChange"/>
+    <text wx:if="{{count_phase}}">{{count_unit}}</text>
     </view>
     <view class="modal-input">
       <textarea class="textarea" fixed="true" cursor-spacing="20" auto-height value="{{textarea_value}}" bindinput="inputChange" placeholder="{{modal_placeholder}}" placeholder-class='modal-placeholder'></textarea>

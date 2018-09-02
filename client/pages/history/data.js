@@ -10,15 +10,20 @@ const timelapses = [ //所有的时间区间的选项
   { 'name': '1年', 'checked': false },
   { 'name': '全部', 'checked': false }];
 
-var option = {
+
+
+/**
+ * 每日完成度柱状图配置
+ */
+var barChartOption = {
   color: ['#37a2da', '#32c5e9', '#67e0e3'],
   grid: {
-    left: 0,
-    top: 20,
-    right: 10,
-    bottom: 10,
-    width: 340,
-    height: 370,
+    top: 0,
+    // left: 5,
+    // right: 10,
+    // bottom: 10,
+    // width: 300,
+    // height: 370,
     containLabel: true
   },
   xAxis: [
@@ -45,7 +50,7 @@ var option = {
     min: 0,
     max: 100,
   },
-  series: [{
+  series: [{ //柱状图
     type: 'bar',
     data: [],
     markLine: {
@@ -93,6 +98,64 @@ var option = {
     }
   }]
 };
+
+
+
+
+/**
+ * 卡片折线图配置
+ */
+var lineChartOption = {
+  color: ['#37a2da', '#32c5e9', '#67e0e3'],
+  grid: {
+    top: 10,
+    left: 0,
+    right: 10,
+    bottom: 10,
+    // width: 340,
+    // height: 30,
+    containLabel: true
+  },
+  xAxis: [{
+    type: 'category',
+    data: [],
+    silent: true,
+    axisLine: {
+      show: false
+    },
+    axisTick: {
+      show: false
+    },
+    axisLabel: {
+      margin: 10,
+      textStyle: {
+        color: '#888888'
+      }
+    },
+  }],
+  yAxis: {
+    show: true
+  },
+  series: [{ //曲线
+    type: 'line',
+    data: [],
+    silent: true,
+    smooth: true,
+    clickable: false,
+    itemStyle: {
+      normal: {
+        color: 'rgba(136, 136, 136, 0.5)'
+      }
+    }
+  }]
+};
+
+
+
+
+
+
+
 
 /* 获取当前用户具体打卡信息 */
 function getCheckDataList(cb){
@@ -635,6 +698,7 @@ module.exports = {
   getCompletePercentageOfDay,
   getCompletenessMap,
 
-  option,
+  barChartOption,
+  lineChartOption,
   timelapses
 }

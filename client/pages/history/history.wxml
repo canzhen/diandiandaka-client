@@ -77,8 +77,53 @@
 
 
 
-<!-- 每日完成度 -->
+
+<!-- 卡片完成度 -->
 <view hidden="{{currentTab!==1}}">
+  <!-- <view class="card-data-panel">
+
+    <view class="one-line-view">
+      卡片选择：
+      <picker range="{{topic_name_list}}" 
+              bindchange="changeTopic" value="{{topic_index}}">
+        <form bindsubmit="changeTopicFormId" report-submit="true">
+        <button form-type='submit' hover-class='none'>
+        {{topic_name_list[topic_index]}}
+        </button>
+        </form>
+      </picker>
+    </view>
+
+
+
+    <ec-canvas class='topic-data-canvas'
+          style="height:{{lineCanvasHeight}}px;"
+          bindtouchstart='canvasTouchStart'
+          bindtouchmove='canvasTouchMove'
+          ec="{{ec_line}}"
+          disable-scroll='true'> </ec-canvas>
+
+  </view>
+
+
+  <form class="card-data-panel" bindsubmit="" 
+        report-submit="true">
+  <button form-type='submit' hover-class='none'>
+    
+  </button>
+  </form> -->
+</view>
+<!-- 卡片完成度结束 -->
+
+
+
+
+
+
+
+
+<!-- 每日完成度 -->
+<view hidden="{{currentTab!==2}}">
     <!-- <view class='mask' catchtouchmove="move"></view> -->
     <view class="completeness-panel">
       <view class="completeness-first-row" wx:if="{{topic_info.length != 0}}">
@@ -101,13 +146,11 @@
   <!-- style="height:{{scrollHeight}}-300px;width:{{scrollWidth}}-20px;" -->
     <!-- <view style="height:370px;"> -->
       <ec-canvas class='completeness-canvas'
-          style="height:{{canvasHeight+150}}px;"
+          style="height:{{barCanvasHeight}}px;"
           hidden="{{!user_click_no_data && !user_click_on_future}}"
-          id='mychart-dom-bar' 
-          canvas-id='mychart-bar' 
           bindtouchstart='canvasTouchStart'
           bindtouchmove='canvasTouchMove'
-          ec="{{ec}}"
+          ec="{{ec_bar}}"
           disable-scroll='true'> </ec-canvas>
 
       <view class="completeness-canvas-error" 
@@ -144,7 +187,7 @@
 
 
 <!-- 历史日志 -->
-<view hidden="{{currentTab!==2}}">
+<view hidden="{{currentTab!==3}}">
 
   <!-- 有日志的时候显示 -->
   <view class="check-log-panel" wx:if="{{topic_info.length != 0}}">
@@ -198,7 +241,7 @@
 
 
     <!-- 一行，已结束卡片 -->
-    <view class="one-line-view" wx:if="{{dated_topic_length != 0}}">
+    <view class="one-line-view" style="color:#888888;margin-bottom: 50rpx;margin-top:100rpx;" wx:if="{{dated_topic_length != 0}}">
       <view class="line-left"></view>
       <text style="margin:auto 15rpx auto 15rpx;"> 已结束的卡片 </text>
       <view class="line-right"></view>

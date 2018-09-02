@@ -475,7 +475,7 @@ Page({
     let data = this.data.my_topic_data[id];
     this._check(id, data);
     this.setData({
-      show_modal: false
+      show_modal: false,
     });
   },
 
@@ -493,6 +493,7 @@ Page({
       [logData]: this.data.textarea_value,
       [countData]: this.data.count_number,
       textarea_value: '',
+      count_number: '',
     });
   },
 
@@ -521,9 +522,6 @@ Page({
           }
           console.log('取消用户[' + topic_name + ']卡片的showlog成功');
           that.hideModal();
-          this.setData({
-            textarea_value: '',
-          });
         },
         'fail': (res) => {
           console.log('取消用户[' + topic_name + ']卡片的showlog失败T_T');

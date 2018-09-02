@@ -5,12 +5,13 @@ const helper = require('helper.js');
 const data = require('data.js');
 const echarts = require('../../vendor/ec-canvas/echarts');
 // import * as echarts from '../../vendor/ec-canvas/echarts';
-let chart = null;
+let barChart = null;
+let lineChart = null;
 let colorList = ['#f8d3ad', '#f3c6ca'];
 
 Page({
   data: {
-    navbar: ['打卡日历', '每日完成度', '历史日志'],
+    navbar: ['打卡日历', '卡片完成度', '每日完成度', '历史日志'],
     currentTab: 0,
     colorList: [ '#f3faf998', '#f6f3fa98', '#f6faf398', '#f9faf398',
                '#faf3f898', '#faf3f498', '#f3faf9a4', '#f3f7faa4'],
@@ -22,15 +23,18 @@ Page({
     check_info_per_topic: [], //每个topic的具体信息：{'跑步': [{check_time': '2018-06-13', 'log': '很好'}, {check_time': '2018-06-24', 'log': '还是很好'}], {'起床': [{}, {}, ..}], '':[], '': [],...}
     checked_data_list: [], // 用于展示每日具体打卡信息
     // topic_name_list: [], // 所有topic名字的集合：['减肥','跑步','早睡']
-    topic_info: [2], //该用户的打卡数据：[{'topic_name':'', 'topic_url':'', 'insist_day':''}, {}, ...] 用于【打卡日历】标题栏
+    topic_info: [], //该用户的打卡数据：[{'topic_name':'', 'topic_url':'', 'insist_day':''}, {}, ...] 用于【打卡日历】标题栏
     topic_info_map: {}, // {'name': {'topic_url':'', 'start_date':'',..}}
     start_date_list: [], //一个都是moment的list，所有topic的开始日期的集合
     end_date_list: [], //一个都是moment的list，所有topic的结束日期的集合
 
 
     /* --------------以下的data属于【打卡日历】-------------- */
-    ec: {
-      onInit: initChart,
+    ec_bar: {
+      onInit: initBarChart,
+    },
+    ec_line: {
+      onInit: initLineChart,
     },
     date: '', // 用户选择的date，随时都会变化，初始化为当前时间
     current_date: '', // 当前的时间，用于打卡日历底部日期选择的enddate
@@ -135,7 +139,6 @@ Page({
         if (error_code != 200 || !checked_data_list) return;
         let [checkTimeListPerTopic, checkInfoListPerTopic] = data.getCheckedDataOfEveryTopic(checked_data_list, topicInfoMap); //按照每个topic分类的打卡时间集合
         let [checkTimeList, checkedTopicListPerDay] = data.getTopicListPerDay(checked_data_list);
-        console.log(checkInfoListPerTopic)
 
         that.setData({
           date: moment(),
@@ -154,9 +157,11 @@ Page({
 
         if (tab == 0) {
           that.initCheckCalendar();
-        } else if (tab == 1) {
+        } else if (tab == 1){
+          this.initTopicCheckData();
+        }else if (tab == 2) {
           that.initCompleteness();
-        } else if (tab == 2) {
+        } else if (tab == 3) {
           that.initCheckLog();
         }
       });
@@ -203,7 +208,82 @@ Page({
 
 
 
-  // 初始化每日完成度
+
+
+  /**
+   * 初始化卡片完成度
+   */
+  initTopicCheckData: function(){
+    console.log('init topic check data')
+    let topic_info = this.data.topic_info;
+    let topic_name_list = [];
+    for (let i in topic_info){
+      topic_name_list.push(topic_info[i].topic_name);
+    }
+    
+    this.setData({
+      topic_name_list: topic_name_list,
+      topic_index: 0
+    })
+
+
+    let that = this;
+    wx.getSystemInfo({
+      success: function (res) {
+
+
+
+        wx.getSystemInfo({
+          success: function (res) {
+            that.getSystemWidget('.one-line-view', 'bottom',
+              (topPos) => {
+                that.setData({
+                  lineCanvasHeight: res.windowHeight - topPos,
+                });
+                data.lineChartOption.grid.height =
+                  that.data.lineCanvasHeight - 20;
+                data.lineChartOption.grid.width =
+                  that.data.scrollWidth - 30;
+                lineChart.setOption(data.lineChartOption);
+                // 生成当前卡片的数据
+                that.newLineCanvas([], 0)
+              })
+          }
+        });
+
+
+        
+      }
+    });
+;
+  },
+
+
+
+
+
+  getSystemWidget: function(name, pos, cb) {
+    wx.createSelectorQuery().selectAll(name).
+      boundingClientRect((rects) => {
+        if (pos == 'top') {
+          cb(rects[0].top);
+          // console.log(rects[0].top);
+        } else if (pos == 'bottom') {
+          cb(rects[0].bottom);
+          // console.log(rects[0].bottom);
+        }
+        // let diff = res.windowHeight - rects[0].top;
+        // console.log(diff)
+      }).exec();
+  },
+
+
+
+
+
+  /**
+   * 初始化每日完成度
+   */
   initCompleteness: function () {
     if (this.data.checked_data_list.length == 0) {
       this.setData({
@@ -211,20 +291,26 @@ Page({
       });
     }
 
+
     let that = this;
     wx.getSystemInfo({
       success: function (res) {
-        wx.createSelectorQuery().selectAll('.completeness-first-row').boundingClientRect((rects) => {
-          let scrollHeight = that.data.scrollHeight;
-          that.setData({
-            canvasHeight: res.windowHeight - rects[0].top - 150,
-          });
-          data.option.grid.height = that.data.canvasHeight;
-          data.option.grid.width = that.data.scrollWidth - 50;
-          chart.setOption(data.option);
-          // 生成当前周的数据
-          that.newCanvas('1周', 0);
-        }).exec();
+        that.getSystemWidget('.completeness-panel-bottom', 'top', 
+        (bottomPos) => {
+          that.getSystemWidget('.completeness-first-row', 'bottom',
+            (topPos) => {
+              let diff = res.windowHeight - bottomPos;
+              console.log(diff)
+              that.setData({
+                barCanvasHeight: res.windowHeight - diff - topPos - 40,
+              });
+              data.barChartOption.grid.height = that.data.barCanvasHeight;
+              data.barChartOption.grid.width = that.data.scrollWidth - 30;
+              barChart.setOption(data.barChartOption);
+              // 生成当前周的数据
+              that.newBarCanvas('1周', 0);
+            })
+        })
       }
     });
   },
@@ -339,9 +425,11 @@ Page({
     });
     if (tabidx == 0){
       this.initCheckCalendar();
-    } else if (tabidx == 1){
+    }else if (tabidx == 1){
+      this.initTopicCheckData();
+    }else if (tabidx == 2){
       this.initCompleteness();
-    } else if (tabidx == 2){
+    } else if (tabidx == 3){
       this.initCheckLog();
     }
   },
@@ -461,6 +549,34 @@ Page({
 
 
 
+  /*----------------------以下是卡片完成度部分-----------------------*/
+  changeTopic: function(e){
+    this.setData({
+      topic_index: e.detail.value
+    })
+  },
+
+
+  changeTopicFormId: function (e) {
+    this.saveFormId(e.detail.formId);
+    console.log(e.detail.formId)
+  },
+
+
+
+  newLineCanvas: function (timelapse, n) {
+    setLineChart(['一', '二', '啊', '饿', '个'], [41, 22, 53, 24, 95]);
+  },
+
+
+  completenessChangeTimelapse: function (n) {
+    // if (this.data.selected_timelapse == 3) return;
+    let selectedTimelapseName = this.data.timelapses[this.data.selected_timelapse].name;
+    this.newBarCanvas(selectedTimelapseName, n);
+  },
+
+
+
   /*----------------------以下是每日完成度部分-----------------------*/
   
   /**
@@ -479,7 +595,7 @@ Page({
       [newCheckedStr]: true
     });
 
-    this.newCanvas(time, 0);
+    this.newBarCanvas(time, 0);
   },
 
   /**
@@ -518,10 +634,12 @@ Page({
 
 
 
+
+
   /**
    * 新建canvas并往里填充数据
    */
-  newCanvas: function (timelapse, n) {
+  newBarCanvas: function (timelapse, n) {
     let ans = data.getCanvasData(
                 this.data.check_time_list,
                 this.data.checked_topic_list_per_day,
@@ -572,15 +690,19 @@ Page({
     if (this.data.user_click_no_data || this.data.user_click_on_future)
       canvasXText = [];
 
-    setChart(canvasXText, canvasYData);
+    setBarChart(canvasXText, canvasYData);
   },
 
 
   completenessChangeTimelapse: function (n) {
     // if (this.data.selected_timelapse == 3) return;
     let selectedTimelapseName = this.data.timelapses[this.data.selected_timelapse].name;
-    this.newCanvas(selectedTimelapseName, n);
+    this.newBarCanvas(selectedTimelapseName, n);
   },
+
+
+
+
 
 
   /**
@@ -842,21 +964,35 @@ Page({
 /**
  * 图表配置部分
  */
-function setChart(xdata, ydata){
-  data.option.xAxis[0].data = xdata;
-  data.option.series[0].data = ydata;
+function setBarChart(xdata, ydata){
+  data.barChartOption.xAxis[0].data = xdata;
+  data.barChartOption.series[0].data = ydata;
   // option.series[1].data = ydata;
-  chart.setOption(data.option);
+  barChart.setOption(data.barChartOption);
 };
 
-function initChart(canvas, width, height) { //初始化图表
-  chart = echarts.init(canvas, null, {
+function initBarChart(canvas, width, height) { //初始化每日完成度图表
+  barChart = echarts.init(canvas, null, {
     width: width,
     height: height
   });
-  canvas.setChart(chart);
-  return chart;
+  canvas.setChart(barChart);
+  return barChart;
 }
 
-// console.log(moment().diff(moment('2018-08-25','YYYY-MM-DD'), 'days'))
-// console.log(moment().subtract(2, 'days').format('YYYY-MM-DD'))
+
+function setLineChart(xdata, ydata) {
+  data.lineChartOption.xAxis[0].data = xdata;
+  data.lineChartOption.series[0].data = ydata;
+  // option.series[1].data = ydata;
+  lineChart.setOption(data.lineChartOption);
+};
+
+function initLineChart(canvas, width, height) { //初始化卡片完成度图表
+  lineChart = echarts.init(canvas, null, {
+    width: width,
+    height: height
+  });
+  canvas.setChart(lineChart);
+  return lineChart;
+}

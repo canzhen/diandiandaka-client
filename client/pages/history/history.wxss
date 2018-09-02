@@ -43,7 +43,6 @@ image{
 
 
 /* 打卡日历部分 */
-
 .check-calendar-panel{
   display: flex;
   flex-direction: row;
@@ -235,6 +234,28 @@ image{
 
 
 
+
+
+/*---------------------------------------*/
+
+ /* 卡片完成度部分开始  */
+.card-data-panel{
+  position: fixed;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin-top: 20rpx;
+  align-items: center;
+}
+ /* 卡片完成度部分开始  */
+
+
+
+
+
+
+
+
 /*---------------------------------------*/
 
  /* 每日完成度部分开始  */
@@ -259,7 +280,7 @@ image{
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100%;
+    /* height: 100%; */
     width: 100%;
  }
 
@@ -283,8 +304,6 @@ image{
   margin: 0 auto;
 }
 
-
-
  .completeness-first-row1{
   /* 
   justify-content: center;
@@ -301,14 +320,35 @@ image{
   position: fixed;
   overflow: hidden;
   justify-content: center;
-  top: 240rpx;
-  left: 25rpx;
+  /* 上面那个first line是 top120 */
+  top: 250rpx; 
+  left: 0;
+  right: 0;
+  margin: auto 0;
   /* margin: 10rpx 100rpx 0rpx 0rpx; */
   width: 100%;
+  height: auto;
+}
+
+.topic-data-canvas{
+  position: fixed;
+  overflow: hidden;
+  justify-content: center;
+  /* 上面那个first line是 top120 */
+  top: 180rpx; 
+  left: 0;
+  right: 0;
+  margin: auto 0;
+  /* margin: 10rpx 100rpx 0rpx 0rpx; */
+  width: 100%;
+  height: auto;
 }
 
 .completeness-canvas-error{
   position: fixed;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   opacity: 0.65;
   top: 500rpx;
   left: 170rpx;
@@ -451,11 +491,8 @@ button::after{
 .one-line-view{
   display:flex; 
   flex-direction:row; 
-  margin-bottom: 50rpx;
-  margin-top:100rpx;
   align-items:center;
   justify-content: center;
-  color: #888888;
 }
 
 
@@ -670,6 +707,7 @@ button::after{
 
 button{
   background-color: transparent;
+  font-size: 30rpx;
 }
 
 
