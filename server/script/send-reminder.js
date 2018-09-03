@@ -141,7 +141,10 @@ function startSendMessage() {
         if (moment().diff(moment(last_check_time, 'YYYY-MM-DD'),
           'days') <= 5) continue;
         // 没设置提醒，却已经五天没打卡了，就要强制提醒
-        else force_remind = true;
+        else {
+          force_remind = true;
+          console.log('强制给用户' + user_id + '推送提醒，因为已经五天没打卡了');
+        }
       } 
 
 

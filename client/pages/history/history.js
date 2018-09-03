@@ -225,14 +225,10 @@ Page({
       topic_name_list: topic_name_list,
       topic_index: 0
     })
-
-
+ 
     let that = this;
     wx.getSystemInfo({
       success: function (res) {
-
-
-
         wx.getSystemInfo({
           success: function (res) {
             that.getSystemWidget('.one-line-view', 'bottom',
@@ -241,21 +237,22 @@ Page({
                   lineCanvasHeight: res.windowHeight - topPos,
                 });
                 data.lineChartOption.grid.height =
-                  that.data.lineCanvasHeight - 20;
+                  that.data.lineCanvasHeight - 50;
                 data.lineChartOption.grid.width =
                   that.data.scrollWidth - 30;
                 lineChart.setOption(data.lineChartOption);
-                // 生成当前卡片的数据
-                that.newLineCanvas([], 0)
+                let topic_name = that.data.topic_name_list
+                [that.data.topic_index];
+                let [xTextList, yDataList] = data.
+                      getLineCanvasData(that.data.
+                        check_info_per_topic[topic_name]);
+                // 生成当前卡片canvas的数据
+                that.newLineCanvas(xTextList, yDataList);
               })
           }
         });
-
-
-        
       }
     });
-;
   },
 
 
@@ -300,7 +297,6 @@ Page({
           that.getSystemWidget('.completeness-first-row', 'bottom',
             (topPos) => {
               let diff = res.windowHeight - bottomPos;
-              console.log(diff)
               that.setData({
                 barCanvasHeight: res.windowHeight - diff - topPos - 40,
               });
@@ -554,6 +550,14 @@ Page({
     this.setData({
       topic_index: e.detail.value
     })
+
+    let topic_name = this.data.topic_name_list
+                        [this.data.topic_index];
+    let [xTextList, yDataList] = data.
+      getLineCanvasData(this.data.
+        check_info_per_topic[topic_name]);
+    // 生成当前卡片canvas的数据
+    this.newLineCanvas(xTextList, yDataList);
   },
 
 
@@ -564,8 +568,8 @@ Page({
 
 
 
-  newLineCanvas: function (timelapse, n) {
-    setLineChart(['一', '二', '啊', '饿', '个'], [41, 22, 53, 24, 95]);
+  newLineCanvas: function (xlist, ylist) {
+    setLineChart(xlist, ylist);
   },
 
 
@@ -640,7 +644,7 @@ Page({
    * 新建canvas并往里填充数据
    */
   newBarCanvas: function (timelapse, n) {
-    let ans = data.getCanvasData(
+    let ans = data.getBarCanvasData(
                 this.data.check_time_list,
                 this.data.checked_topic_list_per_day,
                 this.data.completeness_current_date,

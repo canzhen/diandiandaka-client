@@ -243,9 +243,10 @@ image{
   position: fixed;
   display: flex;
   flex-direction: row;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   margin-top: 20rpx;
-  align-items: center;
 }
  /* 卡片完成度部分开始  */
 
@@ -335,7 +336,7 @@ image{
   overflow: hidden;
   justify-content: center;
   /* 上面那个first line是 top120 */
-  top: 180rpx; 
+  top: 220rpx; 
   left: 0;
   right: 0;
   margin: auto 0;
@@ -496,6 +497,17 @@ button::after{
 }
 
 
+.topic-picker{
+  margin-left: 0rpx;
+
+}
+
+.center{
+  text-align: center;
+  left: 0;
+  right: 0;
+  margin: auto 0;
+}
 
 .line-left{
   width: 225rpx;
@@ -605,13 +617,6 @@ button::after{
 }
 
 
-::-webkit-scrollbar{
-  width: 0;
-  height: 0;
-  color: transparent;
-}
-
-
 
 /* 弹窗部分 */
 .modal-mask {
@@ -706,8 +711,13 @@ button::after{
 
 
 button{
+  display: flex;
+  /* flex-direction: row; */
+  align-items: center;
   background-color: transparent;
   font-size: 30rpx;
+  /* padding-left: 0;
+  padding-bottom: 0; */
 }
 
 
@@ -717,7 +727,7 @@ button::after{
 
 
 ::-webkit-scrollbar{
-width: 0;
-height: 0;
-color: transparent;
+  width: 0;
+  height: 0;
+  color: transparent;
 }

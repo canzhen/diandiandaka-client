@@ -1,7 +1,7 @@
 {
   "pages": [
-    "pages/index/index",
     "pages/history/history",
+    "pages/index/index",
     "pages/today/today",
     "pages/me/myrank",
     "pages/me/mytopic",

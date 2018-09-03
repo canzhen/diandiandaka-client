@@ -80,11 +80,11 @@
 
 <!-- 卡片完成度 -->
 <view hidden="{{currentTab!==1}}">
-  <!-- <view class="card-data-panel">
+  <view class="card-data-panel">
 
-    <view class="one-line-view">
+    <view class="one-line-view center">
       卡片选择：
-      <picker range="{{topic_name_list}}" 
+      <picker class="topic-picker" range="{{topic_name_list}}" 
               bindchange="changeTopic" value="{{topic_index}}">
         <form bindsubmit="changeTopicFormId" report-submit="true">
         <button form-type='submit' hover-class='none'>
@@ -111,7 +111,7 @@
   <button form-type='submit' hover-class='none'>
     
   </button>
-  </form> -->
+  </form>
 </view>
 <!-- 卡片完成度结束 -->
 

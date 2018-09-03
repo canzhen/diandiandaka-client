@@ -109,7 +109,7 @@ var lineChartOption = {
   color: ['#37a2da', '#32c5e9', '#67e0e3'],
   grid: {
     top: 10,
-    left: 0,
+    left: 10,
     right: 10,
     bottom: 10,
     // width: 340,
@@ -134,11 +134,17 @@ var lineChartOption = {
     },
   }],
   yAxis: {
-    show: true
+    show: true,
+    silent: true,
+    axisLine: {
+      show: false
+    },
   },
   series: [{ //曲线
     type: 'line',
     data: [],
+    symbol: 'pin',
+    showSymbol: true,
     silent: true,
     smooth: true,
     clickable: false,
@@ -325,7 +331,7 @@ function getCompletePercentageOfDay(currentdate, topic_list_per_day, total_topic
 
 
 
-function _getCanvasData(percentageList, startdate, enddate, 
+function _getBarCanvasData(percentageList, startdate, enddate, 
           start_date_list, end_date_list, check_time_list,
           topic_list_per_day,total_topic_num, ifAverage, 
           ifAddXTestList = false, xTextList=null, ) {
@@ -379,10 +385,38 @@ function _getCanvasData(percentageList, startdate, enddate,
 
 
 
+
 /**
- * 计算获得每日完成度：
+ * 计算获得单个卡片的
  */
-function getCanvasData(
+function getLineCanvasData(check_time_list){
+  // check_time_list默认按照时间排序，
+  // 所以第一个就是最靠近当前日期的，
+  // 最后一个是最早的日期的
+  console.log(check_time_list)
+  let l = check_time_list.length;
+  let xTextList = [];
+  let yDataList = [];
+
+  if (l == 0) return [xTextList, yDataList];
+
+  for (let i = l - 1; i >= 0; i--){
+    let check_info = check_time_list[i];
+    if (check_info.count == -1) continue;
+    xTextList.push(check_info.check_time);
+    yDataList.push(check_info.count);
+  }
+
+  return [xTextList, yDataList];
+}
+
+
+
+
+/**
+ * 计算获得每日完成度
+ */
+function getBarCanvasData(
             check_time_list, 
             topic_list_per_day, 
             current_date, 
@@ -391,6 +425,7 @@ function getCanvasData(
             total_topic_num,
             time_lapse,
             n){
+
   var percentageList = [];
   let enddate = moment(current_date, 'YYYY-MM-DD');
   let startdate = moment(current_date, 'YYYY-MM-DD');
@@ -440,7 +475,7 @@ function getCanvasData(
 
   if (startdate <= moment()) {
     // 计算数据
-    _getCanvasData(percentageList, startdate, enddate, start_date_list, end_date_list, check_time_list, topic_list_per_day, total_topic_num, ifAverage, ifAddXTextList, xTextList);
+    _getBarCanvasData(percentageList, startdate, enddate, start_date_list, end_date_list, check_time_list, topic_list_per_day, total_topic_num, ifAverage, ifAddXTextList, xTextList);
   }
   let subtitle = startdate.format('YYYY-MM-DD') + ' 到 ' + enddate.format('YYYY-MM-DD');
 
@@ -690,7 +725,8 @@ module.exports = {
   getTopicInfoList,
   getCheckedDataOfEveryTopic,
   getCheckDetailOnGivenDay,
-  getCanvasData,
+  getBarCanvasData,
+  getLineCanvasData,
   getTopicListPerDay,
   getTotalTopicNumPerDay,
   getStartEndDateList,
