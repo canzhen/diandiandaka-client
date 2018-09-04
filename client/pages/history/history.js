@@ -138,6 +138,8 @@ Page({
       data.getCheckDataList((error_code, msg, checked_data_list) => {
         if (error_code != 200 || !checked_data_list) return;
         let [checkTimeListPerTopic, checkInfoListPerTopic] = data.getCheckedDataOfEveryTopic(checked_data_list, topicInfoMap); //按照每个topic分类的打卡时间集合
+
+        console.log(checkInfoListPerTopic)
         let [checkTimeList, checkedTopicListPerDay] = data.getTopicListPerDay(checked_data_list);
 
         that.setData({
@@ -753,6 +755,7 @@ Page({
    * 单击日志
    */
   tapOnLog: function (e) {
+    console.log(this.data.check_info_per_topic)
     let topic_name = e.currentTarget.dataset.topicName;
     //当前topic的第idx个日志
     let topic_log_idx = e.currentTarget.dataset.idx; 
@@ -769,6 +772,8 @@ Page({
       log: log,
       show_modal: true,
       word_left_num: cur_word_left - log.length,
+      count_phase: this.data.topic_info_map[topic_name].topic_count_phase,
+      count_unit: this.data.topic_info_map[topic_name].topic_count_unit
     });
   },
 
@@ -880,7 +885,8 @@ Page({
       topic_name: '',
       check_time: '',
       check_timestamp: '',
-      log: ''
+      log: '',
+      count_number: ''
     });
   },
 
@@ -896,6 +902,7 @@ Page({
         check_time: this.data.check_time,
         check_timestamp: this.data.check_timestamp,
         log: this.data.new_log,
+        count: this.data.count_number
       },
       'success': (res) => {
         if (res.error_code == 200)
@@ -909,7 +916,12 @@ Page({
     });
 
     let check_info_per_topic = this.data.check_info_per_topic;
-    check_info_per_topic[this.data.topic_name][this.data.topic_log_idx]['log'] = this.data.new_log;
+    if (this.data.new_log)
+      check_info_per_topic[this.data.topic_name]
+          [this.data.topic_log_idx]['log'] = this.data.new_log;
+    if (this.data.count_number)
+      check_info_per_topic[this.data.topic_name]
+          [this.data.topic_log_idx]['count'] = this.data.count_number;
 
     this.setData({
       check_info_per_topic: check_info_per_topic
@@ -918,6 +930,18 @@ Page({
   },
 
 
+
+
+
+
+  /**
+   * 打卡计数变化
+   */
+  bindTopicCountNumberChange: function (e) {
+    this.setData({
+      count_number: e.detail.value
+    })
+  },
 
   /**
    * 对话框取消按钮点击事件

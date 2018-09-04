@@ -783,16 +783,43 @@ router.post('/updateCheckLog', function (req, res) {
   let check_time = req.body.check_time;
   let check_timestamp = req.body.check_timestamp;
   let log = req.body.log;
+  let count = req.body.count;
+
 
   redishelper.getValue(id, (openid) => {
     if (!openid) {
       res.send({ 'error_code': 102, 'msg': '' });
       return;
     }
-    dbhelper.update('topic_check', 'log=?',
+
+    let column_string = '';
+    let value_list = [];
+
+    if (log) {
+      value_list.push(log);
+      column_string += 'log=?';
+    }
+    if (count) {
+      value_list.push(count);
+      if (column_string) column_string += ',';
+      column_string += 'count=?';
+    }
+
+
+    value_list = value_list.concat([openid, topic_name, check_time, check_timestamp]);
+
+    if (!log && !count) {
+      res.send({ 
+        'error_code': 200, 
+        'msg': '', 
+        'result_list': [] 
+      });
+      return;
+    }
+
+    dbhelper.update('topic_check', column_string,
       'user_id=? AND topic_name=? AND check_time=? AND check_timestamp=?',
-      [log, openid, topic_name, check_time, check_timestamp],
-      (status, result_list) => {
+      value_list, (status, result_list) => {
         let statusCode = status ? 200 : 100;
         let resList = status ? result_list : false;
         res.send({ 'error_code': statusCode, 'msg': '', 'result_list': resList });

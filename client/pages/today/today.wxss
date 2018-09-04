@@ -162,9 +162,10 @@ Page{
   margin-bottom: 20rpx;
 }
 
+/* 
 .modal-line > text{
   margin-top: 10rpx;
-}
+} */
 
 
 .modal-input {
@@ -182,7 +183,7 @@ Page{
   font-size: 30rpx;
   margin:auto 10rpx auto 10rpx;
   width:80rpx;
-  height:10rpx;
+  min-height: 1.1rem;
 }
 
 .textarea {

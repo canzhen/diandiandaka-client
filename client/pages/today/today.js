@@ -525,9 +525,18 @@ Page({
           }
           console.log('取消用户[' + topic_name + ']卡片的showlog成功');
           that.hideModal();
+
+          this.setData({
+            count_number: ''
+          })
         },
         'fail': (res) => {
           console.log('取消用户[' + topic_name + ']卡片的showlog失败T_T');
+
+
+          this.setData({
+            count_number: ''
+          })
         },
       });
     };

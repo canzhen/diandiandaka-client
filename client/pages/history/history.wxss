@@ -694,6 +694,16 @@ button::after{
   padding: 50rpx 32rpx;
 }
 
+
+.modal-line{
+  display: flex;
+  flex-direction: row;
+  align-content: center;
+  justify-content: flex-start;
+  font-size: 30rpx;
+  margin-bottom: 20rpx;
+}
+
 .modal-input {
   display: flex;
   background: #fff;
@@ -701,6 +711,18 @@ button::after{
   border-radius: 4rpx;
   font-size: 30rpx;
 }
+
+
+.modal-digit-input{
+  display: flex;
+  background: #fff;
+  border: 2rpx solid #ddd;
+  font-size: 30rpx;
+  margin:auto 10rpx auto 10rpx;
+  width:80rpx;
+  min-height: 1.1rem;
+}
+
 
 .textarea {
   width: 100%;

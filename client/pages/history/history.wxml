@@ -327,6 +327,12 @@
   <view class="modal-title">修改日志</view>
   <view class="modal-subtitle">{{check_time}} {{check_timestamp}}丨还能输入{{word_left_num}}字</view>
   <view class="modal-content">
+    <view class="modal-line">
+      <text>输入打卡计数： {{count_phase}} </text>
+      <input type='digit' class="modal-digit-input"  style="height: 30rpx;"  value="{{count_number}}"  bindchange="bindTopicCountNumberChange"/>
+      <text>{{count_unit}}</text>
+    </view>
+
     <view class="modal-input">
       <textarea class="textarea" cursor-spacing="20" fixed="true" auto-height value="{{log}}" bindinput="inputChange" placeholder="{{modal_placeholder}}"></textarea>
     </view>

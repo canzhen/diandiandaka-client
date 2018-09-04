@@ -409,7 +409,9 @@ function getLineCanvasData(check_time_list){
   for (let i = l - 1; i >= 0; i--){
     let check_info = check_time_list[i];
     if (check_info.count == -1) continue;
-    xTextList.push(check_info.check_time);
+    let simplifiedTime = check_info.check_time;
+    let timeList = simplifiedTime.split('-');
+    xTextList.push(timeList[1] + '.' + timeList[2]);
     yDataList.push(check_info.count);
   }
 
