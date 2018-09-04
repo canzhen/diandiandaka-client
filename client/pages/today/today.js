@@ -15,7 +15,7 @@ Page({
     is_reset_name: false, //默认用户没修改过名字
 
     show_modal: false, //是否弹出弹框
-    // count_number: '', //打卡计数
+    count_number: '', //打卡计数
     modal_placeholder: '', //弹出框的默认字符串
     modal_todate_time: '', //弹出框要显示的今日日期时间
     word_left_num: 140, //微信默认textarea最多输入140字
@@ -491,10 +491,13 @@ Page({
     this.hideModal();
     this.setData({
       [logData]: this.data.textarea_value,
-      [countData]: this.data.count_number,
-      textarea_value: '',
-      count_number: '',
+      [countData]: this.data.count_number ? this.data.count_number : -1,
+      textarea_value: ''
     });
+
+    this.setData({
+      count_number: ''
+    })
   },
 
 

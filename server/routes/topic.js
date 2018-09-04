@@ -143,6 +143,7 @@ router.post('/check', function (req, res) {
       if (user_topic_update_list.length == 0) return;
       console.log('【check】start updating user_topic')
 
+
       user_topic_update_list.push(openid)
 
       dbhelper.updateMulti('user_topic', 
@@ -160,10 +161,16 @@ router.post('/check', function (req, res) {
   };
 
 
+
+
   /* insert into topic_check 打卡数据 */
   let insertTopicCheck = function(openid) {
     console.log('【check】 start inserting into topic_check')
     return new Promise((resolve) => {
+
+      console.log(user_topic_insert_list)
+
+      
       for (let i in user_topic_insert_list)
         user_topic_insert_list[i].push("'" + openid + "'");
 

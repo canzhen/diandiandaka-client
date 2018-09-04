@@ -11,7 +11,7 @@ let colorList = ['#f8d3ad', '#f3c6ca'];
 
 Page({
   data: {
-    navbar: ['打卡日历', '卡片完成度', '每日完成度', '历史日志'],
+    navbar: ['打卡日历', '卡片数据', '每日完成度', '历史日志'],
     currentTab: 0,
     colorList: [ '#f3faf998', '#f6f3fa98', '#f6faf398', '#f9faf398',
                '#faf3f898', '#faf3f498', '#f3faf9a4', '#f3f7faa4'],
@@ -211,7 +211,7 @@ Page({
 
 
   /**
-   * 初始化卡片完成度
+   * 初始化卡片数据
    */
   initTopicCheckData: function(){
     console.log('init topic check data')
@@ -545,7 +545,7 @@ Page({
 
 
 
-  /*----------------------以下是卡片完成度部分-----------------------*/
+  /*----------------------以下是卡片数据部分-----------------------*/
   changeTopic: function(e){
     this.setData({
       topic_index: e.detail.value
@@ -776,7 +776,7 @@ Page({
     let that = this;
     wx.showModal({
       title: '删除',
-      content: '确定要删除这次打卡吗？删除操作不可恢复，且删除打卡会影响该卡片完成度，以及连续、坚持天数喔',
+      content: '确定要删除这次打卡吗？删除操作不可恢复，且删除打卡会影响该卡片数据，以及连续、坚持天数喔',
       showCancel: true,
       success: (res)=>{
         if (!res.confirm) return;
@@ -992,7 +992,7 @@ function setLineChart(xdata, ydata) {
   lineChart.setOption(data.lineChartOption);
 };
 
-function initLineChart(canvas, width, height) { //初始化卡片完成度图表
+function initLineChart(canvas, width, height) { //初始化卡片数据图表
   lineChart = echarts.init(canvas, null, {
     width: width,
     height: height

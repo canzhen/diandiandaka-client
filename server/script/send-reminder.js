@@ -312,6 +312,8 @@ function startSendMessage() {
   let getDiffSeconds = function (user_id, topic, timezone,
     remind_time, remind_method) {
 
+    if (!remind_time) return 0; //如果没有设置提醒时间，那么直接提醒
+
     /* 计算时区 */
     let userCurrentTime = moment();
     if (timezone != '480') { //中国时区，和服务器一致，无须转换
