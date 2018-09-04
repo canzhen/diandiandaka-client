@@ -447,16 +447,16 @@ router.post('/create', function (req, res) {
     }
 
 
-    insertTopic()
-    .then((result) => { 
+    insertUserTopic()
+    .then((result) => {
       if (result.error_code != 200){
-        res.send({error_code: 100, msg: result.msg});
+        res.send({ error_code: result.error_code, msg: result.msg});
         return;
       }
-      return insertUserTopic();
+      return insertTopic();
     }).then((result) => {
       if (result.error_code != 200) {
-        res.send({ error_code: 100, msg: result.msg });
+        res.send({ error_code: result.error_code, msg: result.msg });
         return;
       }
       res.send({ error_code: 200, msg: '' });
