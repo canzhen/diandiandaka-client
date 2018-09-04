@@ -38,6 +38,9 @@ Page({
       'showLoading': true,
       'success': (res) => {
         if (res.error_code == 200) {
+          let if_show_log = false;
+          if (options.if_show_log && options.if_show_log == 1) 
+            if_show_log = true;
           this.setData({
             icon_data_list: res.result_list,
             icon_name_num: utils.getSubscriptByLength(res.result_list.length, numEachRow),
@@ -45,7 +48,7 @@ Page({
             topic_url: options.topic_url ? options.topic_url : '',
             start_date: options.start_date ? options.start_date : '',
             end_date: options.end_date ? options.end_date : '',
-            if_show_log: options.if_show_log ? options.if_show_log : '',
+            if_show_log: if_show_log,
             topic_count_phase: options.topic_count_phase ? 
                         options.topic_count_phase : '',
             topic_count_unit: options.topic_count_unit ? 
