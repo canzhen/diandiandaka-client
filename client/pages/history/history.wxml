@@ -94,7 +94,15 @@
       </picker>
     </view>
 
+    <view wx:if="{{yList.length!=0}}" class="one-line-view center tips">
+      计数关键词：{{yName}}
+    </view>
 
+
+    <view wx:if="{{yList.length==0}}" class="card-data-nodata">
+      当前卡片无计数
+      <image src='/images/oops.png'></image>
+    </view>
 
     <ec-canvas class='topic-data-canvas'
           style="height:{{lineCanvasHeight}}px;"
@@ -102,7 +110,6 @@
           bindtouchmove='canvasTouchMove'
           ec="{{ec_line}}"
           disable-scroll='true'> </ec-canvas>
-
   </view>
 
 
@@ -155,13 +162,13 @@
 
       <view class="completeness-canvas-error" 
             hidden="{{(!user_click_no_data && checked_data_list.length != 0) || topic_info.length == 0}}">
-        <image src="/images/unhappy.png"></image>
-        <text>该段时间您没有打卡嗷~</text>
+        <image src="/images/nodata.png"></image>
+        <text style="margin-top:50rpx;">这段时间没有打卡数据~</text>
       </view>
 
       <view class="completeness-canvas-error" 
             hidden="{{!user_click_on_future || topic_info.length == 0}}">
-        <image src="/images/wronged.png"></image>
+        <image src="/images/future.png"></image>
         <text style="">未来的事情宝宝还不知道呢~</text>
       </view>
 

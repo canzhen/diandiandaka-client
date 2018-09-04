@@ -7,10 +7,6 @@ page{
   /* overflow:hidden; */
 }
 
-image{
-  border-radius: 50%;
-}
-
 .navbar{
   flex: none;
   display: flex;
@@ -81,6 +77,7 @@ image{
 .all-history-left-image{
   width: 75rpx;
   height: 75rpx;
+  border-radius: 50%;
 }
 
 .all-history-left-bottom{
@@ -242,13 +239,29 @@ image{
 .card-data-panel{
   position: fixed;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
   margin-top: 20rpx;
 }
- /* 卡片完成度部分开始  */
+
+.card-data-nodata{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.card-data-nodata > image{
+  width: 400rpx;
+  height: 400rpx;
+  margin-top: 200rpx;
+}
+
+
+ /* 卡片完成度部分结束  */
 
 
 
@@ -336,7 +349,7 @@ image{
   overflow: hidden;
   justify-content: center;
   /* 上面那个first line是 top120 */
-  top: 220rpx; 
+  top: 260rpx; 
   left: 0;
   right: 0;
   margin: auto 0;
@@ -345,22 +358,28 @@ image{
   height: auto;
 }
 
+.tips{
+  font-size: 25rpx;
+  color: #888888;
+}
+
 .completeness-canvas-error{
   position: fixed;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  opacity: 0.65;
-  top: 500rpx;
+  /* opacity: 0.65; */
+  top: 300rpx;
   left: 170rpx;
   /* z-index: -1; */
 }
 
 
 .completeness-canvas-error image{
-  width: 50rpx;
-  height: 60rpx;
-  margin-right: 10rpx;
+  width: 400rpx;
+  height: 400rpx;
+  /* margin-top: 200rpx; */
   /* margin-top: 30rpx; */
 }
 
@@ -387,6 +406,12 @@ image{
   text-align: center;
   padding-top: 4rpx; 
 
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
   
   /* shape */
   border: none;
@@ -408,6 +433,12 @@ image{
   text-align: center;
   padding-top: 3rpx; 
 
+
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  
   
   /* shape */
   border: none;

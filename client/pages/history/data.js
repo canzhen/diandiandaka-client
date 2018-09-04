@@ -85,17 +85,6 @@ var barChartOption = {
         shadowBlur: 5,
       }
     }
-  }, { // 连接柱状图的曲线
-    type: 'line',
-    data: [],
-    silent: true,
-    smooth: true,
-    clickable: false,
-    itemStyle: {
-      normal: {
-        color: 'rgba(136, 136, 136, 0.5)'
-      }
-    }
   }]
 };
 
@@ -126,16 +115,17 @@ var lineChartOption = {
     axisTick: {
       show: false
     },
-    axisLabel: {
-      margin: 10,
-      textStyle: {
-        color: '#888888'
-      }
-    },
+    // axisLabel: {
+    //   margin: 10,
+    //   textStyle: {
+    //     color: '#888888'
+    //   }
+    // }
   }],
   yAxis: {
     show: true,
     silent: true,
+    nameLocation: 'middle',
     axisLine: {
       show: false
     },
@@ -143,16 +133,33 @@ var lineChartOption = {
   series: [{ //曲线
     type: 'line',
     data: [],
-    symbol: 'pin',
     showSymbol: true,
-    silent: true,
-    smooth: true,
-    clickable: false,
+    showAllSymbol: true,
+    'symbol': 'circle', //折线点设置为实心点
+    symbolSize: 100, //折线点的大小
+    // silent: true,
+    // smooth: true,
+    animation: false,
+    // clickable: false,
     itemStyle: {
       normal: {
-        color: 'rgba(136, 136, 136, 0.5)'
+        color: 'rgba(136, 136, 136, 0.5)',
+        barBorderRadius: 0,
       }
-    }
+    },
+    lineStyle: {
+      color: '#feddbb'
+    },
+    areaStyle: {
+      color: '#feddbb',
+      smooth: true,
+    },
+    label: {
+      show: true,
+      position: 'top',
+      formatter: '平均{c}%',
+      distance: 20
+    },
   }]
 };
 
@@ -393,7 +400,6 @@ function getLineCanvasData(check_time_list){
   // check_time_list默认按照时间排序，
   // 所以第一个就是最靠近当前日期的，
   // 最后一个是最早的日期的
-  console.log(check_time_list)
   let l = check_time_list.length;
   let xTextList = [];
   let yDataList = [];
@@ -406,6 +412,8 @@ function getLineCanvasData(check_time_list){
     xTextList.push(check_info.check_time);
     yDataList.push(check_info.count);
   }
+
+  console.log(xTextList, yDataList)
 
   return [xTextList, yDataList];
 }

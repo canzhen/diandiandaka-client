@@ -231,7 +231,7 @@ Page({
       success: function (res) {
         wx.getSystemInfo({
           success: function (res) {
-            that.getSystemWidget('.one-line-view', 'bottom',
+            that.getSystemWidget('.one-line-view', 'bottom', 1,
               (topPos) => {
                 that.setData({
                   lineCanvasHeight: res.windowHeight - topPos,
@@ -246,8 +246,9 @@ Page({
                 let [xTextList, yDataList] = data.
                       getLineCanvasData(that.data.
                         check_info_per_topic[topic_name]);
+                let yName = that.data.topic_info_map[topic_name].topic_count_phase + 'n' + that.data.topic_info_map[topic_name].topic_count_unit;
                 // 生成当前卡片canvas的数据
-                that.newLineCanvas(xTextList, yDataList);
+                that.newLineCanvas(xTextList, yDataList, yName);
               })
           }
         });
@@ -259,14 +260,14 @@ Page({
 
 
 
-  getSystemWidget: function(name, pos, cb) {
+  getSystemWidget: function(name, pos, index, cb) {
     wx.createSelectorQuery().selectAll(name).
       boundingClientRect((rects) => {
         if (pos == 'top') {
-          cb(rects[0].top);
+          cb(rects[index].top);
           // console.log(rects[0].top);
         } else if (pos == 'bottom') {
-          cb(rects[0].bottom);
+          cb(rects[index].bottom);
           // console.log(rects[0].bottom);
         }
         // let diff = res.windowHeight - rects[0].top;
@@ -292,9 +293,9 @@ Page({
     let that = this;
     wx.getSystemInfo({
       success: function (res) {
-        that.getSystemWidget('.completeness-panel-bottom', 'top', 
+        that.getSystemWidget('.completeness-panel-bottom', 'top', 0,
         (bottomPos) => {
-          that.getSystemWidget('.completeness-first-row', 'bottom',
+          that.getSystemWidget('.completeness-first-row', 'bottom', 0, 
             (topPos) => {
               let diff = res.windowHeight - bottomPos;
               that.setData({
@@ -556,8 +557,10 @@ Page({
     let [xTextList, yDataList] = data.
       getLineCanvasData(this.data.
         check_info_per_topic[topic_name]);
+    let yName = this.data.topic_info_map[topic_name].topic_count_phase +
+          'n' + this.data.topic_info_map[topic_name].topic_count_unit;
     // 生成当前卡片canvas的数据
-    this.newLineCanvas(xTextList, yDataList);
+    this.newLineCanvas(xTextList, yDataList, yName);
   },
 
 
@@ -568,8 +571,13 @@ Page({
 
 
 
-  newLineCanvas: function (xlist, ylist) {
+  newLineCanvas: function (xlist, ylist, yname) {
     setLineChart(xlist, ylist);
+    yname = yname == 'n' ? '无': yname;
+    this.setData({
+      yList: ylist,
+      yName: yname
+    })
   },
 
 
