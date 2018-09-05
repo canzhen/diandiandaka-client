@@ -42,9 +42,7 @@ function startComputeRank(now) {
                 if (map[topic_name][user_id] == undefined)
                   map[topic_name][user_id] = {};
 
-                map[topic_name][user_id].start_date = info.start_date;
-                map[topic_name][user_id].insist_day = info.insist_day;
-                map[topic_name][user_id].total_day = info.total_day;
+                map[topic_name][user_id] = JSON.parse(JSON.stringify(info));
               }
               resolve({ error_code: 200, result_list: map});
             });
@@ -72,11 +70,16 @@ function startComputeRank(now) {
                 if (map[topic_name] == undefined)
                   map[topic_name] = {};
                 if (map[topic_name][user_id] == undefined)
-                  map[topic_name][user_id] = [];
+                  map[topic_name][user_id] = new Set();
                 
-                map[topic_name][user_id].push(info.check_time);
+                map[topic_name][user_id].add(info.check_time);
               }
-              // console.log(map);
+              for (let topic_name in map){
+                for (let user_id in map[topic_name])
+                  map[topic_name][user_id] = Array.from(map[topic_name][user_id]); //from set to list
+              }
+
+              // console.log(map)
               resolve({ error_code: 200, result_list: map})
             });
         })
@@ -99,6 +102,8 @@ function startComputeRank(now) {
         for (let topic_name in topicUserMap){
           for (let user_id in topicUserMap[topic_name]){
             let info = topicUserMap[topic_name][user_id];
+            // info.total_day = 10000;
+            // console.log(topicUserMap[topic_name][user_id].total_day);
             if (checkDataMap[topic_name] == undefined || 
                 checkDataMap[topic_name][user_id] == undefined ||
                 checkDataMap[topic_name][user_id].length == 0){
@@ -109,24 +114,36 @@ function startComputeRank(now) {
               continue;
             }
             let check_info = checkDataMap[topic_name][user_id];
+            // if (topic_name == '照顾外公')
+            //   console.log(check_info);
             let l = check_info.length;
             /** 计算总打卡天数 */
             info.total_day = l;
-            // 没有打卡日期，或者最后打卡日期是两天前，insist_day都设为0
-            let totalDayNum = moment().diff(moment(info.start_date, 'YYYY-MM-DD'), 'days') + 1;
-            /** 计算完成度 */
+            let today = moment();
+            let startDate = moment(info.start_date, 'YYYY-MM-DD');
             let endDate = moment(info.end_date, 'YYYY-MM-DD');
+            // 没有打卡日期，或者最后打卡日期是两天前，insist_day都设为0
+            let totalDayNum = today.diff(startDate, 'days') + 1;
+
+            /** 计算完成度 */
             // 如果在过期之后更新过，那么就不必再继续更新了，因为数值都已经不变了
-            if (moment().diff(endDate, 'days') > 0 &&
+            if (today.diff(endDate, 'days') > 0 &&
               moment(info.update_time, 'YYYY-MM-DD').diff(endDate, 'days') > 0)
               continue;
+
+            if (today.diff(endDate, 'days') > 0){
+              console.log('oops,过期了');
+              console.log('开始日期：' + info.start_date)
+              console.log('结束日期：' + info.end_date)
+              totalDayNum = endDate.diff(startDate, 'days') + 1;
+              console.log('相差：' + totalDayNum)
+            }
               
             // 否则，没过期，或者过期了但是还没更新过，则继续算
             info.complete_rate = parseFloat(((l / totalDayNum) * 100).toFixed(2));
             // if (user_id == 'ovMv05aNpgwDcJd4PEqfBfVtA3cU' && topic_name == '闭关'){
             //   console.log(lastCheckDay.format('YYYY-MM-DD'))
             // }
-            let today = moment();
             let lastCheckDay = moment(check_info[0], 'YYYY-MM-DD');
             if (today.diff(lastCheckDay, 'days') > 1) {
               info.insist_day = 0;
@@ -148,10 +165,11 @@ function startComputeRank(now) {
             }
 
             info.score = parseFloat(((info.total_day + info.insist_day * 2) * info.complete_rate / 10).toFixed(2));
+
+            // console.log(topicUserMap[topic_name][user_id])
           }
         }
         // 循环结束
-
 
 
         // 开始根据score排序
@@ -169,6 +187,9 @@ function startComputeRank(now) {
           topicUserMap[topic_name] = newMap;
         }
 
+
+
+        // console.log(topicUserMap)
 
         resolve({ error_code: 200, result_list: topicUserMap});
         // resolve({error_code: 200});

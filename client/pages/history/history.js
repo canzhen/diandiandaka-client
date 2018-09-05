@@ -187,7 +187,6 @@ Page({
           'total_day': list[i].total_day,
           'start_date': list[i].start_date,
           'end_date': list[i].end_date,
-          'complete_rate': list[i].complete_rate,
           'last_check_time': list[i].last_check_time,
           'topic_count_phase': list[i].topic_count_phase,
           'topic_count_unit': list[i].topic_count_unit
@@ -331,6 +330,7 @@ Page({
     if (this.data.topic_info_list == 0) return;
 
     let all_topic_info_map = this.data.topic_info_map;
+    let completenessMap = data.getCompletenessMap(all_topic_info_map, this.data.check_time_per_topic);
 
     // 分割过期的和不过期的
     let dated_topic_info_map = {};
@@ -343,9 +343,35 @@ Page({
     }
 
     this.setData({
+      completeness_map: completenessMap,
       undated_topic_info_map: undated_topic_info_map, 
       dated_topic_info_map: dated_topic_info_map,
       dated_topic_length: Object.keys(dated_topic_info_map).length
+    });
+
+
+
+    let completenessList = [];
+    for (let name in completenessMap){
+      completenessList.push(name);
+      completenessList.push(completenessMap[name]);
+    }
+
+    /* 保存每个卡片的完成度的数据 */
+    api.postRequest({
+      'url': '/topic/saveCompleteRate',
+      'data': {
+        value_list: completenessList,
+      },
+      'success': (res) => {
+        if (res.error_code == 200)
+          console.log('更新完成度成功');
+        else
+          console.log('更新完成度失败');
+      },
+      'fail': (res) => {
+        console.log('更新完成度失败');
+      } 
     });
 
   },

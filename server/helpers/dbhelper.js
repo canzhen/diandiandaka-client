@@ -240,8 +240,8 @@ function updateMulti(table_name, column_map, value_list, condition_string, cb) {
   if (condition_string != '')
     sql += ' WHERE ' + condition_string;
 
-  // console.log(sql)
-  // console.log(value_list)
+  console.log(sql)
+  console.log(value_list)
 
   client.query(sql, value_list,
     function (err, result) {
