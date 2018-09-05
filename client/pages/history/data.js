@@ -716,22 +716,6 @@ function getTotalTopicNumPerDay(check_last_date, topic_info_list){
 }
 
 
-/**
- * 计算每个topic的完成度
- * @param check_time_per_topic: ['topic_name': time_list,'':[],..]
- */
-function getCompletenessMap(topic_info_map, check_time_per_topic){
-  let map = {};
-  for (let topic in topic_info_map){
-    let totalDays = moment().diff(moment(
-          topic_info_map[topic].start_date, 'YYYY-MM-DD'),
-          'days') + 1;
-    let validDays = check_time_per_topic[topic].length;
-    map[topic] = parseFloat((validDays / totalDays) *100).toFixed(2);
-  }
-  return map;
-}
-
 module.exports = {
   getCheckDataList,
   getTopicInfoList,
@@ -744,7 +728,6 @@ module.exports = {
   getStartEndDateList,
   getCalendar,
   getCompletePercentageOfDay,
-  getCompletenessMap,
 
   barChartOption,
   lineChartOption,
