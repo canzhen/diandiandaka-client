@@ -122,7 +122,10 @@ Page({
   /**
    * 合并提醒 / 取消合并提醒
    */
-  merge: function(e) {
+  merge: function (e) {
+    this.setData({
+      isChanged: true
+    })
     this.saveFormId(e.detail.formId);
     if (this.data.isCombine){
       this.setData({
@@ -194,7 +197,10 @@ Page({
   /**
    * 设置打卡时间变化时触发的函数
    */
-  bindRemindTimeChange: function(e){
+  bindRemindTimeChange: function (e) {
+    this.setData({
+      isChanged: true
+    })
     let index = e.currentTarget.dataset.index;
     let topic_list = this.data.topic_list;
     topic_list[index].remind_time = e.detail.value;
@@ -227,6 +233,9 @@ Page({
    * 设置提醒方式，微信或短信
    */
   setRemindMethod: function (e) {
+    this.setData({
+      isChanged: true
+    })
     this.saveFormId(e.detail.formId);
     let remind_method = e.currentTarget.dataset.method;
     let is_combine = this.data.isCombine;
