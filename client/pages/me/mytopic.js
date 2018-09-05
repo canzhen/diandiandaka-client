@@ -92,10 +92,18 @@ Page({
       'showLoading': true,
       'success': (res) => { //成功
         // console.log(res)
-        if (res.error_code != 200) {
-          console.log('从数据库中获取用户卡片信息失败');
+        if(res.error_code == 102 || res.error_code == 103){
+          utils.login((res) => { });
+          wx.showToast({
+            title: '好像出了点问题，可以重新进入一下咩~',
+            icon: 'none'
+          })
           return;
         }
+        // if (res.error_code != 200) {
+        //   console.log('从数据库中获取用户卡片信息失败');
+        //   return;
+        // }
         console.log('从数据库中获取用户卡片信息成功');
         this.setData({
           topic_list: res.result_list

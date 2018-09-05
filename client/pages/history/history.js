@@ -130,7 +130,14 @@ Page({
     })
       /* 获取当前用户的所有卡片 */
     data.getTopicInfoList((error_code, msg, topic_info_list) => {
-      if (error_code != 200) return;
+      if(error_code == 102 || error_code == 103) {
+        utils.login((res) => { });
+        wx.showToast({
+          title: '好像出了点问题，可以刷新一下咩~',
+          icon: 'none'
+        })
+        return;
+      }
       topic_info_list = utils.filterDataFromDB(topic_info_list);
       let topicInfoMap = getTopicInfoMap(topic_info_list);
       let [startDateList, endDateList] = data.getStartEndDateList(topic_info_list);
@@ -315,6 +322,9 @@ Page({
   },
 
 
+
+
+
   // 初始化历史日志tab
   initCheckLog: function(){
     if (this.data.topic_info_list == 0) return;
@@ -355,12 +365,12 @@ Page({
       },
       'success': (res) => {
         if (res.error_code == 200)
-          console.log('更新日志成功');
+          console.log('更新完成度成功');
         else
-          console.log('更新日志失败');
+          console.log('更新完成度失败');
       },
       'fail': (res) => {
-        console.log('更新日志失败');
+        console.log('更新完成度失败');
       } 
     });
 

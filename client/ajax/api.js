@@ -19,8 +19,8 @@ const API = {
  *                 'header' : {}}
  */
 function postRequest(params) {
-  if (!sessionId) 
-    sessionId = utils.getStorageSync('sessionId');
+  sessionId = utils.getStorageSync('sessionId');
+
   if (params.showLoading){
     wx.showLoading({
       title: '加载中',
@@ -135,7 +135,7 @@ function getRequest(url, data, fnSucess, fnFail, showLoading = false) {
  */
 function showFailToast() {
   wx.showToast({
-    title: '提交失败..大爷饶命，小的这就去查看原因..',
+    title: '加载失败..大爷饶命，小的这就去查看原因..',
     icon: 'none',
     duration: 2000
   })

@@ -129,6 +129,11 @@
 
 
 
+
+
+
+
+
 <!-- 每日完成度 -->
 <view hidden="{{currentTab!==2}}">
     <!-- <view class='mask' catchtouchmove="move"></view> -->

@@ -261,7 +261,7 @@ Page({
       let index = e.currentTarget.dataset.topicIndex;
       let topic_list = this.data.topic_list;
       topic_list[index].checked = true;
-      if (topic_list[index].remind_method == -1) {
+      if (this.data.isCombine && topic_list[index].remind_method == -1) {
         topic_list[index].remind_time = '08:00';
       }
       topic_list[index].remind_method = remind_method;

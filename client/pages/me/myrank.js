@@ -1,5 +1,6 @@
 const api = require('../../ajax/api.js');
 const utils = require('../../vendor/utils.js');
+const moment = require('../../vendor/moment.js');
 
 
 Page({
@@ -9,6 +10,7 @@ Page({
    */
   data: {
     topic_list: [], //排名列表
+    current_date: moment().format('YYYY年MM月DD日')
   },
 
   /**
@@ -21,10 +23,18 @@ Page({
       'data': [],
       'showLoading': true,
       'success': (res) => { //成功
-        if (res.error_code != 200) {
-          console.log('从数据库中获取用户卡片信息失败');
+        if (res.error_code == 102 || res.error_code == 103) {
+          utils.login((res) => { });
+          wx.showToast({
+            title: '好像出了点问题，可以重新进入一下咩~',
+            icon: 'none'
+          })
           return;
         }
+        // if (res.error_code != 200) {
+        //   console.log('从数据库中获取用户卡片信息失败');
+        //   return;
+        // }
         console.log('从数据库中获取用户卡片信息成功');
 
         // 获取总人数
@@ -33,6 +43,7 @@ Page({
           'data': [],
           'showLoading': false,
           'success': (res) => {
+
             console.log('从数据库中获取卡片使用人数信息成功');
             let user_topic_list = this.data.topic_list;
             let topic_use_list = res.result_list;

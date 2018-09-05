@@ -153,6 +153,9 @@ Page({
             my_topic_data: undated_topic_list
           });
           createRowNum();
+        } else if (res.error_code == 102 || res.error_code == 103) {
+          utils.login((res) => { });
+          that.showFailToast('好像出了点问题，可以刷新一下咩~');
         } else console.log('获取用户打卡信息失败');
       },
       'fail': (res) => { //失败
@@ -597,5 +600,13 @@ Page({
       form_id_list: form_id_list
     });
   },
+
+
+  showFailToast: function(msg){
+    wx.showToast({
+      title: msg,
+      icon: 'none'
+    })
+  }
 
 });

@@ -1,3 +1,6 @@
+<!-- <canvas canvas-id="shareCanvas" style="width:600px;height:900px"></canvas>  -->
+
+
 <view style="display:flex; flex-direction:column;">
   <!-- 背景墙 -->
   <view class="top-background"></view>

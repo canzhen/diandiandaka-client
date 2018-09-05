@@ -113,8 +113,8 @@ function insertMulti(table_name, column_string, value_list, other_operation_stri
   sql += ' ';
   sql += other_operation_string;
 
-  console.log(sql)
-  console.log(value_list)
+  // console.log(sql)
+  // console.log(value_list)
 
   client.query(
     sql, value_list,
@@ -185,8 +185,8 @@ function update(table_name, column_string, condition_string, value_list, cb){
     sql += ' WHERE ' + condition_string;
 
 
-  console.log(sql)
-  console.log(value_list)
+  // console.log(sql)
+  // console.log(value_list)
 
   client.query(sql, value_list,
     function (err, result) {
@@ -240,8 +240,8 @@ function updateMulti(table_name, column_map, value_list, condition_string, cb) {
   if (condition_string != '')
     sql += ' WHERE ' + condition_string;
 
-  console.log(sql)
-  console.log(value_list)
+  // console.log(sql)
+  // console.log(value_list)
 
   client.query(sql, value_list,
     function (err, result) {

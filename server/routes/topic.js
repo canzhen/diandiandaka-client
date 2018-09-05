@@ -930,21 +930,21 @@ router.post('/deleteCheck', function (req, res) {
     }
 
     Promise.all([deleteTopicCheck(), reduceUserTopicData()])
-      .then((result) => { //如果成功
-        console.log(result)
-        for (let i in result) {
-          if (result[i].error_code != 200) {
-            res.send({
-              'error_code': result[i].error_code,
-              'msg': result[i].msg
-            });
-            return;
-          }
-          res.send({ 'error_code': 200, 'msg': '' });
+    .then((result) => { //如果成功
+      // console.log(result)
+      for (let i in result) {
+        if (result[i].error_code != 200) {
+          res.send({
+            'error_code': result[i].error_code,
+            'msg': result[i].msg
+          });
+          return;
         }
-      }, (res) => { //如果失败
-        res.send({ 'error_code': 100, 'msg': '' });
-      })
+        res.send({ 'error_code': 200, 'msg': '' });
+      }
+    }, (res) => { //如果失败
+      res.send({ 'error_code': 100, 'msg': '' });
+    })
 
   });
 });

@@ -44,6 +44,8 @@ router.post('/login', function (req, res) {
     });
   }
 
+  
+
   // 如果sessionid不存在，或者在redis过期了，都需要重新获取openid
   // 这时候有个问题，前端的sessionid先过期了，后端的redis还存在，就会有些废redis留着
   let getOpenID = function (code) {
@@ -80,11 +82,13 @@ router.post('/login', function (req, res) {
   }
 
   if (sessionid) {
-    redishelper.getValue(sessionid, (value) => {
-      if (value) {
+    redishelper.getValue(sessionid, (openid) => {
+      if (openid) {
         res.send({ 'error_code': 200, 'msg': '', 'sessionId': sessionid });
         return;
-      } else { getOpenID(code); }
+      } 
+      
+      getOpenID(code); 
     })
   } else {
     getOpenID(code);

@@ -115,6 +115,8 @@
         </view>
         <!-- 卡片名称结束 -->
 
+
+
         <!-- 提醒方式和时间 -->
         <view class="one-row-right" style="width:70%;padding-right:0;">
           <picker mode="time" data-group-index="{{group_index}}" 

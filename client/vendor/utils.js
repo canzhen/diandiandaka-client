@@ -23,16 +23,16 @@ module.exports.login = function(cb) {
           'timezone': getTimezone()
         },
         'success': (res) => {
-          module.exports.setStorageSync('sessionId', res.sessionId, 1000 * 60 * 60 * 2); //服务端的session也是默认2小时过期
+          module.exports.setStorageSync(
+                'sessionId', res.sessionId, 
+                1000 * 60 * 60 * 2); //服务端的session也是默认2小时过期
           cb(res.error_code, res.msg);
-        },
-        'fail': (res) => {
+        }, 'fail': (res) => {
           console.log('从数据库中更新或添加用户登录状态失败，请检查网络状态');
           cb(100, '');
         }
       });
-    },
-    fail(loginError) {
+    }, fail(loginError) {
       console.log('微信登录失败，请检查网络状态');
       cb(100, '');
     }
@@ -91,7 +91,9 @@ module.exports.getStorageSync = function (key) {
 
 
   console.log('get key: ' + key +
-    ', expiration time:' + expiration + ', current time is : ' + timestamp);
+    ', expiration time:' + expiration + 
+    ', value is : ' + data + 
+    ', current time is : ' + timestamp);
 
   if (data && expiration > timestamp){
     return data;

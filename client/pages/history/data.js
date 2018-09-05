@@ -178,7 +178,7 @@ function getCheckDataList(cb){
     'success': (res) => {
       if (res.error_code != 200) {
         console.log('从数据库中获取用户具体每日打卡信息失败');
-        cb(100, '', []);
+        cb(res.error_code, '', []);
         return;
       }
       console.log('从数据库中获取用户具体每日打卡信息成功');
@@ -186,7 +186,7 @@ function getCheckDataList(cb){
     },
     'fail': (res) => {
       console.log('从数据库中获取用户具体每日打卡信息失败');
-      cb(100, '', []);
+      cb(res.error_code, '', []);
     }
   });
 }
@@ -202,7 +202,7 @@ function getTopicInfoList(cb) {
     'success': (res) => { //成功
       if (res.error_code != 200) {
         console.log('从数据库中获取用户卡片信息失败');
-        cb(100, '', []);
+        cb(res.error_code, '', []);
         return;
       }
       console.log('从数据库中获取用户卡片信息成功');
@@ -210,7 +210,7 @@ function getTopicInfoList(cb) {
     },
     'fail': (res) => { //失败
       console.log('从数据库中获取用户卡片信息失败');
-      cb(100, '', []);
+      cb(res.error_code, '', []);
     }
   });
 }
@@ -723,7 +723,9 @@ function getTotalTopicNumPerDay(check_last_date, topic_info_list){
 function getCompletenessMap(topic_info_map, check_time_per_topic){
   let map = {};
   for (let topic in topic_info_map){
-    let totalDays = moment().diff(moment(topic_info_map[topic].start_date, 'YYYY-MM-DD'), 'days') + 1;
+    let totalDays = moment().diff(moment(
+          topic_info_map[topic].start_date, 'YYYY-MM-DD'),
+          'days') + 1;
     let validDays = check_time_per_topic[topic].length;
     map[topic] = parseFloat((validDays / totalDays) *100).toFixed(2);
   }
