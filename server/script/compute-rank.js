@@ -160,13 +160,9 @@ function startComputeRank(now) {
                 insist_day += 1;
                 lastCheckDay = currentCheckDay.clone();
               }
-              // console.log('insist day is : ' + insist_day)
               info.insist_day = insist_day;
             }
-
             info.score = parseFloat(((info.total_day + info.insist_day * 2) * info.complete_rate / 10).toFixed(2));
-
-            // console.log(topicUserMap[topic_name][user_id])
           }
         }
         // 循环结束
@@ -186,10 +182,6 @@ function startComputeRank(now) {
           }
           topicUserMap[topic_name] = newMap;
         }
-
-
-
-        // console.log(topicUserMap)
 
         resolve({ error_code: 200, result_list: topicUserMap});
         // resolve({error_code: 200});

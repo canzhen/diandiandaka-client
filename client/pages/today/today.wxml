@@ -27,7 +27,7 @@
         <form bindsubmit="check" data-src="{{my_topic_data[num].topic_url}}" data-idx="{{num}}" report-submit='true'>
         <button class="topic-image-each-item" hover-class="none" form-type="submit">
           <image class="image" src="{{my_topic_data[num].topic_url}}"></image>
-          <image src="/images/duigou.png" animation="{{my_topic_data[num].animation}}" class="image-punched-in" wx:if="{{my_topic_data[num].is_checked && my_topic_data[num].insist_day}}"></image>
+          <image src='http://images.zhoucanzhendevelop.com/icon/duigou.png' animation="{{my_topic_data[num].animation}}" class="image-punched-in" wx:if="{{my_topic_data[num].is_checked && my_topic_data[num].insist_day}}"></image>
           <view class="white-space"></view>
           <!-- 每个image结束 -->
           <text style="text-align:center;">{{my_topic_data[num].topic_name}}</text>

@@ -11,11 +11,11 @@
               style="font-size:25rpx;padding-right:0;">
       <view class="title-right" wx:if="{{!isCombine}}">
         <text style="margin-right:10rpx;color:#616161;"> 合并提醒 </text>
-        <image src="/images/hebing.png" class="small-image"></image>
+        <image src="http://images.zhoucanzhendevelop.com/icon/hebing.png" class="small-image"></image>
       </view>
       <view class="title-right" wx:if="{{isCombine}}">
         <text style="margin-right:10rpx;color:#616161;"> 取消合并 </text>
-        <image src="/images/quxiaohebing.png" class="small-image"></image>
+        <image src="http://images.zhoucanzhendevelop.com/icon/quxiaohebing.png" class="small-image"></image>
       </view>
       </button>
       </form>
@@ -50,16 +50,16 @@
             <form bindsubmit="setRemindMethod" report-submit="true"
                   data-method="1" data-topic-index="{{index}}">
             <button form-type='submit' hover-class='none' style="margin-left:-5rpx;">
-              <image src="/images/weixin.png" class="image"/>
-              <image wx:if="{{topic.remind_method == 1}}" src="/images/heigou.png" class="punched-image"/>
+              <image src="http://images.zhoucanzhendevelop.com/icon/weixin.png" class="image"/>
+              <image wx:if="{{topic.remind_method == 1}}" src="http://images.zhoucanzhendevelop.com/icon/heigou.png" class="punched-image"/>
             </button>
             </form>
 
             <form bindsubmit="setRemindMethod" report-submit="true"
                    data-method="2" data-topic-index="{{index}}">
             <button form-type='submit' hover-class='none'  style="margin-left:-40rpx;">
-              <image src="/images/duanxin.png" class="image"/>
-              <image wx:if="{{topic.remind_method == 2}}"src="/images/heigou.png" class="punched-image"/>
+              <image src="http://images.zhoucanzhendevelop.com/icon/duanxin.png" class="image"/>
+              <image wx:if="{{topic.remind_method == 2}}"src="http://images.zhoucanzhendevelop.com/icon/heigou.png" class="punched-image"/>
             </button>
             </form>
           </view>
@@ -106,7 +106,7 @@
                 data-topic-index="{{index}}"
                 data-current-topic="{{topic_name}}">
           <button form-type='submit' hover-class='none' style='margin-left:-20rpx;'>
-            <image src="/images/xiugai2.png" 
+            <image src="http://images.zhoucanzhendevelop.com/icon/xiugai2.png" 
                 style="margin-left:10rpx;"
                 class="small-image"/>
           </button>
@@ -128,16 +128,16 @@
           <form bindsubmit="setRemindMethod" report-submit="true"
                   data-method="1" data-index="{{group_index}}">
           <button form-type='submit' hover-class='none' style="margin-left:-5rpx;">
-            <image src="/images/weixin.png" class="image"/>
-            <image wx:if="{{topic_info.remind_method == 1}}" src="/images/heigou.png" class="punched-image"/>
+            <image src="http://images.zhoucanzhendevelop.com/icon/weixin.png" class="image"/>
+            <image wx:if="{{topic_info.remind_method == 1}}" src="http://images.zhoucanzhendevelop.com/icon/heigou.png" class="punched-image"/>
           </button>
           </form>
 
           <form bindsubmit="setRemindMethod" report-submit="true"
                   data-method="2" data-index="{{group_index}}">
           <button form-type='submit' hover-class='none'  style="margin-left:-40rpx;">
-            <image src="/images/duanxin.png" class="image"/>
-            <image wx:if="{{topic_info.remind_method == 2}}"src="/images/heigou.png" class="punched-image"/>
+            <image src="http://images.zhoucanzhendevelop.com/icon/duanxin.png" class="image"/>
+            <image wx:if="{{topic_info.remind_method == 2}}"src="http://images.zhoucanzhendevelop.com/icon/heigou.png" class="punched-image"/>
           </button>
           </form>
         </view>
@@ -186,7 +186,7 @@
             bindchange="groupPickerChange">
       <view class="modal-picker">
       {{current_group}}
-      <image src="/images/zhankai.png" class="small-image"/>
+      <image src="http://images.zhoucanzhendevelop.com/icon/zhankai.png" class="small-image"/>
       </view>
     </picker>
   </view>

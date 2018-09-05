@@ -404,17 +404,6 @@ Page({
 
 
   /**
-   * 跳转到微信提醒设置界面
-   */
-  gotoWechatReminder: function(e){
-    wx.navigateTo({
-      url: '/pages/settings/wechatReminder',
-    })
-  },
-
-
-
-  /**
    * 跳转到提醒设置界面
    */
   gotoReminder: function (e) {

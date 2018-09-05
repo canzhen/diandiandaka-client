@@ -10,7 +10,7 @@
       <text style="font-size:25rpx;" space='ensp'>分数<text style="font-weight:bold;font-size:27rpx;color:black;">{{topic_info.score}}</text> 超过<text style="font-weight:bold;color:{{topic_info.higher_rate>=50?'red':'blue'}};">{{topic_info.higher_rate}}</text>%的同学</text>
     </view>
     <view class="one-row-right-right">
-      <image src="/images/{{topic_info.higher_rate>50 || topic_info.rank <=5 ?'xiaolian':'kulian'}}.png"/>
+      <image src="http://images.zhoucanzhendevelop.com/icon/{{topic_info.higher_rate>50 || topic_info.rank <=5 ?'xiaolian':'kulian'}}.png"/>
     </view>
   </view>
 <!-- </view> -->

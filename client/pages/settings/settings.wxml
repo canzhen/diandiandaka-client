@@ -10,7 +10,7 @@
         <view class="one-row-right">
           <text wx:if="{{is_reset_name}}">{{user_name}}</text>
           <open-data type="userNickName" lang="zh_CN" wx:if="{{!is_reset_name}}"></open-data>
-          <image src='/images/right.png' class="one-row-right-arrow"></image>
+          <image src='http://images.zhoucanzhendevelop.com/icon/right.png' class="one-row-right-arrow"></image>
         </view>
       </button>
       </form>
@@ -24,7 +24,7 @@
           <view class="avatar" wx:if="{{!is_reset_avatar}}">
           <open-data type="userAvatarUrl" mode="aspectFill"></open-data>
           </view>
-          <image src='/images/right.png' class="one-row-right-arrow"></image>
+          <image src='http://images.zhoucanzhendevelop.com/icon/right.png' class="one-row-right-arrow"></image>
         </view>
       </button>
       </form>
@@ -39,7 +39,7 @@
           <view class="infoText">
             {{region[0]}} {{region[1]}} {{region[2]}}
           </view>
-          <image src='/images/right.png' class="one-row-right-arrow"></image>
+          <image src='http://images.zhoucanzhendevelop.com/icon/right.png' class="one-row-right-arrow"></image>
         </view>
       </button>
       </picker>
@@ -53,7 +53,7 @@
           <text>性别</text>
           <view class="one-row-right">
             {{gender}}
-            <image src='/images/right.png' class="one-row-right-arrow"></image>
+            <image src='http://images.zhoucanzhendevelop.com/icon/right.png' class="one-row-right-arrow"></image>
           </view>
       </button>
       </picker>
@@ -66,7 +66,7 @@
         <text>微信号</text>
         <view class="one-row-right">
           <text>{{wechat_id}}</text>
-          <image src='/images/right.png' class="one-row-right-arrow"></image>
+          <image src='http://images.zhoucanzhendevelop.com/icon/right.png' class="one-row-right-arrow"></image>
         </view>
       </button>
       </form>
@@ -79,7 +79,7 @@
         <view class="one-row-right">
           <text wx:if="{{phone_number}}">{{countryCode}}-{{phone_number}}</text>
           <text wx:elif="{{!phone_number}}">未设置</text>
-          <image src='/images/right.png' class="one-row-right-arrow"></image>
+          <image src='http://images.zhoucanzhendevelop.com/icon/right.png' class="one-row-right-arrow"></image>
         </view>
       </button>
       </form>
@@ -92,7 +92,7 @@
         <text>生日</text>
         <view class="one-row-right">
           <text>{{birthday}}</text>
-          <image src='/images/right.png' class="one-row-right-arrow"></image>
+          <image src='http://images.zhoucanzhendevelop.com/icon/right.png' class="one-row-right-arrow"></image>
         </view>
       </button>
       </picker>
@@ -113,7 +113,7 @@
         <text>打卡提醒</text>
         <view class="one-row-right">
           <text>设置微信或短信打卡提醒</text>
-          <image src='/images/right.png' class="one-row-right-arrow"></image>
+          <image src='http://images.zhoucanzhendevelop.com/icon/right.png' class="one-row-right-arrow"></image>
         </view>
       </button>
       </form>

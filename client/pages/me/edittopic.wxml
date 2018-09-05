@@ -75,9 +75,9 @@
         <text style="font-size:25rpx;">(下滑查看更多)</text>
       </view>
 
-      <view bindtap="uploadIcon" style="margin-bottom:10rpx; align-items:center;">
+      <view bindtap="uploadIcon" style="display:flex;flex-direction:row;align-items:center;">
         <text style="font-size:25rpx;">上传自定义图标</text>
-        <image src="/images/upload.png" style="width:40rpx; height:40rpx;margin-top:10rpx;"></image>
+        <image src="http://images.zhoucanzhendevelop.com/icon/upload.png" style="width:35rpx; height:35rpx;"></image>
       </view>
     </view>
 
@@ -86,7 +86,10 @@
       <view class="icon-image-view" wx:for="{{icon_name_num}}" wx:key="idx" wx:for-item="row_data">
         <!-- 每一行 -->
         <view class="icon-image-row" wx:for="{{row_data}}" wx:key="col" wx:for-item="num">
-          <view class="icon-image-each-item" id="{{icon_data_list[num] == topic_url ? 'chosen' : 'unchosen'}}" bindtap="checkIcon" data-src="/images/{{icon_data_list[num]}}" data-idx="{{num}}" data-url="{{icon_data_list[num]}}" >
+          <view class="icon-image-each-item" 
+          id="{{icon_data_list[num] == topic_url ? 'chosen' : 'unchosen'}}" bindtap="checkIcon" 
+          data-idx="{{num}}" 
+          data-url="{{icon_data_list[num]}}" >
             <image class="image" src="{{icon_data_list[num]}}"></image>
             <icon class="image-punched-in" wx:if="{{icon_data_list[num] == topic_url}}" type="success_no_circle" size="30"></icon>
           </view>

@@ -16,7 +16,7 @@
           <!-- 用户名 -->
           <open-data type="userNickName" lang="zh_CN" wx:if="{{!is_reset_name}}"></open-data>
           <text wx:if="{{is_reset_name}}">{{user_name}}</text>
-          <image class="username-edit-image" src="/images/xiugai.png"></image>
+          <image class="username-edit-image" src="http://images.zhoucanzhendevelop.com/icon/xiugai.png"></image>
         </view>
         <!-- <text class="edit-data" bindtap="editPersonalData">编辑个人资料 ></text> -->
       </view>
@@ -33,7 +33,7 @@
       <!-- 我的卡片 -->
       <form bindsubmit="redirectToMyTopic" report-submit='true' >
       <button class="me-lower-part-each-item" hover-class="none" form-type="submit">
-        <image class="image" src="/images/kapian.png"></image>
+        <image class="image" src="http://images.zhoucanzhendevelop.com/icon/kapian.png"></image>
         <text> 我的卡片 </text>
       </button>
       </form>
@@ -45,7 +45,7 @@
       <form bindsubmit="redirectToMyRank" report-submit='true' >
       <button class="me-lower-part-each-item" hover-class="none" 
               form-type="submit">
-        <image class="image" src="/images/paiming.png"></image>
+        <image class="image" src="http://images.zhoucanzhendevelop.com/icon/paiming.png"></image>
         <text> 我的排名 </text>
       </button>
       </form>
@@ -56,8 +56,19 @@
       <!-- 设置 -->
       <form bindsubmit="redirectToSettings" report-submit='true' >
       <button class="me-lower-part-each-item" hover-class="none" form-type="submit">
-        <image class="image" src="/images/shezhi.png"></image>
+        <image class="image" src="http://images.zhoucanzhendevelop.com/icon/shezhi.png"></image>
         <text> 高级设置 </text>
+      </button>
+      </form>
+
+
+
+
+      <!-- 分享打卡 -->
+      <form bindsubmit="shareCards" report-submit='true' >
+      <button class="me-lower-part-each-item" hover-class="none" form-type="submit">
+        <image class="image" src="http://images.zhoucanzhendevelop.com/icon/fenxiang.png"></image>
+        <text> 分享打卡 </text>
       </button>
       </form>
 

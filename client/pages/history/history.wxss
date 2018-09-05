@@ -396,7 +396,7 @@ page{
 
 
 .completeness-button{
-  width: 120rpx;
+  width: 130rpx;
   height: 60rpx;
   margin-right: 50rpx;
 
@@ -422,7 +422,7 @@ page{
 
 
 .completeness-button-checked{
-  width: 120rpx;
+  width: 130rpx;
   height: 60rpx;
   margin-right: 50rpx;
 
@@ -522,9 +522,10 @@ button::after{
 
 .one-line-view{
   display:flex; 
-  flex-direction:row; 
-  align-items:center;
+  flex-direction: row; 
+  align-items: center;
   justify-content: center;
+  width: 100%;
 }
 
 

@@ -53,7 +53,7 @@
             <view class="calendar-days-row" wx:for="{{date.days}}" wx:key="idx" wx:for-item="sevenDays">
               <view space="emsp" class="calendar-days-each-item" wx:for="{{sevenDays}}" wx:key="idx" wx:for-item="day" bindtap="bindTapOnDate" data-current-date="{{date.year}}-{{date.month}}-{{day._day}}">
                 <text>{{day._day}}</text>
-                <image src="/images/duigou.png" hidden="{{!day._checked}}" class="checked"></image>
+                <image src="http://images.zhoucanzhendevelop.com/icon/duigou.png" hidden="{{!day._checked}}" class="checked"></image>
               </view> 
             </view>
           </view> 
@@ -78,7 +78,7 @@
 
 
 
-<!-- 卡片完成度 -->
+<!-- 卡片数据 -->
 <view hidden="{{currentTab!==1}}">
   <view class="card-data-panel">
 
@@ -101,7 +101,7 @@
 
     <view wx:if="{{yList.length==0}}" class="card-data-nodata">
       当前卡片无计数
-      <image src='/images/oops.png'></image>
+      <image src='http://images.zhoucanzhendevelop.com/icon/oops.png'></image>
     </view>
 
     <ec-canvas class='topic-data-canvas'
@@ -120,7 +120,7 @@
   </button>
   </form>
 </view>
-<!-- 卡片完成度结束 -->
+<!-- 卡片数据结束 -->
 
 
 
@@ -140,12 +140,12 @@
     <view class="completeness-panel">
       <view class="completeness-first-row" wx:if="{{topic_info.length != 0}}">
         <view class="completeness-first-row1">
-          <image src="/images/graph-left.png" 
+          <image src="http://images.zhoucanzhendevelop.com/icon/graph-left.png" 
           style="width:35rpx;height:35rpx;margin-right:30rpx;"
           bindtap="completenessPreTimelapse"
           disabled="{{selected_timelapse==3}}"></image>
           <text> {{completeness_week_subtitle}}</text>
-          <image src="/images/graph-right.png" 
+          <image src="http://images.zhoucanzhendevelop.com/icon/graph-right.png" 
           style="width:35rpx;height:35rpx;margin-left:30rpx;" 
           bindtap="completenessNextTimelapse"
           disabled="{{selected_timelapse==3}}"></image>
@@ -167,19 +167,23 @@
 
       <view class="completeness-canvas-error" 
             hidden="{{(!user_click_no_data && checked_data_list.length != 0) || topic_info.length == 0}}">
-        <image src="/images/nodata.png"></image>
+        <image src="http://images.zhoucanzhendevelop.com/icon/nodata.png"></image>
         <text style="margin-top:50rpx;">这段时间没有打卡数据~</text>
       </view>
 
       <view class="completeness-canvas-error" 
             hidden="{{!user_click_on_future || topic_info.length == 0}}">
-        <image src="/images/future.png"></image>
+        <image src="http://images.zhoucanzhendevelop.com/icon/future.png"></image>
         <text style="">未来的事情宝宝还不知道呢~</text>
       </view>
 
     <!-- 底部固定的1周/1个月/1年/全部的选项卡 -->
       <view class="completeness-panel-bottom" wx:if="{{checked_data_list.length != 0}}">
-        <button wx:for="{{timelapses}}" wx:key="key" wx:for-index="index" wx:for-item="timelapse" class='{{timelapse.checked ? "completeness-button-checked" : "completeness-button"}}' bindtap="selectTimeLapse" data-time="{{timelapse.name}}" data-index="{{index}}"> {{timelapse.name}}</button>
+        <button wx:for="{{timelapses}}" wx:key="key" 
+          wx:for-index="index" wx:for-item="timelapse" 
+          class='{{timelapse.checked ? "completeness-button-checked" : "completeness-button"}}' bindtap="selectTimeLapse" 
+          data-time="{{timelapse.name}}" 
+          data-index="{{index}}"> {{timelapse.name}}</button>
       </view>
     <!-- 底部固定的1周/1个月/1年/全部的选项卡 -->
     </view>
@@ -233,7 +237,7 @@
             data-date="{{info.check_time}}" 
             data-time="{{info.check_timestamp}}"
             data-log="{{info.log}}">
-              <image class="detail-loop-panel-left" src="/images/log-dot.png"></image>
+              <image class="detail-loop-panel-left" src="http://images.zhoucanzhendevelop.com/icon/log-dot.png"></image>
               <view class="detail-loop-panel-right" style="color:{{undated_topic_info_map[topic_name].dated?'#888888':'black'}};">
                 <text class="detail-date">
                   {{info.check_time}}　{{info.check_timestamp}}
@@ -284,7 +288,7 @@
           <view class="timeline"></view>
           <view class="detail-text">
             <view class="detail-loop-panel" bindtap="tapOnLog" bindlongpress='longTapLog' wx:for="{{check_info_per_topic[topic_name]}}" wx:key="key" wx:for-index="idx" wx:for-item="info" data-topic-name="{{topic_name}}" data-idx="{{idx}}" data-date="{{info.check_time}}" data-time="{{info.check_timestamp}}" data-log="{{info.log}}">
-              <image class="detail-loop-panel-left" src="/images/log-dot.png"></image>
+              <image class="detail-loop-panel-left" src="http://images.zhoucanzhendevelop.com/icon/log-dot.png"></image>
               <view class="detail-loop-panel-right" style="color:{{dated_topic_info_map[topic_name].dated?'#888888':'black'}};">
                 <text class="detail-date">
                   {{info.check_time}}　{{info.check_timestamp}}

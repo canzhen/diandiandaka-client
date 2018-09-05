@@ -994,7 +994,7 @@ Page({
     /* 处理formid */
     if (this.data.form_id_list.length == 0) return;
     console.log('I am hiding')
-    console.log(this.data.form_id_list);
+    // console.log(this.data.form_id_list);
     utils.saveFormId(this.data.form_id_list);
     this.setData({
       form_id_list: []

@@ -415,7 +415,7 @@ function getLineCanvasData(check_time_list){
     yDataList.push(check_info.count);
   }
 
-  console.log(xTextList, yDataList)
+  // console.log(xTextList, yDataList)
 
   return [xTextList, yDataList];
 }

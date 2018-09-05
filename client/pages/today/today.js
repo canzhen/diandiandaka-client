@@ -24,7 +24,29 @@ Page({
   },
 
 
+  // /**
+  //  * 分享转发
+  //  */
+  // onShareAppMessage: (res) => {
+  //   if (res.from === 'button') {
+  //     console.log("来自页面内转发按钮");
+  //     console.log(res.target);
+  //   } else {
+  //     console.log("来自右上角转发菜单")
+  //   }
 
+  //   // return {
+  //   //   title: '我的打卡',
+  //   //   path: '/pages/today/today?id=123',
+  //   //   imageUrl: "/images/1.jpg",
+  //   //   success: (res) => {
+  //   //     console.log("转发成功", res);
+  //   //   },
+  //   //   fail: (res) => {
+  //   //     console.log("转发失败", res);
+  //   //   }
+  //   // }
+  // },
 
 
   /* 页面加载函数 */
@@ -145,7 +167,7 @@ Page({
           }
           undated_topic_list.push({
             'topic_name': '添加新卡片\n',
-            'topic_url': '/images/xinkapian.png',
+            'topic_url': 'http://images.zhoucanzhendevelop.com/icon/xinkapian.png',
             'insist_day': -1,
             'is_checked': false
           });

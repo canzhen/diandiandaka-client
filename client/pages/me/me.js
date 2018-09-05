@@ -275,6 +275,17 @@ Page({
   },
 
 
+  /**
+   * 分享打卡
+   */
+  shareCards: function(e){
+    this.saveFormId(e.detail.formId);
+    wx.navigateTo({
+      url: '/pages/share/share'
+    })
+  },
+
+
 
   /**
    * 弹出框蒙层截断touchmove事件
