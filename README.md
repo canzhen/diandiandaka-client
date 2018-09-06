@@ -66,9 +66,9 @@
 服务器
 
 1. 进入/home/ubuntu/receiver，运行node server.js打开本地和服务器同步的接口
-2. redis-server & 在后端打开redis
+2. redis-server --port 6226 & 在后端打开redis服务器，要查看redis的时候：redis-cli -p 6226
 3. mysql -uroot diandiandaka -p （mysql123）打开数据库
-4. 进入/home/ubuntu/diandiandaka，运行pm2 log bin/www --watch --name dddk，再运行pm2 log dddk即可查看日志
+4. 进入/home/ubuntu/diandiandaka，运行pm2 start bin/www --watch --name dddk，再运行pm2 log dddk即可查看日志
 5. 进入/usr/local/nginx（nginx当时是用编译安装的），运行sbin/nginx -c conf/nginx.conf，启动nginx
 6. 如果要编辑定时任务，crontab -e修改即可，crontab -l查看定时任务是否被添加
 
