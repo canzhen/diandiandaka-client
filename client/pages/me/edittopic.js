@@ -42,9 +42,8 @@ Page({
           if (options.if_show_log && options.if_show_log == 1) 
             if_show_log = true;
           let is_ended = false;
-          let end_date = '';
-          if (options.end_date){
-            end_date = options.end_date;
+          let end_date = options.end_date;
+          if (end_date && end_date != '永不结束'){
             let endDate = moment(end_date, 'YYYY-MM-DD');
             if (endDate < moment())  is_ended = true;
           }
