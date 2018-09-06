@@ -133,22 +133,23 @@ function startSendMessage() {
 
 
 
-      if (user_id != 'ovMv05WNSF-fzJnoQ4UMSWtMWjFs') continue;
+      // if (user_id != 'ovMv05WNSF-fzJnoQ4UMSWtMWjFs') continue;
 
-      console.log(topic);
 
+      // console.log(topic, last_check_time);
+
+      /** 过期的卡片直接跳过 */
       if (end_date != '永不结束' && moment() >
         moment(end_date, 'YYYY-MM-DD')) continue;
 
       // 如果已经五天没打卡了，即使用户没设置提醒仍要提醒用户
-      if (!remind_time){
-        if (moment().diff(moment(last_check_time, 'YYYY-MM-DD'),
-          'days') <= 5) continue;
+      if (moment().diff(moment(last_check_time, 'YYYY-MM-DD'),'days') > 5){
         // 没设置提醒，却已经五天没打卡了，就要强制提醒
-        else {
-          force_remind = true;
-          console.log('强制给用户' + user_id + '推送提醒，因为已经五天没打卡了');
-        }
+        force_remind = true;
+        writeLog('用户' + user_id + '上次打卡' + topic + 
+                    '的时间为：' + last_check_time + 
+                    '强制给用户' + user_id + 
+                    '推送提醒，因为已经五天没打卡了');
       } 
 
 
@@ -156,13 +157,16 @@ function startSendMessage() {
 
 
       if (remind_group != -1 || force_remind){
-        if (combineTopicMap[remind_group] == undefined)
-          combineTopicMap[remind_group] = { topic: [] }
-        combineTopicMap[remind_group].topic.push(topic);
-        combineTopicMap[remind_group].user_id = user_id;
-        combineTopicMap[remind_group].remind_time = remind_time;
-        combineTopicMap[remind_group].remind_method = remind_method;
-        combineTopicMap[remind_group].timezone = timezone;
+        if (combineTopicMap[user_id] == undefined)
+          combineTopicMap[user_id] = {};
+        if (combineTopicMap[user_id][remind_group] == undefined)
+          combineTopicMap[user_id][remind_group] = { topic: [] }
+        combineTopicMap[user_id][remind_group].topic.push(topic);
+        combineTopicMap[user_id][remind_group].user_id = user_id;
+        combineTopicMap[user_id][remind_group].remind_time = remind_time;
+        combineTopicMap[user_id][remind_group].remind_method = remind_method;
+        combineTopicMap[user_id][remind_group].timezone = timezone;
+        combineTopicMap[user_id][remind_group].force_remind = force_remind;
         continue;
       }
 
@@ -238,74 +242,80 @@ function startSendMessage() {
 
 
 
-
     /**
      * 处理统一发送的卡片
      */
-    for (let i in combineTopicMap){
+    for (let user_id in combineTopicMap){
+      for (let i in combineTopicMap[user_id]){
 
-      let diffTime = getDiffSeconds(combineTopicMap[i].user_id,
-                          combineTopicMap[i].topic.toString(),
-                          combineTopicMap[i].timezone, 
-                          combineTopicMap[i].remind_time,
-                          combineTopicMap[i].remind_method);
-      
-      if (combineTopicMap[i].remind_method == 1){
+        let topic_string = combineTopicMap[user_id][i].topic.toString();
+        let remind_time = combineTopicMap[user_id][i].remind_time;
+        let remind_method = combineTopicMap[user_id][i].remind_method;
+        let force_remind = combineTopicMap[user_id][i].force_remind;
 
-        let form_id = getFormId(combineTopicMap[i].user_id, user_map);
-        if (!form_id) continue;
-        /* 开始设置提醒 */
-        setTimeout(() => {
-          writeLog(diffTime / 1000 + '秒计时到啦！准备【微信】推送消息给' + combineTopicMap[i].user_id + '，推送使用的的form_id为：' + form_id);
-          let words = force_remind ? 
-            '你已经超过五天没有打卡了喔，卡卡好想你呀~': 
-            perseveranceList[utils.getRandom(0, 
+        let diffTime = getDiffSeconds(user_id, topic_string,
+          combineTopicMap[user_id][i].timezone, 
+          remind_time, remind_method);
+
+        if (remind_method == 1 || force_remind) {
+
+          let form_id = getFormId(user_id, user_map);
+          // console.log('进入提醒窗口')
+          if (!form_id) continue;
+          /* 开始设置提醒 */
+          setTimeout(() => {
+            writeLog(diffTime / 1000 + '秒计时到啦！准备【微信】推送消息给' +
+                    user_id + '，推送使用的的form_id为：' + form_id);
+            let words = force_remind ?
+              '这些卡片你已经超过五天没有打卡了喔，卡卡好想你呀~' :
+              perseveranceList[utils.getRandom(0,
                 perseveranceList.length - 1)];
-          /** 推送message */
-          messagehelper.sendMessage(combineTopicMap[i].user_id, form_id,
-            {
-              keyword1: { value: combineTopicMap[i].topic.toString() }, //打卡项目
-              keyword2: { value: moment().format('YYYY年MM月DD日') }, //打卡时间
-              keyword3: { value: words }, //提示语
-            }, true, //合并发送
-            (status, errmsg) => {
-              if (status) writeLog('推送消息成功');
-              else {
-                writeLog('推送消息失败，错误原因：');
-                writeLog(errmsg);
+            /** 推送message */
+            messagehelper.sendMessage(user_id, form_id,
+              {
+                keyword1: { value: topic_string }, //打卡项目
+                keyword2: { value: moment().format('YYYY年MM月DD日') }, //打卡时间
+                keyword3: { value: words }, //提示语
+              }, true, //合并发送
+              (status, errmsg) => {
+                if (status) writeLog('推送消息成功');
+                else {
+                  writeLog('推送消息失败，错误原因：');
+                  writeLog(errmsg);
+                }
               }
-            }
-          )
-        }, diffTime);
+            )
+          }, diffTime);
 
-      }else{
+        } else if (remind_method == 2) {
 
-        let phone_number = user_map[combineTopicMap[i].user_id]['phone_number'];
-        let countryCode = phone_number.split('-')[0],
-          phone = phone_number.split('-')[1];
-        let params = [combineTopicMap[i].remind_time, 
-          "「" + combineTopicMap[i].topic.toString() + "」",
-          '人生在勤，不索何获。']
+          let phone_number = user_map[user_id]['phone_number'];
+          let countryCode = phone_number.split('-')[0],
+            phone = phone_number.split('-')[1];
+          let params = [remind_time,  "「" + topic_string + "」",
+                        '人生在勤，不索何获。']
 
-        /* 开始设置提醒 */
-        setTimeout(() => {
-          writeLog(diffTime / 1000 + '秒计时到啦！准备【短信】推送消息给' + combineTopicMap[i].user_id);
-          smshelper.sendSMS(params, countryCode, phone, true,
-            (err, res, resData) => {
-              if (err) {
-                writeLog('发送短信失败：', err);
-              } else {
-                writeLog('发送短信成功！');
-                writeLog("request data: ", res.req);
-                writeLog("response data: ", resData);
-              }
-            });
-        }, diffTime)
+          /* 开始设置提醒 */
+          setTimeout(() => {
+            writeLog(diffTime / 1000 + 
+                '秒计时到啦！准备【短信】推送消息给' + user_id);
+            smshelper.sendSMS(params, countryCode, phone, true,
+              (err, res, resData) => {
+                if (err) {
+                  writeLog('发送短信失败：', err);
+                } else {
+                  writeLog('发送短信成功！');
+                  writeLog("request data: ", res.req);
+                  writeLog("response data: ", resData);
+                }
+              });
+          }, diffTime)
+        }
       }
     }
 
 
-    process.exit(0);
+    // process.exit(0);
 
   })
 
@@ -339,6 +349,8 @@ function startSendMessage() {
 
     /* 计算当地时间和用户要被提醒的时间差 */
     let diffTime = (parseInt(remindTime.diff(userCurrentTime, 'seconds')) + 1) * 1000; //换算成毫秒
+
+
     let method = remind_method == 1 ? '【微信】' : '【短信】';
     writeLog('给用户' + user_id + '设置了' + method + '打卡提醒，' +
       '提醒时间为：' + remindTime.format('YYYY-MM-DD HH:mm') +
