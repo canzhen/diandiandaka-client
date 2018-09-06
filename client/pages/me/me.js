@@ -1,6 +1,14 @@
 const qiniuhelper = require('../../vendor/qiniuhelper.js');
 const api = require('../../ajax/api.js');
 const utils = require('../../vendor/utils.js');
+const share_list = [
+  { path: 'https://images.zhoucanzhendevelop.com/share/background1.jpg?v=11',
+    top: 60
+  },{
+    path: 'https://images.zhoucanzhendevelop.com/share/background2.jpg?v=11',
+    top: 50
+  }
+]
 
 
 Page({
@@ -9,8 +17,9 @@ Page({
    * 页面的初始数据
    */
   data: {
-    topic_list: [], //用户的打卡数据
-    topic_num_list: [], //用于存排列下标的数组
+    topic_list: [], //用户的打卡全部数据列表
+    topic_name_list: [], //用户的卡片名列表
+    selected_topic_idx: 0, //默认用户选择的卡片（用于分享）
 
     user_name: '', //用户名（如果没设置就是微信名）
     avatar_url: '', //从数据库（本地缓存）中获取
@@ -280,55 +289,26 @@ Page({
    */
   shareCards: function(e){
     this.saveFormId(e.detail.formId);
-
-    let that = this;
-    // let path = '/images/background1.jpg';
-    let path = 'https://images.zhoucanzhendevelop.com/share/background1.jpg';
-
-    wx.showLoading({
-      title: '图片生成中',
-    })
-
-    wx.getSystemInfo({
-      success: function (res) {
-
-        let width = res.windowWidth * 0.8;
-        let height = res.windowHeight * 0.75;
-
-        wx.getImageInfo({
-          src: path,
-          success: (res) => {},
-          complete: (res) => {
-            console.log(res)
-          }
-        })
-        // console.log(res.height)
-
-        let context = wx.createCanvasContext('shareCanvas');
-        // context.stroke();
-        context.drawImage(path, 0, 0, width, height);
-        context.draw();
-
-        setTimeout(() => {
-          that.setData({
-            share_modal_width: width,
-            share_modal_height: height,
-            show_share_modal: true
-          })
-          wx.hideLoading();
-        }, 1000)
-      }
-    })
-
-    
-
-
-    
-    // wx.navigateTo({
-    //   url: '/pages/share/share'
-    // })
   },
 
+
+
+  /**
+   * picker选择topic
+   */
+  bindSelectTopic: function(e){
+    this.setData({
+      selected_topic_idx: e.detail.value
+    })
+  },
+
+
+  /**
+   * 选择卡片时，保存form id
+   */
+  selectTopicSaveFormId: function(e){
+    this.saveFormId(e.detail.formId);
+  },
 
 
   /**
@@ -345,16 +325,28 @@ Page({
       show_modal: false
     });
   }, 
-  
-  
+
+
   /**
-   * 不再显示，隐藏模态对话框
+   * 不在显示选择卡片的模态对话框
+   */
+  hideSelectTopicModal: function(){
+    this.setData({
+      show_select_topic_modal: false
+    })
+  },
+
+
+
+  /**
+   * 不再显示分享图片的模态对话框
    */
   hideShareModal: function () {
     this.setData({
       show_share_modal: false
     });
   },
+
 
   /**
    * 用户在input框输入
@@ -364,32 +356,6 @@ Page({
     this.setData({
       new_username: e.detail.value
     });
-  },
-
-  /**
-   * 对话框确认按钮点击事件
-   */
-  onConfirm: function () {
-    let that = this;
-    let new_input = this.data.new_modal_input_value;
-    if (new_input == undefined || new_input == '') {
-      wx.showModal({
-        title: '内容为空',
-        content: '您填写的' + this.data.modal_title + '为空' +
-          '，您确定要修改咩？',
-        success: (res) => {
-          this.hideModal();
-          if (res.cancel) return;
-
-          if (this.data.modal_title == '用户名')
-            this._changeUserName(new_input);
-          else if (this.data.modal_title == '微信号')
-            this._changeWechatId(new_input);
-          else if (this.data.modal_title == '手机号')
-            this._changePhone(new_input);
-        }
-      })
-    }
   },
 
 
@@ -454,10 +420,226 @@ Page({
 
 
   /**
+   * 用户单击分享打卡时，先弹出获取用户信息界面
+   */
+  bindGetUserInfo: function (e) {
+    if (e.detail.userInfo != undefined){ //用户授权了
+      let userInfo = e.detail.userInfo;
+      console.log(userInfo);
+      if (!this.data.user_name)
+        this.setData({
+          user_name: userInfo.nickName
+        })
+      if (!this.data.avatar_url)
+        this.setData({
+          avatar_url: userInfo.avatarUrl
+        })
+    }
+
+
+    // 开始让用户选择要分享的卡片
+    api.postRequest({
+      url: '/topic/getUserTopic',
+      data: {},
+      success: (res) => {
+        if (res.error_code != 200) {
+          console.log('获取用户卡片列表失败');
+          return;
+        }
+        let topic_name_list = [];
+        for (let i in res.result_list)
+          topic_name_list.push(res.result_list[i].topic_name);
+        this.setData({
+          topic_list: res.result_list,
+          topic_name_list: topic_name_list,
+          selected_topic_idx: 0,
+        })
+
+        this.setData({
+          show_select_topic_modal: true
+        })
+      }
+    })
+
+    // wx.navigateTo({
+    //   url: '/pages/share/share'
+    // })
+
+  },
+
+  /**
+   * 用户选择了某个卡片之后的操作
+   */
+  onConfirmSelectTopic: function () {
+    let idx = utils.getRandom(0, share_list.length - 1);
+
+    idx = 1;
+    let path = share_list[idx].path;
+    let topic_name = this.data.topic_name_list[this.data.selected_topic_idx];
+    let that = this;
+
+    wx.showLoading({
+      title: '图片生成中',
+    })
+
+
+    /** 获取系统宽度和高度 */
+    let getSystemWidthHeight = function(cb){
+      wx.getSystemInfo({
+        success: function (res) {
+          let width = res.windowWidth * 0.8;
+          let height = res.windowHeight * 0.75;
+
+          cb(width, height);
+        }
+      })
+    }
+
+
+
+    /** 获取背景url */
+    let getBackgroundUrl = function(cb){
+      wx.getImageInfo({
+        src: path,
+        success: (res) => {
+          let backgroundUrl = res.path;
+          cb(backgroundUrl);
+        }
+      })
+    }
+    
+
+    /** 获取头像url（名字） */
+    let getAvatarUrl = function(cb){
+      wx.getImageInfo({
+        src: that.data.avatar_url,
+        success: (res) => {
+          let avatarUrl = res.path;
+          cb(avatarUrl);
+        }
+      })
+    }
+
+
+    let getAllTopic = function(cb){
+      // 获取总人数
+      api.postRequest({
+        'url': '/topic/getAllTopic',
+        'data': [],
+        'showLoading': false,
+        'success': (res) => {
+          if (res.error_code != 200) {
+            console.log('从数据库中获取卡片使用人数信息失败');
+            return;
+          }
+
+          console.log('从数据库中获取卡片使用人数信息成功');
+          let topic_use_list = res.result_list;
+          let topic_use_map = {};
+
+          for (let i in topic_use_list)
+            topic_use_map[topic_use_list[i].topic_name] =
+              topic_use_list[i].use_people_num;
+
+          cb(topic_use_map);
+        },
+        'fail': (res) => { //失败
+          console.log('从数据库中获取卡片使用人数信息失败');
+        }
+      })
+    }
+
+    getSystemWidthHeight((width, height) => {
+      getBackgroundUrl((backgroundUrl) => {
+        getAvatarUrl((avatarUrl) => {
+          getAllTopic((topicUseMap) => {
+            let topic_info = that.data.topic_list[that.data.selected_topic_idx];
+            let rank = topic_info.rank;
+            let total_num = topicUseMap[topic_name];
+            let higher_rate = parseFloat((total_num - rank) / total_num * 100).toFixed(2);
+            console.log(rank, total_num);
+
+
+            utils.drawShareImage('shareCanvas', backgroundUrl,
+              that.data.user_name, avatarUrl, topic_name, 
+              topic_info.total_day, higher_rate, 
+              share_list[idx].top, width, height,
+              () => {
+                setTimeout(() => {
+                  that.setData({
+                    share_modal_width: width,
+                    share_modal_height: height,
+                    show_share_modal: true,
+                    show_select_topic_modal: false
+                  })
+                  wx.hideLoading();
+                }, 5000)
+              })
+          })
+        })
+      })
+    })
+
+
+
+    // wx.getSystemInfo({
+    //   success: function (res) {
+
+    //     let width = res.windowWidth * 0.8;
+    //     let height = res.windowHeight * 0.75;
+
+    //     wx.getImageInfo({
+    //       src: path,
+    //       success: (res) => {
+    //         let backgroundUrl = res.path;
+
+    //         wx.getImageInfo({
+    //           src: that.data.avatar_url,
+    //           success: (res) => {
+    //             let avatarUrl = res.path;
+
+
+    //             utils.drawShareImage('shareCanvas', backgroundUrl,
+    //               that.data.user_name, avatarUrl, topic_name, higher_rage,
+    //               that.data.topic_list[that.data.selected_topic_idx].total_day,
+    //               width, height,
+    //               () => {
+    //                 setTimeout(() => {
+    //                   that.setData({
+    //                     share_modal_width: width,
+    //                     share_modal_height: height,
+    //                     show_share_modal: true,
+    //                     show_select_topic_modal: false
+    //                   })
+    //                   wx.hideLoading();
+    //                 }, 5000)
+    //               })
+
+    //           }
+    //         })
+    //       },
+    //       // complete: (res) => {
+    //       // }
+    //     })
+
+    //   }
+    // })
+
+  },
+
+
+  /**
    * 对话框取消按钮点击事件
    */
   onCancel: function () {
     this.hideModal();
+  },
+
+
+  onCancelSelectTopic: function(){
+    this.setData({
+      show_select_topic_modal: false
+    })
   },
 
 
@@ -508,12 +690,11 @@ Page({
               content: '图片成功保存到相册了，去发圈噻~',
               showCancel: false,
               confirmText: '好哒',
-              confirmColor: '#72B9C3',
               success: function (res) {
                 if (res.confirm) {
                   console.log('用户点击确定');
+                  that.hideShareModal()
                 }
-                that.hideShareImg()
               }
             })
           }

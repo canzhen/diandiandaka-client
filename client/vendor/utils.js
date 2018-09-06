@@ -341,18 +341,104 @@ module.exports.isPhoneNumberLegal = function(phoneNumber){
 
 
 
+
+
+/**
+ * 绘制分享图
+ */
+module.exports.drawShareImage = function (canvasId, backgroundUrl,
+  userName, avatarUrl, topicName, insistDay, higherRate,
+  top_height, width, height, cb) {
+  
+  insistDay = insistDay + '';
+  let ctx = wx.createCanvasContext(canvasId);
+  // context.stroke();
+  ctx.drawImage(backgroundUrl, 0, 0, width, height);
+  // ctx.save();
+
+
+  // 绘制时间
+  // ctx.setFontSize(12);
+  ctx.font = 'bold 12px 微软雅黑';
+  ctx.setFillStyle('black');
+  ctx.setTextAlign('center');
+  let yijingWidth = ctx.measureText('已经').width + 5;
+  let tianWidth = ctx.measureText('天').width;
+  // console.log('已经的width：' + yijingWidth);
+  // console.log('天的width：' + tianWidth);
+  // const metrics = ctx.measureText(time).width;   //时间文字的所占宽度
+  ctx.fillText('我在点点小打卡坚持', width / 2, top_height);
+  ctx.setFontSize(30);
+  let topicNameWidth = ctx.measureText(topicName).width;
+  let insistDayWidth = ctx.measureText(insistDay).width + 10;
+  // console.log('卡片名称的width：' + topicNameWidth);
+  // console.log('坚持天数的width：' + insistDayWidth);
+  
+  let totalWidth = topicNameWidth + yijingWidth + 
+      insistDayWidth + tianWidth;
+  let topicNamePos = (width - totalWidth + topicNameWidth) / 2;
+  // console.log(topicNamePos);
+  ctx.fillText(topicName, topicNamePos, top_height + 39);
+  ctx.setFontSize(12);
+  let yijingPos = topicNamePos + (topicNameWidth + yijingWidth) / 2;
+  // console.log(yijingPos);
+  ctx.fillText('已经', yijingPos, top_height + 38);
+  ctx.setFontSize(30); 
+  insistDayWidth = ctx.measureText(insistDay).width;
+  // console.log('坚持天数：' + insistDay);
+  // console.log('坚持天数的width：' + insistDayWidth);
+  let insistDayPos = yijingPos + (yijingWidth + insistDayWidth) / 2;
+  // console.log(insistDayPos);
+  ctx.fillText(insistDay, insistDayPos, top_height + 40);
+  ctx.setFontSize(12);
+  let tianPos = insistDayPos + (insistDayWidth + tianWidth) / 2;
+  // console.log(tianPos);
+  ctx.fillText('天', tianPos, top_height + 38);
+
+
+  ctx.font = 'normal normal 14px sans-serif';
+  ctx.setTextAlign('center');
+  ctx.setFillStyle('black');
+  ctx.fillText('超过了' + higherRate + '%用户', width / 2, top_height + 70);
+
+  // let time = moment().format('YYYY年MM月DD日');
+  // ctx.setFontSize(10);
+  // ctx.fillText(time, width / 2, top_height + 90);
+
+
+  /** 头像和名称 */
+  ctx.save();
+  ctx.arc(width / 2 - 30, top_height + 110, 20, 0, 2 * Math.PI);
+  ctx.clip()
+  ctx.drawImage(avatarUrl, width / 2 - 50, top_height + 90, 40, 40);
+  ctx.restore();
+
+  ctx.font = 'normal normal 14px sans-serif';
+  ctx.setTextAlign('left');
+  ctx.setFillStyle('#333333');
+  ctx.fillText(userName, width / 2, top_height + 115);
+
+
+  ctx.draw();
+  cb();
+}
+
+
+
+
+
+
 /**
  * 保存画布到本地图片
  */
 module.exports.canvasToFile = function (canvasId, width, height, cb) {
   wx.canvasToTempFilePath({
-    x: 0,
-    y: 0,
+    canvasId: canvasId,
     width: width,
     height: height,
-    destWidth: width,
-    destHeight: height,
-    canvasId: canvasId,
+    destWidth: width * 4,
+    destHeight: height * 4,
+    quality: 1,
     success: (res) => {
       console.log(res.tempFilePath);
       cb(res.tempFilePath)
@@ -362,6 +448,10 @@ module.exports.canvasToFile = function (canvasId, width, height, cb) {
     }
   })
 }
+
+
+
+
 
 
 // module.exports = {

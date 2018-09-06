@@ -66,7 +66,9 @@
 
       <!-- 分享打卡 -->
       <form bindsubmit="shareCards" report-submit='true'>
-      <button class="me-lower-part-each-item" hover-class="none" form-type="submit">
+      <button class="me-lower-part-each-item" hover-class="none" 
+              form-type="submit" open-type="getUserInfo"
+              bindgetuserinfo="bindGetUserInfo"> 
         <image class="image" src="http://images.zhoucanzhendevelop.com/	icon/share1.svg"></image>
         <text> 分享打卡 </text>
       </button>
@@ -105,6 +107,37 @@
 
 
 
+<!-- 选择要分享的卡片开始 -->
+<view class="modal-mask" bindtap="hideSelectTopicModal" catchtouchmove="preventTouchMove" wx:if="{{show_select_topic_modal}}"></view>
+<view class="modal-dialog" style="width:400rpx; left:90rpx;" wx:if="{{show_select_topic_modal}}">
+  <view class="modal-title">选择卡片</view>
+  <view class="modal-content" style="display:flex;flex-direction:column;align-items:center;">
+    <picker range="{{topic_name_list}}" bindchange="bindSelectTopic" value="{{selected_topic_idx}}">
+      <!-- 我的排名 -->
+      <form bindsubmit="selectTopicSaveFormId" report-submit='true' >
+      <button class="modal-topic-picker" hover-class="none" 
+              form-type="submit">
+              
+        <text> {{topic_name_list[selected_topic_idx]}} </text>
+        <image style="width:30rpx; height:30rpx;" src="https://images.zhoucanzhendevelop.com/icon/xinagxia.svg"/>
+      </button>
+      </form>
+    </picker>
+  </view>
+  <view class="modal-footer">
+    <view class="btn-cancel" bindtap="onCancelSelectTopic">取消</view>
+    <view class="btn-confirm" bindtap="onConfirmSelectTopic">确定</view>
+  </view>
+</view>
+<!-- 选择要分享的卡片结束 -->
+
+
+
+
+
+
+
+
 
 <!-- 分享图片部分开始 -->
 <view class="modal-mask" bindtap="hideShareModal"      catchtouchmove="preventTouchMove" wx:if="{{show_share_modal}}"></view>
@@ -123,3 +156,6 @@ style="width:{{share_modal_width}}px;height:{{share_modal_height}}px;"/>
 </button>
 </form>
 <!-- 分享图片部分结束 -->
+
+
+

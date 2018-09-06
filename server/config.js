@@ -63,7 +63,7 @@ const CONF = {
    * 七牛cdn存储的配置
    */
   qiniu: {
-    prefix: 'http://images.zhoucanzhendevelop.com/',
+    prefix: 'https://images.zhoucanzhendevelop.com/',
     suffix: '?imageView2/1/w/90/h/90/q/75|imageslim',
     accessKey: 'Qo0sHRVPZBSNfD03wbzxMfXtRQb3BlIX0q1EKKV-',
     secretKey: 'El-eXq7MDFhVVtn8a3L4qDmEui0_OIocRB5nPSUj',
