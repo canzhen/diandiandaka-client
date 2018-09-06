@@ -165,16 +165,16 @@ Page({
         avatar_string.replace(qiniuhelper.config.scaleAPI, '');
         avatar_string.replace(qiniuhelper.config.prefix, '');
         api.postRequest({
-          'url': '/qiniu/delete',
-          'data': {
+          url: '/qiniu/delete',
+          data: {
             'key': avatar_string
           },
-          'showLoading': false,
-          'success': (res) => {
+          showLoading: false,
+          success: (res) => {
             if (res.error_code == 200) console.log('删除之前的头像成功');
             else console.log('删除之前头像失败');
           },
-          'fail': (res) => {
+          fail: (res) => {
             console.log('删除之前头像失败');
           }
         });
@@ -283,7 +283,11 @@ Page({
 
     let that = this;
     // let path = '/images/background1.jpg';
-    let path = 'https://zhoucanzhendevelop.com/images/background1.jpg';
+    let path = 'https://images.zhoucanzhendevelop.com/share/background1.jpg';
+
+    wx.showLoading({
+      title: '图片生成中',
+    })
 
     wx.getSystemInfo({
       success: function (res) {
@@ -291,19 +295,32 @@ Page({
         let width = res.windowWidth * 0.8;
         let height = res.windowHeight * 0.75;
 
+        wx.getImageInfo({
+          src: path,
+          success: (res) => {},
+          complete: (res) => {
+            console.log(res)
+          }
+        })
+        // console.log(res.height)
+
         let context = wx.createCanvasContext('shareCanvas');
         // context.stroke();
-        context.drawImage(path, 0, 0,
-                          width, height);
+        context.drawImage(path, 0, 0, width, height);
         context.draw();
 
-        that.setData({
-          share_modal_width: width,
-          share_modal_height: height,
-          show_share_modal: true
-        })
+        setTimeout(() => {
+          that.setData({
+            share_modal_width: width,
+            share_modal_height: height,
+            show_share_modal: true
+          })
+          wx.hideLoading();
+        }, 1000)
       }
-    });
+    })
+
+    
 
 
     

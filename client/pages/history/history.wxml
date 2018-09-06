@@ -210,7 +210,8 @@
     <scroll-view style="height:{{scrollHeight-20}}px;" scroll-y scroll-with-animation enable-back-to-top>
       <!-- 循环部分开始 -->
       <view class="block" style="background-color:{{undated_topic_info_map[topic_name].dated?'#bebebe5e':colorList[check_info_per_topic[topic_name].length%8]}};" wx:for="{{undated_topic_info_map}}" wx:key="key" wx:for-index="topic_name" wx:for-item="topic_name">
-        <form bindsubmit="selectTopicLog" data-idx="{{topic_name}}" report-submit='true' >
+        <form bindsubmit="selectTopicLog" 
+              data-idx="{{topic_name}}" report-submit='true' >
         <button class="check-log-topic-image-text" style="color:{{undated_topic_info_map[topic_name].dated?'#888888':'black'}};" hover-class="none" form-type="submit" >
         <!-- <view bindtap="selectTopicLog" > -->
           <image class="check-log-topic-image" src="{{undated_topic_info_map[topic_name].topic_url}}"></image>
@@ -338,7 +339,7 @@
   <view class="modal-content">
     <view class="modal-line">
       <text>输入打卡计数： {{count_phase}} </text>
-      <input type='digit' class="modal-digit-input"  style="height: 30rpx;"  value="{{count_number}}"  bindchange="bindTopicCountNumberChange"/>
+      <input type='digit' class="modal-digit-input" style="height: 30rpx;"  value="{{count_number}}"  bindchange="bindTopicCountNumberChange"/>
       <text>{{count_unit}}</text>
     </view>
 

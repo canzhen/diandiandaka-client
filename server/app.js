@@ -32,10 +32,10 @@ app.use('/user', user);
 
 
 
-app.get('/images/*', function (req, res) {
-  res.sendFile(__dirname + "/public" + req.url);
-  console.log("Request for " + req.url + " received.");
-})
+// app.get('/images/*', function (req, res) {
+//   res.sendFile(__dirname + "/public" + req.url);
+//   console.log("Request for " + req.url + " received.");
+// })
 
 
 

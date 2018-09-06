@@ -146,7 +146,6 @@ Page({
         if (error_code != 200 || !checked_data_list) return;
         let [checkTimeListPerTopic, checkInfoListPerTopic] = data.getCheckedDataOfEveryTopic(checked_data_list, topicInfoMap); //按照每个topic分类的打卡时间集合
 
-        console.log(checkInfoListPerTopic)
         let [checkTimeList, checkedTopicListPerDay] = data.getTopicListPerDay(checked_data_list);
 
         that.setData({
@@ -774,6 +773,7 @@ Page({
     let log = e.currentTarget.dataset.log;
     let cur_word_left = this.data.word_left_num;
 
+
     this.setData({
       topic_name: topic_name,
       topic_log_idx: topic_log_idx,
@@ -783,6 +783,7 @@ Page({
       show_modal: true,
       word_left_num: cur_word_left - log.length,
       count_phase: this.data.topic_info_map[topic_name].topic_count_phase,
+      count_number: this.data.check_info_per_topic[topic_name][topic_log_idx].count,
       count_unit: this.data.topic_info_map[topic_name].topic_count_unit
     });
   },
@@ -795,7 +796,6 @@ Page({
    * 长按日志，弹出删除窗口
    */
   longTapLog: function(e){
-    console.log(this.data.check_info_per_topic)
     let that = this;
     wx.showModal({
       title: '删除',

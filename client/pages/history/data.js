@@ -731,8 +731,6 @@ function getCompletenessMap(topic_info_map, check_time_per_topic){
     else 
       totalDays = moment().diff(startDate, 'days') + 1;
     let validDays = check_time_per_topic[topic].length;
-    if (topic == '照顾外公')
-      console.log(validDays)
     map[topic] = parseFloat((validDays / totalDays) *100).toFixed(2);
   }
   return map;

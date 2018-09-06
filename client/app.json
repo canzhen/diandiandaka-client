@@ -1,10 +1,10 @@
 {
   "pages": [
+    "pages/history/history",
     "pages/me/me",
     "pages/newtopic/newtopic",
     "pages/me/mytopic",
     "pages/index/index",
-    "pages/history/history",
     "pages/me/myrank",
     "pages/me/edittopic",
     "pages/today/today",

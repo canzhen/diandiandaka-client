@@ -716,9 +716,11 @@ button::after{
 
 .modal-digit-input{
   display: flex;
+  align-items: center;
   background: #fff;
   border: 2rpx solid #ddd;
   font-size: 30rpx;
+  padding-left: 5rpx;
   margin:auto 10rpx auto 10rpx;
   width:80rpx;
   min-height: 1.1rem;
