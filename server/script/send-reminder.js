@@ -266,8 +266,10 @@ function startSendMessage() {
           setTimeout(() => {
             writeLog(diffTime / 1000 + '秒计时到啦！准备【微信】推送消息给' +
                     user_id + '，推送使用的的form_id为：' + form_id);
-            let words = force_remind ?
-              '这些卡片你已经超过五天没有打卡了喔，卡卡好想你呀~' :
+            let words = force_remind ? (
+            combineTopicMap[user_id][i].topic.length > 1 ? 
+            '这些卡片已经超过五天没有被你照顾了喔，它们好想你呀~' : 
+            '['+topic_string+']卡片已经超过五天没有被你照顾了喔，它好想你呀~'):
               perseveranceList[utils.getRandom(0,
                 perseveranceList.length - 1)];
             /** 推送message */
