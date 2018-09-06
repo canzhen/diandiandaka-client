@@ -1,7 +1,7 @@
 <view style="display:flex; flex-direction:column; margin-left: 70rpx; margin-right:70rpx; padding-top:50rpx;">
   <form bindsubmit="submitForm">
     <view class="one-line-inner-panel" style="width:100%;">
-      <text style="width: 150rpx;" space="ensp">计划名称 </text>
+      <text style="width: 150rpx;">计划名称 </text>
       <input placeholder="输入计划名称" value="{{topic_name}}" name="input_topic_name" bindchange="bindTopicChange"/>
     </view>
     <view class="line"></view>
@@ -11,7 +11,7 @@
     <view class="one-line-panel">
       <!-- left panel开始 -->
       <view class="one-line-inner-panel" style="width:100%;">
-        <text style="width: 150rpx;" space="ensp">开始日期 </text>
+        <text style="width: 150rpx;">开始日期 </text>
         <picker mode="date" value="{{start_date}}" name="start_date" start="{{start_date}}" end="3000-12-31" bindchange="bindStartDateChange">
           {{start_date}}
         </picker>
@@ -27,10 +27,18 @@
     <view class="one-line-panel">
       <!-- left panel开始 -->
       <view class="one-line-inner-panel" style="width:100%;">
-        <text style="width: 150rpx;" space="ensp">结束日期 </text>
-        <picker style="padding-bottom: 5rpx;" mode="date" value="{{end_date}}" name="end_date" start="{{start_date}}" end="3000-12-31" bindchange="bindEndDateChange">
-            {{end_date}}
-          </picker>
+        <text style="width: 150rpx;">结束日期</text>
+        <picker wx:if="{{!is_ended}}" 
+                style="padding-bottom: 5rpx;" mode="date" 
+                value="{{end_date}}" name="end_date" 
+                start="{{start_date}}" 
+                end="3000-12-31" 
+                bindchange="bindEndDateChange">
+          {{end_date}}
+        </picker>
+
+        <text wx:if="{{is_ended}}" style="color:#888888">{{end_date}}（已结束）
+        </text>
       </view>
       <!-- left panel结束 -->
     </view>
@@ -42,12 +50,12 @@
 
 
     <view class="one-line-inner-panel" style="width:100%;">
-      <text style="width: 190rpx;" space="ensp">计数关键词 </text>
+      <text style="width: 190rpx;">计数关键词 </text>
       <input style="width: 250rpx;" placeholder-class="center"
        placeholder="例如：今天跑了" value="{{topic_count_phase}}" 
        name="input_topic_count_phase" 
        bindchange="bindTopicCountPhaseChange"/>
-      <text style="width: 30rpx;"space='ensp'>n   </text>
+      <text style="width: 30rpx;" space='ensp'>n   </text>
       <input style="width: 100rpx;" placeholder-class="center" 
         placeholder="步" value="{{topic_count_unit}}" 
         name="input_topic_count_unit" maxlength="3"
@@ -61,7 +69,7 @@
 
 
     <view class="one-line-inner-panel" style="width:100%;">
-      <text space="ensp">是否弹出打卡日志 </text>
+      <text>是否弹出打卡日志 </text>
        <switch checked="{{if_show_log}}" 
                bindchange="bindSwitchLogChange"/>
     </view>

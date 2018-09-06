@@ -31,6 +31,14 @@ app.use('/db/topic', dbtopic);
 app.use('/user', user);
 
 
+
+app.get('/images/*', function (req, res) {
+  res.sendFile(__dirname + "/public" + req.url);
+  console.log("Request for " + req.url + " received.");
+})
+
+
+
 /// catch 404 and forwarding to error handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');

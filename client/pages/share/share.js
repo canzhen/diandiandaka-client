@@ -12,15 +12,50 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    wx.getImageInfo({
-      src: 'https://pcjzq4ixp.bkt.clouddn.com/share/background1.jpg',
-      success: (res) => {
-        const ctx = wx.createCanvasContext('shareCanvas')
-        ctx.drawImage(res.path, 0, 0, 600, 900)
-        ctx.draw()
+    // wx.getImageInfo({
+    //   src: path,
+    //   success: (res) => {
+    //     console.log(res);
+    //   },
+    //   fail: (res) => {
+    //     console.log('error:'+res.errMsg);
+    //   }
+    // })
+
+
+    let path = '/images/background1.jpg';
+    //设置scroll-view高度，自适应屏幕
+    wx.getSystemInfo({
+      success: function (res) {
+        let context = wx.createCanvasContext('shareCanvas');
+        // context.stroke();
+        context.drawImage(path, 0, 0, 
+            res.windowWidth, res.windowHeight - 50);
+        context.draw();
       }
-    })
+    });
+
+
+    // wx.downloadFile({
+    //   url: 'https://pcjzq4ixp.bkt.clouddn.com/share/background1.jpg',
+    //   success: function (sres) {
+    //     console.log('download file success');
+    //     console.log(sres);
+    //     // that.data.mysrc = sres.tempFilePath
+    //   }, fail: function (fres) {
+    //     console.log('download file fail');
+    //     console.log(fres.errMsg);
+    //   }
+    // })
+
+
   },
+
+
+  // drawImage: function(){
+  //   let mycv = document.getElementById('shareCanvas');
+  //   let myctx = mycv.getContext()
+  // },
 
   /**
    * 生命周期函数--监听页面初次渲染完成

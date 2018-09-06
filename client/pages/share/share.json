@@ -1,1 +1,5 @@
-{}
+{
+  "navigationBarTextStyle": "black",
+  "navigationBarTitleText": "分享打卡",
+  "disableScroll": true
+}

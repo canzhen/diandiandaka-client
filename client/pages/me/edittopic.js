@@ -41,13 +41,21 @@ Page({
           let if_show_log = false;
           if (options.if_show_log && options.if_show_log == 1) 
             if_show_log = true;
+          let is_ended = false;
+          let end_date = '';
+          if (options.end_date){
+            end_date = options.end_date;
+            let endDate = moment(end_date, 'YYYY-MM-DD');
+            if (endDate < moment())  is_ended = true;
+          }
           this.setData({
             icon_data_list: res.result_list,
             icon_name_num: utils.getSubscriptByLength(res.result_list.length, numEachRow),
             topic_name: options.topic_name ? options.topic_name : '',
             topic_url: options.topic_url ? options.topic_url : '',
             start_date: options.start_date ? options.start_date : '',
-            end_date: options.end_date ? options.end_date : '',
+            end_date: end_date,
+            is_ended: is_ended,
             if_show_log: if_show_log,
             topic_count_phase: options.topic_count_phase ? 
                         options.topic_count_phase : '',

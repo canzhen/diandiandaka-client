@@ -126,6 +126,38 @@ Page{
   border-radius: 36rpx;
 }
 
+
+.share-modal-dialog {
+  /* width: 600rpx; */
+  overflow: hidden;
+  position: fixed;
+  top: 5%;
+  left: 10%;
+  z-index: 9999;
+  background: #f9f9f9;
+  /* margin: -180rpx 105rpx; */
+}
+
+
+.share-modal-button {
+  overflow: hidden;
+  position: fixed;
+  top: 85%;
+  left: 35%;
+  z-index: 9999;
+  width: 250rpx;
+  height: 80rpx;
+  border-radius: 20rpx;
+  background: #82b9c3;
+  color: white;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+
 .modal-title {
   padding-top: 50rpx;
   font-size: 40rpx;

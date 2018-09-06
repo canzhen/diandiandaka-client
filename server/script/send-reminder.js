@@ -133,6 +133,10 @@ function startSendMessage() {
 
 
 
+      if (user_id != 'ovMv05WNSF-fzJnoQ4UMSWtMWjFs') continue;
+
+      console.log(topic);
+
       if (end_date != '永不结束' && moment() >
         moment(end_date, 'YYYY-MM-DD')) continue;
 
@@ -151,7 +155,6 @@ function startSendMessage() {
 
 
 
-      // if (user_id != 'ovMv05WNSF-fzJnoQ4UMSWtMWjFs') continue;
       if (remind_group != -1 || force_remind){
         if (combineTopicMap[remind_group] == undefined)
           combineTopicMap[remind_group] = { topic: [] }
@@ -236,20 +239,19 @@ function startSendMessage() {
 
 
 
-
-
-
     /**
      * 处理统一发送的卡片
      */
     for (let i in combineTopicMap){
+
       let diffTime = getDiffSeconds(combineTopicMap[i].user_id,
                           combineTopicMap[i].topic.toString(),
                           combineTopicMap[i].timezone, 
                           combineTopicMap[i].remind_time,
                           combineTopicMap[i].remind_method);
+      
       if (combineTopicMap[i].remind_method == 1){
-        console.log(combineTopicMap[i].user_id)
+
         let form_id = getFormId(combineTopicMap[i].user_id, user_map);
         if (!form_id) continue;
         /* 开始设置提醒 */
@@ -275,6 +277,7 @@ function startSendMessage() {
             }
           )
         }, diffTime);
+
       }else{
 
         let phone_number = user_map[combineTopicMap[i].user_id]['phone_number'];
@@ -300,6 +303,9 @@ function startSendMessage() {
         }, diffTime)
       }
     }
+
+
+    process.exit(0);
 
   })
 
@@ -400,5 +406,4 @@ function startCheckZeroUseTopic(){
 writeLog('starting....')
 startSendMessage()
 startCheckZeroUseTopic()
-
 

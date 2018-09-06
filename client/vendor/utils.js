@@ -329,12 +329,38 @@ function checkNumber(theObj) {
   return false;
 }
 
+
+
 module.exports.isPhoneNumberLegal = function(phoneNumber){
   phoneNumber = phoneNumber+''; //变成string
   if (phoneNumber.length < 5) return false; //小于5位的手机号不存在吧？
   if (!checkNumber(phoneNumber)) return false; //验证字符串是否是纯数字
   
   return true;
+}
+
+
+
+/**
+ * 保存画布到本地图片
+ */
+module.exports.canvasToFile = function (canvasId, width, height, cb) {
+  wx.canvasToTempFilePath({
+    x: 0,
+    y: 0,
+    width: width,
+    height: height,
+    destWidth: width,
+    destHeight: height,
+    canvasId: canvasId,
+    success: (res) => {
+      console.log(res.tempFilePath);
+      cb(res.tempFilePath)
+    },
+    fail: function (res) {
+      console.log(res)
+    }
+  })
 }
 
 

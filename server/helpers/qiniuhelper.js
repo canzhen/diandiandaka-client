@@ -38,6 +38,18 @@ function deleteImage(key, cb) {
   });
 }
 
+
+
+
+// var publicBucketDomain = 'https://pcjzq4ixp.bkt.clouddn.com';
+// var publicDownloadUrl =
+//       bucketManager.publicDownloadUrl(
+//       publicBucketDomain, 'share/background1.jpg');
+
+// console.log(publicDownloadUrl)
+
+
+
 module.exports = {
   getToken,
   deleteImage

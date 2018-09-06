@@ -31,7 +31,7 @@ Page({
           this.setData({
             hot_topic_data: res.result_list
           });
-        } else {
+        }else {
           setTimeout(function () {
             wx.navigateTo({
               url: '/pages/index/index',

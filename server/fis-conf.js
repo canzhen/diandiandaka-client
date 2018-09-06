@@ -1,4 +1,4 @@
-fis.set('project.files', ['helpers/**', 'routes/**', 'script/**', 'app.js', 'config.js','send-reminder.js']);
+fis.set('project.files', ['public/images/**', 'helpers/**', 'routes/**', 'script/**', 'app.js', 'config.js','send-reminder.js']);
 
 fis.match('**', {
   deploy: fis.plugin('http-push', {

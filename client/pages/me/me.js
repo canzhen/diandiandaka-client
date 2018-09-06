@@ -280,9 +280,36 @@ Page({
    */
   shareCards: function(e){
     this.saveFormId(e.detail.formId);
-    wx.navigateTo({
-      url: '/pages/share/share'
-    })
+
+    let that = this;
+    // let path = '/images/background1.jpg';
+    let path = 'https://zhoucanzhendevelop.com/images/background1.jpg';
+
+    wx.getSystemInfo({
+      success: function (res) {
+
+        let width = res.windowWidth * 0.8;
+        let height = res.windowHeight * 0.75;
+
+        let context = wx.createCanvasContext('shareCanvas');
+        // context.stroke();
+        context.drawImage(path, 0, 0,
+                          width, height);
+        context.draw();
+
+        that.setData({
+          share_modal_width: width,
+          share_modal_height: height,
+          show_share_modal: true
+        })
+      }
+    });
+
+
+    
+    // wx.navigateTo({
+    //   url: '/pages/share/share'
+    // })
   },
 
 
@@ -299,6 +326,16 @@ Page({
   hideModal: function () {
     this.setData({
       show_modal: false
+    });
+  }, 
+  
+  
+  /**
+   * 不再显示，隐藏模态对话框
+   */
+  hideShareModal: function () {
+    this.setData({
+      show_share_modal: false
     });
   },
 
@@ -411,7 +448,7 @@ Page({
    * 用于保存formId的helper方法
    */
   saveFormId: function (formId) {
-    console.log(formId);
+    // console.log(formId);
     let form_id_list = this.data.form_id_list;
     form_id_list.push(formId);
     this.setData({
@@ -429,11 +466,41 @@ Page({
    * */
   onHide: function (event) {
     if (this.data.form_id_list.length == 0) return;
-    console.log('I am hiding')
-    console.log(this.data.form_id_list);
+    // console.log('I am hiding')
+    // console.log(this.data.form_id_list);
     utils.saveFormId(this.data.form_id_list);
     this.setData({
       form_id_list: []
     });
+  },
+
+
+  /**
+   * 保存分享图到本地相册，引导分享
+   */
+  saveShareToLocal: function(){
+    let that = this;
+    utils.canvasToFile('shareCanvas', 
+      that.data.share_modal_width, that.data.share_modal_height,
+      (path) => {
+        wx.saveImageToPhotosAlbum({
+          filePath: path,
+          success(res) {
+            wx.showModal({
+              title: '存图成功',
+              content: '图片成功保存到相册了，去发圈噻~',
+              showCancel: false,
+              confirmText: '好哒',
+              confirmColor: '#72B9C3',
+              success: function (res) {
+                if (res.confirm) {
+                  console.log('用户点击确定');
+                }
+                that.hideShareImg()
+              }
+            })
+          }
+        })
+      })
   },
 })
