@@ -1,7 +1,7 @@
 <view style="display:flex; flex-direction:column; margin-left: 70rpx; margin-right:70rpx; padding-top:50rpx;">
   <form bindsubmit="submitForm">
     <view class="one-line-inner-panel" style="width:100%;">
-      <text style="width: 150rpx;">计划名称 </text>
+      <text style="width: 170rpx;">计划名称 </text>
       <input placeholder="输入计划名称" value="{{topic_name}}" name="input_topic_name" bindchange="bindTopicChange"/>
     </view>
     <view class="line"></view>
@@ -11,7 +11,7 @@
     <view class="one-line-panel">
       <!-- left panel开始 -->
       <view class="one-line-inner-panel" style="width:100%;">
-        <text style="width: 150rpx;">开始日期 </text>
+        <text style="width: 170rpx;">开始日期 </text>
         <picker mode="date" value="{{start_date}}" name="start_date" start="{{start_date}}" end="3000-12-31" bindchange="bindStartDateChange">
           {{start_date}}
         </picker>
@@ -27,7 +27,7 @@
     <view class="one-line-panel">
       <!-- left panel开始 -->
       <view class="one-line-inner-panel" style="width:100%;">
-        <text style="width: 150rpx;">结束日期</text>
+        <text style="width: 170rpx;">结束日期</text>
         <picker wx:if="{{!is_ended}}" 
                 style="padding-bottom: 5rpx;" mode="date" 
                 value="{{end_date}}" name="end_date" 
