@@ -8,12 +8,6 @@ Page{
   color: #616161;
 }
 
-image{
-  width: 100rpx;
-  height: 100rpx;
-  border-radius: 50%;
-}
-
 
 .one-row{
   display: flex;
@@ -23,11 +17,19 @@ image{
   height: 150rpx;
   width: 100%;
 
-  padding-left: 50rpx;
-  padding-right: 50rpx;
+  padding-left: 30rpx;
+  padding-right: 30rpx;
 
   /* border */
   border-top: 2rpx solid #eee;
+}
+
+
+
+.one-row > image{
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
 }
 
 
@@ -41,7 +43,8 @@ image{
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  width: 500rpx;
+  width: 600rpx;
+  /* width: 100%; */
   padding-left: 50rpx;
 }
 
@@ -94,5 +97,5 @@ button::after{
   flex-direction: column;
   color: #888888;
   font-size: 25rpx;
-  margin: 30rpx 20rpx auto 20rpx;
+  margin: 30rpx 20rpx 30rpx 20rpx;
 }
