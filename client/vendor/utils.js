@@ -1,6 +1,18 @@
 const moment = require('./moment.js');
 const api = require('../ajax/api.js');
 
+const perseveranceList = [
+  '“坚持不懈才能积沙成塔”',
+  '“人生在勤，不索何获”',
+  '“业精于勤而荒于嬉”',
+  '“不经一番寒彻骨，怎得梅花扑鼻香”',
+  '“契而不舍，金石可偻”',
+  '“绳锯木断，水滴石穿”',
+  '“九层之台，起于垒土”', ,
+  '“苟有恒，何必三更起五更眠”',
+  '“及时当勉励，岁月不待人”'];
+
+
 function getTimezone(){
   return -parseInt(new Date().getTimezoneOffset());
 }
@@ -313,6 +325,10 @@ module.exports.formatCheckData = function (topic_list){
  * 范围：[min, max] 都是闭集
  */
 module.exports.getRandom = function (min, max){
+  return getRandom(min, max);
+}
+
+function getRandom (min, max){
   // var seed = today.getTime();
   // seed = (seed * 9301 + 49297) % 233280;
   var Range = max - min;
@@ -399,24 +415,35 @@ module.exports.drawShareImage = function (canvasId, backgroundUrl,
   ctx.font = 'normal normal 14px sans-serif';
   ctx.setTextAlign('center');
   ctx.setFillStyle('black');
-  ctx.fillText('超过了' + higherRate + '%用户', width / 2, top_height + 70);
+
+  if (higherRate >= 60){
+    ctx.fillText('超过了' + higherRate + '%用户', width / 2, top_height + 70);
+  } else {
+    ctx.setFontSize(10);
+    let idx = getRandom(0, perseveranceList.length - 1);
+    let encouragePhrase = perseveranceList[idx];
+    encouragePhrase = '“不经一番寒彻骨，怎得梅花扑鼻香”';
+    ctx.fillText(encouragePhrase, width/2, top_height + 70);
+  }
 
   // let time = moment().format('YYYY年MM月DD日');
   // ctx.setFontSize(10);
   // ctx.fillText(time, width / 2, top_height + 90);
 
 
+  // let avatarHeight = higherRate >= 60 ? top_height + 90 : top_height + 110;
+  let avatarHeight = top_height + 90;
   /** 头像和名称 */
   ctx.save();
-  ctx.arc(width / 2 - 30, top_height + 110, 20, 0, 2 * Math.PI);
+  ctx.arc(width / 2 - 30, avatarHeight + 20, 20, 0, 2 * Math.PI);
   ctx.clip()
-  ctx.drawImage(avatarUrl, width / 2 - 50, top_height + 90, 40, 40);
+  ctx.drawImage(avatarUrl, width / 2 - 50, avatarHeight, 40, 40);
   ctx.restore();
 
   ctx.font = 'normal normal 14px sans-serif';
   ctx.setTextAlign('left');
   ctx.setFillStyle('#333333');
-  ctx.fillText(userName, width / 2, top_height + 115);
+  ctx.fillText(userName, width / 2, avatarHeight + 25);
 
 
   ctx.draw();

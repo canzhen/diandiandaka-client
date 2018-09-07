@@ -2,13 +2,12 @@ const qiniuhelper = require('../../vendor/qiniuhelper.js');
 const api = require('../../ajax/api.js');
 const utils = require('../../vendor/utils.js');
 const share_list = [
-  { path: 'https://images.zhoucanzhendevelop.com/share/background1.jpg?v=11',
-    top: 60
-  },{
-    path: 'https://images.zhoucanzhendevelop.com/share/background2.jpg?v=11',
-    top: 50
-  }
+  { path: '1.jpg',top: 70},
+  { path: '2.jpg',top: 50 }
 ]
+const BACKGROUND_PREFIX = 'https://images.zhoucanzhendevelop.com/share/background';
+const BACKGROUND_SUFFIX = '?imageView2/0/q/50|imageslim';
+	
 
 
 Page({
@@ -425,7 +424,7 @@ Page({
   bindGetUserInfo: function (e) {
     if (e.detail.userInfo != undefined){ //用户授权了
       let userInfo = e.detail.userInfo;
-      console.log(userInfo);
+      // console.log(userInfo);
       if (!this.data.user_name)
         this.setData({
           user_name: userInfo.nickName
@@ -472,9 +471,11 @@ Page({
    */
   onConfirmSelectTopic: function () {
     let idx = utils.getRandom(0, share_list.length - 1);
-
-    idx = 1;
-    let path = share_list[idx].path;
+    // idx = 1;
+    let path = BACKGROUND_PREFIX + 
+              share_list[idx].path + BACKGROUND_SUFFIX;
+              
+    console.log('选中的分享图为:' + path);
     let topic_name = this.data.topic_name_list[this.data.selected_topic_idx];
     let that = this;
 
@@ -557,8 +558,6 @@ Page({
             let rank = topic_info.rank;
             let total_num = topicUseMap[topic_name];
             let higher_rate = parseFloat((total_num - rank) / total_num * 100).toFixed(2);
-            console.log(rank, total_num);
-
 
             utils.drawShareImage('shareCanvas', backgroundUrl,
               that.data.user_name, avatarUrl, topic_name, 
