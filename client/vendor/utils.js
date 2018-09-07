@@ -421,8 +421,9 @@ module.exports.drawShareImage = function (canvasId, backgroundUrl,
   } else {
     ctx.setFontSize(10);
     let idx = getRandom(0, perseveranceList.length - 1);
+    // idx = 1;
     let encouragePhrase = perseveranceList[idx];
-    encouragePhrase = '“不经一番寒彻骨，怎得梅花扑鼻香”';
+    // encouragePhrase = '“不经一番寒彻骨，怎得梅花扑鼻香”';
     ctx.fillText(encouragePhrase, width/2, top_height + 70);
   }
 

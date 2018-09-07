@@ -6,7 +6,7 @@ const share_list = [
   { path: '2.jpg',top: 50 }
 ]
 const BACKGROUND_PREFIX = 'https://images.zhoucanzhendevelop.com/share/background';
-const BACKGROUND_SUFFIX = '?imageView2/0/q/50|imageslim';
+const BACKGROUND_SUFFIX = '?v=1111';
 	
 
 

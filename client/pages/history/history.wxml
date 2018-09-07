@@ -101,7 +101,8 @@
 
     <view wx:if="{{yList.length==0}}" class="card-data-nodata">
       当前卡片无计数
-      <image src='http://images.zhoucanzhendevelop.com/icon/oops.png'></image>
+      <image src='http://images.zhoucanzhendevelop.com/icon/nodata.svg'></image>
+      <text style="margin-top:50rpx;">没有打卡数据~</text>
     </view>
 
     <ec-canvas class='topic-data-canvas'
@@ -167,7 +168,7 @@
 
       <view class="completeness-canvas-error" 
             hidden="{{(!user_click_no_data && checked_data_list.length != 0) || topic_info.length == 0}}">
-        <image src="http://images.zhoucanzhendevelop.com/icon/nodata.png"></image>
+        <image src="http://images.zhoucanzhendevelop.com/icon/nodata.svg"></image>
         <text style="margin-top:50rpx;">这段时间没有打卡数据~</text>
       </view>
 
@@ -337,10 +338,10 @@
   <view class="modal-title">修改日志</view>
   <view class="modal-subtitle">{{check_time}} {{check_timestamp}}丨还能输入{{word_left_num}}字</view>
   <view class="modal-content">
-    <view class="modal-line">
-      <text>输入打卡计数： {{count_phase}} </text>
+    <view class="modal-line" style="white-space:nowrap;">
+      <text style="white-space:nowrap;">输入打卡计数： {{count_phase}} </text>
       <input type='digit' class="modal-digit-input" style="height: 30rpx;"  value="{{count_number}}"  bindchange="bindTopicCountNumberChange"/>
-      <text>{{count_unit}}</text>
+      <text style="white-space:nowrap;">{{count_unit}}</text>
     </view>
 
     <view class="modal-input">

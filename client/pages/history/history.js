@@ -772,6 +772,8 @@ Page({
     let check_timestamp = e.currentTarget.dataset.time;
     let log = e.currentTarget.dataset.log;
     let cur_word_left = this.data.word_left_num;
+    let count_number = this.data.check_info_per_topic[topic_name][topic_log_idx].count;
+    count_number = count_number == -1 ? '' : count_number;
 
 
     this.setData({
@@ -783,7 +785,7 @@ Page({
       show_modal: true,
       word_left_num: cur_word_left - log.length,
       count_phase: this.data.topic_info_map[topic_name].topic_count_phase,
-      count_number: this.data.check_info_per_topic[topic_name][topic_log_idx].count,
+      count_number: count_number,
       count_unit: this.data.topic_info_map[topic_name].topic_count_unit
     });
   },
