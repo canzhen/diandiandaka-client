@@ -140,8 +140,13 @@ function startSendMessage() {
       if (end_date != '永不结束' && moment() >
         moment(end_date, 'YYYY-MM-DD')) continue;
 
+
+
       // 如果已经五天没打卡了，即使用户没设置提醒仍要提醒用户
-      if (moment().diff(moment(last_check_time, 'YYYY-MM-DD'),'days') > 30){
+      if (!remind_time && 
+          moment().diff(moment(last_check_time, 
+            'YYYY-MM-DD'),'days') > 30){
+        
         // 没设置提醒，却已经五天没打卡了，就要强制提醒
         force_remind = true;
         writeLog('用户' + user_id + '上次打卡' + topic + 
@@ -150,6 +155,9 @@ function startSendMessage() {
                     '推送提醒，因为已经三十天没打卡了');
       } 
 
+
+
+      if (!remind_time) continue;
 
 
 
