@@ -2,8 +2,8 @@ const qiniuhelper = require('../../vendor/qiniuhelper.js');
 const api = require('../../ajax/api.js');
 const utils = require('../../vendor/utils.js');
 const share_list = [
-  { path: '1.jpg',top: 70},
-  { path: '2.jpg',top: 50 }
+  { path: '1-yasuo.jpg',top: 70},
+  { path: '2-yasuo.jpg',top: 50 }
 ]
 const BACKGROUND_PREFIX = 'https://images.zhoucanzhendevelop.com/share/background';
 const BACKGROUND_SUFFIX = '?v=1111';

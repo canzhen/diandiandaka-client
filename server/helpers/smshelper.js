@@ -8,7 +8,7 @@ let appkey = config.AppKey;
 let templateId = config.templateId;
 let templateIdCombine = config.templateIdCombine;
 // 签名
-let smsSign = "周灿桢不负此生";
+let smsSign = "点点小打卡";
 // 实例化QcloudSms
 let qcloudsms = QcloudSms(appid, appkey);
 

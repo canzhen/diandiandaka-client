@@ -102,8 +102,6 @@ function startComputeRank(now) {
         for (let topic_name in topicUserMap){
           for (let user_id in topicUserMap[topic_name]){
             let info = topicUserMap[topic_name][user_id];
-            // info.total_day = 10000;
-            // console.log(topicUserMap[topic_name][user_id].total_day);
             if (checkDataMap[topic_name] == undefined || 
                 checkDataMap[topic_name][user_id] == undefined ||
                 checkDataMap[topic_name][user_id].length == 0){
@@ -114,8 +112,6 @@ function startComputeRank(now) {
               continue;
             }
             let check_info = checkDataMap[topic_name][user_id];
-            // if (topic_name == '照顾外公')
-            //   console.log(check_info);
             let l = check_info.length;
             /** 计算总打卡天数 */
             info.total_day = l;

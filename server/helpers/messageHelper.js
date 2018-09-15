@@ -50,7 +50,7 @@ function sendMessage(openid,formid, messageBody, ifCombine, cb){
         touser: openid,
         template_id: ifCombine ? config.message.combineTemplateId: config.message.templateId,
         form_id: formid,
-        page: '/pages/today/today', //用户单击之后自动跳到今日打卡
+        page: 'pages/today/today', //用户单击之后自动跳到今日打卡
         data: messageBody,
       },
       'json': true
