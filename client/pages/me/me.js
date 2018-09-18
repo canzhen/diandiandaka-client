@@ -424,7 +424,6 @@ Page({
   bindGetUserInfo: function (e) {
     if (e.detail.userInfo != undefined){ //用户授权了
       let userInfo = e.detail.userInfo;
-      // console.log(userInfo);
       if (!this.data.user_name)
         this.setData({
           user_name: userInfo.nickName
@@ -460,22 +459,93 @@ Page({
       }
     })
 
-    // wx.navigateTo({
-    //   url: '/pages/share/share'
-    // })
 
+
+    let idx = utils.getRandom(0, share_list.length - 1);
+    let path = BACKGROUND_PREFIX +
+      share_list[idx].path + BACKGROUND_SUFFIX;
+    console.log('选中的分享图为:' + path);
+    let that = this;
+
+    that.setData({
+      selected_random_idx: idx
+    })
+
+
+    /** 获取背景url */
+    let getBackgroundUrl = function () {
+      wx.getImageInfo({
+        src: path,
+        success: (res) => {
+          let backgroundUrl = res.path;
+          that.setData({
+            background_url : backgroundUrl
+          });
+          // cb(backgroundUrl);
+        }
+      })
+    }
+
+
+    /** 获取头像url（名字） */
+    let getAvatarUrl = function () {
+      wx.getImageInfo({
+        src: that.data.avatar_url,
+        success: (res) => {
+          let avatarUrl = res.path;
+          that.setData({
+            avatar_url: avatarUrl
+          })
+          // cb(avatarUrl);
+        }
+      })
+    }
+
+
+    let getAllTopic = function () {
+      // 获取总人数
+      api.postRequest({
+        'url': '/topic/getAllTopic',
+        'data': [],
+        'showLoading': false,
+        'success': (res) => {
+          if (res.error_code != 200) {
+            console.log('从数据库中获取卡片使用人数信息失败');
+            return;
+          }
+
+          console.log('从数据库中获取卡片使用人数信息成功');
+          let topic_use_list = res.result_list;
+          let topic_use_map = {};
+
+          for (let i in topic_use_list)
+            topic_use_map[topic_use_list[i].topic_name] =
+              topic_use_list[i].use_people_num;
+
+          that.setData({
+            topic_use_map: topic_use_map
+          })
+          // cb(topic_use_map);
+        },
+        'fail': (res) => { //失败
+          console.log('从数据库中获取卡片使用人数信息失败');
+        }
+      })
+    }
+
+
+    getBackgroundUrl();
+    getAvatarUrl();
+    getAllTopic();
   },
+
+
+
 
   /**
    * 用户选择了某个卡片之后的操作
    */
   onConfirmSelectTopic: function () {
-    let idx = utils.getRandom(0, share_list.length - 1);
-    // idx = 1;
-    let path = BACKGROUND_PREFIX + 
-              share_list[idx].path + BACKGROUND_SUFFIX;
-              
-    console.log('选中的分享图为:' + path);
     let topic_name = this.data.topic_name_list[this.data.selected_topic_idx];
     let that = this;
 
@@ -498,131 +568,81 @@ Page({
 
 
 
-    /** 获取背景url */
-    let getBackgroundUrl = function(cb){
-      wx.getImageInfo({
-        src: path,
-        success: (res) => {
-          let backgroundUrl = res.path;
-          cb(backgroundUrl);
-        }
-      })
-    }
+    // /** 获取背景url */
+    // let getBackgroundUrl = function(cb){
+    //   wx.getImageInfo({
+    //     src: path,
+    //     success: (res) => {
+    //       let backgroundUrl = res.path;
+    //       cb(backgroundUrl);
+    //     }
+    //   })
+    // }
     
 
-    /** 获取头像url（名字） */
-    let getAvatarUrl = function(cb){
-      wx.getImageInfo({
-        src: that.data.avatar_url,
-        success: (res) => {
-          let avatarUrl = res.path;
-          cb(avatarUrl);
-        }
-      })
-    }
+    // /** 获取头像url（名字） */
+    // let getAvatarUrl = function(cb){
+    //   wx.getImageInfo({
+    //     src: that.data.avatar_url,
+    //     success: (res) => {
+    //       let avatarUrl = res.path;
+    //       cb(avatarUrl);
+    //     }
+    //   })
+    // }
 
 
-    let getAllTopic = function(cb){
-      // 获取总人数
-      api.postRequest({
-        'url': '/topic/getAllTopic',
-        'data': [],
-        'showLoading': false,
-        'success': (res) => {
-          if (res.error_code != 200) {
-            console.log('从数据库中获取卡片使用人数信息失败');
-            return;
-          }
+    // let getAllTopic = function(cb){
+    //   // 获取总人数
+    //   api.postRequest({
+    //     'url': '/topic/getAllTopic',
+    //     'data': [],
+    //     'showLoading': false,
+    //     'success': (res) => {
+    //       if (res.error_code != 200) {
+    //         console.log('从数据库中获取卡片使用人数信息失败');
+    //         return;
+    //       }
 
-          console.log('从数据库中获取卡片使用人数信息成功');
-          let topic_use_list = res.result_list;
-          let topic_use_map = {};
+    //       console.log('从数据库中获取卡片使用人数信息成功');
+    //       let topic_use_list = res.result_list;
+    //       let topic_use_map = {};
 
-          for (let i in topic_use_list)
-            topic_use_map[topic_use_list[i].topic_name] =
-              topic_use_list[i].use_people_num;
+    //       for (let i in topic_use_list)
+    //         topic_use_map[topic_use_list[i].topic_name] =
+    //           topic_use_list[i].use_people_num;
 
-          cb(topic_use_map);
-        },
-        'fail': (res) => { //失败
-          console.log('从数据库中获取卡片使用人数信息失败');
-        }
-      })
-    }
+    //       cb(topic_use_map);
+    //     },
+    //     'fail': (res) => { //失败
+    //       console.log('从数据库中获取卡片使用人数信息失败');
+    //     }
+    //   })
+    // }
 
     getSystemWidthHeight((width, height) => {
-      getBackgroundUrl((backgroundUrl) => {
-        getAvatarUrl((avatarUrl) => {
-          getAllTopic((topicUseMap) => {
-            let topic_info = that.data.topic_list[that.data.selected_topic_idx];
-            let rank = topic_info.rank;
-            let total_num = topicUseMap[topic_name];
-            let higher_rate = parseFloat((total_num - rank) / total_num * 100).toFixed(2);
+      let topic_info = that.data.topic_list[that.data.selected_topic_idx];
+      let rank = topic_info.rank;
+      let total_num = that.data.topic_use_map[topic_name];
+      let higher_rate = parseFloat((total_num - rank) / total_num * 100).toFixed(2);
 
-            utils.drawShareImage('shareCanvas', backgroundUrl,
-              that.data.user_name, avatarUrl, topic_name, 
-              topic_info.total_day, higher_rate, 
-              share_list[idx].top, width, height,
-              () => {
-                setTimeout(() => {
-                  that.setData({
-                    share_modal_width: width,
-                    share_modal_height: height,
-                    show_share_modal: true,
-                    show_select_topic_modal: false
-                  })
-                  wx.hideLoading();
-                }, 5000)
-              })
-          })
+      utils.drawShareImage('shareCanvas', that.data.background_url,
+        that.data.user_name, that.data.avatar_url, topic_name,
+        topic_info.total_day, higher_rate,
+        share_list[that.data.selected_random_idx].top, 
+        width, height,
+        () => {
+          setTimeout(() => {
+            that.setData({
+              share_modal_width: width,
+              share_modal_height: height,
+              show_share_modal: true,
+              show_select_topic_modal: false
+            })
+            wx.hideLoading();
+          }, 5000)
         })
-      })
     })
-
-
-
-    // wx.getSystemInfo({
-    //   success: function (res) {
-
-    //     let width = res.windowWidth * 0.8;
-    //     let height = res.windowHeight * 0.75;
-
-    //     wx.getImageInfo({
-    //       src: path,
-    //       success: (res) => {
-    //         let backgroundUrl = res.path;
-
-    //         wx.getImageInfo({
-    //           src: that.data.avatar_url,
-    //           success: (res) => {
-    //             let avatarUrl = res.path;
-
-
-    //             utils.drawShareImage('shareCanvas', backgroundUrl,
-    //               that.data.user_name, avatarUrl, topic_name, higher_rage,
-    //               that.data.topic_list[that.data.selected_topic_idx].total_day,
-    //               width, height,
-    //               () => {
-    //                 setTimeout(() => {
-    //                   that.setData({
-    //                     share_modal_width: width,
-    //                     share_modal_height: height,
-    //                     show_share_modal: true,
-    //                     show_select_topic_modal: false
-    //                   })
-    //                   wx.hideLoading();
-    //                 }, 5000)
-    //               })
-
-    //           }
-    //         })
-    //       },
-    //       // complete: (res) => {
-    //       // }
-    //     })
-
-    //   }
-    // })
 
   },
 
