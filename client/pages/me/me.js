@@ -22,6 +22,7 @@ Page({
 
     user_name: '', //用户名（如果没设置就是微信名）
     avatar_url: '', //从数据库（本地缓存）中获取
+    background_url: '', //从七牛云端下载的背景图url
     is_reset_avatar: false, //默认用户没有修改头像
     is_reset_name: false, //默认用户没修改过名字
     start_reset_user_name: false, //是否开始修改用户名（显示input）
@@ -70,6 +71,9 @@ Page({
         }
       });
     }
+
+
+    console.log(wx.getStorageSync('avatarUrl'));
   },
 
 
@@ -93,6 +97,70 @@ Page({
     this.setData({
       is_loaded: true
     });
+
+
+
+
+
+    let idx = utils.getRandom(0, share_list.length - 1);
+    let path = BACKGROUND_PREFIX +
+      share_list[idx].path + BACKGROUND_SUFFIX;
+    console.log('选中的分享图为:' + path);
+    let that = this;
+
+    that.setData({
+      selected_random_idx: idx
+    })
+
+
+    /** 获取背景url */
+    let getBackgroundUrl = function () {
+      wx.getImageInfo({
+        src: path,
+        success: (res) => {
+          let backgroundUrl = res.path;
+          console.log('下载下来的background_url:' + backgroundUrl);
+          that.setData({
+            background_url: backgroundUrl
+          });
+        }
+      })
+    }
+
+
+    /** 获取所有topic的使用人数 */
+    let getAllTopic = function () {
+      api.postRequest({
+        'url': '/topic/getAllTopic',
+        'data': [],
+        'showLoading': false,
+        'success': (res) => {
+          if (res.error_code != 200) {
+            console.log('从数据库中获取卡片使用人数信息失败');
+            return;
+          }
+
+          console.log('从数据库中获取卡片使用人数信息成功');
+          let topic_use_list = res.result_list;
+          let topic_use_map = {};
+
+          for (let i in topic_use_list)
+            topic_use_map[topic_use_list[i].topic_name] =
+              topic_use_list[i].use_people_num;
+
+          that.setData({
+            topic_use_map: topic_use_map
+          })
+          // cb(topic_use_map);
+        },
+        'fail': (res) => { //失败
+          console.log('从数据库中获取卡片使用人数信息失败');
+        }
+      })
+    }
+
+    getBackgroundUrl();
+    getAllTopic();
   },
 
   /* tab来回切换时也会调用的function */
@@ -419,6 +487,7 @@ Page({
    * 用户单击分享打卡时，先弹出获取用户信息界面
    */
   bindGetUserInfo: function (e) {
+    let that = this;
     if (e.detail.userInfo != undefined){ //用户授权了
       let userInfo = e.detail.userInfo;
       if (!this.data.user_name)
@@ -427,7 +496,8 @@ Page({
         })
       if (!this.data.avatar_url)
         this.setData({
-          avatar_url: userInfo.avatarUrl
+          avatar_url: userInfo.avatarUrl,
+          wx_avatar: true // 是否是微信自带的头像
         })
     }
 
@@ -457,79 +527,37 @@ Page({
     })
 
 
-    let idx = utils.getRandom(0, share_list.length - 1);
-    let path = BACKGROUND_PREFIX +
-      share_list[idx].path + BACKGROUND_SUFFIX;
-    console.log('选中的分享图为:' + path);
-    let that = this;
-
-    that.setData({
-      selected_random_idx: idx
-    })
-
-
-    /** 获取背景url */
-    let getBackgroundUrl = function () {
-      wx.getImageInfo({
-        src: path,
-        success: (res) => {
-          let backgroundUrl = res.path;
-          that.setData({
-            background_url : backgroundUrl
-          });
-        }
-      })
-    }
-
 
     /** 获取头像url（名字） */
     let getAvatarUrl = function () {
+      // console.log('get avatar url');
+      // console.log('current avatar url is: ' + that.data.avatar_url);
+
+      // 如果头像url为空，或者微信头像（因为没加到downloadfile现在无法画到画布上）
+      if (that.data.wx_avatar || !that.data.avatar_url){
+        that.setData({
+          avatar_url: ''
+        })
+        return;
+      }
+
       wx.getImageInfo({
         src: that.data.avatar_url,
         success: (res) => {
-          let avatarUrl = res.path;
+          let avatarUrl = res.path; 
+          console.log('下载下来的avatar_url:' + avatarUrl);
           that.setData({
             avatar_url: avatarUrl
           })
         }
       })
+
+      // console.log('after getting, the avatar url is: ' + that.data.avatar_url);
     }
-
-
-    let getAllTopic = function () {
-      // 获取总人数
-      api.postRequest({
-        'url': '/topic/getAllTopic',
-        'data': [],
-        'showLoading': false,
-        'success': (res) => {
-          if (res.error_code != 200) {
-            console.log('从数据库中获取卡片使用人数信息失败');
-            return;
-          }
-
-          console.log('从数据库中获取卡片使用人数信息成功');
-          let topic_use_list = res.result_list;
-          let topic_use_map = {};
-
-          for (let i in topic_use_list)
-            topic_use_map[topic_use_list[i].topic_name] =
-              topic_use_list[i].use_people_num;
-
-          that.setData({
-            topic_use_map: topic_use_map
-          })
-          // cb(topic_use_map);
-        },
-        'fail': (res) => { //失败
-          console.log('从数据库中获取卡片使用人数信息失败');
-        }
-      })
-    }
-
-    getBackgroundUrl();
     getAvatarUrl();
-    getAllTopic();
+
+
+
   },
 
 
@@ -539,50 +567,64 @@ Page({
    * 用户选择了某个卡片之后的操作
    */
   onConfirmSelectTopic: function () {
-    let topic_name = this.data.topic_name_list[this.data.selected_topic_idx];
-    let that = this;
 
+    let that = this;
     wx.showLoading({
       title: '图片生成中',
     })
 
-
-    /** 获取系统宽度和高度 */
-    let getSystemWidthHeight = function(cb){
-      wx.getSystemInfo({
-        success: function (res) {
-          let width = res.windowWidth * 0.8;
-          let height = res.windowHeight * 0.75;
-
-          cb(width, height);
-        }
-      })
+    if (this.data.topic_name_list.length == 0 ||
+      !this.data.avatar_url || !this.data.background_url) {
+      setTimeout(() => {
+        startDrawing();
+      }, 1000)
+    }else{
+      startDrawing();
     }
 
 
-    getSystemWidthHeight((width, height) => {
-      let topic_info = that.data.topic_list[that.data.selected_topic_idx];
-      let rank = topic_info.rank;
-      let total_num = that.data.topic_use_map[topic_name];
-      let higher_rate = parseFloat((total_num - rank) / total_num * 100).toFixed(2);
+    let startDrawing = function(){
+      let topic_name = that.data.topic_name_list[that.data.selected_topic_idx];
 
-      utils.drawShareImage('shareCanvas', that.data.background_url,
-        that.data.user_name, that.data.avatar_url, topic_name,
-        topic_info.total_day, higher_rate,
-        share_list[that.data.selected_random_idx].top, 
-        width, height,
-        () => {
-          setTimeout(() => {
-            that.setData({
-              share_modal_width: width,
-              share_modal_height: height,
-              show_share_modal: true,
-              show_select_topic_modal: false
-            })
-            wx.hideLoading();
-          }, 5000)
+      console.log('图片生成中');
+
+      /** 获取系统宽度和高度 */
+      let getSystemWidthHeight = function (cb) {
+        wx.getSystemInfo({
+          success: function (res) {
+            let width = res.windowWidth * 0.8;
+            let height = res.windowHeight * 0.75;
+
+            cb(width, height);
+          }
         })
-    })
+      }
+
+
+      getSystemWidthHeight((width, height) => {
+        let topic_info = that.data.topic_list[that.data.selected_topic_idx];
+        let rank = topic_info.rank;
+        let total_num = that.data.topic_use_map[topic_name];
+        let higher_rate = parseFloat((total_num - rank) / total_num * 100).toFixed(2);
+
+        utils.drawShareImage('shareCanvas', that.data.background_url,
+          that.data.user_name, that.data.avatar_url, topic_name,
+          topic_info.total_day, higher_rate,
+          share_list[that.data.selected_random_idx].top,
+          width, height,
+          () => {
+            setTimeout(() => {
+              that.setData({
+                share_modal_width: width,
+                share_modal_height: height,
+                show_share_modal: true,
+                show_select_topic_modal: false
+              })
+              wx.hideLoading();
+            }, 5000)
+          })
+      })
+    }
 
   },
 

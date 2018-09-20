@@ -368,9 +368,7 @@ module.exports.drawShareImage = function (canvasId, backgroundUrl,
   
   insistDay = insistDay + '';
   let ctx = wx.createCanvasContext(canvasId);
-  // context.stroke();
   ctx.drawImage(backgroundUrl, 0, 0, width, height);
-  // ctx.save();
 
 
   // 绘制时间
@@ -434,20 +432,30 @@ module.exports.drawShareImage = function (canvasId, backgroundUrl,
 
   // let avatarHeight = higherRate >= 60 ? top_height + 90 : top_height + 110;
   let avatarHeight = top_height + 90;
-  /** 头像和名称 */
-  ctx.save();
-  ctx.arc(width / 2 - 30, avatarHeight + 20, 20, 0, 2 * Math.PI);
-  ctx.clip()
-  ctx.drawImage(avatarUrl, width / 2 - 50, avatarHeight, 40, 40);
-  ctx.restore();
+  console.log('avatarUrl: ' + avatarUrl);
+  if (!avatarUrl) {
+    /** 只有用户名 */
+    ctx.font = 'normal normal 14px sans-serif';
+    ctx.setTextAlign('center');
+    ctx.setFillStyle('#333333');
+    ctx.fillText(userName, width / 2, avatarHeight + 15);
+  }else{
+    /** 头像和用户名 */
+    ctx.save();
+    ctx.arc(width / 2 - 30, avatarHeight + 20, 20, 0, 2 * Math.PI);
+    ctx.clip()
+    ctx.drawImage(avatarUrl, width / 2 - 50, avatarHeight, 40, 40);
+    ctx.restore();
 
-  ctx.font = 'normal normal 14px sans-serif';
-  ctx.setTextAlign('left');
-  ctx.setFillStyle('#333333');
-  ctx.fillText(userName, width / 2, avatarHeight + 25);
+    ctx.font = 'normal normal 14px sans-serif';
+    ctx.setTextAlign('left');
+    ctx.setFillStyle('#333333');
+    ctx.fillText(userName, width / 2, avatarHeight + 25);
+  }
 
 
   ctx.draw();
+  console.log('done drawing..')
   cb();
 }
 

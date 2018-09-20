@@ -108,7 +108,8 @@
 
 
 <!-- 选择要分享的卡片开始 -->
-<view class="modal-mask" bindtap="hideSelectTopicModal" catchtouchmove="preventTouchMove" wx:if="{{show_select_topic_modal}}"></view>
+<view class="modal-mask" bindtap="hideSelectTopicModal" 
+      catchtouchmove="preventTouchMove" wx:if="{{show_select_topic_modal}}"></view>
 <view class="modal-dialog" style="width:400rpx; left:90rpx;" wx:if="{{show_select_topic_modal}}">
   <view class="modal-title">选择卡片</view>
   <view class="modal-content" style="display:flex;flex-direction:column;align-items:center;">
@@ -137,16 +138,13 @@
 
 
 
-
-
 <!-- 分享图片部分开始 -->
-<view class="modal-mask" bindtap="hideShareModal"      catchtouchmove="preventTouchMove" wx:if="{{show_share_modal}}"></view>
-
+<view class="modal-mask" bindtap="hideShareModal"
+      catchtouchmove="preventTouchMove" wx:if="{{show_share_modal}}"></view>
 
 <canvas class="share-modal-dialog" 
 wx:if="{{show_share_modal}}" canvas-id="shareCanvas" 
 style="width:{{share_modal_width}}px;height:{{share_modal_height}}px;"/>
-
 
 <form bindsubmit="saveShareToLocal" report-submit='true'
       wx:if="{{show_share_modal}}">
