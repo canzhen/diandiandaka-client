@@ -31,10 +31,13 @@ function writeLog(log){
 
 
 
-/** 开始发送消息 */
+/**
+ * 开始发送消息
+ */
 function startSendMessage() { 
+
   /**
-   * 遍历usertopic表
+   * 1. 遍历usertopic表
    */
   let getAllFromUserTopic = function(){
     return new Promise((resolve) => {
@@ -54,7 +57,7 @@ function startSendMessage() {
 
 
   /**
-   * 获取topic使用人数信息
+   * 2. 获取topic使用人数信息
    */
   let getTopicUseMap = function (user_topic_list){
     return new Promise((resolve) => {
@@ -78,7 +81,7 @@ function startSendMessage() {
 
 
   /**
-   * 获取用户信息
+   * 3. 获取用户信息
    */
   let getUserMap = function(user_topic_list, topic_use_map) {
     return new Promise((resolve) => {
@@ -115,8 +118,12 @@ function startSendMessage() {
   }).then(([user_topic_list, topic_use_map]) => {
     return getUserMap(user_topic_list, topic_use_map)
   }).then(([user_topic_list, topic_use_map, user_map]) => {
+
+    // 获取所有信息之后，开始计算排名和设置提醒timeout
     let combineTopicMap = {};
-    // 循环开始
+
+
+    // 循环发送单独提醒开始
     for (let i in user_topic_list) {
       let user_id = user_topic_list[i]['user_id'],
           timezone = user_map[user_id]['timezone'],
@@ -131,8 +138,6 @@ function startSendMessage() {
           last_check_time = user_topic_list[i]['last_check_time'],
           force_remind = false; //用户没设置提醒，自作主张提醒（超过五天没打卡）
 
-
-
       // if (user_id != 'ovMv05WNSF-fzJnoQ4UMSWtMWjFs') continue;
       // console.log(topic, last_check_time);
 
@@ -140,14 +145,10 @@ function startSendMessage() {
       if (end_date != '永不结束' && moment() >
         moment(end_date, 'YYYY-MM-DD')) continue;
 
-
-
-      // 如果已经五天没打卡了，即使用户没设置提醒仍要提醒用户
+      // 如果没设置提醒，但是超过30天没打卡，仍旧要强制提醒
       if (!remind_time && 
           moment().diff(moment(last_check_time, 
             'YYYY-MM-DD'),'days') > 30){
-        
-        // 没设置提醒，却已经五天没打卡了，就要强制提醒
         force_remind = true;
         writeLog('用户' + user_id + '上次打卡' + topic + 
                     '的时间为：' + last_check_time + 
@@ -155,13 +156,11 @@ function startSendMessage() {
                     '推送提醒，因为已经三十天没打卡了');
       } 
 
-
-
+      // 如果没设置提醒，且在30天之内，则跳过该用户
       if (!remind_time) continue;
 
-
-
-
+      // 分组提醒，或者强制提醒都无须直接提醒
+      // 留到循环之后统一进行处理
       if (remind_group != -1 || force_remind){
         if (combineTopicMap[user_id] == undefined)
           combineTopicMap[user_id] = {};
@@ -176,28 +175,25 @@ function startSendMessage() {
         continue;
       }
 
-
+      // 计算提醒时间与当前时间的差值（需要考虑时区）
       let diffTime = getDiffSeconds(user_id, topic, timezone, remind_time, remind_method);
 
-
-      /** 微信推送 */
+      // 正式进行提醒推送
+      /* 微信提醒 */
       if (remind_method == 1){ //强制推送是通过微信
         // 准备form_id
         let form_id = getFormId(user_id, user_map);
         if (!form_id) continue;
-
         // 开始设置提醒
         setTimeout(() => {
           writeLog(diffTime / 1000 + 
-          '秒计时到啦！准备【微信】推送消息给' + user_id + 
-          '，推送使用的的form_id为：' + form_id + 
-          '，推送的卡片为：' + topic);
-          let words = perseveranceList[utils.
-            getRandom(0, perseveranceList.length - 1)];
+                  '秒计时到啦！准备【微信】推送消息给' + user_id + 
+                  '，推送使用的的form_id为：' + form_id + 
+                  '，推送的卡片为：' + topic);
+          let words = perseveranceList[utils.getRandom(0, perseveranceList.length - 1)];
           /** 推送message */
           messagehelper.sendMessage(user_id, form_id,
-            {
-              keyword1: { value: topic }, //打卡项目
+            { keyword1: { value: topic }, //打卡项目
               keyword2: { value: moment().
                           format('YYYY年MM月DD日') }, //打卡时间
               keyword3: { value: total_day }, //已打卡天数
@@ -216,8 +212,9 @@ function startSendMessage() {
             }
           )
         }, diffTime);
-        
-      } else if (remind_method == 2) {
+      
+      /* 短信提醒 */
+      } else if (remind_method == 2) { 
 
         let phone_number = user_map[user_id]['phone_number'];
         let countryCode = phone_number.split('-')[0],
@@ -269,22 +266,20 @@ function startSendMessage() {
         if (remind_method == 1 || force_remind) {
 
           let form_id = getFormId(user_id, user_map);
-          // console.log('进入提醒窗口')
           if (!form_id) continue;
           /* 开始设置提醒 */
           setTimeout(() => {
             writeLog(diffTime / 1000 + '秒计时到啦！准备【微信】推送消息给' +
                     user_id + '，推送使用的的form_id为：' + form_id);
-            let words = force_remind ? (
-            combineTopicMap[user_id][i].topic.length > 1 ? 
-            '这些卡片已经超过五天没有被你照顾了喔，它们好想你呀~' : 
-            '['+topic_string+']卡片已经超过五天没有被你照顾了喔，它好想你呀~'):
-              perseveranceList[utils.getRandom(0,
-                perseveranceList.length - 1)];
+            let words = force_remind ? 
+                        (combineTopicMap[user_id][i].topic.length > 1 ? 
+                        '这些卡片已经超过五天没有被你照顾了喔，它们好想你呀~' : 
+                        '['+topic_string+']卡片已经超过五天没有被你照顾了喔，它好想你呀~'):
+                          perseveranceList[utils.getRandom(0,
+                            perseveranceList.length - 1)];
             /** 推送message */
             messagehelper.sendMessage(user_id, form_id,
-              {
-                keyword1: { value: topic_string }, //打卡项目
+              { keyword1: { value: topic_string }, //打卡项目
                 keyword2: { value: moment().format('YYYY年MM月DD日') }, //打卡时间
                 keyword3: { value: words }, //提示语
               }, true, //合并发送
@@ -324,9 +319,6 @@ function startSendMessage() {
         }
       }
     }
-
-
-    // process.exit(0);
 
   })
 

@@ -10,13 +10,13 @@ function writeLog(log) {
 }
 
 
-/** 开始发送消息 */
-function startComputeRank(now) {
+/** 开始计算排名 */
+function startComputeRank() {
 
   /**
    * 第一步，计算每个用户的每个卡片的完成度
    */
-  let calculateCompletenessRate = function(now){
+  let calculateCompletenessRate = function(){
 
     return new Promise((resolve) => {
 
@@ -54,8 +54,8 @@ function startComputeRank(now) {
       let getCheckDataMap = function () {
         return new Promise((resolve) => {
           dbhelper.select('topic_check', 
-          'user_id, topic_name, check_time', 
-          '', [], 'ORDER BY check_time DESC',
+            'user_id, topic_name, check_time', 
+            '', [], 'ORDER BY check_time DESC',
             (status, result_list) => {
               if (result_list.length == 0){
                 resolve({error_code: 200, result_list: []});
@@ -79,7 +79,6 @@ function startComputeRank(now) {
                   map[topic_name][user_id] = Array.from(map[topic_name][user_id]); //from set to list
               }
 
-              // console.log(map)
               resolve({ error_code: 200, result_list: map})
             });
         })
@@ -180,7 +179,6 @@ function startComputeRank(now) {
         }
 
         resolve({ error_code: 200, result_list: topicUserMap});
-        // resolve({error_code: 200});
       }, (res) => {
         writeLog('运行失败');
         resolve({ error_code: 100, result_list: [] });
@@ -188,67 +186,6 @@ function startComputeRank(now) {
 
     })
   }
-
-
-
-
-
-
-  /**
-   * 第二步，根据坚持天数、总共天数以及完成度，计算出分数并排序
-   */
-  // let calculateScore = function(){
-  //   return new Promise((resolve) => {
-
-  //     // 先把分数计算出来
-  //     dbhelper.update('user_topic', 
-  //     'score = FORMAT((total_day + insist_day)*complete_rate/10, 2)',
-  //     '', [], (status, errmsg) => {
-  //       if (!status) {
-  //         resolve(false);
-  //         return;
-  //       }
-
-  //       // 利用mysql根据分数排序
-  //       dbhelper.select('user_topic',
-  //         'topic_name, user_id, score',
-  //         '', [], 'ORDER BY topic_name, score DESC',
-  //         (status, result) => {
-  //           if (!status) {
-  //             writeLog('1. 获取所有user的topic和score失败');
-  //           }
-  //           let topic_rate_map = {};
-
-  //           // 生成user_map
-  //           for (let i in result) {
-  //             let topic_name = result[i]['topic_name'];
-  //             let rank = 1;
-  //             if (topic_rate_map[topic_name] == undefined) {
-  //               topic_rate_map[topic_name] = [];
-  //             } else {
-  //               let l = topic_rate_map[topic_name].length - 1;
-  //               if (result[i]['score'] ==
-  //                 topic_rate_map[topic_name][l]['score'])
-  //                 rank = topic_rate_map[topic_name][l]['rank'];
-  //               else
-  //                 rank = topic_rate_map[topic_name][l]['rank'] + 1;
-  //             }
-
-
-  //             topic_rate_map[topic_name].push({
-  //               user_id: result[i]['user_id'],
-  //               score: result[i]['score'],
-  //               rank: rank
-  //             })
-  //           }
-  //           resolve(topic_rate_map)
-  //         })
-  //     });
-
-  //   })
-  // }
-
-
 
 
 
@@ -260,7 +197,6 @@ function startComputeRank(now) {
    * 4. score
    * 5. rank
    */
-  
   let updateRank = function (topic_rate_map){
     return new Promise((resolve)=>{
       if (!topic_rate_map){
@@ -349,14 +285,12 @@ function startComputeRank(now) {
 
 
 
-  calculateCompletenessRate(now)
+  calculateCompletenessRate()
   .then((res) => {
     if (res.error_code != 200 || !res.result_list) {
       writeLog('脚本执行失败...');
       process.exit(0);
     }
-    // console.log(res.result_list)
-    // process.exit(0);
     return updateRank(res.result_list);
   })
   .then((promiseList) => {
@@ -368,6 +302,6 @@ function startComputeRank(now) {
 }
 
 
-let now = Date.now();
-writeLog('脚本开始执行....')
-startComputeRank(now)
+// let now = Date.now();
+writeLog('脚本开始执行....');
+startComputeRank();

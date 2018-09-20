@@ -141,15 +141,13 @@ Page({
   
   },
 
+
   /**
    * 编辑个人资料
    */
   editPersonalData: function(){
     console.log('编辑个人资料');
   },
-
-
-
 
 
   /**
@@ -403,7 +401,6 @@ Page({
         }
       })
     }
-    
 
     let showNewUserName = function () {
       that.setData({
@@ -460,7 +457,6 @@ Page({
     })
 
 
-
     let idx = utils.getRandom(0, share_list.length - 1);
     let path = BACKGROUND_PREFIX +
       share_list[idx].path + BACKGROUND_SUFFIX;
@@ -481,7 +477,6 @@ Page({
           that.setData({
             background_url : backgroundUrl
           });
-          // cb(backgroundUrl);
         }
       })
     }
@@ -496,7 +491,6 @@ Page({
           that.setData({
             avatar_url: avatarUrl
           })
-          // cb(avatarUrl);
         }
       })
     }
@@ -533,7 +527,6 @@ Page({
       })
     }
 
-
     getBackgroundUrl();
     getAvatarUrl();
     getAllTopic();
@@ -566,59 +559,6 @@ Page({
       })
     }
 
-
-
-    // /** 获取背景url */
-    // let getBackgroundUrl = function(cb){
-    //   wx.getImageInfo({
-    //     src: path,
-    //     success: (res) => {
-    //       let backgroundUrl = res.path;
-    //       cb(backgroundUrl);
-    //     }
-    //   })
-    // }
-    
-
-    // /** 获取头像url（名字） */
-    // let getAvatarUrl = function(cb){
-    //   wx.getImageInfo({
-    //     src: that.data.avatar_url,
-    //     success: (res) => {
-    //       let avatarUrl = res.path;
-    //       cb(avatarUrl);
-    //     }
-    //   })
-    // }
-
-
-    // let getAllTopic = function(cb){
-    //   // 获取总人数
-    //   api.postRequest({
-    //     'url': '/topic/getAllTopic',
-    //     'data': [],
-    //     'showLoading': false,
-    //     'success': (res) => {
-    //       if (res.error_code != 200) {
-    //         console.log('从数据库中获取卡片使用人数信息失败');
-    //         return;
-    //       }
-
-    //       console.log('从数据库中获取卡片使用人数信息成功');
-    //       let topic_use_list = res.result_list;
-    //       let topic_use_map = {};
-
-    //       for (let i in topic_use_list)
-    //         topic_use_map[topic_use_list[i].topic_name] =
-    //           topic_use_list[i].use_people_num;
-
-    //       cb(topic_use_map);
-    //     },
-    //     'fail': (res) => { //失败
-    //       console.log('从数据库中获取卡片使用人数信息失败');
-    //     }
-    //   })
-    // }
 
     getSystemWidthHeight((width, height) => {
       let topic_info = that.data.topic_list[that.data.selected_topic_idx];
@@ -684,8 +624,6 @@ Page({
    * */
   onHide: function (event) {
     if (this.data.form_id_list.length == 0) return;
-    // console.log('I am hiding')
-    // console.log(this.data.form_id_list);
     utils.saveFormId(this.data.form_id_list);
     this.setData({
       form_id_list: []
