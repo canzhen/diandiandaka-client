@@ -10,7 +10,8 @@ Page({
    */
   data: {
     topic_list: [], //排名列表
-    current_date: moment().format('YYYY年MM月DD日')
+    current_date: moment().format('YYYY年MM月DD日'),
+    form_id_list: [], //用于存储用户单击所产生的form_id
   },
 
   /**
@@ -81,55 +82,39 @@ Page({
       }
     });
 
-
   },
 
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-  
+
+  saveFormId: function(e){
+    console.log('form id: ' + e.detail.formId);
+    this.saveFormId(e.detail.formId);
   },
 
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow: function () {
-  
-  },
+
 
   /**
-   * 生命周期函数--监听页面隐藏
+   * 用于保存formId的helper方法
    */
-  onHide: function () {
-  
+  saveFormId: function (formId) {
+    // console.log(formId);
+    let form_id_list = this.data.form_id_list;
+    form_id_list.push(formId);
+    this.setData({
+      form_id_list: form_id_list
+    });
   },
 
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload: function () {
-  
-  },
 
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh: function () {
-  
+  /** 
+   * 页面隐藏函数
+   * 监听页面的隐藏，
+   * 当从当前A页跳转到其他页面，那么A页面处于隐藏状态
+   * */
+  onHide: function (event) {
+    if (this.data.form_id_list.length == 0) return;
+    utils.saveFormId(this.data.form_id_list);
+    this.setData({
+      form_id_list: []
+    });
   },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom: function () {
-  
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage: function () {
-  
-  }
 })

@@ -43,7 +43,7 @@ Page{
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  width: 600rpx;
+  width: 550rpx;
   /* width: 100%; */
   padding-left: 50rpx;
 }
