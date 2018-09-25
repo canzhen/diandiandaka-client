@@ -188,7 +188,7 @@ function startSendMessage() {
         setTimeout(() => {
           writeLog(diffTime / 1000 + 
                   '秒计时到啦！准备【微信】推送消息给' + user_id + 
-                  '，推送使用的的form_id为：' + form_id + 
+                  '，推送使用的form_id为：' + form_id + 
                   '，推送的卡片为：' + topic);
           let words = perseveranceList[utils.getRandom(0, perseveranceList.length - 1)];
           /** 推送message */

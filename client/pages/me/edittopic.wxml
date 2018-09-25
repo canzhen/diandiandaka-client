@@ -28,8 +28,7 @@
       <!-- left panel开始 -->
       <view class="one-line-inner-panel" style="width:100%;">
         <text style="width: 170rpx;">结束日期</text>
-        <picker wx:if="{{!is_ended}}" 
-                style="padding-bottom: 5rpx;" mode="date" 
+        <picker style="padding-bottom: 5rpx;" mode="date" 
                 value="{{end_date}}" name="end_date" 
                 start="{{start_date}}" 
                 end="3000-12-31" 
@@ -37,8 +36,8 @@
           {{end_date}}
         </picker>
 
-        <text wx:if="{{is_ended}}" style="color:#888888">{{end_date}}（已结束）
-        </text>
+        <!-- <text wx:if="{{is_ended}}" style="color:#888888">{{end_date}}（已结束）
+        </text> -->
       </view>
       <!-- left panel结束 -->
     </view>
