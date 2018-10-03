@@ -534,7 +534,7 @@ Page({
       // console.log('current avatar url is: ' + that.data.avatar_url);
 
       // 如果头像url为空，或者微信头像（因为没加到downloadfile现在无法画到画布上）
-      if (that.data.wx_avatar || !that.data.avatar_url){
+      if (!that.data.avatar_url){
         that.setData({
           avatar_url: ''
         })
@@ -573,17 +573,11 @@ Page({
       title: '图片生成中',
     })
 
-    if (this.data.topic_name_list.length == 0 ||
-      !this.data.avatar_url || !this.data.background_url) {
-      setTimeout(() => {
-        startDrawing();
-      }, 1000)
-    }else{
-      startDrawing();
-    }
 
 
-    let startDrawing = function(){
+
+
+    let startDrawing = function () {
       let topic_name = that.data.topic_name_list[that.data.selected_topic_idx];
 
       console.log('图片生成中');
@@ -599,7 +593,6 @@ Page({
           }
         })
       }
-
 
       getSystemWidthHeight((width, height) => {
         let topic_info = that.data.topic_list[that.data.selected_topic_idx];
@@ -624,6 +617,15 @@ Page({
             }, 5000)
           })
       })
+    }
+    
+    if (this.data.topic_name_list.length == 0 ||
+      !this.data.avatar_url || !this.data.background_url) {
+      setTimeout(() => {
+        startDrawing();
+      }, 1000)
+    }else{
+      startDrawing();
     }
 
   },
