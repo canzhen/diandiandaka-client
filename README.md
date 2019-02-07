@@ -85,7 +85,7 @@
 
 1. clone到本地，只保留server部分，client部分可以删除
 2. 主目录下运行npm install => pm2 start bin/www --watch --name diandiandaka，之后可用pm2 log diandiandaka查看运行日志
-3. 运行定时任务，在主目录下运行crontab crontab_file即可
+3. 运行定时任务，在目录"/home/ubuntu/diandiandaka/script"下运行crontab crontab_file即可
 
 小程序端
 
