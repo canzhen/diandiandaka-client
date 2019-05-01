@@ -1,0 +1,6 @@
+# edit by canzhen 2018-09-07 定时任务每天运行一次推送提醒的node脚本
+59 10 * * * /bin/sh /home/ubuntu/diandiandaka/script/stop-send-reminder.sh >> /dev/null 2>&1
+00 11 * * * /bin/sh /home/ubuntu/diandiandaka/script/start-send-reminder.sh >> /dev/null 2>&1
+
+# edit by canzhen 2018-09-07 定时任务每两个小时计算并更新一次排名
+23 */6 * * * /bin/sh /home/ubuntu/diandiandaka/script/start-compute-rank.sh >> /home/ubuntu/diandiandaka/script/log/compute-rank.log
