@@ -33,7 +33,11 @@
 5. 安装nginx，apt-get install nginx，
 /usr/sbin/nginx：主程序
 /etc/nginx：存放配置文件
+
 nginx -c /etc/nginx/nginx.conf
+
+SSL证书也在 /etc/nginx/目录下
+
 6. mysql建表
 7. 主目录下运行npm install => pm2 start bin/www --watch --name diandiandaka，之后可用pm2 log diandiandaka查看运行日志
 8. 运行定时任务，在目录"/home/ubuntu/diandiandaka/script"下运行crontab crontab_file即可
