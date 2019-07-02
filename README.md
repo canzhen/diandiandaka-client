@@ -1,4 +1,50 @@
-# diandiandaka
+# 点点小打卡
+
+
+#### 项目介绍
+微信小程序，点点小打卡
+
+#### 开发教程
+
+服务器
+
+1. 进入/home/ubuntu/receiver，运行node server.js打开本地和服务器同步的接口
+2. redis-server --port 6226 & 在后端打开redis服务器，要查看redis的时候：redis-cli -p 6226
+3. mysql -uroot diandiandaka -p （mysql123）打开数据库
+4. 进入/home/ubuntu/diandiandaka，运行pm2 start bin/www --watch --name dddk，再运行pm2 log dddk即可查看日志
+5. 进入/usr/local/nginx（nginx当时是用编译安装的），运行sbin/nginx -c conf/nginx.conf，启动nginx
+6. 如果要编辑定时任务，crontab -e修改即可，crontab -l查看定时任务是否被添加
+
+本地
+1. 进入开发目录，进入server目录，运行fis3 release -w，即可自动监控改动同步到服务器
+
+至此，可以开始开发了。
+
+
+
+#### 安装教程
+
+服务器端
+
+1. clone到本地，只保留server部分，client部分可以删除
+2. 安装npm
+3. 安装pm2 （npm install pm2 -g）
+4. 安装node，mysql
+5. 安装nginx，apt-get install nginx，
+/usr/sbin/nginx：主程序
+/etc/nginx：存放配置文件
+nginx -c /etc/nginx/nginx.conf
+6. mysql建表
+7. 主目录下运行npm install => pm2 start bin/www --watch --name diandiandaka，之后可用pm2 log diandiandaka查看运行日志
+8. 运行定时任务，在目录"/home/ubuntu/diandiandaka/script"下运行crontab crontab_file即可
+
+小程序端
+
+直接pull放到微信开发者工具即可运行
+
+
+
+
 
 #### 待完成工作
 1. 离开“今天”界面时，要往数据库里更新所有被修改过的数据 【完成】✔️ 2018.08.02 22:27
@@ -57,47 +103,6 @@
 
 
 
-
-#### 项目介绍
-微信小程序，点点小打卡
-
-#### 开发教程
-
-服务器
-
-1. 进入/home/ubuntu/receiver，运行node server.js打开本地和服务器同步的接口
-2. redis-server --port 6226 & 在后端打开redis服务器，要查看redis的时候：redis-cli -p 6226
-3. mysql -uroot diandiandaka -p （mysql123）打开数据库
-4. 进入/home/ubuntu/diandiandaka，运行pm2 start bin/www --watch --name dddk，再运行pm2 log dddk即可查看日志
-5. 进入/usr/local/nginx（nginx当时是用编译安装的），运行sbin/nginx -c conf/nginx.conf，启动nginx
-6. 如果要编辑定时任务，crontab -e修改即可，crontab -l查看定时任务是否被添加
-
-本地
-1. 进入开发目录，进入server目录，运行fis3 release -w，即可自动监控改动同步到服务器
-
-至此，可以开始开发了。
-
-
-
-#### 安装教程
-
-服务器端
-
-1. clone到本地，只保留server部分，client部分可以删除
-2. 安装npm
-3. 安装pm2 （npm install pm2 -g）
-4. 安装node，mysql
-5. 安装nginx，apt-get install nginx，
-/usr/sbin/nginx：主程序
-/etc/nginx：存放配置文件
-nginx -c /etc/nginx/nginx.conf
-6. mysql建表
-7. 主目录下运行npm install => pm2 start bin/www --watch --name diandiandaka，之后可用pm2 log diandiandaka查看运行日志
-8. 运行定时任务，在目录"/home/ubuntu/diandiandaka/script"下运行crontab crontab_file即可
-
-小程序端
-
-直接pull放到微信开发者工具即可运行
 
 
 
