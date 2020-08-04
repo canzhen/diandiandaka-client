@@ -1,5 +1,15 @@
 # 点点小打卡
 
+更新七牛云证书步骤：
+1. 七牛云申请证书，在ssl证书服务->购买证书->补全证书信息->配置域名进行证书验证->证书下发。
+2. 腾讯云配置证书
+3. 七牛更新证书：申请证书/上传证书->已过期的证书系统会自动更新，如果未生效->融合cdn域名管理->配置->https配置->配置证书。
+
+
+2019.07.02 修复bug：
+1. 日历上滑的时候没有显示历史打卡记录，由于check_first_date和check_last_date逻辑混乱导致。
+2. 单击日期，在电脑模拟器上显示的日期是正确的，在真机上却显示“1年 1月”，原因是因为start_date是moment()格式，而不是字符串格式。
+
 
 #### 项目介绍
 微信小程序，点点小打卡
@@ -33,7 +43,11 @@
 5. 安装nginx，apt-get install nginx，
 /usr/sbin/nginx：主程序
 /etc/nginx：存放配置文件
+
 nginx -c /etc/nginx/nginx.conf
+
+SSL证书也在 /etc/nginx/目录下
+
 6. mysql建表
 7. 主目录下运行npm install => pm2 start bin/www --watch --name diandiandaka，之后可用pm2 log diandiandaka查看运行日志
 8. 运行定时任务，在目录"/home/ubuntu/diandiandaka/script"下运行crontab crontab_file即可
