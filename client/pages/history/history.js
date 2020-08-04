@@ -148,7 +148,6 @@ Page({
 
         let [checkTimeList, checkedTopicListPerDay] = data.getTopicListPerDay(checked_data_list);
 
-        console.log(checked_data_list.length);
         that.setData({
           date: moment(),
           topic_info: topic_info_list,
