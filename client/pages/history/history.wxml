@@ -12,11 +12,21 @@
       <scroll-view style="height:{{scrollHeight}}px;" scroll-y scroll-with-animation enable-back-to-top>
       
         <!-- <view > -->
-        <form class="all-history-left-item" wx:for="{{topic_info}}" wx:for-item="data" wx:key="key" wx:for-index="index" bindsubmit="tapTopic" data-topic-idx="{{index}}" report-submit='true' >
-        <button class="all-history-left-button-image" hover-class="none" form-type="submit">
-          <image class="all-history-left-image" src="{{data.topic_url}}"></image>
-        </button>
-        <text style="font-size:25rpx;">{{data.topic_name}}</text>
+        <form 
+          class="all-history-left-item" 
+          wx:for="{{topic_info}}" 
+          wx:for-item="data" 
+          wx:key="key" 
+          wx:for-index="index" 
+          bindsubmit="tapTopic" 
+          data-topic-idx="{{index}}" 
+          report-submit='true'>
+          <view wx:if="{{!data.dated}}">
+            <button class="all-history-left-button-image" hover-class="none" form-type="submit">
+              <image class="all-history-left-image" src="{{data.topic_url}}"></image>
+            </button>
+            <text style="font-size:25rpx;">{{data.topic_name}}</text>
+          </view>
         </form>
         <!-- </view>  -->
       </scroll-view>
@@ -39,16 +49,17 @@
         <view class="calendar-panel" id="id{{date.year}}-{{date.month}}" wx:for="{{year_month_list}}" wx:key="idx" wx:for-item="date">
           <!-- 圆形块，显示当前月份 -->
           <view class="year-month-circle" style="background-color:{{date.background}};">
-            <picker value="{{date}}"
+            <picker 
+                value="{{date}}"
                 bindchange="bindPickerChange"
                 fields="month"
                 mode="date"
                 start="{{check_first_date}}"
-                end="{{current_date}}">
-            <text class="year-month-text">{{date.year}}年\n{{date.month}}月</text>
+                end="{{check_last_date}}">
+              <text class="year-month-text">{{date.year}}年\n{{date.month}}月</text>
             </picker>
           </view>
-           <!-- 圆形块结束 -->
+          <!-- 圆形块结束 -->
           <view class="calendar-right-part">
             <view class="calendar-days-row" wx:for="{{date.days}}" wx:key="idx" wx:for-item="sevenDays">
               <view space="emsp" class="calendar-days-each-item" wx:for="{{sevenDays}}" wx:key="idx" wx:for-item="day" bindtap="bindTapOnDate" data-current-date="{{date.year}}-{{date.month}}-{{day._day}}">

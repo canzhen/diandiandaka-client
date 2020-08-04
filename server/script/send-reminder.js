@@ -214,30 +214,8 @@ function startSendMessage() {
         }, diffTime);
       
       /* 短信提醒 */
-      } else if (remind_method == 2) { 
-
-        let phone_number = user_map[user_id]['phone_number'];
-        let countryCode = phone_number.split('-')[0],
-            phone = phone_number.split('-')[1];
-        let params = [remind_time, "「" + topic + "」", 
-                      complete_rate + '%', 
-                      rank == -1 ? topic_use_map[topic] : rank ,
-                      '人生在勤，不索何获。']
-
-        /* 开始设置提醒 */
-        setTimeout(() => {
-          writeLog(diffTime / 1000 + '秒计时到啦！准备【短信】推送消息给' + user_id);
-          smshelper.sendSMS(params, countryCode, phone, false,
-            (err, res, resData) => {
-              if (err) {
-                writeLog('发送短信失败：', err);
-              } else {
-                writeLog('发送短信成功！');
-                writeLog("request data: ", res.req);
-                writeLog("response data: ", resData);
-              }
-            });
-        }, diffTime)
+      } else if (remind_method == 2) {
+        // no-op
       }
     }
     // 循环发送单独提醒结束

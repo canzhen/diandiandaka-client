@@ -148,6 +148,7 @@ Page({
 
         let [checkTimeList, checkedTopicListPerDay] = data.getTopicListPerDay(checked_data_list);
 
+        console.log(checked_data_list.length);
         that.setData({
           date: moment(),
           topic_info: topic_info_list,
@@ -172,6 +173,7 @@ Page({
         } else if (tab == 3) {
           that.initCheckLog();
         }
+      }, function (res) {
       });
     });
 
@@ -201,10 +203,10 @@ Page({
     if (this.data.topic_info_list == 0) return;
     let checked_data_list = this.data.checked_data_list;
 
-    if (this.data.checked_data_list.length != 0) {
+    if (checked_data_list.length != 0) {
       this.setData({
-        check_first_date: moment(checked_data_list[checked_data_list.length - 1].check_time, 'YYYY-MM-DD'), //所有卡片最早开始打卡的时间
-        check_last_date: moment(checked_data_list[0].check_time, 'YYYY-MM-DD'), //所有卡片中最晚打卡的时间
+        check_first_date: moment(checked_data_list[checked_data_list.length - 1].check_time).format('YYYY-MM-DD'), //所有卡片最早开始打卡的时间
+        check_last_date: moment(checked_data_list[0].check_time).format('YYYY-MM-DD'), //所有卡片中最晚打卡的时间
       });
     }
 

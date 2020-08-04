@@ -173,7 +173,7 @@ module.exports.filterDataFromDB = function (user_topic_list){
 
     // 将过期的卡片标注为过期（当前日期大于用户设置的end_date）
     if (currentMoment.diff(
-      moment(item['end_date'], 'YYYY-MM-DD'), 'days') > 0) {
+      moment(item['end_date']).format('YYYY-MM-DD'), 'days') > 0) {
       item['dated'] = true;
       datedList.push(item);
     } else {
