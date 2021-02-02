@@ -71,16 +71,6 @@
       <!-- 循环结束 -->
     </view>
 
-
-
-
-
-
-
-
-
-
-
     <!-- 统一设置提醒时间开始 -->
     <view class="content" wx:if="{{isCombine}}"
           wx:for="{{combine_topic_list}}" wx:key="key"

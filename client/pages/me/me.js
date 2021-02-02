@@ -2,8 +2,8 @@ const qiniuhelper = require('../../vendor/qiniuhelper.js');
 const api = require('../../ajax/api.js');
 const utils = require('../../vendor/utils.js');
 const share_list = [
-  { path: '1-yasuo.jpg',top: 70},
-  { path: '2-yasuo.jpg',top: 50 }
+  {path: '1-yasuo.jpg',top: 70},
+  {path: '2-yasuo.jpg',top: 50}
 ]
 const BACKGROUND_PREFIX = 'https://images.zhoucanzhendevelop.com/share/background';
 const BACKGROUND_SUFFIX = '?v=1111';
@@ -530,9 +530,6 @@ Page({
 
     /** 获取头像url（名字） */
     let getAvatarUrl = function () {
-      // console.log('get avatar url');
-      // console.log('current avatar url is: ' + that.data.avatar_url);
-
       // 如果头像url为空，或者微信头像（因为没加到downloadfile现在无法画到画布上）
       if (!that.data.avatar_url){
         that.setData({
@@ -545,19 +542,13 @@ Page({
         src: that.data.avatar_url,
         success: (res) => {
           let avatarUrl = res.path; 
-          console.log('下载下来的avatar_url:' + avatarUrl);
           that.setData({
             avatar_url: avatarUrl
           })
         }
       })
-
-      // console.log('after getting, the avatar url is: ' + that.data.avatar_url);
     }
     getAvatarUrl();
-
-
-
   },
 
 
@@ -572,10 +563,6 @@ Page({
     wx.showLoading({
       title: '图片生成中',
     })
-
-
-
-
 
     let startDrawing = function () {
       let topic_name = that.data.topic_name_list[that.data.selected_topic_idx];
