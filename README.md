@@ -37,20 +37,53 @@
 服务器端
 
 1. clone到本地，只保留server部分，client部分可以删除
-2. 安装npm
-3. 安装pm2 （npm install pm2 -g）
-4. 安装node，mysql
-5. 安装nginx，apt-get install nginx，
-/usr/sbin/nginx：主程序
-/etc/nginx：存放配置文件
+2. 安装
 
-nginx -c /etc/nginx/nginx.conf
+    1）npm
+    
+    2）redis-server （apt install redis-server）
+       运行：redis-server --port 6226 & 在后端打开redis服务器，要查看redis的时候：redis-cli -p 6226
+       
+    3）pm2 （npm install pm2 -g）
+    
+    4）node，mysql，以及node-mysql module（npm install mysql）
+       mysql -uroot diandiandaka -p （mysql123）打开数据库
+       还要从之前的服务器拷贝过来 mysqldump xxx.sql，要拷贝到的服务器create database之后用source复制
+       
+    5）安装nginx，apt-get install nginx，
+        /usr/sbin/nginx：主程序
+        /etc/nginx：存放配置文件（如果是迁移，记得把之前服务器这个目录下的的ssh file 1_zhoucanzhendevelop.com_bundle.crt/2_zhoucanzhendevelop.com.key也拷贝过来）
+        nginx -c /etc/nginx/nginx.conf
+        sudo systemctl restart nginx
+        SSL证书也在 /etc/nginx/目录下
+        
+3. mysql建表
+4. 主目录下运行npm install => pm2 start bin/www --watch --name diandiandaka，之后可用pm2 log diandiandaka查看运行日志。如果出问题了，pm2 delete diandiandaka
+5. 运行定时任务，首先打开cron：sudo service cron start，其次到目录"/home/ubuntu/diandiandaka_server/script"下，运行crontab crontab_file，然后再检测是否成功运行：sudo service cron status，crontab -l查看定时任务是否被添加.
 
-SSL证书也在 /etc/nginx/目录下
+附录
+1. 迁移mysql数据库
+    1) In the "FROM" sever: shell> mysqldump -uroot -p databasename > dump.sql
+    2) In the "TO" sever: shell> scp root@IPADDRESS:/home/dump.sql ./dump2.sql
+    2) In the "TO" sever: shell > mysql -uroot -p diandiandaka < dump2.sql
+2. 迁移redis数据库
+    1) 备份
+    - bash> redis-cli --raw -p 6226
+    - redis> config get dir #查看aof文件保存路径
+    - redis> config set appendonly yes #允许调用fsync将AOF日志同步到硬盘
+    - redis> SLAVEOF localhost 6226 #需要备份的服务器的ip端口
+    - bash > cat $dir/appendonly.aof #查看备份的aof日志
+    - redis> SLAVEOF NO ONE #取消主从同步
+    - redis> config set appendonly no #取消调用fsync
+    2) 还原
+    - bash> redis-cli --raw -p 6226
+    - redis> config set appendonly yes #允许调用fsync将AOF日志同步到硬盘
+    - redis> redis-cli --raw -p 6226 --pipe < appendonly.aof #将文件进行导入
+    - redis> config set appendonly no #取消调用fsync
+    - redis> keys * #查看备份的数据
 
-6. mysql建表
-7. 主目录下运行npm install => pm2 start bin/www --watch --name diandiandaka，之后可用pm2 log diandiandaka查看运行日志
-8. 运行定时任务，在目录"/home/ubuntu/diandiandaka/script"下运行crontab crontab_file即可
+
+
 
 小程序端
 
