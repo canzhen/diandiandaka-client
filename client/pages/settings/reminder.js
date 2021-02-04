@@ -242,6 +242,24 @@ Page({
     let country_code = this.data.country_code;
     let phone_number = this.data.phone_number;
 
+    if (remind_method == 2){		
+      if (phone_number == undefined || !phone_number) {		
+        wx.showToast({		
+          title: '您没设置手机号码，无法进行短信提醒~',		
+          icon: 'none'		
+        })		
+        return;		
+      }		
+
+       if (country_code != undefined && country_code != '86') {		
+        wx.showToast({		
+          title: '目前短信提醒只支持国内手机号喔~',		
+          icon: 'none'		
+        })		
+        return;		
+      }		
+    } 
+
     if (is_combine){
       let index = e.currentTarget.dataset.index;
       let combine_topic_list = this.data.combine_topic_list;

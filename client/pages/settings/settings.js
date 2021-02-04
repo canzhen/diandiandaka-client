@@ -409,10 +409,23 @@ Page({
   gotoReminder: function (e) {
     let url = '/pages/settings/reminder?phone_number=' +
                   this.data.phone_number + '&country_code=' +
-                  this.data.countryCode;      
-    wx.navigateTo({
-      url: url
-    })
+                  this.data.countryCode;  
+    if (this.data.phone_number == '') {
+      wx.showModal({
+        title: '注意',		
+        content: '您尚未设置手机号，将只能设置微信提醒，无法设置短信提醒',		
+        showCancel: false,		
+        success: (res) => {		
+          wx.navigateTo({		
+            url: url		
+          })		
+        }		
+      })		
+    } else {		
+      wx.navigateTo({		
+        url: url		
+      })		
+    }
   },
 
 

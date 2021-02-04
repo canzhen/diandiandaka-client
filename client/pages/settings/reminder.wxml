@@ -3,7 +3,7 @@
   <form bindsubmit="saveSettings" report-submit="true">
     <view class="title" > 
       <view class="row-view">
-        设置微信提醒 
+        设置微信或短信提醒
         <view wx:if="{{!isCombine}}">（左滑取消提醒）</view>
       </view>
       <form bindsubmit="merge" report-submit="true">
@@ -54,6 +54,14 @@
               <image wx:if="{{topic.remind_method == 1}}" src="http://images.zhoucanzhendevelop.com/icon/heigou.png" class="punched-image"/>
             </button>
             </form>
+
+             <form bindsubmit="setRemindMethod" report-submit="true"		
+                    data-method="2" data-topic-index="{{index}}">		
+             <button form-type='submit' hover-class='none'  style="margin-left:-40rpx;">		
+               <image src="http://images.zhoucanzhendevelop.com/icon/duanxin.png" class="image"/>		
+               <image wx:if="{{topic.remind_method == 2}}"src="http://images.zhoucanzhendevelop.com/icon/heigou.png" class="punched-image"/>		
+             </button>		
+             </form>
           </view>
           <!-- 右边部分结束 -->
         </view>
@@ -114,6 +122,14 @@
             <image wx:if="{{topic_info.remind_method == 1}}" src="http://images.zhoucanzhendevelop.com/icon/heigou.png" class="punched-image"/>
           </button>
           </form>
+
+          <form bindsubmit="setRemindMethod" report-submit="true"		
+                   data-method="2" data-index="{{group_index}}">		
+           <button form-type='submit' hover-class='none'  style="margin-left:-40rpx;">		
+             <image src="http://images.zhoucanzhendevelop.com/icon/duanxin.png" class="image"/>		
+             <image wx:if="{{topic_info.remind_method == 2}}"src="http://images.zhoucanzhendevelop.com/icon/heigou.png" class="punched-image"/>		
+           </button>		
+           </form>
         </view>
         <!-- 提醒方式和时间结束 -->
       </view>

@@ -111,7 +111,7 @@
       <button class="one-row" form-type="submit" hover-class="none" >
         <text>打卡提醒</text>
         <view class="one-row-right">
-          <text>设置微信打卡提醒</text>
+          <text>设置微信或短信打卡提醒</text>
           <image src='http://images.zhoucanzhendevelop.com/icon/right.png' class="one-row-right-arrow"></image>
         </view>
       </button>
