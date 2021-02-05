@@ -50,6 +50,32 @@ Page({
   },
 
 
+
+  /**
+   * 分享转发给朋友
+   */
+  onShareAppMessage: (res) => {
+    if (res.from === 'button') {
+      console.log("来自页面内转发按钮");
+      console.log(res.target);
+    } else {
+      console.log("来自右上角转发菜单")
+    }
+
+    return {
+      title: '点点小打卡',
+      path: '/pages/index/index',
+      imageUrl: "/images/1selected.jpg",
+      success: (res) => {
+        console.log("转发成功", res);
+      },
+      fail: (res) => {
+        console.log("转发失败", res);
+      }
+    }
+  },
+
+
   /**
    * 生命周期函数--监听页面加载
    */
