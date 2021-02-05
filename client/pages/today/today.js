@@ -23,33 +23,49 @@ Page({
   },
 
 
-  // /**
-  //  * 分享转发
-  //  */
-  // onShareAppMessage: (res) => {
-  //   if (res.from === 'button') {
-  //     console.log("来自页面内转发按钮");
-  //     console.log(res.target);
-  //   } else {
-  //     console.log("来自右上角转发菜单")
-  //   }
+  /**
+   * 分享转发给朋友
+   */
+  onShareAppMessage: (res) => {
+    if (res.from === 'button') {
+      console.log("来自页面内转发按钮");
+      console.log(res.target);
+    } else {
+      console.log("来自右上角转发菜单")
+    }
 
-  //   // return {
-  //   //   title: '我的打卡',
-  //   //   path: '/pages/today/today?id=123',
-  //   //   imageUrl: "/images/1.jpg",
-  //   //   success: (res) => {
-  //   //     console.log("转发成功", res);
-  //   //   },
-  //   //   fail: (res) => {
-  //   //     console.log("转发失败", res);
-  //   //   }
-  //   // }
-  // },
+    return {
+      title: '我的打卡',
+      path: '/pages/today/today',
+      imageUrl: "/images/2selected.jpg",
+      success: (res) => {
+        console.log("转发成功", res);
+      },
+      fail: (res) => {
+        console.log("转发失败", res);
+      }
+    }
+  },
+
+
+  /**
+   * 分享到朋友圈
+   */
+  onShareTimeline: (res) => {
+    return {
+      title: "点点小打卡",
+    }
+  },
 
 
   /* 页面加载函数 */
   onLoad() {
+    wx.showShareMenu({
+      withShareTicket:true,
+      menus:['shareAppMessage','shareTimeline']
+    })
+
+
     let that = this;
 
     //设置scroll-view高度，自适应屏幕

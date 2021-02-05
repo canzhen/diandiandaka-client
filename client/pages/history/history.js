@@ -69,7 +69,29 @@ Page({
   },
 
 
+  /**
+   * 分享转发给朋友
+   */
+  onShareAppMessage: (res) => {
+    if (res.from === 'button') {
+      console.log("来自页面内转发按钮");
+      console.log(res.target);
+    } else {
+      console.log("来自右上角转发菜单")
+    }
 
+    return {
+      title: '打卡历史',
+      path: '/pages/history/history',
+      imageUrl: "/images/3selected.jpg",
+      success: (res) => {
+        console.log("转发成功", res);
+      },
+      fail: (res) => {
+        console.log("转发失败", res);
+      }
+    }
+  },
 
   onLoad: function (options) {
     let that = this;

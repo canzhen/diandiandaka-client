@@ -24,7 +24,7 @@
 		"userConfirmedUseCompilerModuleSwitch": false
 	},
 	"compileType": "miniprogram",
-	"libVersion": "2.8.2",
+	"libVersion": "2.11.3",
 	"appid": "wx51edf73b7674cbc5",
 	"projectname": "diandiandaka",
 	"svr": "server/",

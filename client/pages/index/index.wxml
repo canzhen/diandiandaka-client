@@ -6,7 +6,7 @@
       <form bindsubmit="createNewTopic" report-submit="true">
         <button lang="zh_CN" form-type="submit"
                 class="new-topic-button"> 
-          新增卡片 
+          新增卡片
         </button>
       </form>
   </view>
