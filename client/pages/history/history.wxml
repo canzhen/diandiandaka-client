@@ -97,11 +97,9 @@
       卡片选择：
       <picker class="topic-picker" range="{{topic_name_list}}" 
               bindchange="changeTopic" value="{{topic_index}}">
-        <form bindsubmit="changeTopicFormId" report-submit="true">
         <button form-type='submit' hover-class='none'>
         {{topic_name_list[topic_index]}}
         </button>
-        </form>
       </picker>
     </view>
 

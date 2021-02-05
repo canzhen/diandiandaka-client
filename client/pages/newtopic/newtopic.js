@@ -15,7 +15,6 @@ Page({
     pre_end_date: '', //在取消永不结束checkbox时，就把之前选好的end_date再放上去
     never_end: false, //永不结束的checkbox是否选中
     has_special_character: false, //计划名称中是否包含特殊字符
-    form_id_list: [], 
   },
 
 
@@ -217,7 +216,6 @@ Page({
    * 提交数据
    */
   submitForm: function (event) {
-    this.saveFormId(event.detail.formId);
     let value = event.detail.value;
     // 检查数据是否完整
     if (!value.input_topic_name) {
@@ -389,27 +387,6 @@ Page({
           } else { showFailToast(); return; }
         });
       }
-    });
-  },
-
-
-
-
-
-
-
-
-
-
-  /**
-   * 用于保存formId的helper方法
-   */
-  saveFormId: function (formId) {
-    console.log(formId);
-    let form_id_list = this.data.form_id_list;
-    form_id_list.push(formId);
-    this.setData({
-      form_id_list: form_id_list
     });
   },
 });

@@ -30,8 +30,6 @@
       </form>
 
 
-
-      <form bindsubmit="changeRegion" report-submit="true">
       <picker mode="region" bindchange="bindRegionChange" value="{{region}}"> 
       <button class="one-row" form-type="submit" hover-class="none" >
         <text>地区</text>
@@ -43,11 +41,8 @@
         </view>
       </button>
       </picker>
-      </form>
 
 
-
-      <form bindsubmit="saveFormId" report-submit="true">
       <picker bindchange="bindGenderChange" range="{{genderItems}}"> 
       <button class="one-row" form-type="submit" hover-class="none" >
           <text>性别</text>
@@ -57,8 +52,6 @@
           </view>
       </button>
       </picker>
-      </form>
-
 
 
       <form bindsubmit="changeWechatId" report-submit="true">
@@ -70,7 +63,6 @@
         </view>
       </button>
       </form>
-
 
 
       <form bindsubmit="changePhone" report-submit="true">
@@ -85,8 +77,6 @@
       </form>
 
 
-
-      <form bindsubmit="saveBirthday" report-submit="true">
       <picker mode="date" bindchange="bindBirthdayChange" value="{{birthday}}" range="{{genderItems}}"> 
       <button class="one-row" form-type="submit" hover-class="none" >
         <text>生日</text>
@@ -96,7 +86,6 @@
         </view>
       </button>
       </picker>
-      </form> 
 
     </view>
 

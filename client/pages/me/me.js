@@ -26,7 +26,6 @@ Page({
     is_reset_avatar: false, //默认用户没有修改头像
     is_reset_name: false, //默认用户没修改过名字
     start_reset_user_name: false, //是否开始修改用户名（显示input）
-    form_id_list: [], //用于存储用户单击所产生的form_id
   },
 
 
@@ -328,35 +327,22 @@ Page({
   },
 
   redirectToMyTopic: function(e){
-    this.saveFormId(e.detail.formId);
     wx.navigateTo({
       url: '/pages/me/mytopic',
     })
   },
 
   redirectToMyRank: function (e) {
-    this.saveFormId(e.detail.formId);
     wx.navigateTo({
       url: '/pages/me/myrank',
     })
   },
 
   redirectToSettings: function(e){
-    this.saveFormId(e.detail.formId);
     wx.navigateTo({
       url: '/pages/settings/settings'
     })
   },
-
-
-  /**
-   * 分享打卡
-   */
-  shareCards: function(e){
-    this.saveFormId(e.detail.formId);
-  },
-
-
 
   /**
    * picker选择topic
@@ -366,15 +352,6 @@ Page({
       selected_topic_idx: e.detail.value
     })
   },
-
-
-  /**
-   * 选择卡片时，保存form id
-   */
-  selectTopicSaveFormId: function(e){
-    this.saveFormId(e.detail.formId);
-  },
-
 
   /**
    * 弹出框蒙层截断touchmove事件
@@ -633,32 +610,12 @@ Page({
   },
 
 
-  /**
-   * 用于保存formId的helper方法
-   */
-  saveFormId: function (formId) {
-    // console.log(formId);
-    let form_id_list = this.data.form_id_list;
-    form_id_list.push(formId);
-    this.setData({
-      form_id_list: form_id_list
-    });
-  },
-
-
-
-
   /** 
    * 页面隐藏函数
    * 监听页面的隐藏，
    * 当从当前A页跳转到其他页面，那么A页面处于隐藏状态
    * */
   onHide: function (event) {
-    if (this.data.form_id_list.length == 0) return;
-    utils.saveFormId(this.data.form_id_list);
-    this.setData({
-      form_id_list: []
-    });
   },
 
 

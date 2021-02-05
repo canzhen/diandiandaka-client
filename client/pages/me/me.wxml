@@ -65,14 +65,12 @@
 
 
       <!-- 分享打卡 -->
-      <form bindsubmit="shareCards" report-submit='true'>
       <button class="me-lower-part-each-item" hover-class="none" 
               form-type="submit" open-type="getUserInfo"
               bindgetuserinfo="bindGetUserInfo"> 
         <image class="image" src="http://images.zhoucanzhendevelop.com/	icon/share1.svg"></image>
         <text> 分享打卡 </text>
       </button>
-      </form>
 
       
     </view> 
@@ -115,14 +113,12 @@
   <view class="modal-content" style="display:flex;flex-direction:column;align-items:center;">
     <picker range="{{topic_name_list}}" bindchange="bindSelectTopic" value="{{selected_topic_idx}}">
       <!-- 我的排名 -->
-      <form bindsubmit="selectTopicSaveFormId" report-submit='true' >
       <button class="modal-topic-picker" hover-class="none" 
               form-type="submit">
               
         <text> {{topic_name_list[selected_topic_idx]}} </text>
         <image style="width:30rpx; height:30rpx;" src="https://images.zhoucanzhendevelop.com/icon/xinagxia.svg"/>
       </button>
-      </form>
     </picker>
   </view>
   <view class="modal-footer">

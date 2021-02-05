@@ -53,7 +53,7 @@
   <view class="modal-title">打卡日志</view>
   <view class="modal-subtitle">{{current_time}} | 还能输入{{word_left_num}}字</view>
   <view class="modal-content">
-    <view class="modal-line">
+    <view class="modal-line" wx:if="{{count_phase || count_unit}}">
       <text>输入打卡计数： {{count_phase}} </text>
       <input type='digit' class="modal-digit-input" style="height: 30rpx;" value="{{count_number}}"  bindchange="bindTopicCountNumberChange"/>
       <text>{{count_unit}}</text>

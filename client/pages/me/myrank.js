@@ -11,7 +11,6 @@ Page({
   data: {
     topic_list: [], //排名列表
     current_date: moment().format('YYYY年MM月DD日'),
-    form_id_list: [], //用于存储用户单击所产生的form_id
   },
 
   /**
@@ -81,29 +80,7 @@ Page({
         console.log('从数据库中获取用户卡片信息失败');
       }
     });
-
   },
-
-
-  saveFormId: function(e){
-    console.log('form id: ' + e.detail.formId);
-    this.saveFormId(e.detail.formId);
-  },
-
-
-
-  /**
-   * 用于保存formId的helper方法
-   */
-  saveFormId: function (formId) {
-    // console.log(formId);
-    let form_id_list = this.data.form_id_list;
-    form_id_list.push(formId);
-    this.setData({
-      form_id_list: form_id_list
-    });
-  },
-
 
   /** 
    * 页面隐藏函数
@@ -111,10 +88,5 @@ Page({
    * 当从当前A页跳转到其他页面，那么A页面处于隐藏状态
    * */
   onHide: function (event) {
-    if (this.data.form_id_list.length == 0) return;
-    utils.saveFormId(this.data.form_id_list);
-    this.setData({
-      form_id_list: []
-    });
   },
 })

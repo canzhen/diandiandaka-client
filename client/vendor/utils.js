@@ -53,27 +53,6 @@ module.exports.login = function(cb) {
 
 
 /**
- * 批量保存搜集而来的formId
- */
-module.exports.saveFormId = function (formIdList){
-  api.postRequest({
-    'url': '/saveFormId',
-    'data':{
-      form_id_list: formIdList
-    },
-    'success': (res) => {
-      if (res.error_code != 200) console.log('update form_id 失败')
-      else console.log('update form_id 成功')
-    },
-    'fail': (res) => {
-      console.log('update form_id 失败')
-    }
-  });
-}
-
-
-
-/**
  * 设置缓存
  * @param key: 键
  * @param value: 值

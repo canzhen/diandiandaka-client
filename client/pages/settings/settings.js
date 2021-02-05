@@ -250,7 +250,6 @@ Page({
     topic_list: [], //该用户的topic列表
     remind_topic_list: [], //该用户选择要提醒的topic列表
     is_remind_switch_on: false, //是否打开提醒的switch是否开着
-    form_id_list: [], //用于存储用户单击所产生的form_id
   },
 
 
@@ -409,7 +408,7 @@ Page({
   gotoReminder: function (e) {
     let url = '/pages/settings/reminder?phone_number=' +
                   this.data.phone_number + '&country_code=' +
-                  this.data.countryCode;  
+                  this.data.countryCode;
     if (this.data.phone_number == '') {
       wx.showModal({
         title: '注意',		
@@ -500,7 +499,6 @@ Page({
    * 修改用户名
    */
   changeUserName: function(e){
-    this.saveFormId(e.detail.formId);
     this.setData({
       show_modal: true,
       modal_title: '用户名',
@@ -516,7 +514,6 @@ Page({
    * 单击modal触发的函数
    */
   clickModal: function(e){
-    this.saveFormId(e.detail.formId);
   },
 
 
@@ -549,31 +546,12 @@ Page({
 
 
 
-  /**
-   * 用于保存formId的helper方法
-   */
-  saveFormId: function (formId) {
-    console.log(formId);
-    let form_id_list = this.data.form_id_list;
-    form_id_list.push(formId);
-    this.setData({
-      form_id_list: form_id_list
-    });
-  },
-
-
-
   /** 
    * 页面隐藏函数
    * 监听页面的隐藏，
    * 当从当前A页跳转到其他页面，那么A页面处于隐藏状态
    * */
   onHide: function (event) {
-    if (this.data.form_id_list.length == 0) return;
-    utils.saveFormId(this.data.form_id_list);
-    this.setData({
-      form_id_list: []
-    });
   },
 
 
@@ -726,16 +704,6 @@ Page({
     };
   },
 
-
-  /**
-   * 修改地区时触发的函数
-   */
-  changeRegion: function (e) {
-    this.saveFormId(e.detail.formId);
-  },
-
-
-
   _changeWechatId: function (new_wechatid) {
     let that = this;
     api.postRequest({
@@ -767,8 +735,6 @@ Page({
 
 
   _changePhone: function (new_phone_number) {
-    console.log(new_phone_number)
-    
     let that = this;
     api.postRequest({
       'url': '/user/updateColumn',
@@ -870,8 +836,6 @@ Page({
    * 用户单击头像，修改头像
    */
   changeAvatar: function (e) {
-    this.saveFormId(e.detail.formId);
-
     let that = this;
     let showFailToast = function () {
       wx.showToast({
@@ -973,7 +937,6 @@ Page({
    * 修改微信号
    */
   changeWechatId: function (e) {
-    this.saveFormId(e.detail.formId);
     this.setData({
       show_modal: true,
       modal_title: '微信号',
@@ -988,8 +951,6 @@ Page({
    * 修改手机号
    */
   changePhone: function (e) {
-    this.saveFormId(e.detail.formId);
-
     this.setData({
       show_phone_modal: true,
       modal_title: '手机号',
@@ -1006,15 +967,6 @@ Page({
       countryCode: this.data.country_code_list[e.detail.value].split(' ')[1]
     })
   },
-
-
-  /**
-   * 保存修改后的生日
-   */
-  saveBirthday: function (e) {
-    this.saveFormId(e.detail.formId);
-  },
-
 
   /**
    * 保存生日到后台

@@ -14,7 +14,6 @@ Page({
     phone_number: '', //电话号码
     isCombine: false, //是否合并提醒，默认分开设置提醒时间
     delBtnWidth: 220,//删除按钮宽度单位（rpx）
-    form_id_list: [], //用于存储用户单击所产生的form_id
   },
 
   /**
@@ -126,7 +125,6 @@ Page({
     this.setData({
       isChanged: true
     })
-    this.saveFormId(e.detail.formId);
     if (this.data.isCombine){
       this.setData({
         isCombine: false
@@ -172,25 +170,6 @@ Page({
    * 生命周期函数--监听页面隐藏
    */
   onHide: function () {
-    if (this.data.form_id_list.length == 0) return;
-    utils.saveFormId(this.data.form_id_list);
-    this.setData({
-      form_id_list: []
-    });
-  },
-
-
-
-  /**
-   * 用于保存formId的helper方法
-   */
-  saveFormId: function (formId) {
-    console.log(formId);
-    let form_id_list = this.data.form_id_list;
-    form_id_list.push(formId);
-    this.setData({
-      form_id_list: form_id_list
-    });
   },
 
 
@@ -224,11 +203,6 @@ Page({
   },
 
 
-  clickOnSetRemindTime: function(e){
-    this.saveFormId(e.detail.formId);
-  },
-
-
   /**
    * 设置提醒方式，微信或短信
    */
@@ -236,12 +210,12 @@ Page({
     this.setData({
       isChanged: true
     })
-    this.saveFormId(e.detail.formId);
     let remind_method = e.currentTarget.dataset.method;
     let is_combine = this.data.isCombine;
     let country_code = this.data.country_code;
     let phone_number = this.data.phone_number;
 
+    // 短信提醒
     if (remind_method == 2){		
       if (phone_number == undefined || !phone_number) {		
         wx.showToast({		
@@ -260,6 +234,7 @@ Page({
       }		
     } 
 
+    // 合并提醒
     if (is_combine){
       let index = e.currentTarget.dataset.index;
       let combine_topic_list = this.data.combine_topic_list;
@@ -267,19 +242,20 @@ Page({
       this.setData({
         combine_topic_list: combine_topic_list
       })
-    }else{
-      let index = e.currentTarget.dataset.topicIndex;
-      let topic_list = this.data.topic_list;
-      topic_list[index].checked = true;
-      if (this.data.isCombine && topic_list[index].remind_method == -1) {
-        topic_list[index].remind_time = '08:00';
-      }
-      topic_list[index].remind_method = remind_method;
-      this.setData({
-        topic_list: topic_list
-      })
+      return;
     }
 
+    // 微信提醒
+    let index = e.currentTarget.dataset.topicIndex;
+    let topic_list = this.data.topic_list;
+    topic_list[index].checked = true;
+    if (this.data.isCombine && topic_list[index].remind_method == -1) {
+      topic_list[index].remind_time = '08:00';
+    }
+    topic_list[index].remind_method = remind_method;
+    this.setData({
+      topic_list: topic_list
+    })
   },
 
 
@@ -287,7 +263,6 @@ Page({
    * 移动卡片到新的分组
    */
   move: function(e){
-    this.saveFormId(e.detail.formId);
     let group_index = e.currentTarget.dataset.groupIndex;
     let topic_index = e.currentTarget.dataset.topicIndex;
     let currentTopic = e.currentTarget.dataset.currentTopic;
@@ -403,33 +378,41 @@ Page({
    * 保存设置
    */
   saveSettings: function (e) {
-    this.saveFormId(e.detail.formId);
     let that = this;
     let value_list = [];
-    if (!this.data.isCombine){
-      for (let i in this.data.topic_list) {
-        if (!that.data.topic_list[i].checked) continue;
-        value_list.push(that.data.topic_list[i].topic_name)
-        value_list.push(that.data.topic_list[i].remind_time)
+
+    let remindByWechat = false;
+    for (let i in that.data.topic_list) {
+      if (that.data.topic_list[i].remind_method == 1) {
+        remindByWechat = true;
+        break;
       }
+    }
+    if (this.data.isCombine || remindByWechat) {
+      let templateID = getApp().globalData.templateID;
+      wx.getSetting({
+        withSubscriptions: true,
+        success (res) {
+          if (!res.subscriptionsSetting || !res.subscriptionsSetting.mainSwitch || !res.subscriptionsSetting.itemSettings || res.subscriptionsSetting.itemSettings[templateID] == 'reject') {
+            wx.requestSubscribeMessage({
+              tmplIds: [templateID],
+              success (res) { 
+                if (res.TEMPLATE_ID == 'reject') {
+                  wx.showToast({
+                    title: '不同意推送的话，无法设置打卡提醒哦~',
+                  })
+                }
+              }, 
+            })
+          }
+        }
+      })
+    }
 
-      for (let i in this.data.topic_list) {
-        if (!that.data.topic_list[i].checked) continue;
-        value_list.push(that.data.topic_list[i].topic_name)
-        value_list.push(that.data.topic_list[i].remind_method)
-      }
-
-      for (let i in this.data.topic_list) {
-        if (!that.data.topic_list[i].checked) continue;
-        value_list.push(that.data.topic_list[i].topic_name)
-        value_list.push(-1) //remind_group
-      }
-
-    } else {
-
-      for (let i in this.data.combine_topic_list) {
+    if (that.data.isCombine){
+      for (let i in that.data.combine_topic_list) {
         // if (!that.data.topic_list[i].checked) continue;
-        let topic_info = this.data.combine_topic_list[i];
+        let topic_info = that.data.combine_topic_list[i];
         for (let j in topic_info.topic) {
           value_list.push(topic_info.topic[j])
           value_list.push(topic_info.remind_time)
@@ -443,10 +426,23 @@ Page({
           value_list.push(i) //remind_group
         }
       }
-
+    } else {
+      for (let i in that.data.topic_list) {
+        if (!that.data.topic_list[i].checked) continue;
+        value_list.push(that.data.topic_list[i].topic_name)
+        value_list.push(that.data.topic_list[i].remind_time)
+      }
+      for (let i in that.data.topic_list) {
+        if (!that.data.topic_list[i].checked) continue;
+        value_list.push(that.data.topic_list[i].topic_name)
+        value_list.push(that.data.topic_list[i].remind_method)
+      }
+      for (let i in that.data.topic_list) {
+        if (!that.data.topic_list[i].checked) continue;
+        value_list.push(that.data.topic_list[i].topic_name)
+        value_list.push(-1) //remind_group
+      }
     }
-
-
 
     if (value_list.length == 0) {
       this.showSucceedToast();
@@ -454,7 +450,6 @@ Page({
     }
 
     let l = (value_list.length / 3) / 2; //checked topic的数量
-
     let column_map = {
       remind_time: {
         condition_column: 'topic_name',
@@ -613,8 +608,6 @@ Page({
    * 删除卡片
    */
   deleteTopic: function(e){
-    this.saveFormId(e.detail.formId);
-
     let index = e.target.dataset.index;
     let topic_list = this.data.topic_list;
 
