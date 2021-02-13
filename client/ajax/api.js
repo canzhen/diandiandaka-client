@@ -44,8 +44,8 @@ function postRequest(params) {
         url: root + params.url,
         method: 'POST',
         dataType: 'json',
-        data: params.data,
         header: params.header, 
+        data: params.data,
         success: (res) => {
           if (params.showLoading) wx.hideLoading()
           if (res.data.state == -2) {
@@ -111,8 +111,6 @@ function getRequest(url, data, fnSucess, fnFail, showLoading = false) {
               fnSucess(res.data);
             }
           } else {
-            //统一代码处理中心
-            // console.log("------------- ")
             showFailToast()
             fnFail(res);
           }
@@ -120,7 +118,6 @@ function getRequest(url, data, fnSucess, fnFail, showLoading = false) {
         fail: (res) => {
           if (showLoading) wx.hideLoading();
           showFailToast()
-          //统一代码处理中心
           if (fnFail && typeof fnFail == "function")
             fnFail(res);
         }

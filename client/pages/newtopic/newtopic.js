@@ -223,14 +223,15 @@ Page({
       return;
     }
 
-    //检查计划名称中是否包含特殊字符
+    // 检查计划名称中是否包含特殊字符
     if (this.data.has_special_character) {
       this.showReminderAlert('计划名称中包含特殊字符，请删掉再提交，谢谢~');
       return;
     }
+
     if (!value.end_date) value.end_date = '永不结束';
 
-    //检查日期是否漏选（开始和结束日期一样的话）
+    // 检查日期是否漏选（开始和结束日期一样的话）
     if (value.start_date === value.end_date){
       this.showReminderAlert('开始日期和结束日期一样喔，确定吗？');
       return;
@@ -245,36 +246,55 @@ Page({
       "\n开始日期是：" + value.start_date + 
       "\n结束日期是：" + value.end_date);
     let that = this;
-    
+
+
     //将卡片姓名和卡片图像url添加到卡片表中
+    let insertCardIntoTable = function() {
+      api.postRequest({
+        'url': '/topic/create',
+        'data': {
+          'topicname': value.input_topic_name,
+          'topicurl': this.data.topic_url,
+          'startdate': value.start_date,
+          'enddate': value.end_date,
+          'countphase': value.input_topic_count_phase,
+          'countunit': value.input_topic_count_unit,
+        },
+        'success': function(res){
+          if (res.error_code == 101) 
+            that.showFailToast('这个卡片好像你以前添加过喔！换个卡片吧~');
+          else if (res.error_code == 102 || res.error_code == 103){
+            utils.login((res)=>{});
+            that.showFailToast('好像出了点问题，可以再提交一次咩~');
+          } else if (res.error_code == 100)
+            that.showFailToast('提交失败..大爷饶命，小的这就去查看原因..');
+          else if (res.error_code == 200)
+            that.showSucceedToast();
+        },
+        'fail': function(res){
+          console.log('发送/topic/create请求失败');
+        }
+      });
+    };
+
     api.postRequest({
-      'url': '/topic/create',
+      'url': '/topic/securityCheck',
       'data': {
-        'topicname': value.input_topic_name,
-        'topicurl': this.data.topic_url,
-        'startdate': value.start_date,
-        'enddate': value.end_date,
-        'countphase': value.input_topic_count_phase,
-        'countunit': value.input_topic_count_unit,
+        'content': value.input_topic_name,
       },
       'success': function(res){
-        console.log('into success');
-        console.log(res.error_code);
-        if (res.error_code == 101) 
-          that.showFailToast('这个卡片好像你以前添加过喔！换个卡片吧~');
-        else if (res.error_code == 102 || res.error_code == 103){
-          utils.login((res)=>{});
-          that.showFailToast('好像出了点问题，可以再提交一次咩~');
-        }else if (res.error_code == 100)
-          that.showFailToast('提交失败..大爷饶命，小的这就去查看原因..');
-        else if (res.error_code == 200)
-          that.showSucceedToast();
+        if (res.error_code == 101) {
+          that.showFailToast('腾讯爸爸说卡片内容好像含有敏感词汇哦~可以改一下再提交咩~');
+          return;
+        } else {
+          insertCardIntoTable();
+        }
       },
       'fail': function(res){
-        console.log('发送/topic/createtopic请求失败');
+        console.log('发送/topic/securityCheck');
       }
     });
-
+    
   },
 
 
@@ -325,7 +345,6 @@ Page({
    * 上传自定义图标
    */
   uploadIcon: function(){
-
     let that = this;
 
     let showFailToast = function () {
