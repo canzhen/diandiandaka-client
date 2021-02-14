@@ -150,8 +150,7 @@ Page({
       data.getCheckDataList((error_code, msg, checked_data_list) => {
         if (error_code != 200 || !checked_data_list) return;
         let [checkTimeListPerTopic, checkInfoListPerTopic] = data.getCheckedDataOfEveryTopic(checked_data_list, topicInfoMap); //按照每个topic分类的打卡时间集合
-
-        let [checkTimeList, checkedTopicListPerDay] = data.getTopicListPerDay(checked_data_list);
+        let [_, checkedTopicListPerDay] = data.getTopicListPerDay(checked_data_list);
 
         that.setData({
           date: moment(),
@@ -401,8 +400,6 @@ Page({
     }else if (tabidx == 1){
       this.initTopicCheckData();
     }else if (tabidx == 2){
-      this.initCompleteness();
-    } else if (tabidx == 3){
       this.initCheckLog();
     }
   },
