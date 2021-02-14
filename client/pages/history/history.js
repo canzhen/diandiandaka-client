@@ -21,14 +21,13 @@ Page({
     check_time_per_topic: [], //每个topic的打卡天数：[{'跑步':['2018-06-13', '2018-06-24', '2018-06-21']}, {..}, {..}]
     check_info_per_topic: [], //每个topic的具体信息：{'跑步': [{check_time': '2018-06-13', 'log': '很好'}, {check_time': '2018-06-24', 'log': '还是很好'}], {'起床': [{}, {}, ..}], '':[], '': [],...}
     checked_data_list: [], // 用于展示每日具体打卡信息
-    // topic_name_list: [], // 所有topic名字的集合：['减肥','跑步','早睡']
     topic_info: [], //该用户的打卡数据：[{'topic_name':'', 'topic_url':'', 'insist_day':''}, {}, ...] 用于【打卡日历】标题栏
     topic_info_map: {}, // {'name': {'topic_url':'', 'start_date':'',..}}
     start_date_list: [], //一个都是moment的list，所有topic的开始日期的集合
     end_date_list: [], //一个都是moment的list，所有topic的结束日期的集合
 
 
-    /* --------------以下的data属于【打卡日历】-------------- */
+    /* -------------- 以下data属于【打卡日历】-------------- */
     ec_bar: {
       onInit: initBarChart,
     },
@@ -47,7 +46,10 @@ Page({
     scroll_into_view_id: '',
     checked_topic_list_per_day: {}, // 每天打卡的卡片列表：{'2018-05-23': ['跑步'], ...}
 
-    /* --------------以下的data属于【历史日志】--------------*/
+    /* -------------- 以下data属于【卡片数据】----------------*/
+    topic_name_list: [], // 所有topic名字的集合：['减肥','跑步','早睡'] （过期的卡片不包含在这个列表里）
+
+    /* -------------- 以下data属于【历史日志】--------------*/
     selected_topic_log: '', //被选中要查看日志的topic名字
     word_left_num: 140, //微信默认textarea最多输入140字
   },
@@ -230,7 +232,9 @@ Page({
     let topic_info = this.data.topic_info;
     let topic_name_list = [];
     for (let i in topic_info){
-      topic_name_list.push(topic_info[i].topic_name);
+      if (topic_info[i].dated !== true) {
+        topic_name_list.push(topic_info[i].topic_name);
+      }
     }
     
     this.setData({

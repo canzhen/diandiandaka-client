@@ -68,18 +68,11 @@
     </view>
   </view>
 
-
   <!-- 没有任何日志的时候显示 -->
   <view class="completeness-nodata" wx:if="{{topic_info.length == 0}}">
     您当前没有任何卡片喔~
   </view>
-
 </view>
- 
-
-
-
-
 
 
 
@@ -88,7 +81,7 @@
   <view class="card-data-panel">
 
     <view class="one-line-view center">
-      卡片选择：
+      当前卡片：
       <picker class="topic-picker" range="{{topic_name_list}}" 
               bindchange="changeTopic" value="{{topic_index}}">
         <button form-type='submit' hover-class='none'>
@@ -129,7 +122,6 @@
 
 <!-- 历史日志 -->
 <view hidden="{{currentTab!==2}}">
-
   <!-- 有日志的时候显示 -->
   <view class="check-log-panel" wx:if="{{topic_info.length != 0}}">
     <scroll-view style="height:{{scrollHeight-20}}px;" scroll-y scroll-with-animation enable-back-to-top>
