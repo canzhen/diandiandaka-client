@@ -127,87 +127,8 @@
 <!-- 卡片数据结束 -->
 
 
-
-
-
-
-
-
-
-
-
-
-
-<!-- 每日完成度 -->
-<view hidden="{{currentTab!==2}}">
-    <!-- <view class='mask' catchtouchmove="move"></view> -->
-    <view class="completeness-panel">
-      <view class="completeness-first-row" wx:if="{{topic_info.length != 0}}">
-        <view class="completeness-first-row1">
-          <image src="http://images.zhoucanzhendevelop.com/icon/graph-left.png" 
-          style="width:35rpx;height:35rpx;margin-right:30rpx;"
-          bindtap="completenessPreTimelapse"
-          disabled="{{selected_timelapse==3}}"></image>
-          <text> {{completeness_week_subtitle}}</text>
-          <image src="http://images.zhoucanzhendevelop.com/icon/graph-right.png" 
-          style="width:35rpx;height:35rpx;margin-left:30rpx;" 
-          bindtap="completenessNextTimelapse"
-          disabled="{{selected_timelapse==3}}"></image>
-        </view>
-
-        <text wx:if="{{!user_click_no_data&&!user_click_on_future}}">平均完成度{{average_completeness}}%</text>
-      </view>
-      
-
-  <!-- style="height:{{scrollHeight}}-300px;width:{{scrollWidth}}-20px;" -->
-    <!-- <view style="height:370px;"> -->
-      <ec-canvas class='completeness-canvas'
-          style="height:{{barCanvasHeight}}px;"
-          hidden="{{!user_click_no_data && !user_click_on_future}}"
-          bindtouchstart='canvasTouchStart'
-          bindtouchmove='canvasTouchMove'
-          ec="{{ec_bar}}"
-          disable-scroll='true'> </ec-canvas>
-
-      <view class="completeness-canvas-error" 
-            hidden="{{(!user_click_no_data && checked_data_list.length != 0) || topic_info.length == 0}}">
-        <image src="http://images.zhoucanzhendevelop.com/icon/nodata.svg"></image>
-        <text style="margin-top:50rpx;">这段时间没有打卡数据~</text>
-      </view>
-
-      <view class="completeness-canvas-error" 
-            hidden="{{!user_click_on_future || topic_info.length == 0}}">
-        <image src="http://images.zhoucanzhendevelop.com/icon/future.png"></image>
-        <text style="">未来的事情宝宝还不知道呢~</text>
-      </view>
-
-    <!-- 底部固定的1周/1个月/1年/全部的选项卡 -->
-      <view class="completeness-panel-bottom" wx:if="{{checked_data_list.length != 0}}">
-        <button wx:for="{{timelapses}}" wx:key="key" 
-          wx:for-index="index" wx:for-item="timelapse" 
-          class='{{timelapse.checked ? "completeness-button-checked" : "completeness-button"}}' bindtap="selectTimeLapse" 
-          data-time="{{timelapse.name}}" 
-          data-index="{{index}}"> {{timelapse.name}}</button>
-      </view>
-    <!-- 底部固定的1周/1个月/1年/全部的选项卡 -->
-    </view>
-
-  <!-- 没有任何日志的时候显示 -->
-  <view class="completeness-nodata" wx:if="{{topic_info.length == 0}}">
-    您当前没有任何卡片喔~
-  </view>
-
-</view>
-
-
-
-
-
-
-
-
 <!-- 历史日志 -->
-<view hidden="{{currentTab!==3}}">
+<view hidden="{{currentTab!==2}}">
 
   <!-- 有日志的时候显示 -->
   <view class="check-log-panel" wx:if="{{topic_info.length != 0}}">

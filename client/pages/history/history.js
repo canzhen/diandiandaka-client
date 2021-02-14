@@ -11,7 +11,7 @@ let colorList = ['#f8d3ad', '#f3c6ca'];
 
 Page({
   data: {
-    navbar: ['打卡日历', '卡片数据', '每日完成度', '历史日志'],
+    navbar: ['打卡日历', '卡片数据', '历史日志'],
     currentTab: 0,
     colorList: [ '#f3faf998', '#f6f3fa98', '#f6faf398', '#f9faf398',
                '#faf3f898', '#faf3f498', '#f3faf9a4', '#f3f7faa4'],
@@ -45,23 +45,7 @@ Page({
     check_first_date: '', //所有卡片中最早开始打卡的时间
     check_last_date: '', //所有卡片中最晚打卡的时间
     scroll_into_view_id: '',
-
-
-    /* --------------以下的data属于【每日完成度】--------------*/
-    //用于展示的图表对象
-    average_completeness: 0,
-    check_time_list: [], // 所有打卡的日期的集合['2018-07-04', '', ..]
     checked_topic_list_per_day: {}, // 每天打卡的卡片列表：{'2018-05-23': ['跑步'], ...}
-    // total_topic_num_per_day: {}, // 每天需要打的卡的数量：{'2018-05-23': 3, ...}
-    timelapses: data.timelapses,
-    selected_timelapse: 0, //当前选中的时间区间的下标
-    selected_canvas: 'week', //当前选择展示的图表，默认显示的是本周的
-    completeness_week_subtitle: '', //每日完成度第一行要显示的标语
-    completeness_current_date: moment().format('YYYY-MM-DD'), //每日完成度-1周-当前查看的周
-    touch_move_x_start_pos: -1, //鼠标拖动图表的初始x值
-    touch_move_y_start_pos: -1, //鼠标拖动图表的初始y值
-
-
 
     /* --------------以下的data属于【历史日志】--------------*/
     selected_topic_log: '', //被选中要查看日志的topic名字
@@ -178,7 +162,6 @@ Page({
           topic_info_map: topicInfoMap,
           start_date_list: startDateList,  //一个都是moment的list
           end_date_list: endDateList,
-          check_time_list: checkTimeList,
           checked_topic_list_per_day: checkedTopicListPerDay,
         });
 
@@ -304,46 +287,6 @@ Page({
         // console.log(diff)
       }).exec();
   },
-
-
-
-
-
-  /**
-   * 初始化每日完成度
-   */
-  initCompleteness: function () {
-    if (this.data.checked_data_list.length == 0) {
-      this.setData({
-        user_click_no_data: true
-      });
-    }
-
-
-    let that = this;
-    wx.getSystemInfo({
-      success: function (res) {
-        that.getSystemWidget('.completeness-panel-bottom', 'top', 0,
-        (bottomPos) => {
-          that.getSystemWidget('.completeness-first-row', 'bottom', 0, 
-            (topPos) => {
-              let diff = res.windowHeight - bottomPos;
-              that.setData({
-                barCanvasHeight: res.windowHeight - diff - topPos - 40,
-              });
-              data.barChartOption.grid.height = that.data.barCanvasHeight;
-              data.barChartOption.grid.width = that.data.scrollWidth - 30;
-              barChart.setOption(data.barChartOption);
-              // 生成当前周的数据
-              that.newBarCanvas('1周', 0);
-            })
-        })
-      }
-    });
-  },
-
-
-
 
 
   // 初始化历史日志tab
@@ -568,9 +511,6 @@ Page({
   },
 
 
-
-
-
   /*----------------------以下是卡片数据部分-----------------------*/
   changeTopic: function(e){
     this.setData({
@@ -596,160 +536,6 @@ Page({
       yName: yname
     })
   },
-
-
-  completenessChangeTimelapse: function (n) {
-    // if (this.data.selected_timelapse == 3) return;
-    let selectedTimelapseName = this.data.timelapses[this.data.selected_timelapse].name;
-    this.newBarCanvas(selectedTimelapseName, n);
-  },
-
-
-
-  /*----------------------以下是每日完成度部分-----------------------*/
-  
-  /**
-   *  单击时间区间触发的方法
-   */
-  selectTimeLapse: function (e) {
-    let time = e.currentTarget.dataset.time;
-    let index = e.currentTarget.dataset.index;
-
-    let preCheckedStr = 'timelapses[' + this.data.selected_timelapse + '].checked';
-    let newCheckedStr = 'timelapses[' + index + '].checked';
-
-    this.setData({
-      'selected_timelapse': index,
-      [preCheckedStr]: false,
-      [newCheckedStr]: true
-    });
-
-    this.newBarCanvas(time, 0);
-  },
-
-  /**
-   * 处理用户在canvas上的拖拽开始事件
-   */
-  canvasTouchStart: function(e){
-    this.setData({
-      touch_move_x_start_pos: e.changedTouches[0].pageX,
-      touch_move_y_start_pos: e.changedTouches[0].pageY
-    });
-  },
-
-
-  /**
-   * 处理用户在canvas上拖拽的事件
-   */
-  canvasTouchMove: function(e){
-    if (this.data.touch_move_x_start_pos == -1) return;
-    let x = e.changedTouches[0].pageX;
-    let y = e.changedTouches[0].pageY;
-    if (Math.abs(this.data.touch_move_x_start_pos - x) <= 200) return;
-    if (Math.abs(this.data.touch_move_y_start_pos - y) >= 30) return;
-    // 向右划，时间往回
-    if (x - this.data.touch_move_x_start_pos > 200) {
-      this.completenessPreTimelapse();
-    } else if (this.data.touch_move_x_start_pos - x > 200) {
-      //向左滑，时间往前
-      this.completenessNextTimelapse();
-    }
-
-
-    this.setData({
-      touch_move_x_start_pos: -1
-    });
-  },
-
-
-
-
-
-  /**
-   * 新建canvas并往里填充数据
-   */
-  newBarCanvas: function (timelapse, n) {
-    let ans = data.getBarCanvasData(
-                this.data.check_time_list,
-                this.data.checked_topic_list_per_day,
-                this.data.completeness_current_date,
-                this.data.start_date_list, 
-                this.data.end_date_list, 
-                this.data.topic_info.length,
-                timelapse, n); //生成新的每周数据
-    
-    let canvasXText = ans['xtext'];
-    let canvasYData = ans['ydata'];
-    let avg = 0;
-
-    if (ans['startdate'] > moment()){
-      this.setData({
-        user_click_on_future: true,
-        user_click_no_data: false
-      });
-    } else if (!canvasYData || (canvasYData && helper.checkIfAllZero(canvasYData))){
-      this.setData({
-        user_click_no_data: true,
-        user_click_on_future: false
-      });
-    }else{
-      let sum = 0;
-      let validNum = 0;
-      for (let i in canvasYData){
-        sum += canvasYData[i];
-        validNum += canvasYData[i] != null ? 1 : 0;
-      }
-
-      avg = (sum/validNum).toFixed(2);
-      
-
-      this.setData({
-        user_click_on_future: false,
-        user_click_no_data: false,
-      });
-    }
-
-    this.setData({
-      average_completeness: avg,
-      completeness_current_date: ans['enddate'].format('YYYY-MM-DD'),
-      completeness_week_subtitle: ans['subtitle'],
-    });
-
-
-    if (this.data.user_click_no_data || this.data.user_click_on_future)
-      canvasXText = [];
-
-    setBarChart(canvasXText, canvasYData);
-  },
-
-
-  completenessChangeTimelapse: function (n) {
-    // if (this.data.selected_timelapse == 3) return;
-    let selectedTimelapseName = this.data.timelapses[this.data.selected_timelapse].name;
-    this.newBarCanvas(selectedTimelapseName, n);
-  },
-
-
-
-
-
-
-  /**
-   * “每日完成度”单击向左图片所触发的函数
-   */
-  completenessPreTimelapse: function () {
-    this.completenessChangeTimelapse(-1);
-  },
-
-
-  /**
-   * “每日完成度”单击向右图片所触发的函数
-   */
-  completenessNextTimelapse: function () {
-    this.completenessChangeTimelapse(1);
-  },
-  
-
 
 
   /*---------------------以下是打卡日志部分---------------------------*/
@@ -993,13 +779,6 @@ Page({
 /**
  * 图表配置部分
  */
-function setBarChart(xdata, ydata){
-  data.barChartOption.xAxis[0].data = xdata;
-  data.barChartOption.series[0].data = ydata;
-  // option.series[1].data = ydata;
-  barChart.setOption(data.barChartOption);
-};
-
 function initBarChart(canvas, width, height) { //初始化每日完成度图表
   barChart = echarts.init(canvas, null, {
     width: width,

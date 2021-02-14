@@ -13,85 +13,6 @@ const timelapses = [ //所有的时间区间的选项
 
 
 /**
- * 每日完成度柱状图配置
- */
-var barChartOption = {
-  color: ['#37a2da', '#32c5e9', '#67e0e3'],
-  grid: {
-    top: 0,
-    // left: 5,
-    // right: 10,
-    // bottom: 10,
-    // width: 300,
-    // height: 370,
-    containLabel: true
-  },
-  xAxis: [
-    {
-      type: 'category',
-      data: [],
-      silent: true,
-      axisLine: {
-        show: false
-      },
-      axisTick: {
-        show: false
-      },
-      axisLabel: {
-        margin: 10,
-        textStyle: {
-          color: '#888888'
-        }
-      },
-    }
-  ],
-  yAxis: {
-    show: false,
-    min: 0,
-    max: 100,
-  },
-  series: [{ //柱状图
-    type: 'bar',
-    data: [],
-    markLine: {
-      data: [{ type: 'average' }],
-      label: {
-        show: true,
-        position: 'middle',
-        formatter: '平均{c}%',
-      },
-      lineStyle: {
-        color: 'rgba(0, 0, 0, 0.5)',
-        shadowBlur: 10,
-        opacity: 1
-      },
-    },
-    silent: true,
-    clickable: false,
-    barCategoryGap: '25%',
-    label: {
-      show: true,
-      // position: 'top',
-      color: 'rgba(136, 136, 136, 1)',
-      rotate: 90,
-      fontSize: 10,
-      formatter: '{c}%'
-    },
-    itemStyle: {
-      normal: {
-        barBorderRadius: 5,
-        color: '#feddbb',
-        shadowColor: 'rgba(0, 0, 0, 0.2)',
-        shadowBlur: 5,
-      }
-    }
-  }]
-};
-
-
-
-
-/**
  * 卡片折线图配置
  */
 var lineChartOption = {
@@ -750,7 +671,6 @@ module.exports = {
   getCompletePercentageOfDay,
   getCompletenessMap,
 
-  barChartOption,
   lineChartOption,
   timelapses
 }
