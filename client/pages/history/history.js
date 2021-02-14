@@ -538,7 +538,6 @@ Page({
   /*---------------------以下是打卡日志部分---------------------------*/
   selectTopicLog: function(e){
     let indexKey = e.currentTarget.dataset.idx;
-    // console.log(indexKey)
     if (indexKey == this.data.selected_topic_log)
       indexKey = '';
     this.setData({

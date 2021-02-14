@@ -137,18 +137,23 @@
       <view class="block" style="background-color:{{undated_topic_info_map[topic_name].dated?'#bebebe5e':colorList[check_info_per_topic[topic_name].length%8]}};" wx:for="{{undated_topic_info_map}}" wx:key="key" wx:for-index="topic_name" wx:for-item="topic_name">
         <form bindsubmit="selectTopicLog" 
               data-idx="{{topic_name}}" report-submit='true' >
-        <button class="check-log-topic-image-text" style="color:{{undated_topic_info_map[topic_name].dated?'#888888':'black'}};" hover-class="none" form-type="submit" >
-        <!-- <view bindtap="selectTopicLog" > -->
-          <image class="check-log-topic-image" src="{{undated_topic_info_map[topic_name].topic_url}}"></image>
-          <view style="font-size:30rpx; display:flex;flex-direction:column; align-items:flex-start; margin-top:50rpx;">
-            <view class="check-log-topic-text" style="margin-bottom:{{undated_topic_info_map[topic_name].dated?10:0}}rpx;">
-              <view>{{topic_name}}</view>
+          <button class="check-log-topic-image-text" style="color:{{undated_topic_info_map[topic_name].dated?'#888888':'black'}};" hover-class="none" form-type="submit" >
+            <image class="check-log-topic-image" src="{{undated_topic_info_map[topic_name].topic_url}}"></image>
+            <view style="font-size:30rpx; display:flex;flex-direction:column; align-items:flex-start; margin-top:50rpx;">
+              <view class="check-log-topic-text" style="margin-bottom:{{undated_topic_info_map[topic_name].dated?10:0}}rpx;">
+                <view>{{topic_name}}</view>
+              </view>
+              <progress 
+                class="check-log-progress" 
+                show-info="true" 
+                stroke-width="3" 
+                activeColor="#fcbc7d" 
+                backgroundColor="#fee0c1" 
+                percent="{{completeness_map[topic_name]}}">
+                完成度
+              </progress>
             </view>
-            
-            <progress class="check-log-progress" show-info="true" stroke-width="3" activeColor="#fcbc7d" backgroundColor="#fee0c1" active percent="{{completeness_map[topic_name]}}">完成度</progress>
-          </view>
-        <!-- </view> -->
-        </button>
+          </button>
         </form>
         
         <!-- 日志部分开始 -->
@@ -202,8 +207,16 @@
             <view class="check-log-topic-text" style="margin-bottom:{{dated_topic_info_map[topic_name].dated?10:0}}rpx;">
               <view>{{topic_name}}</view>
             </view>
-            
-            <progress class="check-log-progress" show-info="true" stroke-width="3" activeColor="#fcbc7d" backgroundColor="#fee0c1" active percent="{{completeness_map[topic_name]}}">完成度</progress>
+            <progress 
+              class="check-log-progress" 
+              show-info="true" 
+              stroke-width="3" 
+              activeColor="#fcbc7d" 
+              backgroundColor="#fee0c1" 
+              active 
+              percent="{{completeness_map[topic_name]}}">
+              完成度
+            </progress>
           </view>
         <!-- </view> -->
         </button>
