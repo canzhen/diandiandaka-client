@@ -14,7 +14,7 @@ const perseveranceList = [
 
 
 function getTimezone(){
-  return -parseInt(new Date().getTimezoneOffset());
+  return parseInt(new Date().getTimezoneOffset());
 }
 
 /**
