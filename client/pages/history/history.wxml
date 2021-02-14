@@ -10,9 +10,7 @@
     <view class="all-history-left">
       <!-- 显示出所有正在打卡的topic|左侧 -->
       <scroll-view style="height:{{scrollHeight}}px;" scroll-y scroll-with-animation enable-back-to-top>
-      
-        <!-- <view > -->
-        <form 
+        <view 
           class="all-history-left-item" 
           wx:for="{{topic_info}}" 
           wx:for-item="data" 
@@ -27,12 +25,9 @@
             </button>
             <text style="font-size:25rpx;">{{data.topic_name}}</text>
           </view>
-        </form>
-        <!-- </view>  -->
+        </view>
       </scroll-view>
     </view>
-
-
 
     <view class="all-history-right">
       <view class="all-history-first-row">
@@ -42,7 +37,6 @@
         <text class="all-history-emphasize">{{topic_info[selected_topic_idx].insist_day}}</text>
         <text>天</text>
       </view>
-
 
       <!-- 日历板块 -->
       <scroll-view style="height:{{scrollHeight - 30}}px;" bindscroll="calendarScroll" scroll-into-view="{{scroll_into_view_id}}" scroll-y scroll-with-animation enable-back-to-top>

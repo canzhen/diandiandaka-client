@@ -468,10 +468,6 @@ Page({
    * 日历scroll-view滑动事件
    */
   calendarScroll: function (e) {
-    // let deltaY = e.detail.deltaY; //大于0上滑小于0下滑
-    // console.log('scrollTop:' + e.detail.scrollTop)
-
-
     if (e.detail.scrollTop == 0 ) {//上滑到顶了
       let currentSelectedDate = this.data.date.clone();
       let checkedTime = [];
@@ -480,7 +476,7 @@ Page({
         checkedTime = this.data.check_time_per_topic[topic]; //当前选中的topic的所有check信息
       }
 
-      let newDate = currentSelectedDate.clone().subtract(3, 'month');
+      let newDate = currentSelectedDate.clone().subtract(2, 'month');
       if (newDate < this.data.check_last_date ||
           this.data.check_last_date == '') {
         wx.showToast({
@@ -490,15 +486,12 @@ Page({
         return;
       }
 
-
       wx.showLoading({
         title: '正在加载数据',
       })
 
       let new_year_month_list = this.data.year_month_list;
       new_year_month_list.unshift(data.getCalendar(checkedTime, newDate, colorList[newDate.month() % 2]));
-
-
       this.setData({
         year_month_list: new_year_month_list,
         date: currentSelectedDate.clone().subtract(1, 'month'),
