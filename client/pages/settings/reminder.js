@@ -234,16 +234,16 @@ Page({
       }		
     } 
 
-    // 合并提醒
-    if (is_combine){
-      let index = e.currentTarget.dataset.index;
-      let combine_topic_list = this.data.combine_topic_list;
-      combine_topic_list[index].remind_method = remind_method;
-      this.setData({
-        combine_topic_list: combine_topic_list
-      })
-      return;
-    }
+    // // 合并提醒
+    // if (is_combine){
+    //   let index = e.currentTarget.dataset.index;
+    //   let combine_topic_list = this.data.combine_topic_list;
+    //   combine_topic_list[index].remind_method = remind_method;
+    //   this.setData({
+    //     combine_topic_list: combine_topic_list
+    //   })
+    //   return;
+    // }
 
     // 微信提醒
     let index = e.currentTarget.dataset.topicIndex;
