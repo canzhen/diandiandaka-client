@@ -217,15 +217,16 @@ Page({
    */
   submitForm: function (event) {
     let value = event.detail.value;
+    let that = this;
     // 检查数据是否完整
     if (!value.input_topic_name) {
-      this.showReminderAlert('好像忘了填计划名称哟~');
+      that.showReminderAlert('好像忘了填计划名称哟~');
       return;
     }
 
     // 检查计划名称中是否包含特殊字符
-    if (this.data.has_special_character) {
-      this.showReminderAlert('计划名称中包含特殊字符，请删掉再提交，谢谢~');
+    if (that.data.has_special_character) {
+      that.showReminderAlert('计划名称中包含特殊字符，请删掉再提交，谢谢~');
       return;
     }
 
@@ -233,11 +234,11 @@ Page({
 
     // 检查日期是否漏选（开始和结束日期一样的话）
     if (value.start_date === value.end_date){
-      this.showReminderAlert('开始日期和结束日期一样喔，确定吗？');
+      that.showReminderAlert('开始日期和结束日期一样喔，确定吗？');
       return;
     }
-    if (!this.data.topic_url) {
-      this.showReminderAlert('随便选一个图标就好啦~');
+    if (!that.data.topic_url) {
+      that.showReminderAlert('随便选一个图标就好啦~');
       return;
     }
 
@@ -245,7 +246,6 @@ Page({
       "\n所选择的图像url是：" + this.data.topic_url + 
       "\n开始日期是：" + value.start_date + 
       "\n结束日期是：" + value.end_date);
-    let that = this;
 
 
     //将卡片姓名和卡片图像url添加到卡片表中
@@ -254,7 +254,7 @@ Page({
         'url': '/topic/create',
         'data': {
           'topicname': value.input_topic_name,
-          'topicurl': this.data.topic_url,
+          'topicurl': that.data.topic_url,
           'startdate': value.start_date,
           'enddate': value.end_date,
           'countphase': value.input_topic_count_phase,
