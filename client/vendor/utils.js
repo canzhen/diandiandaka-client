@@ -357,35 +357,25 @@ module.exports.drawShareImage = function (canvasId, backgroundUrl,
   ctx.setTextAlign('center');
   let yijingWidth = ctx.measureText('已经').width + 5;
   let tianWidth = ctx.measureText('天').width;
-  // console.log('已经的width：' + yijingWidth);
-  // console.log('天的width：' + tianWidth);
   // const metrics = ctx.measureText(time).width;   //时间文字的所占宽度
   ctx.fillText('我在点点小打卡坚持', width / 2, top_height);
   ctx.setFontSize(30);
   let topicNameWidth = ctx.measureText(topicName).width;
   let insistDayWidth = ctx.measureText(insistDay).width + 10;
-  // console.log('卡片名称的width：' + topicNameWidth);
-  // console.log('坚持天数的width：' + insistDayWidth);
   
   let totalWidth = topicNameWidth + yijingWidth + 
       insistDayWidth + tianWidth;
   let topicNamePos = (width - totalWidth + topicNameWidth) / 2;
-  // console.log(topicNamePos);
   ctx.fillText(topicName, topicNamePos, top_height + 39);
   ctx.setFontSize(12);
   let yijingPos = topicNamePos + (topicNameWidth + yijingWidth) / 2;
-  // console.log(yijingPos);
   ctx.fillText('已经', yijingPos, top_height + 38);
   ctx.setFontSize(30); 
   insistDayWidth = ctx.measureText(insistDay).width;
-  // console.log('坚持天数：' + insistDay);
-  // console.log('坚持天数的width：' + insistDayWidth);
   let insistDayPos = yijingPos + (yijingWidth + insistDayWidth) / 2;
-  // console.log(insistDayPos);
   ctx.fillText(insistDay, insistDayPos, top_height + 40);
   ctx.setFontSize(12);
   let tianPos = insistDayPos + (insistDayWidth + tianWidth) / 2;
-  // console.log(tianPos);
   ctx.fillText('天', tianPos, top_height + 38);
 
 

@@ -97,10 +97,6 @@ Page({
       is_loaded: true
     });
 
-
-
-
-
     let idx = utils.getRandom(0, share_list.length - 1);
     let path = BACKGROUND_PREFIX +
       share_list[idx].path + BACKGROUND_SUFFIX;
@@ -122,7 +118,11 @@ Page({
           that.setData({
             background_url: backgroundUrl
           });
-        }
+        },
+        fail: ((res) => {
+          console.log('下载分享背景图失败');
+          console.log(res);
+        }),
       })
     }
 
