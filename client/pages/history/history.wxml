@@ -10,14 +10,14 @@
     <view class="all-history-left">
       <!-- 显示出所有正在打卡的topic|左侧 -->
       <scroll-view style="height:{{scrollHeight}}px;" scroll-y scroll-with-animation enable-back-to-top>
-        <view 
-          class="all-history-left-item" 
-          wx:for="{{topic_info}}" 
-          wx:for-item="data" 
-          wx:key="key" 
-          wx:for-index="index" 
-          bindsubmit="tapTopic" 
-          data-topic-idx="{{index}}" 
+        <view
+          class="all-history-left-item"
+          wx:for="{{topic_info}}"
+          wx:for-item="data"
+          wx:key="key"
+          wx:for-index="index"
+          bindtap="tapTopic"
+          data-topic-idx="{{index}}"
           report-submit='true'>
           <view wx:if="{{!data.dated}}">
             <button class="all-history-left-button-image" hover-class="none" form-type="submit">
